@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "XRoadLib", "src\XRoadLib\XRoadLib.fsproj", "{00D28162-AD42-4A86-8880-0B8CE27878A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XRoadLib", "src\XRoadLib\XRoadLib.csproj", "{5109476D-6533-4275-AB06-39D95728BBFA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{BF60BC93-E09B-4E5F-9D85-95A519479D54}"
 	ProjectSection(SolutionItems) = preProject
@@ -40,10 +40,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{00D28162-AD42-4A86-8880-0B8CE27878A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{00D28162-AD42-4A86-8880-0B8CE27878A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{00D28162-AD42-4A86-8880-0B8CE27878A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{00D28162-AD42-4A86-8880-0B8CE27878A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5109476D-6533-4275-AB06-39D95728BBFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5109476D-6533-4275-AB06-39D95728BBFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5109476D-6533-4275-AB06-39D95728BBFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5109476D-6533-4275-AB06-39D95728BBFA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
