@@ -1,38 +1,26 @@
-[![Issue Stats](http://issuestats.com/github/fsprojects/ProjectScaffold/badge/issue)](http://issuestats.com/github/fsprojects/ProjectScaffold)
-[![Issue Stats](http://issuestats.com/github/fsprojects/ProjectScaffold/badge/pr)](http://issuestats.com/github/fsprojects/ProjectScaffold)
+# XRoadLib
 
-# ProjectScaffold
+A .NET library for implementing service interfaces of [X-Road](http://x-road.eu) providers using Code-First Development approach.
 
-This project can be used to scaffold a prototypical .NET solution including file system layout and tooling. This includes a build process that: 
+[![Mono build status](https://img.shields.io/travis/janno-p/XRoadLib/master.svg?label=Mono build)](https://travis-ci.org/janno-p/XRoadLib/)  
+[![Windows build status](https://img.shields.io/appveyor/ci/janno-p/xroadlib/master.svg?label=Windows build)](https://ci.appveyor.com/project/janno-p/xroadlib)  
+[![Version](http://img.shields.io/nuget/v/XRoadLib.svg?label=Current version)](https://www.nuget.org/packages/XRoadLib/)  
+[![Downloads](https://img.shields.io/nuget/dt/XRoadLib.svg?label=Downloads)](https://www.nuget.org/stats/packages/XRoadLib?groupby=Version)
 
-* updates all AssemblyInfo files
-* compiles the application and runs all test projects
-* generates [SourceLinks](https://github.com/ctaggart/SourceLink)
-* generates API docs based on XML document tags
-* generates [documentation based on Markdown files](http://fsprojects.github.io/ProjectScaffold/writing-docs.html)
-* generates [NuGet](http://www.nuget.org) packages
-* and allows a simple [one step release process](http://fsprojects.github.io/ProjectScaffold/release-process.html).
+## Documentation
 
-In order to start the scaffolding process run 
+Documentation and samples can be found at the [XRoadLib home page](http://janno-p.github.com/XRoadLib/).
 
-    > build.cmd // on windows    
-    $ ./build.sh  // on unix
-    
-Read the [Getting started tutorial](http://fsprojects.github.io/ProjectScaffold/index.html#Getting-started) to learn more.
+## Building
 
-Documentation: http://fsprojects.github.io/ProjectScaffold
+* Mono: Run `$ ./build.sh`
+* Windows: Run `> build.cmd`
 
+## Disclaimer
 
-## Build Status
-
-Mono | .NET
----- | ----
-[![Mono CI Build Status](https://img.shields.io/travis/fsprojects/ProjectScaffold/master.svg)](https://travis-ci.org/fsprojects/ProjectScaffold) | [![.NET Build Status](https://img.shields.io/appveyor/ci/fsgit/ProjectScaffold/master.svg)](https://ci.appveyor.com/project/fsgit/projectscaffold)
+This is an alpha build and as such most likely has problems that are yet undetected. That means the solution is not suitable
+for use in production environment. I will not hold responsibility for any damage caused by this software.
 
 ## Maintainer(s)
 
-- [@forki](https://github.com/forki)
-- [@pblasucci](https://github.com/pblasucci)
-- [@sergey-tihon](https://github.com/sergey-tihon)
-
-The default maintainer account for projects under "fsprojects" is [@fsprojectsgit](https://github.com/fsprojectsgit) - F# Community Project Incubation Space (repo management)
+* [@janno-p](https://github.com/janno-p)
