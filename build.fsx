@@ -61,6 +61,9 @@ let gitName = "XRoadLib"
 // The url for the raw files hosted
 let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/janno-p"
 
+// Strong name key file for assembly signing
+let keyFile = "src" @@ "XRoadLib.pfx"
+
 // --------------------------------------------------------------------------------------
 // END TODO: The rest of the file includes standard build steps
 // --------------------------------------------------------------------------------------
@@ -318,6 +321,10 @@ Target "AddLangDocs" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Release Scripts
 
+Target "CheckKeyFile" (fun _ ->
+    if not (TestFile keyFile) then
+        failwithf "Assembly strong name key file `%s` is not present." keyFile)
+
 Target "ReleaseDocs" (fun _ ->
     let tempDocsDir = "temp/gh-pages"
     CleanDir tempDocsDir
@@ -397,6 +404,9 @@ Target "All" DoNothing
 
 "GenerateHelpDebug"
   ==> "KeepRunning"
+
+"CheckKeyFile"
+  ==> "Release"
 
 "ReleaseDocs"
   ==> "Release"
