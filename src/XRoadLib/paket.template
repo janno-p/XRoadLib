@@ -1,0 +1,23 @@
+type project
+owners
+    Janno Põldma
+authors 
+    Janno Põldma
+projectUrl
+    http://github.com/janno-p/XRoadLib
+iconUrl
+    https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png
+licenseUrl
+    http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt
+requireLicenseAcceptance
+    false
+copyright
+    Copyright 2015
+tags
+    x-tee x-road xtee xroad
+summary
+    A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach.
+description
+    A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach.
+
+
