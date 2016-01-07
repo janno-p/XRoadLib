@@ -22,7 +22,6 @@ NUGET
     NUnit.Runners (2.6.4)
     Octokit (0.17.0)
       Microsoft.Net.Http
-    RhinoMocks (3.6.1)
     SourceLink.Fake (1.1.0)
 GITHUB
   remote: fsharp/FAKE
