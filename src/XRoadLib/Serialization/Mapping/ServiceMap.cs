@@ -92,7 +92,7 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
-        public void SerializeResponse(XmlWriter writer, object value, SerializationContext context, XmlReader requestReader, Action afterSerialize = null)
+        public void SerializeResponse(XmlWriter writer, object value, SerializationContext context, XmlReader requestReader, ICustomSerialization customSerialization)
         {
             var containsRequest = requestReader.MoveToElement(2, qualifiedName.Name, qualifiedName.Namespace);
 
@@ -118,7 +118,7 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteEndElement();
             }
 
-            afterSerialize?.Invoke();
+            customSerialization?.OnContentComplete(writer);
 
             writer.WriteEndElement();
         }

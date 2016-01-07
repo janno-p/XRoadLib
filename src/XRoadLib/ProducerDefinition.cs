@@ -190,6 +190,17 @@ namespace XRoadLib
             }
         }
 
+        public void AddServiceContracts(IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts, bool useGlobalServiceVersion = false)
+        {
+            AddMessageTypes(
+                serviceContracts.Select(kvp => Tuple.Create(kvp.Key,
+                    kvp.Value
+                        .Where(v => !v.Value.IsHidden && (!useGlobalServiceVersion || v.Value.IsDefinedInVersion(version)))
+                        .ToDictionary(y => y.Key, y => y.Value)))
+                    .Where(x => x.Item2.Any())
+                    .ToDictionary(x => x.Item1, x => x.Item2.Keys.ToList()));
+        }
+
         public void AddOperation(string name, MethodInfo methodContract, MethodInfo methodImpl, uint? serviceVersion, bool isExported)
         {
             BuildOperationElements(name, methodContract, methodImpl, isExported);

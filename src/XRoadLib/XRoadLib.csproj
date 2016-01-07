@@ -65,7 +65,9 @@
     <Compile Include="NamespaceHelper.cs" />
     <Compile Include="PrefixHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\CustomSerialization.cs" />
     <Compile Include="Serialization\IAttachmentManager.cs" />
+    <Compile Include="Serialization\ICustomSerialization.cs" />
     <Compile Include="Serialization\ISerializerCache.cs" />
     <Compile Include="Serialization\IXRoadFault.cs" />
     <Compile Include="Serialization\IXRoadFilterMap.cs" />
@@ -108,6 +110,7 @@
     <Compile Include="Serialization\XRoadSerializer.cs" />
     <Compile Include="Serialization\XRoadMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.Debug.cs" />
+    <Compile Include="SoapMessageHelper.cs" />
     <Compile Include="Soap\ClientFaultCode.cs" />
     <Compile Include="Soap\FaultCode.cs" />
     <Compile Include="Soap\ServerFaultCode.cs" />

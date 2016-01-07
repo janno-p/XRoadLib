@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml;
 
 namespace XRoadLib.Serialization.Mapping
@@ -16,6 +15,6 @@ namespace XRoadLib.Serialization.Mapping
 
         void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, SerializationContext context);
 
-        void SerializeResponse(XmlWriter writer, object value, SerializationContext context, XmlReader requestReader, Action afterSerialize = null);
+        void SerializeResponse(XmlWriter writer, object value, SerializationContext context, XmlReader requestReader, ICustomSerialization customSerialization = null);
     }
 }

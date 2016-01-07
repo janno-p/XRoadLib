@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
 using XRoadLib.Serialization;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions
 {
@@ -256,6 +257,34 @@ namespace XRoadLib.Extensions
             generator.Emit(OpCodes.Ret);
 
             return (SetValueMethod)dynamicSet.CreateDelegate(typeof(SetValueMethod));
+        }
+
+        public static Tuple<MethodInfo, XRoadServiceAttribute> FindMethodDeclaration(this MethodInfo method, string operationName, IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts)
+        {
+            if (method.DeclaringType == null)
+                return null;
+
+            var methodContracts = method.DeclaringType
+                                       .GetInterfaces()
+                                       .Select(iface => method.DeclaringType.GetInterfaceMap(iface))
+                                       .Where(map => map.TargetMethods.Contains(method))
+                                       .Select(map => map.InterfaceMethods[Array.IndexOf(map.TargetMethods, method)])
+                                       .ToList();
+
+            if (methodContracts.Count > 1)
+                throw XRoadException.AmbiguousMatch(operationName);
+
+            var methodContract = methodContracts.SingleOrDefault();
+            IDictionary<string, XRoadServiceAttribute> serviceContract;
+
+            if (methodContract == null || !serviceContracts.TryGetValue(methodContract, out serviceContract))
+                throw XRoadException.UndefinedContract(operationName);
+
+            XRoadServiceAttribute serviceAttribute;
+            if (!serviceContract.TryGetValue(operationName, out serviceAttribute))
+                throw XRoadException.UndefinedContract(operationName);
+
+            return Tuple.Create(methodContract, serviceAttribute);
         }
     }
 }

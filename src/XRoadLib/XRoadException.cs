@@ -89,9 +89,19 @@ namespace XRoadLib
             return new XRoadException(new ClientFaultCode("InvalidQuery"), string.Format(message, args));
         }
 
-        public static XRoadException ToetamataPäring()
+        public static XRoadException UnsupportedQuery()
         {
-            return new XRoadException(new ClientFaultCode("UnsupportedQuery"), "Vastu võetud päring ei vasta ühelegi toetatud teenusele.");
+            return new XRoadException(new ClientFaultCode("UnsupportedQuery"), "Received request does not meet any known operation.");
+        }
+
+        public static XRoadException UndefinedContract(string operationName)
+        {
+            throw new XRoadException(new ServerFaultCode("UndefinedContract"), "Operation `{0}` does not implement any known service contract.", operationName);
+        }
+
+        public static XRoadException AmbiguousMatch(string operationName)
+        {
+            throw new XRoadException(new ServerFaultCode("AmbiguousMatch"), "Unable to detect unique service contract for operation `{0}` (method implements multiple service contracts).", operationName);
         }
     }
 }
