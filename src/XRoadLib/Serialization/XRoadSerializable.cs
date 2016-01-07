@@ -14,14 +14,15 @@ namespace XRoadLib.Serialization
             return initializedMembers;
         }
 
-        public bool OnMärgitud(string väljaNimetus)
+        public bool IsSpecified(string memberName)
         {
-            return initializedMembers.ContainsKey(väljaNimetus) && initializedMembers[väljaNimetus];
+            bool value;
+            return initializedMembers.TryGetValue(memberName, out value) && value;
         }
 
-        public bool OnValidaatoris(string väljaNimetus)
+        public bool IsAcceptedByTemplate(string memberName)
         {
-            return initializedMembers.ContainsKey(väljaNimetus);
+            return initializedMembers.ContainsKey(memberName);
         }
 
         void IXRoadSerializable.OnMemberDeserialized(string memberName)
@@ -29,7 +30,7 @@ namespace XRoadLib.Serialization
             initializedMembers[memberName] = true;
         }
 
-        void IXRoadSerializable.SetSpecifiedMembers(IEnumerable<string> memberNames)
+        void IXRoadSerializable.SetTemplateMembers(IEnumerable<string> memberNames)
         {
             foreach (var memberName in memberNames.Where(x => !initializedMembers.ContainsKey(x)))
                 initializedMembers.Add(memberName, false);

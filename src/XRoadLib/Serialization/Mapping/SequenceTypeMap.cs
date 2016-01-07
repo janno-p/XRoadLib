@@ -21,7 +21,7 @@ namespace XRoadLib.Serialization.Mapping
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
             var entity = new T();
-            entity.SetSpecifiedMembers(templateNode.ChildNames);
+            entity.SetTemplateMembers(templateNode.ChildNames);
 
             if (reader.IsEmptyElement)
                 return entity;

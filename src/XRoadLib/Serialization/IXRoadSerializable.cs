@@ -6,6 +6,6 @@ namespace XRoadLib.Serialization
     {
         void OnMemberDeserialized(string memberName);
 
-        void SetSpecifiedMembers(IEnumerable<string> memberNames);
+        void SetTemplateMembers(IEnumerable<string> memberNames);
     }
 }
