@@ -62,22 +62,6 @@
   </Target>
   -->
   <Import Project="..\..\.paket\paket.targets" />
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
-      <ItemGroup>
-        <Reference Include="FsUnit.NUnit">
-          <HintPath>..\..\packages\FsUnit\lib\net45\FsUnit.NUnit.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-        <Reference Include="NHamcrest">
-          <HintPath>..\..\packages\FsUnit\lib\net45\NHamcrest.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
   <ItemGroup>
     <Compile Include="Mapping\DateTest.fs" />
     <Compile Include="Mapping\DateTimeTest.fs" />
@@ -85,9 +69,11 @@
     <Compile Include="NamespaceHelperTest.fs" />
     <Compile Include="ProducerDefinitionTest.fs" />
     <Compile Include="SoapFaultCodesTest.fs" />
+    <Compile Include="XRoadDeserializerTest.fs" />
     <Compile Include="XRoadFilterMapTest.fs" />
     <Compile Include="XRoadMessageReaderTest.fs" />
     <Compile Include="XRoadSerializableTest.fs" />
+    <Compile Include="XRoadSerializerTest.fs" />
     <Compile Include="XRoadServiceNameTest.fs" />
     <None Include="paket.references" />
     <Content Include="App.config" />
@@ -112,10 +98,39 @@
       <Project>{5109476d-6533-4275-ab06-39d95728bbfa}</Project>
       <Private>True</Private>
     </ProjectReference>
+  </ItemGroup>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+      <ItemGroup>
+        <Reference Include="FsUnit.NUnit">
+          <HintPath>..\..\packages\FsUnit\lib\net45\FsUnit.NUnit.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="NHamcrest">
+          <HintPath>..\..\packages\FsUnit\lib\net45\NHamcrest.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <ItemGroup>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
       <Paket>True</Paket>
     </Reference>
   </ItemGroup>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v2.0' Or $(TargetFrameworkVersion) == 'v3.0' Or $(TargetFrameworkVersion) == 'v3.5' Or $(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+      <ItemGroup>
+        <Reference Include="Rhino.Mocks">
+          <HintPath>..\..\packages\RhinoMocks\lib\net\Rhino.Mocks.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
 </Project>

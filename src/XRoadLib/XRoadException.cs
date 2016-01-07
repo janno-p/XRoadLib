@@ -61,7 +61,7 @@ namespace XRoadLib
 
         public static XRoadException PäringusPuudubAttachment(string attachmentContentID)
         {
-            return new XRoadException(new ClientFaultCode("MultipartAttachmentMissing"), "MIME multipart sõnumis puudub attachment Content-ID-ga {0}.", attachmentContentID);
+            return new XRoadException(new ClientFaultCode("MultipartAttachmentMissing"), "MIME multipart message does not contain content with ID `{0}`.", attachmentContentID);
         }
 
         public static XRoadException MultipartManusegaSõnumiOotamatuLõpp()
