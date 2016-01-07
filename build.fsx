@@ -48,7 +48,7 @@ let tags = "x-tee x-road xtee xroad"
 let solutionFile  = "XRoadLib.sln"
 
 // Pattern specifying assemblies to be tested using NUnit
-let testAssemblies = "tests/**/bin/Release/*Tests*.dll"
+let testAssemblies = "tests/**/bin/Debug/*Tests*.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -63,12 +63,6 @@ let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/janno-p"
 
 // Strong name key file for assembly signing
 let keyFile = "src" @@ "XRoadLib.pfx"
-
-let publicKey = [ "00240000048000009400000006020000002400005253413100040000010001008d1875f0fa838e"
-                  "308de6846cf68cd6c7dca1a6e5053754a95084907da06dd01ed486b77e4a4a52c5140a849a0737"
-                  "b9301de3261d5180ef7938789856a04990b54b9d57e35fa8da8d61c4e98fd4eb0079b28eca2026"
-                  "5da68f8885bee9fc9ba4c3782eb428caa0c84ce4c4c4bea2111e7b925dc69a6fef2b2ec9aa0ad0"
-                  "bd4a88f1" ] |> String.concat ""
 
 // --------------------------------------------------------------------------------------
 // END TODO: The rest of the file includes standard build steps
@@ -93,8 +87,7 @@ Target "AssemblyInfo" (fun _ ->
           Attribute.Product project
           Attribute.Description summary
           Attribute.Version release.AssemblyVersion
-          Attribute.FileVersion release.AssemblyVersion
-          Attribute.InternalsVisibleTo (sprintf "XRoadLib.Tests, PublicKey=%s" publicKey)]
+          Attribute.FileVersion release.AssemblyVersion ]
 
     let getProjectDetails projectPath =
         let projectName = System.IO.Path.GetFileNameWithoutExtension(projectPath)
@@ -138,6 +131,12 @@ Target "CleanDocs" (fun _ ->
 
 // --------------------------------------------------------------------------------------
 // Build library & test project
+
+Target "BuildDebug" (fun _ ->
+    !! solutionFile
+    |> MSBuildDebug "" "Rebuild"
+    |> ignore
+)
 
 Target "Build" (fun _ ->
     !! solutionFile
@@ -384,9 +383,10 @@ Target "All" DoNothing
 
 "Clean"
   ==> "AssemblyInfo"
+  ==> "BuildDebug"
+  ==> "RunTests"
   ==> "Build"
   ==> "CopyBinaries"
-  ==> "RunTests"
   ==> "GenerateReferenceDocs"
   ==> "GenerateDocs"
   ==> "All"

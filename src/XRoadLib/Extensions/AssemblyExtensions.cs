@@ -13,7 +13,7 @@ namespace XRoadLib.Extensions
             var producerName = assembly.FindXRoadProducerName();
 
             if (string.IsNullOrWhiteSpace(producerName))
-                throw new Exception($"Unable to extract producer name from contract assembly `{assembly.FullName}`");
+                throw new Exception($"Unable to extract producer name from contract assembly `{assembly.GetName().Name}`.");
 
             return producerName;
         }

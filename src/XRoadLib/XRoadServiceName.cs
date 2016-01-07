@@ -13,6 +13,8 @@ namespace XRoadLib
         public XRoadServiceName(string fullServiceName)
         {
             var tuple = Parse(fullServiceName);
+            if (tuple == null)
+                return;
 
             Producer = tuple.Item1;
             Method = tuple.Item2;

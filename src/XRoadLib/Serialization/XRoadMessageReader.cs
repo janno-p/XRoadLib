@@ -12,7 +12,7 @@ namespace XRoadLib.Serialization
 {
     internal class XRoadMessageReader : IDisposable
     {
-        private enum ChunkStop
+        internal enum ChunkStop
         {
             BufferLimit,
             NewLine,
@@ -215,7 +215,7 @@ namespace XRoadLib.Serialization
             return chunk;
         }
 
-        private ChunkStop ReadChunkOrLine(out byte[] chunk, int chunkSize)
+        internal ChunkStop ReadChunkOrLine(out byte[] chunk, int chunkSize)
         {
             var result = ChunkStop.BufferLimit;
             var buffer = new byte[chunkSize];
