@@ -12,7 +12,7 @@ using XRoadLib.Extensions;
 using XRoadLib.Header;
 using XRoadLib.Serialization;
 
-namespace XRoadLib
+namespace XRoadLib.Description
 {
     public sealed class ProducerDefinition
     {
@@ -158,7 +158,7 @@ namespace XRoadLib
         {
             foreach (var type in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable() && type.ExistsInVersion(version)))
             {
-                if (schemaTypes.ContainsKey(type.Name))
+                if (IsExistingType(type.Name))
                     throw new Exception($"Multiple type definitions for same name `{type.Name}`.");
 
                 var schemaType = new XmlSchemaComplexType { Name = type.Name, IsAbstract = type.IsAbstract };
@@ -351,7 +351,7 @@ namespace XRoadLib
             return methodInfo.DeclaringType.Name;
         }
 
-        private void AddMessageType(string operationName, MethodInfo method, ISet<string> existingTypes)
+        private void AddMessageType(string operationName, MethodInfo method)
         {
             if (method.IsImportedOperation())
             {
@@ -366,7 +366,7 @@ namespace XRoadLib
             var requestName = operationName;
             var responseName = $"{requestName}Response";
 
-            if (!existingTypes.Add(requestName) || !existingTypes.Add(responseName))
+            if (IsExistingType(requestName) || IsExistingType(responseName))
                 throw new Exception($"Operation type `{requestName}` already exists with the same name.");
 
             var requestSequence = CreateOperationRequestSequence(method);
@@ -375,6 +375,11 @@ namespace XRoadLib
             var responseType = CreateResponseType(responseName, method, requestSequence);
 
             operationTypes.Add(requestName, Tuple.Create(method, requestType, responseType));
+        }
+
+        private bool IsExistingType(string typeName)
+        {
+            return schemaTypes.ContainsKey(typeName) || operationTypes.ContainsKey(typeName);
         }
 
         private XmlAttribute CreateAttribute(string prefix, string name, string @namespace, string value)
@@ -621,15 +626,13 @@ namespace XRoadLib
 
         public void AddMessageTypes(IDictionary<MethodInfo, List<string>> contractMessages)
         {
-            var existingTypes = new HashSet<string>();
-
             Func<KeyValuePair<MethodInfo, List<string>>, IEnumerable<Tuple<string, MethodInfo>>> selector =
                 m => protocol == XRoadProtocol.Version20
                     ? m.Value.Select(n => Tuple.Create(n, m.Key))
                     : Enumerable.Repeat(Tuple.Create(GetOperationNameFromMethodInfo(m.Key), m.Key), 1);
 
             foreach (var operation in contractMessages.SelectMany(selector))
-                AddMessageType(operation.Item1, operation.Item2, existingTypes);
+                AddMessageType(operation.Item1, operation.Item2);
         }
 
         public ProducerDefinition AddEncodedHeader<T>(Expression<Func<IXRoadEncodedHeader, T>> expression)

@@ -52,10 +52,11 @@
     <Compile Include="Attributes\XRoadProducerNameAttribute.cs" />
     <Compile Include="Attributes\XRoadRemoveContractAttribute.cs" />
     <Compile Include="Attributes\XRoadTitleAttribute.cs" />
+    <Compile Include="Description\ProducerDefinitionSettings.cs" />
     <Compile Include="Extensions\IXRoadLifetime.cs" />
     <Compile Include="Header\IXRoadHeader.cs" />
     <Compile Include="Header\XRoadHeader.cs" />
-    <Compile Include="ProducerDefinition.cs" />
+    <Compile Include="Description\ProducerDefinition.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\XmlReaderExtensions.cs" />
