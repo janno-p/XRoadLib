@@ -103,6 +103,8 @@ namespace XRoadLib
             responseTypeNameFormat = producerConfiguration.ResponseTypeNameFormat.GetValueOrDefault("{0}Response");
             requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
             responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
+
+            AddTypes(contractAssembly);
         }
 
         public void SaveTo(Stream stream)
@@ -186,7 +188,7 @@ namespace XRoadLib
             serviceDescription.Write(writer);
         }
 
-        public void AddTypes<T>(Assembly contractAssembly)
+        internal void AddTypes(Assembly contractAssembly)
         {
             foreach (var type in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable() && (!version.HasValue || type.ExistsInVersion(version.Value))))
             {
@@ -202,23 +204,26 @@ namespace XRoadLib
                 var type = value.Item1;
                 var schemaType = value.Item2;
 
-                var properties = type.GetPropertiesSorted(type.GetComparer(), version);
+                var attribute = type.GetLayoutAttribute(protocol);
+                var properties = type.GetPropertiesSorted(attribute.GetComparer(), version);
 
-                var sequence = new XmlSchemaSequence();
+                var contentParticle = attribute?.Layout == XRoadLayoutKind.All ? (XmlSchemaGroupBase)new XmlSchemaAll()
+                                                                               : new XmlSchemaSequence();
+
                 foreach (var property in properties)
                 {
                     var propertyElement = new XmlSchemaElement { Name = property.GetPropertyName(), Annotation = CreateAnnotationElement(property) };
                     AddSchemaType(propertyElement, property.PropertyType, true, property.GetElementType());
-                    sequence.Items.Add(propertyElement);
+                    contentParticle.Items.Add(propertyElement);
                 }
 
                 if (type.BaseType != typeof(XRoadSerializable))
                 {
-                    var extension = new XmlSchemaComplexContentExtension { BaseTypeName = GetComplexTypeName(type.BaseType), Particle = sequence };
+                    var extension = new XmlSchemaComplexContentExtension { BaseTypeName = GetComplexTypeName(type.BaseType), Particle = contentParticle };
                     var complexContent = new XmlSchemaComplexContent { Content = extension };
                     schemaType.ContentModel = complexContent;
                 }
-                else schemaType.Particle = sequence;
+                else schemaType.Particle = contentParticle;
             }
         }
 

@@ -76,7 +76,7 @@ namespace XRoadLib.Serialization.Mapping
             if (deserializationPropertyMaps.Count > 0)
                 return;
 
-            var comparer = runtimeType.GetComparer();
+            var comparer = runtimeType.GetComparer(protocol);
 
             foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(comparer, DtoVersion))
             {

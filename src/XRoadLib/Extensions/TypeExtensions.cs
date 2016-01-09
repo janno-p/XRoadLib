@@ -290,10 +290,21 @@ namespace XRoadLib.Extensions
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
 
-        internal static IComparer<PropertyInfo> GetComparer(this Type type)
+        internal static XRoadLayoutAttribute GetLayoutAttribute(this Type type, XRoadProtocol protocol)
         {
-            var layoutAttribute = type.GetSingleAttribute<XRoadLayoutAttribute>();
-            var comparerType = layoutAttribute?.Comparer;
+            return type.GetCustomAttributes(typeof(XRoadLayoutAttribute), false)
+                       .OfType<XRoadLayoutAttribute>()
+                       .SingleOrDefault(attr => attr.appliesTo.HasValue && attr.appliesTo.Value == protocol);
+        }
+
+        internal static IComparer<PropertyInfo> GetComparer(this Type type, XRoadProtocol protocol)
+        {
+            return type.GetLayoutAttribute(protocol).GetComparer();
+        }
+
+        internal static IComparer<PropertyInfo> GetComparer(this XRoadLayoutAttribute attribute)
+        {
+            var comparerType = attribute?.Comparer;
 
             return comparerType != null ? (IComparer<PropertyInfo>)Activator.CreateInstance(comparerType)
                                         : new DefaultComparer();
