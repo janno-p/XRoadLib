@@ -324,10 +324,14 @@ namespace XRoadLib.Serialization
 
                 if (runtimeType.IsAbstract)
                     typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap<>).MakeGenericType(runtimeType));
-                else if (protocol == XRoadProtocol.Version20)
-                    typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);
                 else
-                    typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
+                {
+                    var layout = runtimeType.GetLayoutAttribute(protocol);
+                    if (layout == null || layout.Layout == XRoadLayoutKind.Sequence)
+                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
+                    else
+                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);
+                }
             }
 
             typeMap.DtoVersion = dtoVersion;

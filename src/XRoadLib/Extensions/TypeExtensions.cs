@@ -300,7 +300,7 @@ namespace XRoadLib.Extensions
         {
             return type.GetCustomAttributes(typeof(XRoadLayoutAttribute), false)
                        .OfType<XRoadLayoutAttribute>()
-                       .SingleOrDefault(attr => attr.appliesTo.HasValue && attr.appliesTo.Value == protocol);
+                       .SingleOrDefault(attr => !attr.appliesTo.HasValue || attr.appliesTo.Value == protocol);
         }
 
         internal static IComparer<PropertyInfo> GetComparer(this Type type, XRoadProtocol protocol)
@@ -320,7 +320,7 @@ namespace XRoadLib.Extensions
         {
             public int Compare(PropertyInfo x, PropertyInfo y)
             {
-                return x.MetadataToken.CompareTo(y.MetadataToken);
+                return x.GetPropertyName().CompareTo(y.GetPropertyName());
             }
         }
     }

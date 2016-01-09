@@ -173,14 +173,14 @@ module XRoadSerializerTest =
                            SingleProperty = Nullable(7L),
                            MultipleProperty = [| 8L; 9L |])
         |> shouldSerializeTo ([ @"<keha d1p1:type=""d1p2:WsdlChangesTestDto"" xmlns:d1p2=""http://producers.test-producer.xtee.riik.ee/producer/test-producer"" xmlns:d1p1=""http://www.w3.org/2001/XMLSchema-instance"">"
-                                @"<StaticProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">6</StaticProperty>"
                                 @"<AddedProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">1</AddedProperty>"
                                 @"<ChangedTypeProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">2</ChangedTypeProperty>"
-                                @"<RenamedToProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">4</RenamedToProperty>"
                                 @"<MultipleProperty d1p1:type=""d2p1:Array"" d2p1:arrayType=""d2p2:long[2]"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://schemas.xmlsoap.org/soap/encoding/"">"
                                 @"<item d1p1:type=""d2p2:long"">8</item>"
                                 @"<item d1p1:type=""d2p2:long"">9</item>"
                                 @"</MultipleProperty>"
+                                @"<RenamedToProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">4</RenamedToProperty>"
+                                @"<StaticProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">6</StaticProperty>"
                                 @"</keha>" ] |> String.concat "")
 
     [<Test>]
@@ -194,9 +194,9 @@ module XRoadSerializerTest =
                            SingleProperty = Nullable(7L),
                            MultipleProperty = [| 8L; 9L |])
         |> shouldSerializeToV1 ([ @"<keha d1p1:type=""d1p2:WsdlChangesTestDto"" xmlns:d1p2=""http://producers.test-producer.xtee.riik.ee/producer/test-producer"" xmlns:d1p1=""http://www.w3.org/2001/XMLSchema-instance"">"
-                                  @"<StaticProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">6</StaticProperty>"
-                                  @"<RenamedFromProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">4</RenamedFromProperty>"
-                                  @"<RemovedProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">3</RemovedProperty>"
                                   @"<ChangedTypeProperty d1p1:type=""d2p1:string"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">2</ChangedTypeProperty>"
+                                  @"<RemovedProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">3</RemovedProperty>"
+                                  @"<RenamedFromProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">4</RenamedFromProperty>"
                                   @"<SingleProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">8</SingleProperty>"
+                                  @"<StaticProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">6</StaticProperty>"
                                   @"</keha>" ] |> String.concat "")

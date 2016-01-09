@@ -3,7 +3,7 @@
 namespace XRoadLib.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    class XRoadLayoutAttribute : Attribute
+    public class XRoadLayoutAttribute : Attribute
     {
         internal XRoadProtocol? appliesTo;
 
