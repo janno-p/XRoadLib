@@ -186,7 +186,7 @@ namespace XRoadLib
             serviceDescription.Write(writer);
         }
 
-        public void AddTypes<T>(Assembly contractAssembly, Func<PropertyInfo, T> orderBySelector)
+        public void AddTypes<T>(Assembly contractAssembly)
         {
             foreach (var type in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable() && (!version.HasValue || type.ExistsInVersion(version.Value))))
             {
@@ -202,7 +202,7 @@ namespace XRoadLib
                 var type = value.Item1;
                 var schemaType = value.Item2;
 
-                var properties = type.GetPropertiesSorted(version, orderBySelector);
+                var properties = type.GetPropertiesSorted(type.GetComparer(), version);
 
                 var sequence = new XmlSchemaSequence();
                 foreach (var property in properties)

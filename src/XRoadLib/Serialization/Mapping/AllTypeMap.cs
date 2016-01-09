@@ -76,7 +76,9 @@ namespace XRoadLib.Serialization.Mapping
             if (deserializationPropertyMaps.Count > 0)
                 return;
 
-            foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(DtoVersion, protocol))
+            var comparer = runtimeType.GetComparer();
+
+            foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(comparer, DtoVersion))
             {
                 var dataType = propertyInfo.GetElementType();
                 var elementTypeName = string.IsNullOrWhiteSpace(dataType) ? null : new XmlQualifiedName(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceHelper.SOAP_ENC : NamespaceHelper.XSD);

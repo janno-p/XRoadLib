@@ -36,7 +36,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -45,6 +44,8 @@
     <Compile Include="Attributes\XRoadAddContractAttribute.cs" />
     <Compile Include="Attributes\XRoadAttachmentAttribute.cs" />
     <Compile Include="Attributes\XRoadImportAttribute.cs" />
+    <Compile Include="Attributes\XRoadLayoutAttribute.cs" />
+    <Compile Include="Attributes\XRoadLayoutKind.cs" />
     <Compile Include="Attributes\XRoadServiceAttribute.cs" />
     <Compile Include="Attributes\XRoadMessagePartAttribute.cs" />
     <Compile Include="Attributes\XRoadParameterAttribute.cs" />

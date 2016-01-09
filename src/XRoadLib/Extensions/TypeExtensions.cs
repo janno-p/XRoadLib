@@ -30,33 +30,28 @@ namespace XRoadLib.Extensions
             return false;
         }
 
-        public static IEnumerable<PropertyInfo> GetPublicPropertiesSorted(this Type type)
+        public static IEnumerable<PropertyInfo> GetPropertiesSorted(this Type type, IComparer<PropertyInfo> comparer, uint? version)
         {
-            return type.GetProperties().OrderBy(propertyInfo => propertyInfo.MetadataToken);
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
+            var properties = type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                                 .Where(prop => (!prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null) &&
+                                                (!version.HasValue || prop.ExistsInVersion(version.Value)));
+
+            return new SortedSet<PropertyInfo>(properties, comparer);
         }
 
-        public static IEnumerable<PropertyInfo> GetPropertiesSorted<T>(this Type type, uint? dtoVersion, Func<PropertyInfo, T> orderBySelector)
-        {
-            return type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-                       .Where(prop => (!prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null) && (!dtoVersion.HasValue || prop.ExistsInVersion(dtoVersion.Value)))
-                       .OrderBy(orderBySelector);
-        }
-
-        public static IEnumerable<PropertyInfo> GetAllPropertiesSorted<T>(this Type type, uint dtoVersion, Func<PropertyInfo, T> orderBySelector)
+        public static IEnumerable<PropertyInfo> GetAllPropertiesSorted(this Type type, IComparer<PropertyInfo> comparer, uint? version)
         {
             var properties = new List<PropertyInfo>();
 
             if (type.BaseType != typeof(XRoadSerializable))
-                properties.AddRange(type.BaseType.GetAllPropertiesSorted(dtoVersion, orderBySelector));
+                properties.AddRange(type.BaseType.GetAllPropertiesSorted(comparer, version));
 
-            properties.AddRange(type.GetPropertiesSorted(dtoVersion, orderBySelector));
+            properties.AddRange(type.GetPropertiesSorted(comparer, version));
 
             return properties;
-        }
-
-        public static IEnumerable<PropertyInfo> GetAllPropertiesSorted(this Type type, uint dtoVersion, XRoadProtocol protocol)
-        {
-            return protocol == XRoadProtocol.Version20 ? type.GetAllPropertiesSorted(dtoVersion, p => p.MetadataToken) : type.GetAllPropertiesSorted(dtoVersion, p => p.GetPropertyName());
         }
 
         public static IEnumerable<Tuple<string, string>> GetXRoadTitles(this ICustomAttributeProvider attributeProvider)
@@ -293,6 +288,23 @@ namespace XRoadLib.Extensions
         internal static string GetValueOrDefault(this string value, string defaultValue)
         {
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
+        }
+
+        internal static IComparer<PropertyInfo> GetComparer(this Type type)
+        {
+            var layoutAttribute = type.GetSingleAttribute<XRoadLayoutAttribute>();
+            var comparerType = layoutAttribute?.Comparer;
+
+            return comparerType != null ? (IComparer<PropertyInfo>)Activator.CreateInstance(comparerType)
+                                        : new DefaultComparer();
+        }
+
+        internal class DefaultComparer : IComparer<PropertyInfo>
+        {
+            public int Compare(PropertyInfo x, PropertyInfo y)
+            {
+                return x.MetadataToken.CompareTo(y.MetadataToken);
+            }
         }
     }
 }
