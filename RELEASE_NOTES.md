@@ -1,5 +1,6 @@
 #### 1.0.0-alpha3 - Unreleased
 * More configuration options through contract assembly attributes.
+* Layout attribute to control content particle and order of elements.
 
 #### 1.0.0-alpha2 - January 7 2016
 * Add SOAP specific helper methods.
