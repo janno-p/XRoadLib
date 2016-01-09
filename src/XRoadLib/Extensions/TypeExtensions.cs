@@ -290,6 +290,12 @@ namespace XRoadLib.Extensions
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
 
+        internal static bool HasStrictOperationSignature(this Assembly assembly)
+        {
+            var attr = assembly.GetSingleAttribute<XRoadProducerConfigurationAttribute>();
+            return attr != null ? attr.StrictOperationSignature : true;
+        }
+
         internal static XRoadLayoutAttribute GetLayoutAttribute(this Type type, XRoadProtocol protocol)
         {
             return type.GetCustomAttributes(typeof(XRoadLayoutAttribute), false)

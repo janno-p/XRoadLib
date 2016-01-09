@@ -149,17 +149,17 @@ namespace XRoadLib.Serialization
 
             qualifiedName = new XmlQualifiedName("testSystem", NamespaceHelper.GetXRoadNamespace(protocol));
             var serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, true, false, false));
             customServiceMaps.GetOrAdd(qualifiedName, serviceMap);
 
             qualifiedName = new XmlQualifiedName("getState", NamespaceHelper.GetXRoadNamespace(protocol));
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, integerTypeMap, false), false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, integerTypeMap, false), true, false, false));
             customServiceMaps.GetOrAdd(qualifiedName, serviceMap);
 
             qualifiedName = new XmlQualifiedName("listMethods", NamespaceHelper.GetXRoadNamespace(protocol));
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, stringArrayTypeMap, false), false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, stringArrayTypeMap, false), true, false, false));
             customServiceMaps.GetOrAdd(qualifiedName, serviceMap);
         }
 
@@ -198,7 +198,11 @@ namespace XRoadLib.Serialization
 
         private IServiceMap AddServiceMap(ConcurrentDictionary<uint, IServiceMap> serviceMaps, XmlQualifiedName qualifiedName, uint dtoVersion, MethodInfo methodImpl)
         {
-            var serviceInterface = GetServiceInterface(qualifiedName, dtoVersion);
+            Assembly typeAssembly;
+            if (!typeAssemblies.TryGetValue(qualifiedName.Namespace, out typeAssembly))
+                typeAssembly = null;
+
+            var serviceInterface = GetServiceInterface(typeAssembly, qualifiedName, dtoVersion);
             if (serviceInterface == null)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
@@ -215,15 +219,14 @@ namespace XRoadLib.Serialization
             var hasMultipartRequest = multipartAttribute != null && multipartAttribute.HasMultipartRequest;
             var hasMultipartResponse = multipartAttribute != null && multipartAttribute.HasMultipartResponse;
 
-            var serviceMap = new ServiceMap(qualifiedName, parameterMaps, resultMap, hasMultipartRequest, hasMultipartResponse);
+            var serviceMap = new ServiceMap(qualifiedName, parameterMaps, resultMap, typeAssembly.HasStrictOperationSignature(), hasMultipartRequest, hasMultipartResponse);
 
             return serviceMaps.GetOrAdd(dtoVersion, serviceMap);
         }
 
-        private MethodInfo GetServiceInterface(XmlQualifiedName qualifiedName, uint dtoVersion)
+        private MethodInfo GetServiceInterface(Assembly typeAssembly, XmlQualifiedName qualifiedName, uint dtoVersion)
         {
-            Assembly typeAssembly;
-            if (!typeAssemblies.TryGetValue(qualifiedName.Namespace, out typeAssembly))
+            if (typeAssembly == null)
                 return null;
 
             return typeAssembly.GetTypes()

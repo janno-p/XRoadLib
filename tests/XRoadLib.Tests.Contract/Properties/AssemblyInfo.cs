@@ -24,7 +24,8 @@ using XRoadLib.Attributes;
                                       RequestTypeNameFormat = "{0}Request",
                                       ResponseTypeNameFormat = "{0}Response",
                                       RequestMessageNameFormat = "{0}",
-                                      ResponseMessageNameFormat = "{0}Response")]
+                                      ResponseMessageNameFormat = "{0}Response",
+                                      StrictOperationSignature = true)]
 
 [assembly: XRoadTitle("", "Ilma keeleta palun")]
 [assembly: XRoadTitle("en", "XRoadLib test producer")]

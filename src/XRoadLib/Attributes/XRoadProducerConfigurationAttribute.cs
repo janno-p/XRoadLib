@@ -83,5 +83,11 @@ namespace XRoadLib.Attributes
         /// Should contain exactly one string placeholder.
         /// </summary>
         public string ResponseMessageNameFormat { get; set; }
+
+        /// <summary>
+        /// Specifies if service parameter order is strict
+        /// (uses sequence) or not (uses all).
+        /// </summary>
+        public bool StrictOperationSignature { get; set; } = true;
     }
 }
