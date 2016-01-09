@@ -20,17 +20,17 @@ namespace XRoadLib.Extensions
 
         public static string FindXRoadProducerName(this Assembly assembly)
         {
-            return assembly.GetCustomAttributes(typeof(XRoadProducerNameAttribute), false)
-                           .OfType<XRoadProducerNameAttribute>()
-                           .Select(x => x.Value)
+            return assembly.GetCustomAttributes(typeof(XRoadProducerConfigurationAttribute), false)
+                           .OfType<XRoadProducerConfigurationAttribute>()
+                           .Select(x => x.ProducerName)
                            .SingleOrDefault();
         }
 
         public static uint? GetXRoadPublishedVersion(this Assembly assembly)
         {
-            return assembly.GetCustomAttributes(typeof(XRoadPublishedVersionAttribute), false)
-                           .OfType<XRoadPublishedVersionAttribute>()
-                           .Select(x => (uint?)x.Version)
+            return assembly.GetCustomAttributes(typeof(XRoadProducerConfigurationAttribute), false)
+                           .OfType<XRoadProducerConfigurationAttribute>()
+                           .Select(x => (uint?)x.MaxOperationVersion)
                            .SingleOrDefault();
         }
 

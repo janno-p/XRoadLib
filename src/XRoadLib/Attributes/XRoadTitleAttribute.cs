@@ -2,7 +2,7 @@
 
 namespace XRoadLib.Attributes
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true)]
     public class XRoadTitleAttribute : Attribute
     {
         public string LanguageCode { get; }

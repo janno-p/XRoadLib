@@ -12,24 +12,33 @@ using XRoadLib.Extensions;
 using XRoadLib.Header;
 using XRoadLib.Serialization;
 
-namespace XRoadLib.Description
+namespace XRoadLib
 {
     public sealed class ProducerDefinition
     {
         private const string STANDARD_HEADER_NAME = "stdhdr";
+        private const string DEFAULT_LOCATION = "http://TURVASERVER/cgi-bin/consumer_proxy";
 
         private readonly XmlDocument document = new XmlDocument();
 
+        private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
         private readonly string producerName;
         private readonly string environmentProducerName;
         private readonly string xroadNamespace;
         private readonly string targetNamespace;
-        private readonly uint version;
+        private readonly string standardHeaderName;
+        private readonly uint? version;
+
+        private readonly string requestTypeNameFormat;
+        private readonly string responseTypeNameFormat;
+        private readonly string requestMessageNameFormat;
+        private readonly string responseMessageNameFormat;
 
         private readonly Binding binding;
         private readonly Port servicePort;
         private readonly PortType portType;
+        private readonly Service service;
 
         private readonly ICollection<string> requiredHeaders = new SortedSet<string>();
 
@@ -42,34 +51,58 @@ namespace XRoadLib.Description
         public string HeaderMessage { private get; set; }
         public string ImportedSchemaPath { private get; set; }
         public string Location { private get; set; }
-        public IDictionary<string, string> Title { get; }
 
-        public ProducerDefinition(XRoadProtocol protocol, string producerName, uint version, string environmentProducerName = null)
+        public ProducerDefinition(Assembly contractAssembly, XRoadProtocol protocol, uint? version = null, string environmentProducerName = null)
         {
-            this.environmentProducerName = environmentProducerName ?? producerName;
-            this.producerName = producerName;
+            if (contractAssembly == null)
+                throw new ArgumentNullException(nameof(contractAssembly));
+
+            var producerConfiguration = contractAssembly.GetCustomAttributes(typeof(XRoadProducerConfigurationAttribute), false)
+                                                        .OfType<XRoadProducerConfigurationAttribute>()
+                                                        .SingleOrDefault();
+            if (producerConfiguration == null)
+                throw new ArgumentException(string.Format("Contract assembly `{0}` does not define producer configuration attribute.", contractAssembly.GetName().Name), nameof(contractAssembly));
+
+            producerName = producerConfiguration.ProducerName;
+
+            this.contractAssembly = contractAssembly;
+            this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerName);
             this.protocol = protocol;
             this.version = version;
 
             xroadNamespace = NamespaceHelper.GetXRoadNamespace(protocol);
             targetNamespace = NamespaceHelper.GetProducerNamespace(producerName, protocol);
 
-            Title = new SortedDictionary<string, string>();
-
-            portType = new PortType { Name = $"{producerName}PortType"};
+            portType = new PortType
+            {
+                Name = producerConfiguration.PortTypeName.GetValueOrDefault($"{producerName}PortType")
+            };
 
             binding = new Binding
             {
-                Name = $"{producerName}Binding",
+                Name = producerConfiguration.BindingName.GetValueOrDefault($"{producerName}Binding"),
                 Type = new XmlQualifiedName(portType.Name, targetNamespace)
             };
 
             servicePort = new Port
             {
-                Name = $"{producerName}Port",
+                Name = producerConfiguration.ServicePortName.GetValueOrDefault($"{producerName}Port"),
                 Binding = new XmlQualifiedName(binding.Name, targetNamespace),
                 Extensions = { CreateAddressBindingElement() }
             };
+
+            service = new Service
+            {
+                Name = producerConfiguration.ServiceName.GetValueOrDefault($"{producerName}Service"),
+                Ports = { servicePort }
+            };
+
+            standardHeaderName = producerConfiguration.StandardHeaderName.GetValueOrDefault(STANDARD_HEADER_NAME);
+
+            requestTypeNameFormat = producerConfiguration.RequestTypeNameFormat.GetValueOrDefault("{0}");
+            responseTypeNameFormat = producerConfiguration.ResponseTypeNameFormat.GetValueOrDefault("{0}Response");
+            requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
+            responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
         }
 
         public void SaveTo(Stream stream)
@@ -130,7 +163,7 @@ namespace XRoadLib.Description
             AddSoapBinding();
             serviceDescription.Bindings.Add(binding);
 
-            var standardHeader = new Message { Name = STANDARD_HEADER_NAME };
+            var standardHeader = new Message { Name = standardHeaderName };
 
             foreach (var requiredHeader in requiredHeaders)
                 standardHeader.Parts.Add(new MessagePart { Name = requiredHeader, Element = new XmlQualifiedName(requiredHeader, xroadNamespace) });
@@ -140,23 +173,22 @@ namespace XRoadLib.Description
             foreach (var message in messages)
                 serviceDescription.Messages.Add(message);
 
-            foreach (var title in Title)
-                servicePort.Extensions.Add(CreateXRoadTitleElement(title.Key, title.Value));
+            foreach (var title in contractAssembly.GetXRoadTitles().OrderBy(t => t.Item1.ToLower()))
+                servicePort.Extensions.Add(CreateXRoadTitleElement(title.Item1, title.Item2));
 
-            servicePort.Extensions.Add(new SoapAddressBinding { Location = Location });
-
-            serviceDescription.Services.Add(new Service
+            servicePort.Extensions.Add(new SoapAddressBinding
             {
-                Name = $"{producerName}Service",
-                Ports = { servicePort }
+                Location = string.IsNullOrWhiteSpace(Location) ? DEFAULT_LOCATION : Location
             });
+
+            serviceDescription.Services.Add(service);
 
             serviceDescription.Write(writer);
         }
 
         public void AddTypes<T>(Assembly contractAssembly, Func<PropertyInfo, T> orderBySelector)
         {
-            foreach (var type in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable() && type.ExistsInVersion(version)))
+            foreach (var type in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable() && (!version.HasValue || type.ExistsInVersion(version.Value))))
             {
                 if (IsExistingType(type.Name))
                     throw new Exception($"Multiple type definitions for same name `{type.Name}`.");
@@ -190,28 +222,30 @@ namespace XRoadLib.Description
             }
         }
 
-        public void AddServiceContracts(IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts, bool useGlobalServiceVersion = false)
+        public void AddServiceContracts(IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts)
         {
             AddMessageTypes(
                 serviceContracts.Select(kvp => Tuple.Create(kvp.Key,
                     kvp.Value
-                        .Where(v => !v.Value.IsHidden && (!useGlobalServiceVersion || v.Value.IsDefinedInVersion(version)))
+                        .Where(v => !v.Value.IsHidden && (!version.HasValue || v.Value.IsDefinedInVersion(version.Value)))
                         .ToDictionary(y => y.Key, y => y.Value)))
                     .Where(x => x.Item2.Any())
                     .ToDictionary(x => x.Item1, x => x.Item2.Keys.ToList()));
         }
 
-        public void AddOperation(string name, MethodInfo methodContract, MethodInfo methodImpl, uint? serviceVersion, bool isExported)
+        public void AddOperation(string name, MethodInfo methodContract, MethodInfo methodImpl, bool isExported)
         {
             BuildOperationElements(name, methodContract, methodImpl, isExported);
 
             if (isExported)
                 return;
 
+            var serviceVersion = version.GetValueOrDefault(methodContract.GetContractAddedVersion().GetValueOrDefault(1u));
+
             var operationBinding = new OperationBinding
             {
                 Name = name,
-                Extensions = { CreateXRoadVersionBindingElement(serviceVersion.GetValueOrDefault(version)) },
+                Extensions = { CreateXRoadVersionBindingElement(serviceVersion) },
                 Input = new InputBinding(),
                 Output = new OutputBinding()
             };
@@ -317,8 +351,17 @@ namespace XRoadLib.Description
 
             var operationTypeName = GetOperationTypeName(name, methodContract, methodImpl);
 
-            var requestElement = new XmlSchemaElement { Name = name, SchemaTypeName = operationTypeName.Item1 };
-            var responseElement = new XmlSchemaElement { Name = $"{name}Response", SchemaTypeName = operationTypeName.Item2 };
+            var requestElement = new XmlSchemaElement
+            {
+                Name = string.Format(requestTypeNameFormat, name),
+                SchemaTypeName = operationTypeName.Item1
+            };
+
+            var responseElement = new XmlSchemaElement
+            {
+                Name = string.Format(responseTypeNameFormat, name),
+                SchemaTypeName = operationTypeName.Item2
+            };
 
             schemaElements.Add(requestElement.Name, requestElement);
             schemaElements.Add(responseElement.Name, responseElement);
@@ -363,8 +406,8 @@ namespace XRoadLib.Description
                 return;
             }
 
-            var requestName = operationName;
-            var responseName = $"{requestName}Response";
+            var requestName = string.Format(requestTypeNameFormat, operationName);
+            var responseName = string.Format(responseTypeNameFormat, operationName);
 
             if (IsExistingType(requestName) || IsExistingType(responseName))
                 throw new Exception($"Operation type `{requestName}` already exists with the same name.");
@@ -412,14 +455,20 @@ namespace XRoadLib.Description
             var operationTypeName = methodContract.GetImportedOperationTypeNames(importNamespace);
             var extraParts = methodContract.GetExtraMessageParts().ToList();
 
-            var inputMessage = new Message { Name = name };
+            var inputMessage = new Message
+            {
+                Name = string.Format(requestMessageNameFormat, name)
+            };
 
             inputMessage.Parts.Add(
                 protocol == XRoadProtocol.Version20
                     ? new MessagePart { Name = "keha", Type = operationTypeName.Item1 }
                     : new MessagePart { Name = "body", Element = operationTypeName.Item1 });
 
-            var outputMessage = new Message { Name = $"{name}Response"};
+            var outputMessage = new Message
+            {
+                Name = string.Format(responseMessageNameFormat, name)
+            };
 
             if (protocol == XRoadProtocol.Version20)
                 outputMessage.Parts.Add(new MessagePart { Name = "paring", Type = operationTypeName.Item1 });
@@ -485,10 +534,8 @@ namespace XRoadLib.Description
         {
             schema.Includes.Add(new XmlSchemaImport { Namespace = xroadNamespace, SchemaLocation = xroadNamespace });
 
-            schema.Includes.Add(
-                protocol == XRoadProtocol.Version20
-                    ? new XmlSchemaImport { Namespace = NamespaceHelper.SOAP_ENC, SchemaLocation = NamespaceHelper.SOAP_ENC }
-                    : new XmlSchemaImport { Namespace = NamespaceHelper.XMIME, SchemaLocation = NamespaceHelper.XMIME });
+            if (protocol == XRoadProtocol.Version20)
+                schema.Includes.Add(new XmlSchemaImport { Namespace = NamespaceHelper.SOAP_ENC, SchemaLocation = NamespaceHelper.SOAP_ENC });
 
             foreach (var import in schemaImports)
                 schema.Includes.Add(import);
@@ -538,7 +585,7 @@ namespace XRoadLib.Description
         {
             return new SoapHeaderBinding
             {
-                Message = new XmlQualifiedName(STANDARD_HEADER_NAME, targetNamespace),
+                Message = new XmlQualifiedName(standardHeaderName, targetNamespace),
                 Part = headerName,
                 Use = (protocol == XRoadProtocol.Version20 ? SoapBindingUse.Encoded : SoapBindingUse.Literal),
                 Namespace = (protocol == XRoadProtocol.Version20 ? xroadNamespace : null),
@@ -554,7 +601,7 @@ namespace XRoadLib.Description
             {
                 var element = CreateElement(PrefixHelper.SOAP, "header", NamespaceHelper.SOAP);
 
-                element.SetAttribute("message", STANDARD_HEADER_NAME);
+                element.SetAttribute("message", standardHeaderName);
                 element.SetAttribute("part", headerBinding.Part);
                 element.SetAttribute("use", headerBinding.Use == SoapBindingUse.Encoded ? "encoded" : "literal");
 
@@ -615,8 +662,13 @@ namespace XRoadLib.Description
 
         private void AddBinaryAttribute(XmlSchemaAnnotated element)
         {
-            if (protocol != XRoadProtocol.Version20)
-                element.UnhandledAttributes = new[] { CreateAttribute(PrefixHelper.XMIME, "expectedContentTypes", NamespaceHelper.XMIME, "application/octet-stream") };
+            if (protocol == XRoadProtocol.Version20)
+                return;
+
+            if (schemaImports.All(import => import.Namespace != NamespaceHelper.XMIME))
+                schemaImports.Add(new XmlSchemaImport { Namespace = NamespaceHelper.XMIME, SchemaLocation = NamespaceHelper.XMIME });
+
+            element.UnhandledAttributes = new[] { CreateAttribute(PrefixHelper.XMIME, "expectedContentTypes", NamespaceHelper.XMIME, "application/octet-stream") };
         }
 
         private string GetBinaryNamespace()
@@ -659,7 +711,7 @@ namespace XRoadLib.Description
                 var sequence = (XmlSchemaSequence)requestType.Particle;
 
                 var parameterExists = methodContract.GetParameters()
-                                                    .Select(x => x.IsParameterInVersion(version))
+                                                    .Select(x => (!version.HasValue || x.IsParameterInVersion(version.Value)))
                                                     .ToList();
 
                 var parameterNames = methodImpl.GetParameters()
@@ -673,15 +725,15 @@ namespace XRoadLib.Description
                     ((XmlSchemaElement)sequence.Items[i]).Name = parameterNames[i];
             }
 
-            return Tuple.Create(new XmlQualifiedName(name, targetNamespace),
-                                new XmlQualifiedName($"{name}Response", targetNamespace));
+            return Tuple.Create(new XmlQualifiedName(string.Format(requestTypeNameFormat, name), targetNamespace),
+                                new XmlQualifiedName(string.Format(responseTypeNameFormat, name), targetNamespace));
         }
 
         private XmlSchemaSequence CreateOperationRequestSequence(MethodInfo method)
         {
             var requestElement = new XmlSchemaElement { Name = "request" };
 
-            var parameters = method.GetParameters().Where(p => p.IsParameterInVersion(version)).ToList();
+            var parameters = method.GetParameters().Where(p => (!version.HasValue || p.IsParameterInVersion(version.Value))).ToList();
 
             if (protocol == XRoadProtocol.Version20 || parameters.Count > 1)
             {

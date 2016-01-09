@@ -35,10 +35,10 @@ namespace XRoadLib.Extensions
             return type.GetProperties().OrderBy(propertyInfo => propertyInfo.MetadataToken);
         }
 
-        public static IEnumerable<PropertyInfo> GetPropertiesSorted<T>(this Type type, uint dtoVersion, Func<PropertyInfo, T> orderBySelector)
+        public static IEnumerable<PropertyInfo> GetPropertiesSorted<T>(this Type type, uint? dtoVersion, Func<PropertyInfo, T> orderBySelector)
         {
             return type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-                       .Where(prop => (!prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null) && prop.ExistsInVersion(dtoVersion))
+                       .Where(prop => (!prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null) && (!dtoVersion.HasValue || prop.ExistsInVersion(dtoVersion.Value)))
                        .OrderBy(orderBySelector);
         }
 
@@ -80,12 +80,15 @@ namespace XRoadLib.Extensions
                                     .SingleOrDefault();
         }
 
+        public static uint? GetContractAddedVersion(this ICustomAttributeProvider attributeProvider)
+        {
+            var attribute = attributeProvider.GetSingleAttribute<XRoadAddContractAttribute>();
+            return attribute != null ? (uint?)attribute.Version : null;
+        }
+
         public static bool ExistsInVersion(this ICustomAttributeProvider type, uint version)
         {
-            var versionAdded = type.GetCustomAttributes(typeof(XRoadAddContractAttribute), false)
-                                   .OfType<XRoadAddContractAttribute>()
-                                   .Select(x => (uint?)x.Version)
-                                   .SingleOrDefault();
+            var versionAdded = type.GetContractAddedVersion();
 
             var versionRemoved = type.GetCustomAttributes(typeof(XRoadRemoveContractAttribute), false)
                                      .OfType<XRoadRemoveContractAttribute>()
@@ -285,6 +288,11 @@ namespace XRoadLib.Extensions
                 throw XRoadException.UndefinedContract(operationName);
 
             return Tuple.Create(methodContract, serviceAttribute);
+        }
+
+        internal static string GetValueOrDefault(this string value, string defaultValue)
+        {
+            return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
     }
 }

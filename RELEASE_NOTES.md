@@ -1,5 +1,5 @@
 #### 1.0.0-alpha3 - Unreleased
-* Customize WSDL using `ProducerDefinitionSettings` class.
+* More configuration options through contract assembly attributes.
 
 #### 1.0.0-alpha2 - January 7 2016
 * Add SOAP specific helper methods.
