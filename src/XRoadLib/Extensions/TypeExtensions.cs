@@ -7,7 +7,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
 using XRoadLib.Serialization;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions
 {
@@ -75,21 +74,13 @@ namespace XRoadLib.Extensions
                                     .SingleOrDefault();
         }
 
-        public static uint? GetContractAddedVersion(this ICustomAttributeProvider attributeProvider)
+        public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)
         {
-            return attributeProvider.GetSingleAttribute<XRoadAddContractAttribute>()?.Version;
-        }
-
-        public static bool ExistsInVersion(this ICustomAttributeProvider type, uint version)
-        {
-            var versionAdded = type.GetContractAddedVersion();
-
-            var versionRemoved = type.GetCustomAttributes(typeof(XRoadRemoveContractAttribute), false)
-                                     .OfType<XRoadRemoveContractAttribute>()
-                                     .Select(x => (uint?)x.Version)
-                                     .SingleOrDefault();
-
-            return IsVersionInRange(version, versionAdded, versionRemoved);
+            return IsVersionInRange(
+                version,
+                provider.GetSingleAttribute<XRoadAddContractAttribute>()?.Version,
+                provider.GetSingleAttribute<XRoadAddContractAttribute>()?.Version
+                );
         }
 
         public static bool HasMultipartRequest(this MethodInfo methodInfo)
@@ -291,8 +282,7 @@ namespace XRoadLib.Extensions
 
         internal static bool HasStrictOperationSignature(this Assembly assembly)
         {
-            var attr = assembly.GetSingleAttribute<XRoadProducerConfigurationAttribute>();
-            return attr != null ? attr.StrictOperationSignature : true;
+            return assembly.GetSingleAttribute<XRoadProducerConfigurationAttribute>()?.StrictOperationSignature ?? true;
         }
 
         internal static XRoadLayoutAttribute GetLayoutAttribute(this Type type, XRoadProtocol protocol)
@@ -318,11 +308,11 @@ namespace XRoadLib.Extensions
                                         : new DefaultComparer();
         }
 
-        internal class DefaultComparer : IComparer<PropertyInfo>
+        private class DefaultComparer : IComparer<PropertyInfo>
         {
             public int Compare(PropertyInfo x, PropertyInfo y)
             {
-                return x.GetPropertyName().CompareTo(y.GetPropertyName());
+                return string.Compare(x.GetPropertyName(), y.GetPropertyName(), StringComparison.InvariantCultureIgnoreCase);
             }
         }
     }

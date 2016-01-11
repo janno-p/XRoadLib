@@ -5,8 +5,9 @@ namespace XRoadLib.Attributes
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
     public class XRoadProducerConfigurationAttribute : Attribute
     {
-        internal uint? minOperationVersion;
-        internal uint? maxOperationVersion;
+        private uint? minOperationVersion;
+        private uint? maxOperationVersion;
+
         internal XRoadProtocol? appliesTo;
 
         /// <summary>
@@ -19,6 +20,8 @@ namespace XRoadLib.Attributes
             set { minOperationVersion = value; }
         }
 
+        public bool HasMinOperationVersion => minOperationVersion.HasValue;
+
         /// <summary>
         /// Maximal version number for operations defined inside
         /// attribute target assembly. Used by versioning subsystem.
@@ -28,6 +31,8 @@ namespace XRoadLib.Attributes
             get { return maxOperationVersion.GetValueOrDefault(1u); }
             set { maxOperationVersion = value; }
         }
+
+        public bool HasMaxOperationVersion => maxOperationVersion.HasValue;
 
         /// <summary>
         /// Name of the message that defines mandatory X-Road service

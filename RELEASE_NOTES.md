@@ -1,3 +1,7 @@
+#### 1.0.0-alpha5 - Unreleased
+* Fix wrong version number in generated service description.
+* Add properties to test of operation version limits are specified.
+
 #### 1.0.0-alpha4 - January 11 2016
 * Restore separate producer name attribute.
 * Hide complexity of operation declarations in producer definition.

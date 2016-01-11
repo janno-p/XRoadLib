@@ -140,7 +140,7 @@ namespace XRoadLib
             if (isExported)
                 return;
 
-            var serviceVersion = version.GetValueOrDefault(methodContract.Item1.GetContractAddedVersion().GetValueOrDefault(1u));
+            var serviceVersion = version.GetValueOrDefault(methodContract.Item2.AddedInVersion);
 
             var operationBinding = new OperationBinding
             {
