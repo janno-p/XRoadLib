@@ -1,4 +1,4 @@
-#### 1.0.0-alpha3 - Unreleased
+#### 1.0.0-alpha3 - January 11 2016
 * More configuration options through contract assembly attributes.
 * Layout attribute to control content particle and order of elements.
 
