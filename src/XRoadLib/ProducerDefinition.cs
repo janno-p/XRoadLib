@@ -23,7 +23,6 @@ namespace XRoadLib
 
         private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
-        private readonly string producerName;
         private readonly string environmentProducerName;
         private readonly string xroadNamespace;
         private readonly string targetNamespace;
@@ -59,39 +58,37 @@ namespace XRoadLib
 
             var producerConfiguration = contractAssembly.GetConfigurationAttribute(protocol);
             if (producerConfiguration == null)
-                throw new ArgumentException(string.Format("Contract assembly `{0}` does not define producer configuration attribute for protocol `{1}`.", contractAssembly.GetName().Name, protocol.ToString()), nameof(contractAssembly));
-
-            producerName = producerConfiguration.ProducerName;
+                throw new ArgumentException($"Contract assembly `{contractAssembly.GetName().Name}` does not define producer configuration attribute for protocol `{protocol}`.", nameof(contractAssembly));
 
             this.contractAssembly = contractAssembly;
-            this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerName);
+            this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerConfiguration.ProducerName);
             this.protocol = protocol;
             this.version = version;
 
             xroadNamespace = NamespaceHelper.GetXRoadNamespace(protocol);
-            targetNamespace = NamespaceHelper.GetProducerNamespace(producerName, protocol);
+            targetNamespace = NamespaceHelper.GetProducerNamespace(producerConfiguration.ProducerName, protocol);
 
             portType = new PortType
             {
-                Name = producerConfiguration.PortTypeName.GetValueOrDefault($"{producerName}PortType")
+                Name = producerConfiguration.PortTypeName.GetValueOrDefault($"{producerConfiguration.ProducerName}PortType")
             };
 
             binding = new Binding
             {
-                Name = producerConfiguration.BindingName.GetValueOrDefault($"{producerName}Binding"),
+                Name = producerConfiguration.BindingName.GetValueOrDefault($"{producerConfiguration.ProducerName}Binding"),
                 Type = new XmlQualifiedName(portType.Name, targetNamespace)
             };
 
             servicePort = new Port
             {
-                Name = producerConfiguration.ServicePortName.GetValueOrDefault($"{producerName}Port"),
+                Name = producerConfiguration.ServicePortName.GetValueOrDefault($"{producerConfiguration.ProducerName}Port"),
                 Binding = new XmlQualifiedName(binding.Name, targetNamespace),
                 Extensions = { CreateAddressBindingElement() }
             };
 
             service = new Service
             {
-                Name = producerConfiguration.ServiceName.GetValueOrDefault($"{producerName}Service"),
+                Name = producerConfiguration.ServiceName.GetValueOrDefault($"{producerConfiguration.ProducerName}Service"),
                 Ports = { servicePort }
             };
 
@@ -102,7 +99,7 @@ namespace XRoadLib
             requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
             responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
 
-            AddTypes(contractAssembly);
+            AddTypes();
         }
 
         public void SaveTo(Stream stream)
@@ -186,7 +183,7 @@ namespace XRoadLib
             serviceDescription.Write(writer);
         }
 
-        internal void AddTypes(Assembly contractAssembly)
+        private void AddTypes()
         {
             foreach (var type in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable() && (!version.HasValue || type.ExistsInVersion(version.Value))))
             {
