@@ -1,4 +1,4 @@
-#### 1.0.0-alpha4 - Unreleased
+#### 1.0.0-alpha4 - January 11 2016
 * Restore separate producer name attribute.
 * Hide complexity of operation declarations in producer definition.
 
