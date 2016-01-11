@@ -1,3 +1,6 @@
+#### 1.0.0-alpha10 - Unreleased
+* Fix bug with custom operation type name format.
+
 #### 1.0.0-alpha9 - January 11 2016
 * Bug fix.
 

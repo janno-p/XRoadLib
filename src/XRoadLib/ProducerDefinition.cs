@@ -713,14 +713,17 @@ namespace XRoadLib
         {
             var name = protocol == XRoadProtocol.Version20 ? operationName : GetOperationNameFromMethodInfo(methodContract);
 
+            var requestTypeName = string.Format(requestTypeNameFormat, name);
+            var responseTypeName = string.Format(responseTypeNameFormat, name);
+
             Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType> value;
-            if (!operationTypes.TryGetValue(name, out value) || methodContract != value.Item1)
-                throw new Exception($"Unrecognized type `{name}`");
+            if (!operationTypes.TryGetValue(requestTypeName, out value) || methodContract != value.Item1)
+                throw new Exception($"Unrecognized type `{requestTypeName}`");
 
             UpdateParameterNames(value.Item2, methodContract, methodImpl);
 
-            return Tuple.Create(new XmlQualifiedName(string.Format(requestTypeNameFormat, name), targetNamespace),
-                                new XmlQualifiedName(string.Format(responseTypeNameFormat, name), targetNamespace));
+            return Tuple.Create(new XmlQualifiedName(requestTypeName, targetNamespace),
+                                new XmlQualifiedName(responseTypeName, targetNamespace));
         }
 
         private void UpdateParameterNames(XmlSchemaComplexType requestType, MethodInfo methodContract, MethodInfo methodImpl)
