@@ -206,7 +206,7 @@ namespace XRoadLib.Serialization
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
             var configuration = typeAssembly.GetConfigurationAttribute(protocol);
-            var parameterNameProvider = configuration != null ? (IParameterNameProvider)Activator.CreateInstance(configuration.ParameterNameProvider) : null;
+            var parameterNameProvider = configuration?.ParameterNameProvider != null ? (IParameterNameProvider)Activator.CreateInstance(configuration.ParameterNameProvider) : null;
 
             var parameterMaps = serviceInterface.GetParameters()
                                                 .Select((x,i) => new { p = x, m = CreateParameterMap(parameterNameProvider, x, dtoVersion, methodImpl.GetParameters()[i]) })

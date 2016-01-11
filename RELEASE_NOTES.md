@@ -1,3 +1,6 @@
+#### 1.0.0-alpha9 - Unreleased
+* Bug fix.
+
 #### 1.0.0-alpha8 - January 11 2016
 * Use `all` particle for non-strict operation types.
 * Make `XRoadImportAttribute` protocol specific.
