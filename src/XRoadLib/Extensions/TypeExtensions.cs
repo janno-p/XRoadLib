@@ -79,7 +79,7 @@ namespace XRoadLib.Extensions
             return IsVersionInRange(
                 version,
                 provider.GetSingleAttribute<XRoadAddContractAttribute>()?.Version,
-                provider.GetSingleAttribute<XRoadAddContractAttribute>()?.Version
+                provider.GetSingleAttribute<XRoadRemoveContractAttribute>()?.Version
                 );
         }
 
