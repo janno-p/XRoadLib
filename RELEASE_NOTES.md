@@ -1,4 +1,4 @@
-#### 1.0.0-alpha9 - Unreleased
+#### 1.0.0-alpha9 - January 11 2016
 * Bug fix.
 
 #### 1.0.0-alpha8 - January 11 2016
