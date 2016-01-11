@@ -39,17 +39,16 @@ namespace XRoadLib
         private readonly PortType portType;
         private readonly Service service;
 
-        private readonly ICollection<string> requiredHeaders = new SortedSet<string>();
+        private readonly IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts;
 
+        private readonly ICollection<string> requiredHeaders = new SortedSet<string>();
         private readonly IList<Message> messages = new List<Message>();
         private readonly IList<XmlSchemaImport> schemaImports = new List<XmlSchemaImport>();
         private readonly IDictionary<string, XmlSchemaElement> schemaElements = new SortedDictionary<string, XmlSchemaElement>();
         private readonly IDictionary<string, Tuple<Type, XmlSchemaComplexType>> schemaTypes = new SortedDictionary<string, Tuple<Type, XmlSchemaComplexType>>();
         private readonly IDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType>> operationTypes = new SortedDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType>>();
-        private readonly IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts = new Dictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>>();
 
         public string HeaderMessage { private get; set; }
-        public string ImportedSchemaPath { private get; set; }
         public string Location { private get; set; }
 
         public ProducerDefinition(Assembly contractAssembly, XRoadProtocol protocol, uint? version = null, string environmentProducerName = null)
@@ -363,9 +362,10 @@ namespace XRoadLib
 
         private void BuildOperationElements(string name, MethodInfo methodContract, MethodInfo methodImpl, bool isExported)
         {
-            if (methodContract.IsImportedOperation())
+            var importAttribute = methodContract.GetImportAttribute();
+            if (importAttribute != null)
             {
-                BuildImportedOperationElements(name, methodContract);
+                BuildImportedOperationElements(name, methodContract, importAttribute);
                 return;
             }
 
@@ -416,13 +416,11 @@ namespace XRoadLib
 
         private void AddMessageType(string operationName, MethodInfo method)
         {
-            if (method.IsImportedOperation())
+            var importAttribute = method.GetImportAttribute();
+            if (importAttribute != null)
             {
-                schemaImports.Add(new XmlSchemaImport
-                {
-                    SchemaLocation = GetImportedSchemaPath(operationName),
-                    Namespace = GetImportNamespace(operationName)
-                });
+                var schemaImportProvider = (ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider);
+                schemaImports.Add(new XmlSchemaImport { SchemaLocation = schemaImportProvider.SchemaLocation, Namespace = schemaImportProvider.SchemaNamespace });
                 return;
             }
 
@@ -457,21 +455,11 @@ namespace XRoadLib
             return document.CreateElement(prefix, name, @namespace);
         }
 
-        private string GetImportNamespace(string operationName)
-        {
-            return $"{targetNamespace.TrimEnd('/')}/{operationName}";
-        }
-
         #region Contract definitions that depend on X-Road protocol version
 
-        private string GetImportedSchemaPath(string operationName)
+        private void BuildImportedOperationElements(string name, MethodInfo methodContract, XRoadImportAttribute importAttribute)
         {
-            return $"{(ImportedSchemaPath ?? "").TrimEnd('/')}/{(protocol == XRoadProtocol.Version20 ? "2.0" : "3.1")}/{operationName}.xsd";
-        }
-
-        private void BuildImportedOperationElements(string name, MethodInfo methodContract)
-        {
-            var importNamespace = GetImportNamespace(name);
+            var importNamespace = ((ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider)).SchemaNamespace;
             var operationTypeName = methodContract.GetImportedOperationTypeNames(importNamespace);
             var extraParts = methodContract.GetExtraMessageParts().ToList();
 

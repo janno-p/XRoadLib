@@ -142,9 +142,9 @@ namespace XRoadLib.Extensions
             return propertyInfo.GetElementName() ?? propertyInfo.GetFixedPropertyName();
         }
 
-        public static bool IsImportedOperation(this MethodInfo methodInfo)
+        public static XRoadImportAttribute GetImportAttribute(this MethodInfo methodInfo)
         {
-            return methodInfo.GetCustomAttributes(typeof(XRoadImportAttribute), false).Any();
+            return methodInfo.GetSingleAttribute<XRoadImportAttribute>();
         }
 
         public static Tuple<XmlQualifiedName, XmlQualifiedName> GetImportedOperationTypeNames(this MethodInfo methodInfo, string @namespace)
