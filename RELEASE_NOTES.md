@@ -1,4 +1,4 @@
-#### 1.0.0-alpha6 - Unreleased
+#### 1.0.0-alpha6 - January 11 2016
 * Customize schema import namespaces and location through attribute parameter.
 
 #### 1.0.0-alpha5 - January 11 2016
