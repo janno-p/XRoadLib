@@ -3,13 +3,15 @@
 namespace XRoadLib.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class XRoadImportAttribute : Attribute
+    public class XRoadImportAttribute : Attribute, IXRoadProtocolAppliable
     {
-        internal XRoadProtocol? appliesTo;
+        private XRoadProtocol? appliesTo;
 
         public string RequestPart { get; }
         public string ResponsePart { get; }
         public Type SchemaImportProvider { get; }
+
+        public bool HasAppliesToValue => appliesTo.HasValue;
 
         public XRoadProtocol AppliesTo { get { return appliesTo.GetValueOrDefault(); } set { appliesTo = value; } }
 

@@ -142,14 +142,20 @@ namespace XRoadLib.Extensions
             return propertyInfo.GetElementName() ?? propertyInfo.GetFixedPropertyName();
         }
 
+        public static T GetAppliableAttribute<T>(this ICustomAttributeProvider provider, XRoadProtocol protocol)
+            where T : Attribute, IXRoadProtocolAppliable
+        {
+            var attributes = provider.GetCustomAttributes(typeof(T), false)
+                                     .OfType<T>()
+                                     .ToList();
+
+            return attributes.SingleOrDefault(attr => attr.HasAppliesToValue && attr.AppliesTo == protocol)
+                ?? attributes.SingleOrDefault(attr => !attr.HasAppliesToValue);
+        }
+
         public static XRoadImportAttribute GetImportAttribute(this MethodInfo methodInfo, XRoadProtocol protocol)
         {
-            var attributes = methodInfo.GetCustomAttributes(typeof(XRoadImportAttribute), false)
-                                       .OfType<XRoadImportAttribute>()
-                                       .ToList();
-
-            return attributes.SingleOrDefault(attr => attr.appliesTo.HasValue && attr.appliesTo.Value == protocol)
-                ?? attributes.SingleOrDefault(attr => !attr.appliesTo.HasValue);
+            return methodInfo.GetAppliableAttribute<XRoadImportAttribute>(protocol);
         }
 
         public static IEnumerable<XRoadMessagePartAttribute> GetExtraMessageParts(this MethodInfo methodInfo)
@@ -279,12 +285,7 @@ namespace XRoadLib.Extensions
 
         internal static XRoadLayoutAttribute GetLayoutAttribute(this Type type, XRoadProtocol protocol)
         {
-            var attributes = type.GetCustomAttributes(typeof(XRoadLayoutAttribute), false)
-                                 .OfType<XRoadLayoutAttribute>()
-                                 .ToList();
-
-            return attributes.SingleOrDefault(attr => attr.appliesTo.HasValue && attr.appliesTo.Value == protocol)
-                ?? attributes.SingleOrDefault(attr => !attr.appliesTo.HasValue);
+            return type.GetAppliableAttribute<XRoadLayoutAttribute>(protocol);
         }
 
         internal static IComparer<PropertyInfo> GetComparer(this Type type, XRoadProtocol protocol)

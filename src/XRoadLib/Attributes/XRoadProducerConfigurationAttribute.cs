@@ -3,12 +3,12 @@
 namespace XRoadLib.Attributes
 {
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
-    public class XRoadProducerConfigurationAttribute : Attribute
+    public class XRoadProducerConfigurationAttribute : Attribute, IXRoadProtocolAppliable
     {
         private uint? minOperationVersion;
         private uint? maxOperationVersion;
 
-        internal XRoadProtocol? appliesTo;
+        private XRoadProtocol? appliesTo;
 
         /// <summary>
         /// Minimal version number for operations defined inside
@@ -89,6 +89,8 @@ namespace XRoadLib.Attributes
         /// (uses sequence) or not (uses all).
         /// </summary>
         public bool StrictOperationSignature { get; set; } = true;
+
+        public bool HasAppliesToValue => appliesTo.HasValue;
 
         /// <summary>
         /// Specifies protocol version for which this configuration attribute applies to.

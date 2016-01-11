@@ -25,12 +25,7 @@ namespace XRoadLib.Extensions
 
         public static XRoadProducerConfigurationAttribute GetConfigurationAttribute(this Assembly assembly, XRoadProtocol protocol)
         {
-            var attributes = assembly.GetCustomAttributes(typeof(XRoadProducerConfigurationAttribute), false)
-                                     .OfType<XRoadProducerConfigurationAttribute>()
-                                     .ToList();
-
-            return attributes.SingleOrDefault(attr => attr.appliesTo.HasValue && attr.appliesTo.Value == protocol)
-                ?? attributes.SingleOrDefault(attr => !attr.appliesTo.HasValue);
+            return assembly.GetAppliableAttribute<XRoadProducerConfigurationAttribute>(protocol);
         }
 
         public static IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> GetServiceContracts(this Assembly assembly)

@@ -1,6 +1,7 @@
 #### 1.0.0-alpha8 - Unreleased
 * Use `all` particle for non-strict operation types.
 * Make `XRoadImportAttribute` protocol specific.
+* Common interface for appliable attributes.
 
 #### 1.0.0-alpha7 - January 11 2016
 * Allow protocol specific differences for schema import.
