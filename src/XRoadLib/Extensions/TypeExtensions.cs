@@ -77,8 +77,7 @@ namespace XRoadLib.Extensions
 
         public static uint? GetContractAddedVersion(this ICustomAttributeProvider attributeProvider)
         {
-            var attribute = attributeProvider.GetSingleAttribute<XRoadAddContractAttribute>();
-            return attribute != null ? (uint?)attribute.Version : null;
+            return attributeProvider.GetSingleAttribute<XRoadAddContractAttribute>()?.Version;
         }
 
         public static bool ExistsInVersion(this ICustomAttributeProvider type, uint version)

@@ -1,3 +1,7 @@
+#### 1.0.0-alpha4 - Unreleased
+* Restore separate producer name attribute.
+* Hide complexity of operation declarations in producer definition.
+
 #### 1.0.0-alpha3 - January 11 2016
 * More configuration options through contract assembly attributes.
 * Layout attribute to control content particle and order of elements.

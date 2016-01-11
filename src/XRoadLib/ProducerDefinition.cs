@@ -46,6 +46,7 @@ namespace XRoadLib
         private readonly IDictionary<string, XmlSchemaElement> schemaElements = new SortedDictionary<string, XmlSchemaElement>();
         private readonly IDictionary<string, Tuple<Type, XmlSchemaComplexType>> schemaTypes = new SortedDictionary<string, Tuple<Type, XmlSchemaComplexType>>();
         private readonly IDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType>> operationTypes = new SortedDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType>>();
+        private readonly IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts = new Dictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>>();
 
         public string HeaderMessage { private get; set; }
         public string ImportedSchemaPath { private get; set; }
@@ -101,7 +102,10 @@ namespace XRoadLib
             requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
             responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
 
+            serviceContracts = contractAssembly.GetServiceContracts();
+
             AddTypes();
+            AddServiceContracts();
         }
 
         public void SaveTo(Stream stream)
@@ -123,6 +127,42 @@ namespace XRoadLib
                 writer.WriteEndDocument();
                 writer.Flush();
             }
+        }
+
+        public void AddOperation(string name, MethodInfo method, bool isExported)
+        {
+            var methodContract = method.FindMethodDeclaration(name, serviceContracts);
+            if (methodContract.Item2.IsHidden || (version.HasValue && !methodContract.Item2.IsDefinedInVersion(version.Value)))
+                return;
+
+            BuildOperationElements(name, methodContract.Item1, method, isExported);
+
+            if (isExported)
+                return;
+
+            var serviceVersion = version.GetValueOrDefault(methodContract.Item1.GetContractAddedVersion().GetValueOrDefault(1u));
+
+            var operationBinding = new OperationBinding
+            {
+                Name = name,
+                Extensions = { CreateXRoadVersionBindingElement(serviceVersion) },
+                Input = new InputBinding(),
+                Output = new OutputBinding()
+            };
+
+            BuildOperationBinding(operationBinding, methodContract.Item1);
+
+            binding.Operations.Add(operationBinding);
+        }
+
+        public ProducerDefinition AddEncodedHeader<T>(Expression<Func<IXRoadEncodedHeader, T>> expression)
+        {
+            return protocol == XRoadProtocol.Version20 ? AddRequiredHeader(expression) : this;
+        }
+
+        public ProducerDefinition AddLiteralHeader<T>(Expression<Func<IXRoadLiteralHeader, T>> expression)
+        {
+            return protocol == XRoadProtocol.Version20 ? this : AddRequiredHeader(expression);
         }
 
         private ProducerDefinition AddRequiredHeader<THeader, T>(Expression<Func<THeader, T>> expression)
@@ -224,7 +264,7 @@ namespace XRoadLib
             }
         }
 
-        public void AddServiceContracts(IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts)
+        private void AddServiceContracts()
         {
             AddMessageTypes(
                 serviceContracts.Select(kvp => Tuple.Create(kvp.Key,
@@ -233,28 +273,6 @@ namespace XRoadLib
                         .ToDictionary(y => y.Key, y => y.Value)))
                     .Where(x => x.Item2.Any())
                     .ToDictionary(x => x.Item1, x => x.Item2.Keys.ToList()));
-        }
-
-        public void AddOperation(string name, MethodInfo methodContract, MethodInfo methodImpl, bool isExported)
-        {
-            BuildOperationElements(name, methodContract, methodImpl, isExported);
-
-            if (isExported)
-                return;
-
-            var serviceVersion = version.GetValueOrDefault(methodContract.GetContractAddedVersion().GetValueOrDefault(1u));
-
-            var operationBinding = new OperationBinding
-            {
-                Name = name,
-                Extensions = { CreateXRoadVersionBindingElement(serviceVersion) },
-                Input = new InputBinding(),
-                Output = new OutputBinding()
-            };
-
-            BuildOperationBinding(operationBinding, methodContract);
-
-            binding.Operations.Add(operationBinding);
         }
 
         private void AddSchemaType(XmlSchemaElement schemaElement, Type runtimeType, bool isOptional, string elementDataType)
@@ -678,7 +696,7 @@ namespace XRoadLib
             return protocol == XRoadProtocol.Version20 ? NamespaceHelper.SOAP_ENC : NamespaceHelper.XSD;
         }
 
-        public void AddMessageTypes(IDictionary<MethodInfo, List<string>> contractMessages)
+        private void AddMessageTypes(IDictionary<MethodInfo, List<string>> contractMessages)
         {
             Func<KeyValuePair<MethodInfo, List<string>>, IEnumerable<Tuple<string, MethodInfo>>> selector =
                 m => protocol == XRoadProtocol.Version20
@@ -687,16 +705,6 @@ namespace XRoadLib
 
             foreach (var operation in contractMessages.SelectMany(selector))
                 AddMessageType(operation.Item1, operation.Item2);
-        }
-
-        public ProducerDefinition AddEncodedHeader<T>(Expression<Func<IXRoadEncodedHeader, T>> expression)
-        {
-            return protocol == XRoadProtocol.Version20 ? AddRequiredHeader(expression) : this;
-        }
-
-        public ProducerDefinition AddLiteralHeader<T>(Expression<Func<IXRoadLiteralHeader, T>> expression)
-        {
-            return protocol == XRoadProtocol.Version20 ? this : AddRequiredHeader(expression);
         }
 
         private Tuple<XmlQualifiedName, XmlQualifiedName> GetOperationTypeName(string operationName, MethodInfo methodContract, MethodInfo methodImpl)
