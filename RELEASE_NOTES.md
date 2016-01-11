@@ -1,4 +1,4 @@
-#### 1.0.0-alpha8 - Unreleased
+#### 1.0.0-alpha8 - January 11 2016
 * Use `all` particle for non-strict operation types.
 * Make `XRoadImportAttribute` protocol specific.
 * Common interface for appliable attributes.
