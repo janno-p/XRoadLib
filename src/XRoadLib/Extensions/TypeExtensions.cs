@@ -298,9 +298,12 @@ namespace XRoadLib.Extensions
 
         internal static XRoadLayoutAttribute GetLayoutAttribute(this Type type, XRoadProtocol protocol)
         {
-            return type.GetCustomAttributes(typeof(XRoadLayoutAttribute), false)
-                       .OfType<XRoadLayoutAttribute>()
-                       .SingleOrDefault(attr => !attr.appliesTo.HasValue || attr.appliesTo.Value == protocol);
+            var attributes = type.GetCustomAttributes(typeof(XRoadLayoutAttribute), false)
+                                 .OfType<XRoadLayoutAttribute>()
+                                 .ToList();
+
+            return attributes.SingleOrDefault(attr => attr.appliesTo.HasValue && attr.appliesTo.Value == protocol)
+                ?? attributes.SingleOrDefault(attr => !attr.appliesTo.HasValue);
         }
 
         internal static IComparer<PropertyInfo> GetComparer(this Type type, XRoadProtocol protocol)

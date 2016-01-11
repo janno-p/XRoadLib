@@ -165,13 +165,13 @@ namespace XRoadLib.Serialization
 
         public void AddTypeAssembly(Assembly assembly)
         {
-            var producerName = assembly.GetXRoadProducerName();
+            var producerName = assembly.GetProducerName(protocol);
+            var producerNamespace = NamespaceHelper.GetProducerNamespace(producerName, protocol);
 
-            var @namespace = NamespaceHelper.GetProducerNamespace(producerName, protocol);
-            if (typeAssemblies.GetOrAdd(@namespace, assembly) != assembly)
+            if (typeAssemblies.GetOrAdd(producerNamespace, assembly) != assembly)
                 throw XRoadException.SamaAndmekoguNimiKorduvaltKasutuses(producerName);
 
-            assemblyNamespace.GetOrAdd(assembly, @namespace);
+            assemblyNamespace.GetOrAdd(assembly, producerNamespace);
         }
 
         public IServiceMap GetServiceMap(XmlQualifiedName qualifiedName, uint dtoVersion, MethodInfo methodImpl)

@@ -8,22 +8,36 @@ namespace XRoadLib.Extensions
 {
     public static class AssemblyExtensions
     {
-        public static string GetXRoadProducerName(this Assembly assembly)
+        public static string FindProducerName(this Assembly assembly, XRoadProtocol protocol)
         {
-            var producerName = assembly.FindXRoadProducerName();
+            var attribute = assembly.GetConfigurationAttribute(protocol);
+            return attribute != null ? attribute.ProducerName : null;
+        }
+
+        public static string GetProducerName(this Assembly assembly, XRoadProtocol protocol)
+        {
+            var producerName = assembly.FindProducerName(protocol);
 
             if (string.IsNullOrWhiteSpace(producerName))
-                throw new Exception($"Unable to extract producer name from contract assembly `{assembly.GetName().Name}`.");
+                throw new Exception($"Unable to extract producer name from contract assembly `{assembly.GetName().Name}` for protocol `{protocol.ToString()}`.");
 
             return producerName;
         }
 
-        public static string FindXRoadProducerName(this Assembly assembly)
+        public static string GetProducerNamespace(this Assembly assembly, XRoadProtocol protocol)
         {
-            return assembly.GetCustomAttributes(typeof(XRoadProducerConfigurationAttribute), false)
-                           .OfType<XRoadProducerConfigurationAttribute>()
-                           .Select(x => x.ProducerName)
-                           .SingleOrDefault();
+            var producerName = assembly.GetProducerName(protocol);
+            return NamespaceHelper.GetProducerNamespace(producerName, protocol);
+        }
+
+        internal static XRoadProducerConfigurationAttribute GetConfigurationAttribute(this Assembly assembly, XRoadProtocol protocol)
+        {
+            var attributes = assembly.GetCustomAttributes(typeof(XRoadProducerConfigurationAttribute), false)
+                                     .OfType<XRoadProducerConfigurationAttribute>()
+                                     .ToList();
+
+            return attributes.SingleOrDefault(attr => attr.appliesTo.HasValue && attr.appliesTo.Value == protocol)
+                ?? attributes.SingleOrDefault(attr => !attr.appliesTo.HasValue);
         }
 
         public static uint? GetXRoadPublishedVersion(this Assembly assembly)

@@ -57,11 +57,9 @@ namespace XRoadLib
             if (contractAssembly == null)
                 throw new ArgumentNullException(nameof(contractAssembly));
 
-            var producerConfiguration = contractAssembly.GetCustomAttributes(typeof(XRoadProducerConfigurationAttribute), false)
-                                                        .OfType<XRoadProducerConfigurationAttribute>()
-                                                        .SingleOrDefault();
+            var producerConfiguration = contractAssembly.GetConfigurationAttribute(protocol);
             if (producerConfiguration == null)
-                throw new ArgumentException(string.Format("Contract assembly `{0}` does not define producer configuration attribute.", contractAssembly.GetName().Name), nameof(contractAssembly));
+                throw new ArgumentException(string.Format("Contract assembly `{0}` does not define producer configuration attribute for protocol `{1}`.", contractAssembly.GetName().Name, protocol.ToString()), nameof(contractAssembly));
 
             producerName = producerConfiguration.ProducerName;
 

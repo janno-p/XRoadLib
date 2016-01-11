@@ -2,11 +2,12 @@
 
 namespace XRoadLib.Attributes
 {
-    [AttributeUsage(AttributeTargets.Assembly)]
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
     public class XRoadProducerConfigurationAttribute : Attribute
     {
-        private uint? minOperationVersion;
-        private uint? maxOperationVersion;
+        internal uint? minOperationVersion;
+        internal uint? maxOperationVersion;
+        internal XRoadProtocol? appliesTo;
 
         /// <summary>
         /// Identifies producer which types and service contracts
@@ -89,5 +90,14 @@ namespace XRoadLib.Attributes
         /// (uses sequence) or not (uses all).
         /// </summary>
         public bool StrictOperationSignature { get; set; } = true;
+
+        /// <summary>
+        /// Specifies protocol version for which this configuration attribute applies to.
+        /// When protocol does not have explicit configuration, it uses the one which does not
+        /// specify protocol version.
+        /// Each protocol can define exactly one configuration attribute. When no matching
+        /// configuration is found, exception is thrown.
+        /// </summary>
+        public XRoadProtocol AppliesTo { get { return appliesTo.GetValueOrDefault(); } set { appliesTo = value; } }
     }
 }
