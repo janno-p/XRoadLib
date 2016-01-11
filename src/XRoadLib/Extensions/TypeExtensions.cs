@@ -142,17 +142,14 @@ namespace XRoadLib.Extensions
             return propertyInfo.GetElementName() ?? propertyInfo.GetFixedPropertyName();
         }
 
-        public static XRoadImportAttribute GetImportAttribute(this MethodInfo methodInfo)
+        public static XRoadImportAttribute GetImportAttribute(this MethodInfo methodInfo, XRoadProtocol protocol)
         {
-            return methodInfo.GetSingleAttribute<XRoadImportAttribute>();
-        }
+            var attributes = methodInfo.GetCustomAttributes(typeof(XRoadImportAttribute), false)
+                                       .OfType<XRoadImportAttribute>()
+                                       .ToList();
 
-        public static Tuple<XmlQualifiedName, XmlQualifiedName> GetImportedOperationTypeNames(this MethodInfo methodInfo, string @namespace)
-        {
-            return methodInfo.GetCustomAttributes(typeof(XRoadImportAttribute), false)
-                             .OfType<XRoadImportAttribute>()
-                             .Select(x => Tuple.Create(new XmlQualifiedName(x.RequestPart, @namespace), new XmlQualifiedName(x.ResponsePart, @namespace)))
-                             .SingleOrDefault();
+            return attributes.SingleOrDefault(attr => attr.appliesTo.HasValue && attr.appliesTo.Value == protocol)
+                ?? attributes.SingleOrDefault(attr => !attr.appliesTo.HasValue);
         }
 
         public static IEnumerable<XRoadMessagePartAttribute> GetExtraMessageParts(this MethodInfo methodInfo)
@@ -278,11 +275,6 @@ namespace XRoadLib.Extensions
         internal static string GetValueOrDefault(this string value, string defaultValue)
         {
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
-        }
-
-        internal static bool HasStrictOperationSignature(this Assembly assembly)
-        {
-            return assembly.GetSingleAttribute<XRoadProducerConfigurationAttribute>()?.StrictOperationSignature ?? true;
         }
 
         internal static XRoadLayoutAttribute GetLayoutAttribute(this Type type, XRoadProtocol protocol)

@@ -28,6 +28,7 @@ namespace XRoadLib
         private readonly string targetNamespace;
         private readonly string standardHeaderName;
         private readonly uint? version;
+        private readonly bool hasStrictOperationTypes;
 
         private readonly string requestTypeNameFormat;
         private readonly string responseTypeNameFormat;
@@ -66,6 +67,8 @@ namespace XRoadLib
             this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerName);
             this.protocol = protocol;
             this.version = version;
+
+            hasStrictOperationTypes = producerConfiguration.StrictOperationSignature;
 
             xroadNamespace = NamespaceHelper.GetXRoadNamespace(protocol);
             targetNamespace = NamespaceHelper.GetProducerNamespace(producerName, protocol);
@@ -362,7 +365,7 @@ namespace XRoadLib
 
         private void BuildOperationElements(string name, MethodInfo methodContract, MethodInfo methodImpl, bool isExported)
         {
-            var importAttribute = methodContract.GetImportAttribute();
+            var importAttribute = methodContract.GetImportAttribute(protocol);
             if (importAttribute != null)
             {
                 BuildImportedOperationElements(name, methodContract, importAttribute);
@@ -416,14 +419,14 @@ namespace XRoadLib
 
         private void AddMessageType(string operationName, MethodInfo method)
         {
-            var importAttribute = method.GetImportAttribute();
+            var importAttribute = method.GetImportAttribute(protocol);
             if (importAttribute != null)
             {
                 var schemaImportProvider = (ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider);
                 schemaImports.Add(new XmlSchemaImport
                 {
-                    SchemaLocation = schemaImportProvider.GetSchemaLocation(protocol),
-                    Namespace = schemaImportProvider.GetSchemaNamespace(protocol)
+                    SchemaLocation = schemaImportProvider.SchemaLocation,
+                    Namespace = schemaImportProvider.SchemaNamespace
                 });
                 return;
             }
@@ -463,8 +466,11 @@ namespace XRoadLib
 
         private void BuildImportedOperationElements(string name, MethodInfo methodContract, XRoadImportAttribute importAttribute)
         {
-            var importNamespace = ((ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider)).GetSchemaNamespace(protocol);
-            var operationTypeName = methodContract.GetImportedOperationTypeNames(importNamespace);
+            var importNamespace = ((ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider)).SchemaNamespace;
+
+            var operationTypeName = Tuple.Create(new XmlQualifiedName(importAttribute.RequestPart, importNamespace),
+                                                 new XmlQualifiedName(importAttribute.ResponsePart, importNamespace));
+
             var extraParts = methodContract.GetExtraMessageParts().ToList();
 
             var inputMessage = new Message
@@ -710,7 +716,7 @@ namespace XRoadLib
             if (protocol == XRoadProtocol.Version20)
             {
                 var requestType = value.Item2;
-                var sequence = (XmlSchemaSequence)requestType.Particle;
+                var particle = (XmlSchemaGroupBase)requestType.Particle;
 
                 var parameterExists = methodContract.GetParameters()
                                                     .Select(x => (!version.HasValue || x.IsParameterInVersion(version.Value)))
@@ -724,14 +730,14 @@ namespace XRoadLib
                                                .ToList();
 
                 for (var i = 0; i < parameterNames.Count; i++)
-                    ((XmlSchemaElement)sequence.Items[i]).Name = parameterNames[i];
+                    ((XmlSchemaElement)particle.Items[i]).Name = parameterNames[i];
             }
 
             return Tuple.Create(new XmlQualifiedName(string.Format(requestTypeNameFormat, name), targetNamespace),
                                 new XmlQualifiedName(string.Format(responseTypeNameFormat, name), targetNamespace));
         }
 
-        private XmlSchemaSequence CreateOperationRequestSequence(MethodInfo method)
+        private XmlSchemaGroupBase CreateOperationRequestSequence(MethodInfo method)
         {
             var requestElement = new XmlSchemaElement { Name = "request" };
 
@@ -739,7 +745,7 @@ namespace XRoadLib
 
             if (protocol == XRoadProtocol.Version20 || parameters.Count > 1)
             {
-                var schemaTypeSequence = new XmlSchemaSequence();
+                var schemaParticle = hasStrictOperationTypes ? (XmlSchemaGroupBase)new XmlSchemaSequence() : new XmlSchemaAll();
 
                 foreach (var parameter in parameters)
                 {
@@ -753,13 +759,13 @@ namespace XRoadLib
 
                     var parameterElement = new XmlSchemaElement { Name = parameterName, Annotation = CreateAnnotationElement(parameter) };
                     AddSchemaType(parameterElement, parameter.ParameterType, parameterAttribute != null && parameterAttribute.IsOptional, null);
-                    schemaTypeSequence.Items.Add(parameterElement);
+                    schemaParticle.Items.Add(parameterElement);
                 }
 
                 if (protocol == XRoadProtocol.Version20)
-                    return schemaTypeSequence;
+                    return schemaParticle;
 
-                requestElement.SchemaType = new XmlSchemaComplexType { Particle = schemaTypeSequence };
+                requestElement.SchemaType = new XmlSchemaComplexType { Particle = schemaParticle };
             }
             else if (parameters.Count == 1)
                 AddSchemaType(requestElement, parameters.Single().ParameterType, false, null);

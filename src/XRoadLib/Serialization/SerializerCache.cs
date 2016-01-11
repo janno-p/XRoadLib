@@ -218,7 +218,7 @@ namespace XRoadLib.Serialization
             var hasMultipartRequest = multipartAttribute != null && multipartAttribute.HasMultipartRequest;
             var hasMultipartResponse = multipartAttribute != null && multipartAttribute.HasMultipartResponse;
 
-            var serviceMap = new ServiceMap(qualifiedName, parameterMaps, resultMap, typeAssembly.HasStrictOperationSignature(), hasMultipartRequest, hasMultipartResponse);
+            var serviceMap = new ServiceMap(qualifiedName, parameterMaps, resultMap, typeAssembly.HasStrictOperationSignature(protocol), hasMultipartRequest, hasMultipartResponse);
 
             return serviceMaps.GetOrAdd(dtoVersion, serviceMap);
         }

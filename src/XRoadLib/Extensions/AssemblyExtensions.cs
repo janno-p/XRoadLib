@@ -44,5 +44,10 @@ namespace XRoadLib.Extensions
                            .Where(x => x.Item2.Any())
                            .ToDictionary(x => x.Item1, x => (IDictionary<string, XRoadServiceAttribute>)x.Item2);
         }
+
+        internal static bool HasStrictOperationSignature(this Assembly assembly, XRoadProtocol protocol)
+        {
+            return assembly.GetConfigurationAttribute(protocol)?.StrictOperationSignature ?? true;
+        }
     }
 }

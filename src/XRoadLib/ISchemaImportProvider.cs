@@ -2,8 +2,8 @@
 {
     public interface ISchemaImportProvider
     {
-        string GetSchemaLocation(XRoadProtocol protocol);
+        string SchemaLocation { get; }
 
-        string GetSchemaNamespace(XRoadProtocol protocol);
+        string SchemaNamespace { get; }
     }
 }
