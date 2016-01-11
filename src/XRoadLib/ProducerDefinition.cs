@@ -60,35 +60,37 @@ namespace XRoadLib
             if (producerConfiguration == null)
                 throw new ArgumentException($"Contract assembly `{contractAssembly.GetName().Name}` does not define producer configuration attribute for protocol `{protocol}`.", nameof(contractAssembly));
 
+            var producerName = contractAssembly.GetProducerName();
+
             this.contractAssembly = contractAssembly;
-            this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerConfiguration.ProducerName);
+            this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerName);
             this.protocol = protocol;
             this.version = version;
 
             xroadNamespace = NamespaceHelper.GetXRoadNamespace(protocol);
-            targetNamespace = NamespaceHelper.GetProducerNamespace(producerConfiguration.ProducerName, protocol);
+            targetNamespace = NamespaceHelper.GetProducerNamespace(producerName, protocol);
 
             portType = new PortType
             {
-                Name = producerConfiguration.PortTypeName.GetValueOrDefault($"{producerConfiguration.ProducerName}PortType")
+                Name = producerConfiguration.PortTypeName.GetValueOrDefault($"{producerName}PortType")
             };
 
             binding = new Binding
             {
-                Name = producerConfiguration.BindingName.GetValueOrDefault($"{producerConfiguration.ProducerName}Binding"),
+                Name = producerConfiguration.BindingName.GetValueOrDefault($"{producerName}Binding"),
                 Type = new XmlQualifiedName(portType.Name, targetNamespace)
             };
 
             servicePort = new Port
             {
-                Name = producerConfiguration.ServicePortName.GetValueOrDefault($"{producerConfiguration.ProducerName}Port"),
+                Name = producerConfiguration.ServicePortName.GetValueOrDefault($"{producerName}Port"),
                 Binding = new XmlQualifiedName(binding.Name, targetNamespace),
                 Extensions = { CreateAddressBindingElement() }
             };
 
             service = new Service
             {
-                Name = producerConfiguration.ServiceName.GetValueOrDefault($"{producerConfiguration.ProducerName}Service"),
+                Name = producerConfiguration.ServiceName.GetValueOrDefault($"{producerName}Service"),
                 Ports = { servicePort }
             };
 

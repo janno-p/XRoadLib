@@ -165,7 +165,7 @@ namespace XRoadLib.Serialization
 
         public void AddTypeAssembly(Assembly assembly)
         {
-            var producerName = assembly.GetProducerName(protocol);
+            var producerName = assembly.GetProducerName();
             var producerNamespace = NamespaceHelper.GetProducerNamespace(producerName, protocol);
 
             if (typeAssemblies.GetOrAdd(producerNamespace, assembly) != assembly)
@@ -199,8 +199,7 @@ namespace XRoadLib.Serialization
         private IServiceMap AddServiceMap(ConcurrentDictionary<uint, IServiceMap> serviceMaps, XmlQualifiedName qualifiedName, uint dtoVersion, MethodInfo methodImpl)
         {
             Assembly typeAssembly;
-            if (!typeAssemblies.TryGetValue(qualifiedName.Namespace, out typeAssembly))
-                typeAssembly = null;
+            typeAssemblies.TryGetValue(qualifiedName.Namespace, out typeAssembly);
 
             var serviceInterface = GetServiceInterface(typeAssembly, qualifiedName, dtoVersion);
             if (serviceInterface == null)
@@ -226,14 +225,11 @@ namespace XRoadLib.Serialization
 
         private MethodInfo GetServiceInterface(Assembly typeAssembly, XmlQualifiedName qualifiedName, uint dtoVersion)
         {
-            if (typeAssembly == null)
-                return null;
-
-            return typeAssembly.GetTypes()
-                               .Where(t => t.IsInterface)
-                               .SelectMany(t => t.GetMethods())
-                               .SingleOrDefault(x => x.GetServicesInVersion(dtoVersion, true)
-                                                      .Any(m => m == qualifiedName.Name));
+            return typeAssembly?.GetTypes()
+                                .Where(t => t.IsInterface)
+                                .SelectMany(t => t.GetMethods())
+                                .SingleOrDefault(x => x.GetServicesInVersion(dtoVersion, true)
+                                                       .Any(m => m == qualifiedName.Name));
         }
 
         private IParameterMap CreateParameterMap(ParameterInfo parameterInfo, uint dtoVersion, ParameterInfo parameterImpl, string parameterName = null)

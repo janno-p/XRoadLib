@@ -10,12 +10,6 @@ namespace XRoadLib.Attributes
         internal XRoadProtocol? appliesTo;
 
         /// <summary>
-        /// Identifies producer which types and service contracts
-        /// are defined inside attribute target assembly.
-        /// </summary>
-        public string ProducerName { get; set; }
-
-        /// <summary>
         /// Minimal version number for operations defined inside
         /// attribute target assembly. Used by versioning subsystem.
         /// </summary>

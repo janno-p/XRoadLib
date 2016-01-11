@@ -1,7 +1,8 @@
 ﻿using XRoadLib.Attributes;
 
+[assembly: XRoadProducerName("test-producer")]
+
 [assembly: XRoadProducerConfiguration(
-    ProducerName = "test-producer",
     MinOperationVersion = 1u,
     MaxOperationVersion = 2u,
     StandardHeaderName = "stdhdr",

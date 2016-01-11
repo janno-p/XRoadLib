@@ -12,17 +12,17 @@ module AssemblyExtensionsTest =
 
     [<Test>]
     let ``find missing X-Road producer name`` () =
-        typeof<Marker>.Assembly.FindProducerName(XRoadProtocol.Version20) |> should be Null
+        typeof<Marker>.Assembly.FindProducerName() |> should be Null
 
     [<Test>]
     let ``get missing X-Road producer name`` () =
-        TestDelegate(fun _ -> typeof<Marker>.Assembly.GetProducerName(XRoadProtocol.Version31) |> ignore)
-        |> should (throwWithMessage @"Unable to extract producer name from contract assembly `XRoadLib.Tests` for protocol `Version31`.") typeof<Exception>
+        TestDelegate(fun _ -> typeof<Marker>.Assembly.GetProducerName() |> ignore)
+        |> should (throwWithMessage @"Unable to extract producer name from contract assembly `XRoadLib.Tests`.") typeof<Exception>
 
     [<Test>]
     let ``find existing X-Road producer name`` () =
-        typeof<XRoadLib.Tests.Contract.Class1>.Assembly.FindProducerName(XRoadProtocol.Version20) |> should equal "test-producer"
+        typeof<XRoadLib.Tests.Contract.Class1>.Assembly.FindProducerName() |> should equal "test-producer"
 
     [<Test>]
     let ``get existing X-Road producer name`` () =
-        typeof<XRoadLib.Tests.Contract.Class1>.Assembly.GetProducerName(XRoadProtocol.Version31) |> should equal "test-producer"
+        typeof<XRoadLib.Tests.Contract.Class1>.Assembly.GetProducerName() |> should equal "test-producer"
