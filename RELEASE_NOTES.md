@@ -2,6 +2,7 @@
 * Use `all` particle for non-strict operation types.
 * Make `XRoadImportAttribute` protocol specific.
 * Common interface for appliable attributes.
+* Customize parameter names with global name provider.
 
 #### 1.0.0-alpha7 - January 11 2016
 * Allow protocol specific differences for schema import.

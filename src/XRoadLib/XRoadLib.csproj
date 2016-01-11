@@ -57,6 +57,7 @@
     <Compile Include="Extensions\IXRoadLifetime.cs" />
     <Compile Include="Header\IXRoadHeader.cs" />
     <Compile Include="Header\XRoadHeader.cs" />
+    <Compile Include="IParameterNameProvider.cs" />
     <Compile Include="ISchemaImportProvider.cs" />
     <Compile Include="ProducerDefinition.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />

@@ -205,14 +205,17 @@ namespace XRoadLib.Serialization
             if (serviceInterface == null)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
+            var configuration = typeAssembly.GetConfigurationAttribute(protocol);
+            var parameterNameProvider = configuration != null ? (IParameterNameProvider)Activator.CreateInstance(configuration.ParameterNameProvider) : null;
+
             var parameterMaps = serviceInterface.GetParameters()
-                                                .Select((x,i) => new { p = x, m = CreateParameterMap(x, dtoVersion, methodImpl.GetParameters()[i]) })
+                                                .Select((x,i) => new { p = x, m = CreateParameterMap(parameterNameProvider, x, dtoVersion, methodImpl.GetParameters()[i]) })
                                                 .Where(x => x.p.IsParameterInVersion(dtoVersion))
                                                 .Select(x => x.m)
                                                 .ToList();
 
             var resultName = protocol == XRoadProtocol.Version20 ? null : "value";
-            var resultMap = CreateParameterMap(serviceInterface.ReturnParameter, dtoVersion, methodImpl.ReturnParameter, resultName);
+            var resultMap = CreateParameterMap(null, serviceInterface.ReturnParameter, dtoVersion, methodImpl.ReturnParameter, resultName);
 
             var multipartAttribute = serviceInterface.GetSingleAttribute<XRoadAttachmentAttribute>();
             var hasMultipartRequest = multipartAttribute != null && multipartAttribute.HasMultipartRequest;
@@ -232,13 +235,13 @@ namespace XRoadLib.Serialization
                                                        .Any(m => m == qualifiedName.Name));
         }
 
-        private IParameterMap CreateParameterMap(ParameterInfo parameterInfo, uint dtoVersion, ParameterInfo parameterImpl, string parameterName = null)
+        private IParameterMap CreateParameterMap(IParameterNameProvider parameterNameProvider, ParameterInfo parameterInfo, uint dtoVersion, ParameterInfo parameterImpl, string parameterName = null)
         {
             var attribute = parameterInfo.GetCustomAttributes(typeof(XRoadParameterAttribute), false).OfType<XRoadParameterAttribute>().SingleOrDefault();
 
             var usedParameterName = parameterName ??
-                                    (protocol == XRoadProtocol.Version20
-                                        ? parameterImpl.Name
+                                    (parameterNameProvider != null
+                                        ? parameterNameProvider.GetParameterName(parameterInfo, parameterImpl)
                                         : !string.IsNullOrWhiteSpace(attribute?.Name) ? attribute.Name : parameterInfo.Name);
 
             return new ParameterMap(this, usedParameterName, GetTypeMap(parameterInfo.ParameterType, dtoVersion), attribute != null && attribute.IsOptional);

@@ -29,6 +29,7 @@ namespace XRoadLib
         private readonly string standardHeaderName;
         private readonly uint? version;
         private readonly bool hasStrictOperationTypes;
+        private readonly IParameterNameProvider parameterNameProvider;
 
         private readonly string requestTypeNameFormat;
         private readonly string responseTypeNameFormat;
@@ -103,6 +104,9 @@ namespace XRoadLib
             responseTypeNameFormat = producerConfiguration.ResponseTypeNameFormat.GetValueOrDefault("{0}Response");
             requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
             responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
+
+            if (producerConfiguration.ParameterNameProvider != null)
+                parameterNameProvider = (IParameterNameProvider)Activator.CreateInstance(producerConfiguration.ParameterNameProvider);
 
             serviceContracts = contractAssembly.GetServiceContracts();
 
@@ -713,28 +717,31 @@ namespace XRoadLib
             if (!operationTypes.TryGetValue(name, out value) || methodContract != value.Item1)
                 throw new Exception($"Unrecognized type `{name}`");
 
-            if (protocol == XRoadProtocol.Version20)
-            {
-                var requestType = value.Item2;
-                var particle = (XmlSchemaGroupBase)requestType.Particle;
-
-                var parameterExists = methodContract.GetParameters()
-                                                    .Select(x => (!version.HasValue || x.IsParameterInVersion(version.Value)))
-                                                    .ToList();
-
-                var parameterNames = methodImpl.GetParameters()
-                                               .Select(x => x.Name)
-                                               .Zip(parameterExists, Tuple.Create)
-                                               .Where(x => x.Item2)
-                                               .Select(x => x.Item1)
-                                               .ToList();
-
-                for (var i = 0; i < parameterNames.Count; i++)
-                    ((XmlSchemaElement)particle.Items[i]).Name = parameterNames[i];
-            }
+            UpdateParameterNames(value.Item2, methodContract, methodImpl);
 
             return Tuple.Create(new XmlQualifiedName(string.Format(requestTypeNameFormat, name), targetNamespace),
                                 new XmlQualifiedName(string.Format(responseTypeNameFormat, name), targetNamespace));
+        }
+
+        private void UpdateParameterNames(XmlSchemaComplexType requestType, MethodInfo methodContract, MethodInfo methodImpl)
+        {
+            if (parameterNameProvider == null)
+                return;
+
+            var particle = (XmlSchemaGroupBase)requestType.Particle;
+
+            var parameterExists = methodContract.GetParameters()
+                .Select(x => Tuple.Create(x, !version.HasValue || x.IsParameterInVersion(version.Value)))
+                .ToList();
+
+            var parameters = methodImpl.GetParameters()
+                .Zip(parameterExists, (x, y) => Tuple.Create(Tuple.Create(y.Item1, x), y.Item2))
+                .Where(x => x.Item2)
+                .Select(x => x.Item1)
+                .ToList();
+
+            for (var i = 0; i < parameters.Count; i++)
+                ((XmlSchemaElement)particle.Items[i]).Name = parameterNameProvider.GetParameterName(parameters[i].Item1, parameters[i].Item2);
         }
 
         private XmlSchemaGroupBase CreateOperationRequestSequence(MethodInfo method)

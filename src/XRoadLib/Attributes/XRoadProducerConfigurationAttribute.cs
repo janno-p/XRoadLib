@@ -100,5 +100,10 @@ namespace XRoadLib.Attributes
         /// configuration is found, exception is thrown.
         /// </summary>
         public XRoadProtocol AppliesTo { get { return appliesTo.GetValueOrDefault(); } set { appliesTo = value; } }
+
+        /// <summary>
+        /// Specifies class implementing `IParameterNameProvider` which allows enables to customize parameter names.
+        /// </summary>
+        public Type ParameterNameProvider { get; set; }
     }
 }
