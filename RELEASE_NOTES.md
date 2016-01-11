@@ -1,3 +1,6 @@
+#### 1.0.0-alpha11 - Unreleased
+* Fix service root element name.
+
 #### 1.0.0-alpha10 - January 11 2016
 * Fix bug with custom operation type name format.
 

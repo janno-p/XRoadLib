@@ -380,13 +380,13 @@ namespace XRoadLib
 
             var requestElement = new XmlSchemaElement
             {
-                Name = string.Format(requestTypeNameFormat, name),
+                Name = name,
                 SchemaTypeName = operationTypeName.Item1
             };
 
             var responseElement = new XmlSchemaElement
             {
-                Name = string.Format(responseTypeNameFormat, name),
+                Name = $"{name}Response",
                 SchemaTypeName = operationTypeName.Item2
             };
 
