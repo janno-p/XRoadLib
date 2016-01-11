@@ -1,4 +1,4 @@
-#### 1.0.0-alpha11 - Unreleased
+#### 1.0.0-alpha11 - January 11 2016
 * Fix service root element name.
 
 #### 1.0.0-alpha10 - January 11 2016
