@@ -1,3 +1,6 @@
+#### 1.0.0-alpha7 - January 11 2016
+* Allow protocol specific differences for schema import.
+
 #### 1.0.0-alpha6 - January 11 2016
 * Customize schema import namespaces and location through attribute parameter.
 
