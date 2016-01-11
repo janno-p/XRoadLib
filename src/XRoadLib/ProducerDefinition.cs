@@ -420,7 +420,11 @@ namespace XRoadLib
             if (importAttribute != null)
             {
                 var schemaImportProvider = (ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider);
-                schemaImports.Add(new XmlSchemaImport { SchemaLocation = schemaImportProvider.SchemaLocation, Namespace = schemaImportProvider.SchemaNamespace });
+                schemaImports.Add(new XmlSchemaImport
+                {
+                    SchemaLocation = schemaImportProvider.GetSchemaLocation(protocol),
+                    Namespace = schemaImportProvider.GetSchemaNamespace(protocol)
+                });
                 return;
             }
 
@@ -459,7 +463,7 @@ namespace XRoadLib
 
         private void BuildImportedOperationElements(string name, MethodInfo methodContract, XRoadImportAttribute importAttribute)
         {
-            var importNamespace = ((ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider)).SchemaNamespace;
+            var importNamespace = ((ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider)).GetSchemaNamespace(protocol);
             var operationTypeName = methodContract.GetImportedOperationTypeNames(importNamespace);
             var extraParts = methodContract.GetExtraMessageParts().ToList();
 
