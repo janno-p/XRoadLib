@@ -14,10 +14,7 @@ open XRoadLib.Tests.Contract
 
 [<TestFixture>]
 module XRoadSerializerTest =
-    let serializerCache = SerializerCache(XRoadProtocol.Version20)
-
-    [<TestFixtureSetUp>]
-    do serializerCache.AddTypeAssembly(typeof<Class1>.Assembly)
+    let serializerCache = SerializerCache(typeof<Class1>.Assembly, XRoadProtocol.Version20)
 
     let serializeWithContext elementName value dtoVersion addEnvelope isMultipart f =
         use message = new XRoadMessage(XRoadProtocol.Version20, IsMultipart = isMultipart)

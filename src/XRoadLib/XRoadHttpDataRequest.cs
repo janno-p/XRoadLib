@@ -18,7 +18,7 @@ namespace XRoadLib
         private const string RESPONSE_CONTENT_TYPE = "text/xml; charset=utf-8";
 
         private readonly HttpContext httpContext;
-        private readonly ISerializerCache serializerCache;
+        private readonly IProtocolSerializerCache protocolSerializerCache;
         private readonly IServiceRunner serviceRunner;
 
         public XRoadMessage RequestMessage { get; private set; }
@@ -35,15 +35,15 @@ namespace XRoadLib
         public string StoragePath { get; set; }
         public ICustomSerialization CustomSerialization { get; set; }
 
-        public XRoadHttpDataRequest(HttpContext httpContext, ISerializerCache serializerCache, IServiceRunner serviceRunner)
+        public XRoadHttpDataRequest(HttpContext httpContext, IProtocolSerializerCache protocolSerializerCache, IServiceRunner serviceRunner)
         {
             if (httpContext == null)
                 throw new ArgumentNullException(nameof(httpContext));
             this.httpContext = httpContext;
 
-            if (serializerCache == null)
-                throw new ArgumentNullException(nameof(serializerCache));
-            this.serializerCache = serializerCache;
+            if (protocolSerializerCache == null)
+                throw new ArgumentNullException(nameof(protocolSerializerCache));
+            this.protocolSerializerCache = protocolSerializerCache;
 
             if (serviceRunner == null)
                 throw new ArgumentNullException(nameof(serviceRunner));
@@ -80,13 +80,12 @@ namespace XRoadLib
             RequestMessage.LoadRequest(httpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()));
             ResponseMessage.Copy(RequestMessage);
 
-            if (!serializerCache.IsSupportedProtocol(RequestMessage.Protocol))
-                throw XRoadException.InvalidQuery("Unsupported protocol version `{0}`.", RequestMessage.Protocol);
+            var serializerCache = protocolSerializerCache.GetSerializerCache(RequestMessage.Protocol);
 
             RequestLoaded?.Invoke(this, new EventArgs());
 
             IServiceMap serviceMap;
-            var result = InvokeServiceMethod(out serviceMap);
+            var result = InvokeServiceMethod(serializerCache, out serviceMap);
 
             if (serviceMap.HasMultipartResponse)
                 ResponseMessage.IsMultipart = true;
@@ -94,10 +93,10 @@ namespace XRoadLib
             SerializeXRoadResponse(result, serviceMap);
         }
 
-        private object InvokeServiceMethod(out IServiceMap serviceMap)
+        private object InvokeServiceMethod(ISerializerCache serializerCache, out IServiceMap serviceMap)
         {
             object result;
-            if ((serviceMap = InvokeMetaService(out result)) != null)
+            if ((serviceMap = InvokeMetaService(serializerCache, out result)) != null)
                 return result;
 
             var operationName = RequestMessage.Header?.Nimi?.Method ?? RequestMessage.RootElementName?.Name;
@@ -125,7 +124,7 @@ namespace XRoadLib
             return result;
         }
 
-        private IServiceMap InvokeMetaService(out object result)
+        private IServiceMap InvokeMetaService(ISerializerCache serializerCache, out object result)
         {
             result = null;
 

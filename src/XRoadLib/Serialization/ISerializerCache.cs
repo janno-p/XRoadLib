@@ -8,8 +8,6 @@ namespace XRoadLib.Serialization
 {
     public interface ISerializerCache
     {
-        void AddTypeAssembly(Assembly assembly);
-
         IServiceMap GetServiceMap(XmlQualifiedName qualifiedName, uint dtoVersion, MethodInfo methodImpl);
 
         ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion, bool undefined = false);
@@ -19,7 +17,5 @@ namespace XRoadLib.Serialization
         ITypeMap GetTypeMap(XmlQualifiedName qualifiedName, uint dtoVersion, IDictionary<XmlQualifiedName, ITypeMap> partialTypeMaps = null, bool undefined = false);
 
         XmlQualifiedName GetXmlTypeName(Type type);
-
-        bool IsSupportedProtocol(XRoadProtocol protocol);
     }
 }

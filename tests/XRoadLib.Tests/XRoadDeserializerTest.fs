@@ -17,10 +17,7 @@ open XRoadLib.Tests.Contract
 [<TestFixture>]
 module XRoadDeserializerTest =
     let [<Literal>] dtoVersion = 3u
-    let serializerCache = SerializerCache(XRoadProtocol.Version20)
-
-    [<TestFixtureSetUp>]
-    do serializerCache.AddTypeAssembly(typeof<Class1>.Assembly)
+    let serializerCache = SerializerCache(typeof<Class1>.Assembly, XRoadProtocol.Version20)
 
     let deserializeRequest templateXml contentXml =
         let template = XRoadXmlTemplate(templateXml, typeof<IService>.GetMethod("Service1"))

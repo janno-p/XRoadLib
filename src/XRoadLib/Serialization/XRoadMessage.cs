@@ -8,7 +8,6 @@ using System.Web;
 using System.Xml;
 using XRoadLib.Header;
 using XRoadLib.Serialization.Mapping;
-using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization
 {
@@ -40,6 +39,12 @@ namespace XRoadLib.Serialization
         public XRoadMessage(Stream contentStream)
         {
             ContentStream = contentStream;
+        }
+
+        public XRoadMessage(Stream contentStream, XRoadProtocol protocol)
+            : this(contentStream)
+        {
+            Protocol = protocol;
         }
 
         public XRoadAttachment GetAttachment(string contentID)
