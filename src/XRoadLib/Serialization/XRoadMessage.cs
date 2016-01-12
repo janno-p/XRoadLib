@@ -117,6 +117,7 @@ namespace XRoadLib.Serialization
         public void Copy(XRoadMessage message)
         {
             Protocol = message.Protocol;
+            Header = message.Header;
         }
 
         public SerializationContext CreateContext()

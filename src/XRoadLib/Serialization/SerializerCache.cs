@@ -234,7 +234,7 @@ namespace XRoadLib.Serialization
                                         ? parameterNameProvider.GetParameterName(parameterInfo, parameterImpl)
                                         : !string.IsNullOrWhiteSpace(attribute?.Name) ? attribute.Name : parameterInfo.Name);
 
-            return new ParameterMap(this, usedParameterName, parameterInfo, GetTypeMap(parameterInfo.ParameterType, dtoVersion), attribute != null && attribute.IsOptional);
+            return new ParameterMap(this, usedParameterName, parameterImpl, GetTypeMap(parameterInfo.ParameterType, dtoVersion), attribute != null && attribute.IsOptional);
         }
 
         public ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion, bool undefined = false)

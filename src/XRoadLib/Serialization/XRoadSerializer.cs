@@ -31,14 +31,15 @@ namespace XRoadLib.Serialization
             if (!reader.ReadToElement(rootName))
                 return elements;
 
-            foreach (var entry in DeserializeElement(reader, context, parameterTypeMap ?? context.XmlTemplate.ParameterTypes))
+            foreach (var entry in DeserializeElement(reader, context, parameterTypeMap ?? context.XmlTemplate?.ParameterTypes))
                 elements.Add(entry.Key, entry.Value);
 
             if (elements.Count == 0)
                 elements.Add(rootName, null);
 
-            foreach (var templateNode in context.XmlTemplate.ParameterNodes.Where(n => n.IsRequired && (!elements.ContainsKey(n.Name) || elements[n.Name] == null)))
-                throw XRoadException.TeenuseKohustuslikParameeterPuudub(templateNode.Name);
+            if (context.XmlTemplate != null)
+                foreach (var templateNode in context.XmlTemplate.ParameterNodes.Where(n => n.IsRequired && (!elements.ContainsKey(n.Name) || elements[n.Name] == null)))
+                    throw XRoadException.TeenuseKohustuslikParameeterPuudub(templateNode.Name);
 
             return elements;
         }
@@ -80,8 +81,7 @@ namespace XRoadLib.Serialization
         {
             var parameterName = reader.LocalName;
 
-            var templateNode = context.XmlTemplate.GetParameterNode(parameterName);
-
+            var templateNode = context.XmlTemplate != null ? context.XmlTemplate.GetParameterNode(parameterName) : XRoadXmlTemplate.EmptyNode;
             if (templateNode == null)
                 throw XRoadException.UnknownParameter(parameterName);
 
