@@ -1,3 +1,7 @@
+#### 1.0.0-alpha12 - Unreleased
+* Fix strict parameter deserialization when xml template is not used.
+* General request handler for X-Road data requests.
+
 #### 1.0.0-alpha11 - January 11 2016
 * Fix service root element name.
 

@@ -44,16 +44,14 @@ namespace XRoadLib.Serialization.Template
             {
                 var elementNode = responseNode?.Elements().SingleOrDefault();
 
-                return elementNode != null
-                    ? new XRoadRequestTemplateNode(elementNode.Name.LocalName, elementNode)
-                    : new XRoadRequestTemplateNode(string.Empty);
+                return elementNode != null ? new XRoadRequestTemplateNode(elementNode.Name.LocalName, elementNode) : EmptyNode;
             }
         }
 
         public IXmlTemplateNode GetParameterNode(string parameterName)
         {
             if (requestNode == null)
-                return new XRoadRequestTemplateNode(string.Empty);
+                return EmptyNode;
 
             var index = parameterNames.IndexOf(parameterName);
             if (index < 0 || requestNode == null)
@@ -67,6 +65,8 @@ namespace XRoadLib.Serialization.Template
         }
 
         public IEnumerable<IXmlTemplateNode> ParameterNodes => parameterNames?.Select(GetParameterNode) ?? Enumerable.Empty<IXmlTemplateNode>();
+
+        public static readonly IXmlTemplateNode EmptyNode = new XRoadRequestTemplateNode(string.Empty);
 
         #region Nested type: XteeXmlValidatorNode
 

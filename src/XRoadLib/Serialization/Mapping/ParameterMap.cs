@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Reflection;
+using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
@@ -11,10 +12,12 @@ namespace XRoadLib.Serialization.Mapping
         private readonly bool isOptional;
 
         public string Name { get; }
+        public ParameterInfo ParameterInfo { get; }
 
-        public ParameterMap(ISerializerCache serializerCache, string name, ITypeMap defaultTypeMap, bool isOptional)
+        public ParameterMap(ISerializerCache serializerCache, string name, ParameterInfo parameterInfo, ITypeMap defaultTypeMap, bool isOptional)
         {
             Name = name;
+            ParameterInfo = parameterInfo;
 
             this.serializerCache = serializerCache;
             this.defaultTypeMap = defaultTypeMap;
@@ -27,7 +30,7 @@ namespace XRoadLib.Serialization.Mapping
                 return null;
 
             if (reader.LocalName != Name && !isOptional)
-                throw XRoadException.ViganePäring($"Oodati elementi `{Name}`, aga leiti `{reader.LocalName}`.");
+                throw XRoadException.InvalidQuery($"Oodati elementi `{Name}`, aga leiti `{reader.LocalName}`.");
 
             return DeserializeRoot(reader, parameterNode, context);
         }

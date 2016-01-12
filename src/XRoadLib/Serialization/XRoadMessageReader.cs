@@ -69,7 +69,7 @@ namespace XRoadLib.Serialization
                 : (target.RootElementName != null ? target.RootElementName.Name : "");
 
             if (target.Protocol != XRoadProtocol.Version20 && target.IsMultipart && !target.MultipartContentType.Equals("application/xop+xml"))
-                throw XRoadException.ViganePäring("Teenuse `{0}` multipart päringu sisuks oodati `application/xop+xml`, kuid edastati `{1}`.", teenuseNimi, target.MultipartContentType);
+                throw XRoadException.InvalidQuery("Teenuse `{0}` multipart päringu sisuks oodati `application/xop+xml`, kuid edastati `{1}`.", teenuseNimi, target.MultipartContentType);
 
             if (isResponse)
                 return;
@@ -78,7 +78,7 @@ namespace XRoadLib.Serialization
                 return;
 
             if (!Equals(target.RootElementName.Name, target.Header.Nimi.Method))
-                throw XRoadException.ViganePäring("Teenuse nimi `{0}` ei ole vastavuses päringu sisuga `{1}`.", target.Header.Nimi.Method, target.RootElementName);
+                throw XRoadException.InvalidQuery("Teenuse nimi `{0}` ei ole vastavuses päringu sisuga `{1}`.", target.Header.Nimi.Method, target.RootElementName);
         }
 
         public void Dispose()
@@ -383,7 +383,7 @@ namespace XRoadLib.Serialization
         private static XRoadProtocol? ParseXRoadProtocol(XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceHelper.SOAP_ENV))
-                throw XRoadException.ViganePäring("Päringus puudub SOAP-ENV:Envelope element.");
+                throw XRoadException.InvalidQuery("Päringus puudub SOAP-ENV:Envelope element.");
 
             return reader.GetAttribute("encodingStyle", NamespaceHelper.SOAP_ENV) != null ? XRoadProtocol.Version20 : (XRoadProtocol?)null;
         }
@@ -451,7 +451,7 @@ namespace XRoadLib.Serialization
                     case "consumer": header.Asutus = reader.ReadInnerXml(); return;
                 }
 
-            throw XRoadException.ViganePäring("Tundmatu X-tee päise element {0}.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI));
+            throw XRoadException.InvalidQuery("Tundmatu X-tee päise element {0}.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI));
         }
     }
 }

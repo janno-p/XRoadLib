@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using XRoadLib.Extensions;
+using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -32,7 +33,7 @@ namespace XRoadLib.Serialization.Mapping
             var elementName = GetRequestElementName(context);
 
             if (!reader.MoveToElement(3, elementName))
-                throw XRoadException.ViganePäring($"Päringus puudub X-tee `{elementName}` element.");
+                throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{elementName}` element.");
 
             return isStrict ? DeserializeParametersStrict(reader, context)
                             : DeserializeParametersNonStrict(reader, context);
@@ -41,18 +42,23 @@ namespace XRoadLib.Serialization.Mapping
         private IDictionary<string, object> DeserializeParametersStrict(XmlReader reader, SerializationContext context)
         {
             var parameterValues = new List<Tuple<string, object>>();
-            var parameterNodes = context.XmlTemplate.ParameterNodes.ToList();
+            var parameterNodes = context.XmlTemplate?.ParameterNodes.ToList();
 
-            for (var i = 0; i < Math.Min(parameters.Count, parameterNodes.Count); i++)
+            var parameterEnumerator = parameters.GetEnumerator();
+            var templateNodeEnumerator = context.XmlTemplate?.ParameterNodes.GetEnumerator();
+
+            while (parameterEnumerator.MoveNext() && (templateNodeEnumerator == null || templateNodeEnumerator.MoveNext()))
             {
-                var parameterNode = parameterNodes[i];
-                parameterValues.Add(Tuple.Create(parameterNode.Name, parameters.Count < 2 ? parameters[i].DeserializeRoot(reader, parameterNode, context) : parameters[i].Deserialize(reader, parameterNode, context)));
+                var parameterMap = parameterEnumerator.Current;
+                var parameterNode = templateNodeEnumerator != null ? templateNodeEnumerator.Current : XRoadXmlTemplate.EmptyNode;
+                parameterValues.Add(Tuple.Create(parameterMap.ParameterInfo.Name, parameters.Count < 2 ? parameterMap.DeserializeRoot(reader, parameterNode, context) : parameterMap.Deserialize(reader, parameterNode, context)));
                 reader.Read();
             }
 
-            for (var i = 0; i < parameterNodes.Count; i++)
-                if (parameterNodes[i].IsRequired && (parameterValues.Count <= i || parameterValues[i].Item2 == null))
-                    throw XRoadException.TeenuseKohustuslikParameeterPuudub(parameterValues[i].Item1);
+            if (parameterNodes != null)
+                for (var i = 0; i < parameterNodes.Count; i++)
+                    if (parameterNodes[i].IsRequired && (parameterValues.Count <= i || parameterValues[i].Item2 == null))
+                        throw XRoadException.TeenuseKohustuslikParameeterPuudub(parameterValues[i].Item1);
 
             return parameterValues.ToDictionary(p => p.Item1, p => p.Item2);
         }
@@ -64,11 +70,13 @@ namespace XRoadLib.Serialization.Mapping
             while (reader.Read() && reader.MoveToElement(4))
             {
                 var parameter = parameters.Single(x => x.Name == reader.LocalName);
-                parameterValues.Add(reader.LocalName, parameter.DeserializeRoot(reader, context.XmlTemplate.GetParameterNode(parameter.Name), context));
+                var parameterNode = context.XmlTemplate != null ? context.XmlTemplate.GetParameterNode(parameter.ParameterInfo.Name) : XRoadXmlTemplate.EmptyNode;
+                parameterValues.Add(parameter.ParameterInfo.Name, parameter.DeserializeRoot(reader, parameterNode, context));
             }
 
-            foreach (var parameterNode in context.XmlTemplate.ParameterNodes.Where(n => n.IsRequired && (!parameterValues.ContainsKey(n.Name) || parameterValues[n.Name] == null)))
-                throw XRoadException.TeenuseKohustuslikParameeterPuudub(parameterNode.Name);
+            if (context.XmlTemplate != null)
+                foreach (var parameterNode in context.XmlTemplate.ParameterNodes.Where(n => n.IsRequired && (!parameterValues.ContainsKey(n.Name) || parameterValues[n.Name] == null)))
+                    throw XRoadException.TeenuseKohustuslikParameeterPuudub(parameterNode.Name);
 
             return parameterValues;
         }
@@ -78,7 +86,7 @@ namespace XRoadLib.Serialization.Mapping
             var elementName = GetResponseElementName(context);
 
             if (!reader.MoveToElement(3, elementName))
-                throw XRoadException.ViganePäring($"Päringus puudub X-tee `{elementName}` element.");
+                throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{elementName}` element.");
 
             return result.Deserialize(reader, context.XmlTemplate?.ResponseNode, context);
         }

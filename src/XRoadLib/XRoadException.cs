@@ -84,7 +84,7 @@ namespace XRoadLib
             return new XRoadException(new ClientFaultCode("UnsupportedContentTransferEncoding"), "Kodeering `{0}` ei ole rakenduse poolt toetatud.", kodeering);
         }
 
-        public static XRoadException ViganePäring(string message, params object[] args)
+        public static XRoadException InvalidQuery(string message, params object[] args)
         {
             return new XRoadException(new ClientFaultCode("InvalidQuery"), string.Format(message, args));
         }

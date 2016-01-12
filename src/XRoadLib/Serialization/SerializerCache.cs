@@ -154,13 +154,18 @@ namespace XRoadLib.Serialization
 
             qualifiedName = new XmlQualifiedName("getState", NamespaceHelper.GetXRoadNamespace(protocol));
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, integerTypeMap, false), true, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, integerTypeMap, false), true, false, false));
             customServiceMaps.GetOrAdd(qualifiedName, serviceMap);
 
             qualifiedName = new XmlQualifiedName("listMethods", NamespaceHelper.GetXRoadNamespace(protocol));
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, stringArrayTypeMap, false), true, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, stringArrayTypeMap, false), true, false, false));
             customServiceMaps.GetOrAdd(qualifiedName, serviceMap);
+        }
+
+        public bool IsSupportedProtocol(XRoadProtocol protocol)
+        {
+            throw new NotImplementedException();
         }
 
         public void AddTypeAssembly(Assembly assembly)
@@ -244,7 +249,7 @@ namespace XRoadLib.Serialization
                                         ? parameterNameProvider.GetParameterName(parameterInfo, parameterImpl)
                                         : !string.IsNullOrWhiteSpace(attribute?.Name) ? attribute.Name : parameterInfo.Name);
 
-            return new ParameterMap(this, usedParameterName, GetTypeMap(parameterInfo.ParameterType, dtoVersion), attribute != null && attribute.IsOptional);
+            return new ParameterMap(this, usedParameterName, parameterInfo, GetTypeMap(parameterInfo.ParameterType, dtoVersion), attribute != null && attribute.IsOptional);
         }
 
         public ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion, bool undefined = false)

@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Xml;
 using XRoadLib.Header;
 
@@ -34,7 +35,7 @@ namespace XRoadLib.Serialization
             Protocol = protocol;
         }
 
-        public XRoadMessage(Stream contentStream, XRoadProtocol protocol) : this(protocol)
+        public XRoadMessage(Stream contentStream)
         {
             ContentStream = contentStream;
         }
@@ -42,6 +43,11 @@ namespace XRoadLib.Serialization
         public XRoadAttachment GetAttachment(string contentID)
         {
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
+        }
+
+        public void LoadRequest(HttpContext httpContext, string storagePath)
+        {
+            LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers, httpContext.Request.ContentEncoding, storagePath);
         }
 
         public void LoadRequest(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath)

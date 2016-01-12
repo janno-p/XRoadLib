@@ -16,9 +16,13 @@ namespace XRoadLib.Serialization.Mapping
         public XRoadProtocol Protocol => message.Protocol;
         public bool IsMultipart => message.IsMultipart;
 
+        public SerializationContext(XRoadMessage message, uint dtoVersion)
+            : this(message, null, dtoVersion, false, false)
+        { }
+
         public SerializationContext(XRoadMessage message, IXmlTemplate template, uint dtoVersion, bool filteringEnabled, bool excludeNullElement)
         {
-            if (dtoVersion < 1U)
+            if (dtoVersion < 1u)
                 throw new ArgumentOutOfRangeException(nameof(dtoVersion));
 
             this.message = message;

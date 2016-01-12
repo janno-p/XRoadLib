@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Reflection;
+using System.Xml;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -6,6 +7,8 @@ namespace XRoadLib.Serialization.Mapping
     public interface IParameterMap
     {
         string Name { get; }
+
+        ParameterInfo ParameterInfo { get; }
 
         object Deserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context);
 

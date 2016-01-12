@@ -18,14 +18,14 @@ namespace XRoadLib.Serialization.Mapping
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
             if (context.Protocol != XRoadProtocol.Version20 && !reader.ReadToDescendant("Include", NamespaceHelper.XOP))
-                throw XRoadException.ViganePäring("Päringu xml-is puudub viide (`xop:Include` element) faili sisule.");
+                throw XRoadException.InvalidQuery("Päringu xml-is puudub viide (`xop:Include` element) faili sisule.");
 
             var contentID = reader.GetAttribute("href");
 
             if (string.IsNullOrWhiteSpace(contentID))
             {
                 if (context.Protocol != XRoadProtocol.Version20)
-                    throw XRoadException.ViganePäring("Päringu xml-is puudub viide (`xop:Include` elemendi `href` atribuut) faili sisule.");
+                    throw XRoadException.InvalidQuery("Päringu xml-is puudub viide (`xop:Include` elemendi `href` atribuut) faili sisule.");
 
                 var tempAttachment = new XRoadAttachment(new MemoryStream()) { IsMultipartContent = false };
                 context.AttachmentManager.AllAttachments.Add(tempAttachment);
