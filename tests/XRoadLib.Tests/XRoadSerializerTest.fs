@@ -33,7 +33,7 @@ module XRoadSerializerTest =
             writer.WriteAttributeString("xmlns", "tns", NamespaceHelper.XMLNS, NamespaceHelper.GetProducerNamespace("test-producer", XRoadProtocol.Version20))
 
         let serializer = XRoadSerializer(serializerCache)
-        serializer.SerializeElement(writer, elementName, value, new SerializationContext(message, null, dtoVersion, false, false))
+        serializer.SerializeElement(writer, elementName, value, new SerializationContext(message, dtoVersion))
 
         if addEnvelope then writer.WriteEndElement()
 

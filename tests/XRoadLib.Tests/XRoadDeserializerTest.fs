@@ -33,7 +33,7 @@ module XRoadDeserializerTest =
         use reader = XmlReader.Create(stream)
         use message = new XRoadMessage(XRoadProtocol.Version20)
         let serializer = XRoadSerializer(serializerCache)
-        let context = SerializationContext(message, template, dtoVersion, false, false)
+        let context = SerializationContext(message, dtoVersion, XmlTemplate = template)
         serializer.Deserialize(reader, "keha", context)
 
     [<Test>]

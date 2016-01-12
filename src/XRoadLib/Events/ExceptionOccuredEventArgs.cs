@@ -3,7 +3,7 @@ using XRoadLib.Soap;
 
 namespace XRoadLib.Events
 {
-    public delegate void ExceptionOccuredEventHandler(object sender, ExceptionOccuredEventArgs e);
+    public delegate void ExceptionOccuredEventHandler(XRoadHttpDataRequest sender, ExceptionOccuredEventArgs e);
 
     public class ExceptionOccuredEventArgs : EventArgs
     {

@@ -7,6 +7,8 @@ using System.Text;
 using System.Web;
 using System.Xml;
 using XRoadLib.Header;
+using XRoadLib.Serialization.Mapping;
+using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization
 {
@@ -62,6 +64,12 @@ namespace XRoadLib.Serialization
                 reader.Read(this, true);
         }
 
+        public void SaveTo(HttpContext httpContext)
+        {
+            using (var writer = new XRoadMessageWriter(httpContext.Response.Output, httpContext.Response.OutputStream))
+                writer.Write(this, contentType => httpContext.Response.ContentType = contentType, (name, value) => httpContext.Response.AppendHeader(name, value));
+        }
+
         public void SaveTo(TextWriter textWriter, Stream outputStream, Action<string> setContentType, Action<string, string> appendHeader)
         {
             using (var writer = new XRoadMessageWriter(textWriter, outputStream))
@@ -104,6 +112,12 @@ namespace XRoadLib.Serialization
         public void Copy(XRoadMessage message)
         {
             Protocol = message.Protocol;
+        }
+
+        public SerializationContext CreateContext()
+        {
+            var dtoVersion = (Header?.Nimi?.Version).GetValueOrDefault(1u);
+            return new SerializationContext(this, dtoVersion);
         }
     }
 }

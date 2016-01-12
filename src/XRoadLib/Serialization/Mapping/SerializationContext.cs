@@ -5,32 +5,23 @@ namespace XRoadLib.Serialization.Mapping
 {
     public sealed class SerializationContext
     {
-        private readonly XRoadMessage message;
-
-        public bool ExcludeNullElement { get; }
-        public bool FilteringEnabled { get; }
-        public IXmlTemplate XmlTemplate { get; }
+        public bool ExcludeNullElement { get; set; }
+        public bool FilteringEnabled { get; set; }
+        public IXmlTemplate XmlTemplate { get; set; }
         public uint DtoVersion { get; }
+        public XRoadMessage Message { get; }
 
-        public IAttachmentManager AttachmentManager => message;
-        public XRoadProtocol Protocol => message.Protocol;
-        public bool IsMultipart => message.IsMultipart;
+        public IAttachmentManager AttachmentManager => Message;
+        public XRoadProtocol Protocol => Message.Protocol;
+        public bool IsMultipart => Message.IsMultipart;
 
         public SerializationContext(XRoadMessage message, uint dtoVersion)
-            : this(message, null, dtoVersion, false, false)
-        { }
-
-        public SerializationContext(XRoadMessage message, IXmlTemplate template, uint dtoVersion, bool filteringEnabled, bool excludeNullElement)
         {
+            Message = message;
+
             if (dtoVersion < 1u)
                 throw new ArgumentOutOfRangeException(nameof(dtoVersion));
-
-            this.message = message;
-
             DtoVersion = dtoVersion;
-            ExcludeNullElement = excludeNullElement;
-            FilteringEnabled = filteringEnabled;
-            XmlTemplate = template;
         }
     }
 }

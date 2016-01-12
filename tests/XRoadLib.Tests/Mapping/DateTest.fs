@@ -23,7 +23,7 @@ module MappingTestHelpers =
         while reader.Read() && (reader.NodeType <> XmlNodeType.Element) do ()
 
         use message = new XRoadMessage(XRoadProtocol.Version20)
-        let context = SerializationContext(message, null, 1u, false, false)
+        let context = SerializationContext(message, 1u)
 
         let typeMap = Activator.CreateInstance<'T>()
         typeMap.Deserialize(reader, null, context)
