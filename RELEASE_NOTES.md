@@ -2,6 +2,7 @@
 * Fix strict parameter deserialization when xml template is not used.
 * General request handler for X-Road data requests.
 * Refactored serializer cache to deal with one assembly only.
+* Bug fixes.
 
 #### 1.0.0-alpha11 - January 11 2016
 * Fix service root element name.
