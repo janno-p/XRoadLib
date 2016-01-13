@@ -7,7 +7,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class IntegerTypeMap : TypeMap<int>
     {
-        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("int", NamespaceHelper.XSD);
+        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("int", NamespaceConstants.XSD);
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

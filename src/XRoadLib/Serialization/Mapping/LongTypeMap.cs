@@ -7,7 +7,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class LongTypeMap : TypeMap<long>
     {
-        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("long", NamespaceHelper.XSD);
+        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("long", NamespaceConstants.XSD);
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

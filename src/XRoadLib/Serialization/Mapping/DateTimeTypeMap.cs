@@ -8,7 +8,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DateTimeTypeMap : TypeMap<DateTime>
     {
-        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("dateTime", NamespaceHelper.XSD);
+        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("dateTime", NamespaceConstants.XSD);
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

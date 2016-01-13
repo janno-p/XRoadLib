@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Xml;
+using XRoadLib.Extensions;
 using XRoadLib.Header;
 using XRoadLib.Serialization.Mapping;
 
@@ -100,7 +101,7 @@ namespace XRoadLib.Serialization
             if (Header?.Nimi != null)
                 return Header.Nimi.Method == "getState" ? MetaServiceName.GetState : MetaServiceName.None;
 
-            if (RootElementName.Namespace != NamespaceHelper.GetXRoadNamespace(Protocol))
+            if (RootElementName.Namespace != Protocol.GetNamespace())
                 return MetaServiceName.Unsupported;
 
             switch (RootElementName.Name)

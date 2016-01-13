@@ -7,7 +7,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class BooleanTypeMap : TypeMap<bool>
     {
-        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("boolean", NamespaceHelper.XSD);
+        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("boolean", NamespaceConstants.XSD);
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

@@ -2,14 +2,15 @@
 
 open FsUnit
 open NUnit.Framework
-open System;
-open System.IO;
-open System.Reflection;
-open System.Text;
-open System.Xml;
-open XRoadLib;
-open XRoadLib.Serialization;
-open XRoadLib.Serialization.Mapping;
+open System
+open System.IO
+open System.Reflection
+open System.Text
+open System.Xml
+open XRoadLib
+open XRoadLib.Extensions
+open XRoadLib.Serialization
+open XRoadLib.Serialization.Mapping
 open XRoadLib.Tests.Contract
 
 [<TestFixture>]
@@ -24,10 +25,10 @@ module XRoadSerializerTest =
 
         if addEnvelope then
             writer.WriteStartElement("Envelope")
-            writer.WriteAttributeString("xmlns", PrefixHelper.SOAP_ENC, NamespaceHelper.XMLNS, NamespaceHelper.SOAP_ENC)
-            writer.WriteAttributeString("xmlns", PrefixHelper.XSI, NamespaceHelper.XMLNS, NamespaceHelper.XSI)
-            writer.WriteAttributeString("xmlns", PrefixHelper.XSD, NamespaceHelper.XMLNS, NamespaceHelper.XSD)
-            writer.WriteAttributeString("xmlns", "tns", NamespaceHelper.XMLNS, NamespaceHelper.GetProducerNamespace("test-producer", XRoadProtocol.Version20))
+            writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC)
+            writer.WriteAttributeString("xmlns", PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI)
+            writer.WriteAttributeString("xmlns", PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD)
+            writer.WriteAttributeString("xmlns", "tns", NamespaceConstants.XMLNS, XRoadProtocol.Version20.GetProducerNamespace("test-producer"))
 
         let serializer = XRoadSerializer(serializerCache)
         serializer.SerializeElement(writer, elementName, value, new SerializationContext(message, dtoVersion))

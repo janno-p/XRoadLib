@@ -141,13 +141,13 @@ namespace XRoadLib.Serialization.Mapping
         {
             writer.WriteStartElement("faultCode");
             if (protocol == XRoadProtocol.Version20)
-                writer.WriteTypeAttribute("string", NamespaceHelper.XSD);
+                writer.WriteTypeAttribute("string", NamespaceConstants.XSD);
             writer.WriteValue(fault.FaultCode);
             writer.WriteEndElement();
 
             writer.WriteStartElement("faultString");
             if (protocol == XRoadProtocol.Version20)
-                writer.WriteTypeAttribute("string", NamespaceHelper.XSD);
+                writer.WriteTypeAttribute("string", NamespaceConstants.XSD);
             writer.WriteValue(fault.FaultString);
             writer.WriteEndElement();
         }
