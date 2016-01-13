@@ -308,7 +308,7 @@ namespace XRoadLib.Extensions
 
             return string.IsNullOrWhiteSpace(dataType)
                 ? null
-                : new XmlQualifiedName(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceHelper.SOAP_ENC : NamespaceHelper.XSD);
+                : new XmlQualifiedName(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceConstants.SOAP_ENC : NamespaceConstants.XSD);
         }
     }
 }

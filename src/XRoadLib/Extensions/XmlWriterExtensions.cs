@@ -4,7 +4,7 @@ namespace XRoadLib.Extensions
 {
     public static class XmlWriterExtensions
     {
-        private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceHelper.XSI);
+        private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceConstants.XSI);
 
         private static void WriteQualifiedAttribute(this XmlWriter writer, string attributeName, string attributeNamespace, string valueName, string valueNamespace)
         {
@@ -25,7 +25,7 @@ namespace XRoadLib.Extensions
 
         private static void WriteArrayTypeAttribute(this XmlWriter writer, string typeName, string typeNamespace, int arraySize)
         {
-            writer.WriteStartAttribute("arrayType", NamespaceHelper.SOAP_ENC);
+            writer.WriteStartAttribute("arrayType", NamespaceConstants.SOAP_ENC);
             writer.WriteQualifiedName(typeName, typeNamespace);
             writer.WriteString($"[{arraySize}]");
             writer.WriteEndAttribute();
@@ -38,13 +38,13 @@ namespace XRoadLib.Extensions
 
         public static void WriteXteeHeaderElement(this XmlWriter writer, string name, string value, bool writeRaw = false)
         {
-            writer.WriteHeaderElement(NamespaceHelper.GetXRoadNamespace(XRoadProtocol.Version20), name, value, writeRaw);
+            writer.WriteHeaderElement(XRoadProtocol.Version20.GetNamespace(), name, value, writeRaw);
         }
 
         public static void WriteHeaderElement(this XmlWriter writer, string @namespace, string name, string value, bool writeRaw = false)
         {
             writer.WriteStartElement(name, @namespace);
-            writer.WriteTypeAttribute("string", NamespaceHelper.XSD);
+            writer.WriteTypeAttribute("string", NamespaceConstants.XSD);
 
             if (!string.IsNullOrEmpty(value))
             {
@@ -59,7 +59,7 @@ namespace XRoadLib.Extensions
 
         public static void WriteNilAttribute(this XmlWriter writer)
         {
-            writer.WriteAttributeString("nil", NamespaceHelper.XSI, "1");
+            writer.WriteAttributeString("nil", NamespaceConstants.XSI, "1");
         }
     }
 }

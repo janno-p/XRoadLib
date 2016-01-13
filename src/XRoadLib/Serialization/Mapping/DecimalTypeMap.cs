@@ -7,7 +7,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DecimalTypeMap : TypeMap<decimal>
     {
-        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("decimal", NamespaceHelper.XSD);
+        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("decimal", NamespaceConstants.XSD);
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

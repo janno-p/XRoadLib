@@ -13,11 +13,11 @@ module ProducerDefinitionTest =
     let contractAssembly = typeof<XRoadLib.Tests.Contract.Class1>.Assembly
 
     let xn nm = XName.Get(nm)
-    let wsdl nm = XName.Get(nm, NamespaceHelper.WSDL)
-    let soap nm = XName.Get(nm, NamespaceHelper.SOAP)
-    let xrd nm = XName.Get(nm, NamespaceHelper.XROAD)
-    let xtee nm = XName.Get(nm, NamespaceHelper.XTEE)
-    let xml nm = XName.Get(nm, NamespaceHelper.XML)
+    let wsdl nm = XName.Get(nm, NamespaceConstants.WSDL)
+    let soap nm = XName.Get(nm, NamespaceConstants.SOAP)
+    let xrd nm = XName.Get(nm, NamespaceConstants.XROAD)
+    let xtee nm = XName.Get(nm, NamespaceConstants.XTEE)
+    let xml nm = XName.Get(nm, NamespaceConstants.XML)
 
     let attributeValueShouldEqual value (a: XAttribute) =
         a |> should not' (be Null)

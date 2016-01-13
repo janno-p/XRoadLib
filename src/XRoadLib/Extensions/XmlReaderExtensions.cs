@@ -4,10 +4,10 @@ namespace XRoadLib.Extensions
 {
     public static class XmlReaderExtensions
     {
-        private static readonly XmlQualifiedName qnXsiNil = new XmlQualifiedName("nil", NamespaceHelper.XSI);
-        private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceHelper.XSI);
-        private static readonly XmlQualifiedName qnSoapEncArray = new XmlQualifiedName("Array", NamespaceHelper.SOAP_ENC);
-        private static readonly XmlQualifiedName qnSoapEncArrayType = new XmlQualifiedName("arrayType", NamespaceHelper.SOAP_ENC);
+        private static readonly XmlQualifiedName qnXsiNil = new XmlQualifiedName("nil", NamespaceConstants.XSI);
+        private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceConstants.XSI);
+        private static readonly XmlQualifiedName qnSoapEncArray = new XmlQualifiedName("Array", NamespaceConstants.SOAP_ENC);
+        private static readonly XmlQualifiedName qnSoapEncArrayType = new XmlQualifiedName("arrayType", NamespaceConstants.SOAP_ENC);
 
         public static bool ReadToElement(this XmlReader reader, string localName)
         {

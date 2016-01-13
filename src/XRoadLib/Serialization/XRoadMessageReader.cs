@@ -382,15 +382,15 @@ namespace XRoadLib.Serialization
 
         private static XRoadProtocol? ParseXRoadProtocol(XmlReader reader)
         {
-            if (!reader.MoveToElement(0, "Envelope", NamespaceHelper.SOAP_ENV))
+            if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
                 throw XRoadException.InvalidQuery("Päringus puudub SOAP-ENV:Envelope element.");
 
-            return reader.GetAttribute("encodingStyle", NamespaceHelper.SOAP_ENV) != null ? XRoadProtocol.Version20 : (XRoadProtocol?)null;
+            return reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV) != null ? XRoadProtocol.Version20 : (XRoadProtocol?)null;
         }
 
         private static IXRoadHeader ParseXRoadHeader(XmlReader reader, ref XRoadProtocol? protocol)
         {
-            if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceHelper.SOAP_ENV))
+            if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
                 return null;
 
             var header = new XRoadHeader();
@@ -403,7 +403,7 @@ namespace XRoadLib.Serialization
 
         private static XmlQualifiedName ParseMessageRootElementName(XmlReader reader)
         {
-            return (reader.IsCurrentElement(1, "Body", NamespaceHelper.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceHelper.SOAP_ENV)) && reader.MoveToElement(2)
+            return (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV)) && reader.MoveToElement(2)
                 ? new XmlQualifiedName(reader.LocalName, reader.NamespaceURI)
                 : null;
         }
@@ -411,10 +411,10 @@ namespace XRoadLib.Serialization
         private static void SetHeader(XmlReader reader, IXRoadHeader header, ref XRoadProtocol? protocol)
         {
             if (protocol == null)
-                protocol = (reader.NamespaceURI == NamespaceHelper.XTEE ? XRoadProtocol.Version20 : (XRoadProtocol?)null)
-                           ?? (reader.NamespaceURI == NamespaceHelper.XROAD ? XRoadProtocol.Version31 : (XRoadProtocol?)null);
+                protocol = (reader.NamespaceURI == NamespaceConstants.XTEE ? XRoadProtocol.Version20 : (XRoadProtocol?)null)
+                           ?? (reader.NamespaceURI == NamespaceConstants.XROAD ? XRoadProtocol.Version31 : (XRoadProtocol?)null);
 
-            if (protocol == null || reader.NamespaceURI != NamespaceHelper.GetXRoadNamespace(protocol.Value))
+            if (protocol == null || reader.NamespaceURI != protocol.Value.GetNamespace())
             {
                 header.Unresolved.Add(new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), reader.ReadInnerXml());
                 return;

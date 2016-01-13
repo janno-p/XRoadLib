@@ -61,6 +61,7 @@
     <Compile Include="Events\ExceptionOccuredEventArgs.cs" />
     <Compile Include="Events\InvocationErrorEventArgs.cs" />
     <Compile Include="Extensions\IXRoadLifetime.cs" />
+    <Compile Include="Extensions\XRoadProtocolExtensions.cs" />
     <Compile Include="Header\IXRoadHeader.cs" />
     <Compile Include="Header\XRoadHeader.cs" />
     <Compile Include="IParameterNameProvider.cs" />
@@ -73,9 +74,15 @@
     <Compile Include="Extensions\XmlWriterExtensions.cs" />
     <Compile Include="Header\IXRoadEncodedHeader.cs" />
     <Compile Include="Header\IXRoadLiteralHeader.cs" />
-    <Compile Include="NamespaceHelper.cs" />
-    <Compile Include="PrefixHelper.cs" />
+    <Compile Include="NamespaceConstants.cs" />
+    <Compile Include="PrefixConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol\IXRoadHeader.cs" />
+    <Compile Include="Protocol\IXRoadIdentifier.cs" />
+    <Compile Include="Protocol\XRoadCentralServiceIdentifier.cs" />
+    <Compile Include="Protocol\XRoadClientIdentifier.cs" />
+    <Compile Include="Protocol\XRoadObjectType.cs" />
+    <Compile Include="Protocol\XRoadServiceIdentifier.cs" />
     <Compile Include="Serialization\CustomSerialization.cs" />
     <Compile Include="Serialization\IAttachmentManager.cs" />
     <Compile Include="Serialization\ICustomSerialization.cs" />
