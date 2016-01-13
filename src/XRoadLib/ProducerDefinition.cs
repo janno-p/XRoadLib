@@ -238,7 +238,7 @@ namespace XRoadLib
                 if (IsExistingType(type.Name))
                     throw new Exception($"Multiple type definitions for same name `{type.Name}`.");
 
-                var schemaType = new XmlSchemaComplexType { Name = type.Name, IsAbstract = type.IsAbstract };
+                var schemaType = new XmlSchemaComplexType { Name = type.Name, IsAbstract = type.IsAbstract, Annotation = CreateAnnotationElement(type) };
                 schemaTypes.Add(type.Name, Tuple.Create(type, schemaType));
             }
 
@@ -256,7 +256,7 @@ namespace XRoadLib
                 foreach (var property in properties)
                 {
                     var propertyElement = new XmlSchemaElement { Name = property.GetPropertyName(), Annotation = CreateAnnotationElement(property) };
-                    AddSchemaType(propertyElement, property.PropertyType, true, property.GetElementType());
+                    AddSchemaType(propertyElement, property.PropertyType, true, property.GetQualifiedTypeName());
                     contentParticle.Items.Add(propertyElement);
                 }
 
@@ -281,7 +281,7 @@ namespace XRoadLib
                     .ToDictionary(x => x.Item1, x => x.Item2.Keys.ToList()));
         }
 
-        private void AddSchemaType(XmlSchemaElement schemaElement, Type runtimeType, bool isOptional, string elementDataType)
+        private void AddSchemaType(XmlSchemaElement schemaElement, Type runtimeType, bool isOptional, XmlQualifiedName qualifiedTypeName)
         {
             var element = schemaElement;
             var type = runtimeType;
@@ -318,9 +318,9 @@ namespace XRoadLib
             if (type == typeof(Stream))
                 AddBinaryAttribute(element);
 
-            if (!string.IsNullOrWhiteSpace(elementDataType))
+            if (qualifiedTypeName != null)
             {
-                element.SchemaTypeName = new XmlQualifiedName(elementDataType.Equals("base64") ? "base64Binary" : elementDataType, NamespaceHelper.XSD);
+                element.SchemaTypeName = new XmlQualifiedName(qualifiedTypeName.Name.Equals("base64") ? "base64Binary" : qualifiedTypeName.Name, NamespaceHelper.XSD);
                 return;
             }
 
@@ -442,7 +442,7 @@ namespace XRoadLib
                 throw new Exception($"Operation type `{requestName}` already exists with the same name.");
 
             var requestSequence = CreateOperationRequestSequence(method);
-            var requestType = new XmlSchemaComplexType { Name = requestName, Particle = requestSequence };
+            var requestType = new XmlSchemaComplexType { Name = requestName, Particle = requestSequence, Annotation = CreateAnnotationElement(method) };
 
             var responseType = CreateResponseType(responseName, method, requestSequence);
 
@@ -768,7 +768,7 @@ namespace XRoadLib
                         : parameter.Name;
 
                     var parameterElement = new XmlSchemaElement { Name = parameterName, Annotation = CreateAnnotationElement(parameter) };
-                    AddSchemaType(parameterElement, parameter.ParameterType, parameterAttribute != null && parameterAttribute.IsOptional, null);
+                    AddSchemaType(parameterElement, parameter.ParameterType, parameterAttribute != null && parameterAttribute.IsOptional, parameter.GetQualifiedTypeName());
                     schemaParticle.Items.Add(parameterElement);
                 }
 
@@ -778,7 +778,7 @@ namespace XRoadLib
                 requestElement.SchemaType = new XmlSchemaComplexType { Particle = schemaParticle };
             }
             else if (parameters.Count == 1)
-                AddSchemaType(requestElement, parameters.Single().ParameterType, false, null);
+                AddSchemaType(requestElement, parameters.Single().ParameterType, false, parameters.Single().GetQualifiedTypeName());
             else requestElement.SchemaType = new XmlSchemaComplexType();
 
             return new XmlSchemaSequence { Items = { requestElement } };
@@ -789,14 +789,14 @@ namespace XRoadLib
             if (protocol == XRoadProtocol.Version20)
             {
                 if (method.ReturnType == typeof(void) || !method.ReturnType.IsArray)
-                    return new XmlSchemaComplexType { Name = responseName, Particle = new XmlSchemaSequence() };
+                    return new XmlSchemaComplexType { Name = responseName, Particle = new XmlSchemaSequence(), Annotation = CreateAnnotationElement(method) };
 
                 var tempElement = new XmlSchemaElement();
                 AddSchemaType(tempElement, method.ReturnType, false, null);
 
                 var complexContent = (XmlSchemaComplexContent)((XmlSchemaComplexType)tempElement.SchemaType).ContentModel;
 
-                return new XmlSchemaComplexType { Name = responseName, ContentModel = complexContent };
+                return new XmlSchemaComplexType { Name = responseName, ContentModel = complexContent, Annotation = CreateAnnotationElement(method) };
             }
 
             var responseSequence = new XmlSchemaSequence();
@@ -819,7 +819,8 @@ namespace XRoadLib
             return new XmlSchemaComplexType
             {
                 Name = responseName,
-                Particle = new XmlSchemaSequence { Items = { requestSequence.Items[0], responseElement } }
+                Particle = new XmlSchemaSequence { Items = { requestSequence.Items[0], responseElement } },
+                Annotation = CreateAnnotationElement(method)
             };
         }
 

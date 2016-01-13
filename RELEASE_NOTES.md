@@ -1,3 +1,7 @@
+#### 1.0.0-alpha13 - Unreleased
+* More annotation elements to types and elements.
+* Accept XmlElementAttribute.DataType for parameter elements.
+
 #### 1.0.0-alpha12 - January 12 2016
 * Fix strict parameter deserialization when xml template is not used.
 * General request handler for X-Road data requests.

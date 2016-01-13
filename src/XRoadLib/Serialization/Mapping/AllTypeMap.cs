@@ -80,11 +80,10 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(comparer, DtoVersion))
             {
-                var dataType = propertyInfo.GetElementType();
-                var elementTypeName = string.IsNullOrWhiteSpace(dataType) ? null : new XmlQualifiedName(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceHelper.SOAP_ENC : NamespaceHelper.XSD);
+                var qualifiedTypeName = propertyInfo.GetQualifiedTypeName();
 
-                var typeMap = elementTypeName != null ? serializerCache.GetTypeMap(elementTypeName, DtoVersion, partialTypeMaps)
-                                                      : serializerCache.GetTypeMap(propertyInfo.PropertyType, DtoVersion, partialTypeMaps);
+                var typeMap = qualifiedTypeName != null ? serializerCache.GetTypeMap(qualifiedTypeName, DtoVersion, partialTypeMaps)
+                                                        : serializerCache.GetTypeMap(propertyInfo.PropertyType, DtoVersion, partialTypeMaps);
 
                 var propertyMap = new PropertyMap(serializerCache, propertyInfo, typeMap, RuntimeType);
 

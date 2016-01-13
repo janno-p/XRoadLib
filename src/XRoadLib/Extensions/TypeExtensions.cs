@@ -66,14 +66,6 @@ namespace XRoadLib.Extensions
             return !string.IsNullOrWhiteSpace(elementAttribute?.ElementName) ? elementAttribute.ElementName : null;
         }
 
-        public static string GetElementType(this ICustomAttributeProvider attributeProvider)
-        {
-            return attributeProvider.GetCustomAttributes(typeof(XmlElementAttribute), false)
-                                    .OfType<XmlElementAttribute>()
-                                    .Select(a => a.DataType)
-                                    .SingleOrDefault();
-        }
-
         public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)
         {
             return IsVersionInRange(
@@ -307,6 +299,16 @@ namespace XRoadLib.Extensions
             {
                 return string.Compare(x.GetPropertyName(), y.GetPropertyName(), StringComparison.InvariantCultureIgnoreCase);
             }
+        }
+
+        internal static XmlQualifiedName GetQualifiedTypeName(this ICustomAttributeProvider provider)
+        {
+            var attribute = provider.GetSingleAttribute<XmlElementAttribute>();
+            var dataType = attribute?.DataType;
+
+            return string.IsNullOrWhiteSpace(dataType)
+                ? null
+                : new XmlQualifiedName(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceHelper.SOAP_ENC : NamespaceHelper.XSD);
         }
     }
 }
