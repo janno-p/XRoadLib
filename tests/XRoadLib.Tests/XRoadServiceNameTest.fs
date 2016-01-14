@@ -4,6 +4,7 @@ open FsUnit
 open NUnit.Framework
 open System
 open XRoadLib
+open XRoadLib.Header
 
 [<TestFixture>]
 module XRoadServiceNameTest =
@@ -15,7 +16,7 @@ module XRoadServiceNameTest =
 
     [<Test>]
     let ``can parse full service name`` () =
-        let xsn = XRoadServiceName(fullName)
+        let xsn = XRoadServiceIdentifier.FromString(fullName)
         xsn.Producer |> should equal producerName
         xsn.Method |> should equal serviceName
         xsn.Version |> should equal version

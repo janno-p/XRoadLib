@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Schema;
+using XRoadLib;
 using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Header;
@@ -161,17 +162,7 @@ namespace XRoadLib
             binding.Operations.Add(operationBinding);
         }
 
-        public ProducerDefinition AddEncodedHeader<T>(Expression<Func<IXRoadEncodedHeader, T>> expression)
-        {
-            return protocol == XRoadProtocol.Version20 ? AddRequiredHeader(expression) : this;
-        }
-
-        public ProducerDefinition AddLiteralHeader<T>(Expression<Func<IXRoadLiteralHeader, T>> expression)
-        {
-            return protocol == XRoadProtocol.Version20 ? this : AddRequiredHeader(expression);
-        }
-
-        private ProducerDefinition AddRequiredHeader<THeader, T>(Expression<Func<THeader, T>> expression)
+        public ProducerDefinition AddHeader<T>(Expression<Func<IXRoadHeader, T>> expression)
         {
             var memberExpression = expression.Body as MemberExpression;
             if (memberExpression == null)

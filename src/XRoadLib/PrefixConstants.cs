@@ -4,6 +4,7 @@
     {
         public const string ID = "id";
         public const string MIME = "mime";
+        public const string REPR = "repr";
         public const string SOAP = "soap";
         public const string SOAP_ENC = "SOAP-ENC";
         public const string SOAP_ENV = "SOAP-ENV";
