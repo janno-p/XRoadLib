@@ -250,8 +250,7 @@ namespace XRoadLib
                 var attribute = type.GetLayoutAttribute(protocol);
                 var properties = type.GetPropertiesSorted(attribute.GetComparer(), version);
 
-                var contentParticle = attribute?.Layout == XRoadLayoutKind.All ? (XmlSchemaGroupBase)new XmlSchemaAll()
-                                                                               : new XmlSchemaSequence();
+                var contentParticle = new XmlSchemaSequence();
 
                 foreach (var property in properties)
                 {

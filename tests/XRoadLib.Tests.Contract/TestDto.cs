@@ -6,7 +6,7 @@ using XRoadLib.Tests.Contract.Comparers;
 
 namespace XRoadLib.Tests.Contract
 {
-    [XRoadLayout(Layout = XRoadLayoutKind.Sequence, Comparer = typeof(OrderComparer))]
+    [XRoadLayout(PropertyOrder = XRoadPropertyOrder.Strict, Comparer = typeof(OrderComparer))]
     public class TestDto : XRoadSerializable
     {
         [Order(1)]

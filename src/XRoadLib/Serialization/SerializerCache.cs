@@ -319,7 +319,7 @@ namespace XRoadLib.Serialization
                 else
                 {
                     var layout = runtimeType.GetLayoutAttribute(protocol);
-                    if (layout == null || layout.Layout == XRoadLayoutKind.Sequence)
+                    if (layout == null || layout.PropertyOrder == XRoadPropertyOrder.Strict)
                         typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
                     else
                         typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);

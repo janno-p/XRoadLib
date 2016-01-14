@@ -11,7 +11,7 @@ namespace XRoadLib.Attributes
 
         public XRoadProtocol AppliesTo { get { return appliesTo.GetValueOrDefault(); } set { appliesTo = value; } }
 
-        public XRoadLayoutKind Layout { get; set; }
+        public XRoadPropertyOrder PropertyOrder { get; set; }
 
         public Type Comparer { get; set; }
     }
