@@ -15,6 +15,7 @@
         public const string XROAD = "http://x-road.ee/xsd/x-road.xsd";
         public const string XROAD_V4 = "http://x-road.eu/xsd/xroad.xsd";
         public const string XROAD_V4_ID = "http://x-road.eu/xsd/identifiers";
+        public const string XROAD_V4_REPR = "http://x-road.eu/xsd/representation.xsd";
         public const string XSD = "http://www.w3.org/2001/XMLSchema";
         public const string XSI = "http://www.w3.org/2001/XMLSchema-instance";
         public const string XTEE = "http://x-tee.riik.ee/xsd/xtee.xsd";

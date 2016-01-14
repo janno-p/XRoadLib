@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Collections.Generic;
+using System.Xml;
 
 namespace XRoadLib.Extensions
 {
@@ -84,6 +85,19 @@ namespace XRoadLib.Extensions
                 if (!reader.Read() || reader.Depth < depth)
                     return false;
             }
+        }
+
+        private static readonly ICollection<string> headerNamespaces = new[]
+        {
+            NamespaceConstants.XTEE,
+            NamespaceConstants.XROAD,
+            NamespaceConstants.XROAD_V4,
+            NamespaceConstants.XROAD_V4_REPR
+        };
+
+        public static bool IsHeaderNamespace(this XmlReader reader)
+        {
+            return headerNamespaces.Contains(reader.NamespaceURI);
         }
     }
 }

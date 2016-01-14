@@ -99,10 +99,10 @@ namespace XRoadLib
             if ((serviceMap = InvokeMetaService(serializerCache, out result)) != null)
                 return result;
 
-            var operationName = RequestMessage.Header?.Nimi?.Method ?? RequestMessage.RootElementName?.Name;
+            var operationName = RequestMessage.Header?.Service?.ServiceCode ?? RequestMessage.RootElementName?.Name;
             var dataService = serviceRunner.GetDataService(operationName);
 
-            serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, (RequestMessage.Header?.Nimi?.Version).GetValueOrDefault(1u), dataService.Item2);
+            serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, (RequestMessage.Header?.Service?.Version).GetValueOrDefault(1u), dataService.Item2);
 
             var parameters = DeserializeMethodParameters(serviceMap, dataService.Item2);
 

@@ -63,7 +63,9 @@
     <Compile Include="Extensions\IXRoadLifetime.cs" />
     <Compile Include="Extensions\XRoadProtocolExtensions.cs" />
     <Compile Include="Header\IXRoadHeader.cs" />
-    <Compile Include="Header\XRoadHeader.cs" />
+    <Compile Include="Header\XRoadHeader31.cs" />
+    <Compile Include="Header\XRoadHeader40.cs" />
+    <Compile Include="Header\XRoadHeaderBase.cs" />
     <Compile Include="IParameterNameProvider.cs" />
     <Compile Include="ISchemaImportProvider.cs" />
     <Compile Include="IServiceRunner.cs" />
@@ -72,17 +74,19 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\XmlReaderExtensions.cs" />
     <Compile Include="Extensions\XmlWriterExtensions.cs" />
-    <Compile Include="Header\IXRoadEncodedHeader.cs" />
-    <Compile Include="Header\IXRoadLiteralHeader.cs" />
     <Compile Include="NamespaceConstants.cs" />
     <Compile Include="PrefixConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protocol\XRoadHeader.cs" />
-    <Compile Include="Protocol\IXRoadIdentifier.cs" />
-    <Compile Include="Protocol\XRoadCentralServiceIdentifier.cs" />
-    <Compile Include="Protocol\XRoadClientIdentifier.cs" />
-    <Compile Include="Protocol\XRoadObjectType.cs" />
-    <Compile Include="Protocol\XRoadServiceIdentifier.cs" />
+    <Compile Include="Header\IXRoadHeader20.cs" />
+    <Compile Include="Header\XRoadHeader20.cs" />
+    <Compile Include="Header\IXRoadHeader31.cs" />
+    <Compile Include="Header\IXRoadIdentifier.cs" />
+    <Compile Include="Header\XRoadCentralServiceIdentifier.cs" />
+    <Compile Include="Header\XRoadClientIdentifier.cs" />
+    <Compile Include="Header\IXRoadHeader40.cs" />
+    <Compile Include="Header\XRoadObjectType.cs" />
+    <Compile Include="Header\XRoadRepresentedParty.cs" />
+    <Compile Include="Header\XRoadServiceIdentifier.cs" />
     <Compile Include="Serialization\CustomSerialization.cs" />
     <Compile Include="Serialization\IAttachmentManager.cs" />
     <Compile Include="Serialization\ICustomSerialization.cs" />
@@ -137,7 +141,6 @@
     <Compile Include="XRoadHttpDataRequest.cs" />
     <Compile Include="XRoadProtocol.cs" />
     <Compile Include="XRoadException.cs" />
-    <Compile Include="XRoadServiceName.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using XRoadLib.Header;
 
 namespace XRoadLib.Extensions
 {
@@ -7,22 +8,22 @@ namespace XRoadLib.Extensions
     {
         private static readonly Regex namespacePatternV20 = new Regex(@"(http\:\/\/producers.\w.xtee.riik.ee/producer/\w)/.+");
         private static readonly Regex namespacePatternV31 = new Regex(@"(http://\w.x-road.ee/producer/).+");
-        private static readonly Regex namespacePatternV40 = new Regex(@"(http://\w.x-road.eu)/.+");
+        private static readonly Regex namespacePatternV40 = new Regex(@"(http://\w.x-road.eu/producer)/.+");
 
         private static void ConstrainToDefinedValue(XRoadProtocol protocol)
         {
-            if (!protocol.HasValue())
+            if (!protocol.HasDefinedValue())
                 throw new ArgumentOutOfRangeException(nameof(protocol));
         }
 
-        public static bool HasDefinedValue(this XRoadProtocol protocol)
+        public static bool HasValidValue(this XRoadProtocol protocol)
         {
             return Enum.IsDefined(typeof(XRoadProtocol), protocol);
         }
 
-        public static bool HasValue(this XRoadProtocol protocol)
+        public static bool HasDefinedValue(this XRoadProtocol protocol)
         {
-            return protocol.HasDefinedValue() && protocol != XRoadProtocol.Undefined;
+            return protocol.HasValidValue() && protocol != XRoadProtocol.Undefined;
         }
 
         public static string GetNamespace(this XRoadProtocol protocol)
@@ -58,7 +59,7 @@ namespace XRoadLib.Extensions
                     return $"http://{producerName}.x-road.ee/producer/";
 
                 case XRoadProtocol.Version40:
-                    return $"http://{producerName}.x-road.eu";
+                    return $"http://{producerName}.x-road.eu/producer";
 
                 default:
                     throw new ArgumentException($"Unmapped X-Road protocol version `{protocol}`.", nameof(protocol));
@@ -106,6 +107,30 @@ namespace XRoadLib.Extensions
                 case XRoadProtocol.Version31:
                 case XRoadProtocol.Version40:
                     return PrefixConstants.XROAD;
+
+                default:
+                    throw new ArgumentException($"Unmapped X-Road protocol version `{protocol}`.", nameof(protocol));
+            }
+        }
+
+        internal static XRoadHeaderBase CreateXRoadHeader(this XRoadProtocol protocol)
+        {
+            if (!protocol.HasValidValue())
+                throw new ArgumentOutOfRangeException(nameof(protocol));
+
+            switch (protocol)
+            {
+                case XRoadProtocol.Undefined:
+                    return null;
+
+                case XRoadProtocol.Version20:
+                    return new XRoadHeader20();
+
+                case XRoadProtocol.Version31:
+                    return new XRoadHeader31();
+
+                case XRoadProtocol.Version40:
+                    return new XRoadHeader40();
 
                 default:
                     throw new ArgumentException($"Unmapped X-Road protocol version `{protocol}`.", nameof(protocol));
