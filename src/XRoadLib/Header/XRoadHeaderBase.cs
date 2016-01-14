@@ -16,6 +16,9 @@ namespace XRoadLib.Header
 
         public abstract void SetHeaderValue(XmlReader reader);
 
+        public virtual void Validate()
+        { }
+
         public static XRoadHeaderBase FromNamespace(string ns)
         {
             switch (ns)

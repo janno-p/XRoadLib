@@ -416,6 +416,8 @@ namespace XRoadLib.Serialization
                 unresolved.Add(new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), reader.ReadInnerXml());
             }
 
+            header?.Validate();
+
             return Tuple.Create(header, unresolved);
         }
 

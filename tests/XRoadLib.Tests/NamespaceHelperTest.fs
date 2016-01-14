@@ -11,7 +11,7 @@ module NamespaceHelperTest =
     [<TestCase("test", XRoadProtocol.Undefined, ExpectedException = typeof<ArgumentOutOfRangeException >, ExpectedMessage = "Specified argument was out of the range of valid values.", MatchType = MessageMatch.Contains)>]
     [<TestCase("test", XRoadProtocol.Version20, Result = "http://producers.test.xtee.riik.ee/producer/test")>]
     [<TestCase("test", XRoadProtocol.Version31, Result = "http://test.x-road.ee/producer/")>]
-    [<TestCase("test", XRoadProtocol.Version40, Result = "http://test.x-road.eu")>]
+    [<TestCase("test", XRoadProtocol.Version40, Result = "http://test.x-road.eu/producer")>]
     let ``get producer namespace for protocol version`` (producerName, protocol: XRoadProtocol) =
         protocol.GetProducerNamespace(producerName)
 

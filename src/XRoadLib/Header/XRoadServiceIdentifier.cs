@@ -11,11 +11,11 @@ namespace XRoadLib.Header
     {
         private string serviceVersion;
 
-        public string XRoadInstance { get; }
-        public string MemberClass { get; }
-        public string MemberCode { get; }
-        public string SubsystemCode { get; set; } // Optional
-        public string ServiceCode { get; set; }
+        public string XRoadInstance { get; internal set; }
+        public string MemberClass { get; internal set; }
+        public string MemberCode { get; internal set; }
+        public string SubsystemCode { get; internal set; } // Optional
+        public string ServiceCode { get; internal set; }
 
         // Optional
         public string ServiceVersion
@@ -28,7 +28,7 @@ namespace XRoadLib.Header
             }
         }
 
-        public XRoadObjectType ObjectType => XRoadObjectType.Service;
+        public XRoadObjectType ObjectType { get; internal set; }
 
         public uint? Version { get; private set; }
 
@@ -73,16 +73,16 @@ namespace XRoadLib.Header
 
         public override string ToString()
         {
-            var sb = new StringBuilder("SERVICE:").Append(string.IsNullOrWhiteSpace(XRoadInstance) ? XRoadInstance : "XX")
+            var sb = new StringBuilder("SERVICE:").Append(string.IsNullOrWhiteSpace(XRoadInstance) ? "XX" : XRoadInstance)
                                                   .Append("/")
-                                                  .Append(string.IsNullOrWhiteSpace(MemberClass) ? MemberClass : "_")
+                                                  .Append(string.IsNullOrWhiteSpace(MemberClass) ? "_" : MemberClass)
                                                   .Append("/")
-                                                  .Append(string.IsNullOrWhiteSpace(MemberCode) ? MemberCode : "_");
+                                                  .Append(string.IsNullOrWhiteSpace(MemberCode) ? "_" : MemberCode);
 
             if (!string.IsNullOrWhiteSpace(SubsystemCode))
                 sb.Append($"/{SubsystemCode}");
 
-            sb.Append("/").Append(string.IsNullOrWhiteSpace(ServiceCode) ? ServiceCode : "_");
+            sb.Append("/").Append(string.IsNullOrWhiteSpace(ServiceCode) ? "_" : ServiceCode);
 
             if (!string.IsNullOrWhiteSpace(ServiceVersion))
                 sb.Append($"/{ServiceVersion}");
