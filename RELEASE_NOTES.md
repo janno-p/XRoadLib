@@ -1,6 +1,7 @@
-#### 1.0.0-alpha13 - Unreleased
+#### 1.0.0-alpha13 - January 14 2016
 * More annotation elements to types and elements.
 * Accept XmlElementAttribute.DataType for parameter elements.
+* Type content particle uses always sequence, but deserialization mode may vary.
 
 #### 1.0.0-alpha12 - January 12 2016
 * Fix strict parameter deserialization when xml template is not used.
