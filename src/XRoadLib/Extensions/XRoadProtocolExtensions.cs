@@ -26,6 +26,27 @@ namespace XRoadLib.Extensions
             return protocol.HasValidValue() && protocol != XRoadProtocol.Undefined;
         }
 
+        public static bool DefinesHeadersForNamespace(this XRoadProtocol protocol, string ns)
+        {
+            ConstrainToDefinedValue(protocol);
+
+            switch (ns)
+            {
+                case NamespaceConstants.XTEE:
+                    return protocol == XRoadProtocol.Version20;
+
+                case NamespaceConstants.XROAD:
+                    return protocol == XRoadProtocol.Version31;
+
+                case NamespaceConstants.XROAD_V4:
+                case NamespaceConstants.XROAD_V4_REPR:
+                    return protocol == XRoadProtocol.Version40;
+
+                default:
+                    return false;
+            }
+        }
+
         public static string GetNamespace(this XRoadProtocol protocol)
         {
             ConstrainToDefinedValue(protocol);

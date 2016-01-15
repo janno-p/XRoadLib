@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Header;
 using XRoadLib.Serialization.Mapping;
@@ -22,7 +23,7 @@ namespace XRoadLib.Serialization
         public Stream ContentStream { get; internal set; }
         public XRoadProtocol Protocol { get; internal set; }
         public IXRoadHeader Header { get; internal set; }
-        public IDictionary<XmlQualifiedName, string> UnresolvedHeaders { get; set; }
+        public IList<XElement> UnresolvedHeaders { get; set; }
         public XmlQualifiedName RootElementName { get; internal set; }
 
         public IList<XRoadAttachment> AllAttachments => attachments;

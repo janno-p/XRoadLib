@@ -47,19 +47,19 @@ namespace XRoadLib.Header
                         return;
 
                     case "id":
-                        Id = reader.ReadInnerXml();
+                        Id = reader.ReadElementContentAsString();
                         return;
 
                     case "userId":
-                        UserId = reader.ReadInnerXml();
+                        UserId = reader.ReadElementContentAsString();
                         return;
 
                     case "issue":
-                        Issue = reader.ReadInnerXml();
+                        Issue = reader.ReadElementContentAsString();
                         return;
 
                     case "protocolVersion":
-                        ProtocolVersion = reader.ReadInnerXml();
+                        ProtocolVersion = reader.ReadElementContentAsString();
                         return;
                 }
             }
@@ -81,7 +81,7 @@ namespace XRoadLib.Header
 
             if (success && reader.LocalName == "partyClass" && reader.NamespaceURI == NamespaceConstants.XROAD_V4_REPR)
             {
-                representedParty.Class = reader.ReadInnerXml();
+                representedParty.Class = reader.ReadElementContentAsString();
                 success = reader.MoveToElement(depth + 1);
             }
 
@@ -90,7 +90,7 @@ namespace XRoadLib.Header
 
             if (reader.LocalName == "partyCode" && reader.NamespaceURI == NamespaceConstants.XROAD_V4_REPR)
             {
-                representedParty.Code = reader.ReadInnerXml();
+                representedParty.Code = reader.ReadElementContentAsString();
                 if (!reader.MoveToElement(depth + 1))
                     return representedParty;
             }
@@ -109,27 +109,28 @@ namespace XRoadLib.Header
 
             var depth = reader.Depth;
 
-            if (!reader.MoveToAttribute("objectType", NamespaceConstants.XROAD_V4_ID))
-                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}`.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
-            client.ObjectType = GetObjectType(reader.ReadInnerXml());
+            var objectType = reader.GetAttribute("objectType", NamespaceConstants.XROAD_V4_ID);
+            if (string.IsNullOrWhiteSpace(objectType))
+                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}` value.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
+            client.ObjectType = GetObjectType(objectType);
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("xRoadInstance", NamespaceConstants.XROAD_V4_ID));
-            client.XRoadInstance = reader.ReadInnerXml();
+            client.XRoadInstance = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberClass" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("memberClass", NamespaceConstants.XROAD_V4_ID));
-            client.MemberClass = reader.ReadInnerXml();
+            client.MemberClass = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberCode" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("memberCode", NamespaceConstants.XROAD_V4_ID));
-            client.MemberCode = reader.ReadInnerXml();
+            client.MemberCode = reader.ReadElementContentAsString();
 
             var success = reader.MoveToElement(depth + 1);
 
             if (success && reader.LocalName == "subsystemCode" && reader.NamespaceURI == NamespaceConstants.XROAD_V4_ID)
             {
-                client.SubsystemCode = reader.ReadInnerXml();
+                client.SubsystemCode = reader.ReadElementContentAsString();
                 success = reader.MoveToElement(depth + 1);
             }
 
@@ -150,37 +151,38 @@ namespace XRoadLib.Header
 
             var depth = reader.Depth;
 
-            if (!reader.MoveToAttribute("objectType", NamespaceConstants.XROAD_V4_ID))
-                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}`.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
-            service.ObjectType = GetObjectType(reader.ReadInnerXml());
+            var objectType = reader.GetAttribute("objectType", NamespaceConstants.XROAD_V4_ID);
+            if (string.IsNullOrWhiteSpace(objectType))
+                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}` value.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
+            service.ObjectType = GetObjectType(objectType);
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("xRoadInstance", NamespaceConstants.XROAD_V4_ID));
-            service.XRoadInstance = reader.ReadInnerXml();
+            service.XRoadInstance = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberClass" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("memberClass", NamespaceConstants.XROAD_V4_ID));
-            service.MemberClass = reader.ReadInnerXml();
+            service.MemberClass = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberCode" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("memberCode", NamespaceConstants.XROAD_V4_ID));
-            service.MemberCode = reader.ReadInnerXml();
+            service.MemberCode = reader.ReadElementContentAsString();
 
             var success = reader.MoveToElement(depth + 1);
             if (success && reader.LocalName == "subsystemCode" && reader.NamespaceURI == NamespaceConstants.XROAD_V4_ID)
             {
-                service.SubsystemCode = reader.ReadInnerXml();
+                service.SubsystemCode = reader.ReadElementContentAsString();
                 success = reader.MoveToElement(depth + 1);
             }
 
             if (!success || reader.LocalName != "serviceCode" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("serviceCode", NamespaceConstants.XROAD_V4_ID));
-            service.ServiceCode = reader.ReadInnerXml();
+            service.ServiceCode = reader.ReadElementContentAsString();
 
             success = reader.MoveToElement(depth + 1);
             if (success && reader.LocalName == "serviceVersion" && reader.NamespaceURI == NamespaceConstants.XROAD_V4_ID)
             {
-                service.ServiceVersion = reader.ReadInnerXml();
+                service.ServiceVersion = reader.ReadElementContentAsString();
                 success = reader.MoveToElement(depth + 1);
             }
 
@@ -201,17 +203,18 @@ namespace XRoadLib.Header
 
             var depth = reader.Depth;
 
-            if (!reader.MoveToAttribute("objectType", NamespaceConstants.XROAD_V4_ID))
-                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}`.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
-            centralService.ObjectType = GetObjectType(reader.ReadInnerXml());
+            var objectType = reader.GetAttribute("objectType", NamespaceConstants.XROAD_V4_ID);
+            if (string.IsNullOrWhiteSpace(objectType))
+                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}` value.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
+            centralService.ObjectType = GetObjectType(objectType);
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("xRoadInstance", NamespaceConstants.XROAD_V4_ID));
-            centralService.XRoadInstance = reader.ReadInnerXml();
+            centralService.XRoadInstance = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "serviceCode" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
                 throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("serviceCode", NamespaceConstants.XROAD_V4_ID));
-            centralService.ServiceCode = reader.ReadInnerXml();
+            centralService.ServiceCode = reader.ReadElementContentAsString();
 
             if (reader.MoveToElement(depth + 1))
                 throw XRoadException.InvalidQuery("Unexpected element `{0}` in element `{1}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), qualifiedName);

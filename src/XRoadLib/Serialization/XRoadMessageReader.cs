@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Header;
 
@@ -394,26 +395,26 @@ namespace XRoadLib.Serialization
             return reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV) != null ? XRoadProtocol.Version20 : XRoadProtocol.Undefined;
         }
 
-        private static Tuple<XRoadHeaderBase, Dictionary<XmlQualifiedName, string>> ParseXRoadHeader(XmlReader reader, XRoadProtocol protocol)
+        private static Tuple<XRoadHeaderBase, List<XElement>> ParseXRoadHeader(XmlReader reader, XRoadProtocol protocol)
         {
             if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
                 return null;
 
             var header = protocol.CreateXRoadHeader();
-            var unresolved = new Dictionary<XmlQualifiedName, string>();
+            var unresolved = new List<XElement>();
 
             while (reader.MoveToElement(2))
             {
                 if (header == null && reader.IsHeaderNamespace())
                     header = XRoadHeaderBase.FromNamespace(reader.NamespaceURI);
 
-                if (header != null && reader.NamespaceURI == header.Protocol.GetNamespace())
+                if (header != null && header.Protocol.DefinesHeadersForNamespace(reader.NamespaceURI))
                 {
                     header.SetHeaderValue(reader);
                     continue;
                 }
 
-                unresolved.Add(new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), reader.ReadInnerXml());
+                unresolved.Add((XElement)XNode.ReadFrom(reader));
             }
 
             header?.Validate();
