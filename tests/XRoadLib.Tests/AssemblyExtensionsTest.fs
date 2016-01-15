@@ -17,7 +17,7 @@ module AssemblyExtensionsTest =
     [<Test>]
     let ``get missing X-Road producer name`` () =
         TestDelegate(fun _ -> typeof<Marker>.Assembly.GetProducerName() |> ignore)
-        |> should (throwWithMessage @"Assembly `XRoadLib.Tests` does not offer contract for X-Road messaging protocol version `Version20`.") typeof<Exception>
+        |> should (throwWithMessage @"Assembly `XRoadLib.Tests` does not define X-Road producer name.") typeof<Exception>
 
     [<Test>]
     let ``find existing X-Road producer name`` () =

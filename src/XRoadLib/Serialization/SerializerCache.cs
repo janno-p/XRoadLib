@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using XRoadLib.Attributes;
+using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Mapping;
 
@@ -12,6 +13,8 @@ namespace XRoadLib.Serialization
 {
     public sealed class SerializerCache : ISerializerCache
     {
+        private readonly ITypeConfigurationProvider typeConfigurationProvider;
+
         private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
         private readonly string producerNamespace;
@@ -27,6 +30,8 @@ namespace XRoadLib.Serialization
 
             var producerName = contractAssembly.GetProducerName();
             producerNamespace = protocol.GetProducerNamespace(producerName);
+
+            typeConfigurationProvider = protocol.GetTypeConfiguration(contractAssembly);
 
             ITypeMap typeMap = new DateTypeMap();
             systemTypeMaps.GetOrAdd(new XmlQualifiedName("date", NamespaceConstants.XSD), typeMap);
@@ -317,11 +322,11 @@ namespace XRoadLib.Serialization
                     typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap<>).MakeGenericType(runtimeType));
                 else
                 {
-                    var layout = runtimeType.GetLayoutAttribute(protocol);
-                    if (layout == null || layout.ContentLayout == XRoadContentLayoutMode.Strict)
-                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
-                    else
+                    var contentLayoutMode = (typeConfigurationProvider?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
+                    if (contentLayoutMode == XRoadContentLayoutMode.Flexible)
                         typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);
+                    else
+                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
                 }
             }
 
@@ -330,7 +335,7 @@ namespace XRoadLib.Serialization
             partialTypeMaps = partialTypeMaps ?? new Dictionary<XmlQualifiedName, ITypeMap>();
             partialTypeMaps.Add(qualifiedName, typeMap);
 
-            typeMap.InitializeProperties(partialTypeMaps, protocol);
+            typeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);
 
             partialTypeMaps.Remove(qualifiedName);
 

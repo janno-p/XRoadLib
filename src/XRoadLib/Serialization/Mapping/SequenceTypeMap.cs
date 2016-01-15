@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
@@ -72,12 +73,12 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override void InitializeProperties(IDictionary<XmlQualifiedName, ITypeMap> partialTypeMaps, XRoadProtocol protocol)
+        public override void InitializeProperties(IDictionary<XmlQualifiedName, ITypeMap> partialTypeMaps, ITypeConfigurationProvider typeConfigurationProvider)
         {
             if (propertyMaps.Count > 0)
                 return;
 
-            var comparer = runtimeType.GetComparer(protocol);
+            var comparer = typeConfigurationProvider?.GetPropertyComparer(runtimeType) ?? DefaultComparer.Instance;
 
             foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(comparer, DtoVersion))
             {

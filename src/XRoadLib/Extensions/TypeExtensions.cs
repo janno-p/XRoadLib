@@ -275,32 +275,6 @@ namespace XRoadLib.Extensions
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
 
-        internal static XRoadLayoutAttribute GetLayoutAttribute(this Type type, XRoadProtocol protocol)
-        {
-            return type.GetAppliableAttribute<XRoadLayoutAttribute>(protocol);
-        }
-
-        internal static IComparer<PropertyInfo> GetComparer(this Type type, XRoadProtocol protocol)
-        {
-            return type.GetLayoutAttribute(protocol).GetComparer();
-        }
-
-        internal static IComparer<PropertyInfo> GetComparer(this XRoadLayoutAttribute attribute)
-        {
-            var comparerType = attribute?.Comparer;
-
-            return comparerType != null ? (IComparer<PropertyInfo>)Activator.CreateInstance(comparerType)
-                                        : new DefaultComparer();
-        }
-
-        private class DefaultComparer : IComparer<PropertyInfo>
-        {
-            public int Compare(PropertyInfo x, PropertyInfo y)
-            {
-                return string.Compare(x.GetPropertyName(), y.GetPropertyName(), StringComparison.InvariantCultureIgnoreCase);
-            }
-        }
-
         internal static XmlQualifiedName GetQualifiedTypeName(this ICustomAttributeProvider provider)
         {
             var attribute = provider.GetSingleAttribute<XmlElementAttribute>();

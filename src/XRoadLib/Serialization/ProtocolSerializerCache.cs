@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using XRoadLib.Extensions;
 
 namespace XRoadLib.Serialization
 {
@@ -9,12 +10,15 @@ namespace XRoadLib.Serialization
         private readonly IDictionary<XRoadProtocol, ISerializerCache> serializerCaches = new Dictionary<XRoadProtocol, ISerializerCache>();
 
         public Assembly ContractAssembly { get; }
+        public string ProducerName { get; }
 
         public ProtocolSerializerCache(Assembly contractAssembly, params XRoadProtocol[] protocols)
         {
             if (contractAssembly == null)
                 throw new ArgumentNullException(nameof(contractAssembly));
             ContractAssembly = contractAssembly;
+
+            ProducerName = contractAssembly.GetProducerName();
 
             if (protocols == null || protocols.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(protocols));

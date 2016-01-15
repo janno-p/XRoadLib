@@ -6,6 +6,8 @@ namespace XRoadLib.Serialization
     {
         Assembly ContractAssembly { get; }
 
+        string ProducerName { get; }
+
         ISerializerCache GetSerializerCache(XRoadProtocol protocol);
     }
 }

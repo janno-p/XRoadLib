@@ -74,5 +74,11 @@ namespace XRoadLib.Configuration
         /// Maximal version number for operations defined inside attribute target assembly. Used by versioning subsystem.
         /// </summary>
         uint? MaxOperationVersion { get; }
+
+        /// <summary>
+        /// Specifies class implementing <see cref="ITypeConfigurationProvider"/> which allows to customize
+        /// appearance of types in service description and serialized messages.
+        /// </summary>
+        ITypeConfigurationProvider TypeConfigurationProvider { get; }
     }
 }

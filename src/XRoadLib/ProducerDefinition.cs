@@ -8,6 +8,7 @@ using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Schema;
 using XRoadLib.Attributes;
+using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Header;
 using XRoadLib.Serialization;
@@ -30,6 +31,7 @@ namespace XRoadLib
         private readonly uint? version;
         private readonly XRoadContentLayoutMode operationContentLayoutMode;
         private readonly IParameterNameProvider parameterNameProvider;
+        private readonly ITypeConfigurationProvider typeConfigurationProvider;
 
         private readonly string requestTypeNameFormat;
         private readonly string responseTypeNameFormat;
@@ -101,6 +103,7 @@ namespace XRoadLib
             requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
             responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
             parameterNameProvider = producerConfiguration.ParameterNameProvider;
+            typeConfigurationProvider = producerConfiguration.TypeConfigurationProvider;
 
             serviceContracts = contractAssembly.GetServiceContracts();
 
@@ -230,9 +233,7 @@ namespace XRoadLib
             {
                 var type = value.Item1;
                 var schemaType = value.Item2;
-
-                var attribute = type.GetLayoutAttribute(protocol);
-                var properties = type.GetPropertiesSorted(attribute.GetComparer(), version);
+                var properties = type.GetPropertiesSorted(typeConfigurationProvider?.GetPropertyComparer(type) ?? DefaultComparer.Instance, version);
 
                 var contentParticle = new XmlSchemaSequence();
 

@@ -1,9 +1,7 @@
-﻿using XRoadLib.Attributes;
-using XRoadLib.Serialization;
+﻿using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
-    [XRoadLayout(ContentLayout = XRoadContentLayoutMode.Flexible)]
     public class ParamType1 : XRoadSerializable
     {
         public long Property1 { get; set; }

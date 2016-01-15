@@ -15,5 +15,6 @@
         public virtual IParameterNameProvider ParameterNameProvider { get; }
         public virtual uint? MinOperationVersion { get; }
         public virtual uint? MaxOperationVersion { get; }
+        public virtual ITypeConfigurationProvider TypeConfigurationProvider { get; }
     }
 }

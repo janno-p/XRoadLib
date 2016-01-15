@@ -4,6 +4,8 @@ namespace XRoadLib.Tests.Contract.Configuration
 {
     public class XRoadContractConfiguration : XRoadContractConfigurationBase
     {
+        private static readonly ITypeConfigurationProvider typeConfigurationProvider = new TypeConfigurationProvider();
+
         public override uint? MinOperationVersion => 1u;
         public override uint? MaxOperationVersion => 2u;
         public override string StandardHeaderName => "stdhdr";
@@ -16,5 +18,6 @@ namespace XRoadLib.Tests.Contract.Configuration
         public override string RequestMessageNameFormat => "{0}";
         public override string ResponseMessageNameFormat => "{0}Response";
         public override XRoadContentLayoutMode OperationContentLayoutMode => XRoadContentLayoutMode.Strict;
+        public override ITypeConfigurationProvider TypeConfigurationProvider => typeConfigurationProvider;
     }
 }

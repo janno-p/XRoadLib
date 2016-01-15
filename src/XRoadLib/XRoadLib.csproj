@@ -46,8 +46,10 @@
     <Compile Include="Attributes\XRoadAddContractAttribute.cs" />
     <Compile Include="Attributes\XRoadAttachmentAttribute.cs" />
     <Compile Include="Attributes\XRoadImportAttribute.cs" />
-    <Compile Include="Attributes\XRoadLayoutAttribute.cs" />
     <Compile Include="Attributes\XRoadProducerNameAttribute.cs" />
+    <Compile Include="Configuration\DefaultComparer.cs" />
+    <Compile Include="Configuration\ITypeConfigurationProvider.cs" />
+    <Compile Include="Configuration\TypeConfigurationProviderBase.cs" />
     <Compile Include="Configuration\XRoadContractConfigurationBase.cs" />
     <Compile Include="XRoadContentLayoutMode.cs" />
     <Compile Include="Attributes\XRoadServiceAttribute.cs" />
@@ -68,8 +70,8 @@
     <Compile Include="Header\XRoadHeader31.cs" />
     <Compile Include="Header\XRoadHeader40.cs" />
     <Compile Include="Header\XRoadHeaderBase.cs" />
-    <Compile Include="IParameterNameProvider.cs" />
-    <Compile Include="ISchemaImportProvider.cs" />
+    <Compile Include="Configuration\IParameterNameProvider.cs" />
+    <Compile Include="Configuration\ISchemaImportProvider.cs" />
     <Compile Include="IServiceRunner.cs" />
     <Compile Include="ProducerDefinition.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
