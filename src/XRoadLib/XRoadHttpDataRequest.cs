@@ -100,7 +100,7 @@ namespace XRoadLib
                 return result;
 
             var operationName = RequestMessage.Header?.Service?.ServiceCode ?? RequestMessage.RootElementName?.Name;
-            var dataService = serviceRunner.GetDataService(operationName);
+            var dataService = serviceRunner.GetDataService(this, operationName);
 
             serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, (RequestMessage.Header?.Service?.Version).GetValueOrDefault(1u), dataService.Item2);
 
@@ -134,7 +134,7 @@ namespace XRoadLib
 
             var serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, 1u, null);
 
-            result = serviceRunner.InvokeMetaService(metaServiceName);
+            result = serviceRunner.InvokeMetaService(this, metaServiceName);
 
             return serviceMap;
         }

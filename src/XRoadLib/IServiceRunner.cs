@@ -6,8 +6,8 @@ namespace XRoadLib
 {
     public interface IServiceRunner
     {
-        object InvokeMetaService(MetaServiceName metaServiceName);
+        object InvokeMetaService(XRoadHttpDataRequest sender, MetaServiceName metaServiceName);
 
-        Tuple<object, MethodInfo> GetDataService(string name);
+        Tuple<object, MethodInfo> GetDataService(XRoadHttpDataRequest sender, string name);
     }
 }
