@@ -151,20 +151,23 @@ namespace XRoadLib.Serialization
                 systemTypeMaps.GetOrAdd(typeof(System.IO.MemoryStream).ToQualifiedName(), typeMap);
             }
 
-            qualifiedName = new XmlQualifiedName("testSystem", NamespaceHelper.GetXRoadNamespace(protocol));
-            var serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, true, false, false));
-            serviceMaps.GetOrAdd(qualifiedName, serviceMap);
-
             qualifiedName = new XmlQualifiedName("getState", NamespaceHelper.GetXRoadNamespace(protocol));
-            serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
+            var serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
             serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, integerTypeMap, false), true, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
 
-            qualifiedName = new XmlQualifiedName("listMethods", NamespaceHelper.GetXRoadNamespace(protocol));
-            serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, stringArrayTypeMap, false), true, false, false));
-            serviceMaps.GetOrAdd(qualifiedName, serviceMap);
+            foreach (var xroadNamespace in new[] { NamespaceHelper.XTEE, NamespaceHelper.XROAD, "http://x-road.eu/xsd/x-road.xsd", "http://x-rd.net/xsd/xroad.xsd" })
+            {
+                qualifiedName = new XmlQualifiedName("testSystem", xroadNamespace);
+                serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
+                serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, true, false, false));
+                serviceMaps.GetOrAdd(qualifiedName, serviceMap);
+
+                qualifiedName = new XmlQualifiedName("listMethods", xroadNamespace);
+                serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
+                serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, stringArrayTypeMap, false), true, false, false));
+                serviceMaps.GetOrAdd(qualifiedName, serviceMap);
+            }
         }
 
         public IServiceMap GetServiceMap(XmlQualifiedName qualifiedName, uint dtoVersion, MethodInfo methodImpl)

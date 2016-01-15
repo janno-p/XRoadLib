@@ -1,3 +1,6 @@
+#### 1.0.0-alpha14 - Unreleased
+* X-Road metaservices should be defined in every possible X-Road namespace.
+
 #### 1.0.0-alpha13 - January 14 2016
 * More annotation elements to types and elements.
 * Accept XmlElementAttribute.DataType for parameter elements.
