@@ -3,7 +3,7 @@ using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
-    [XRoadLayout(PropertyOrder = XRoadPropertyOrder.Flexible)]
+    [XRoadLayout(ContentLayout = XRoadContentLayoutMode.Flexible)]
     public class ParamType1 : XRoadSerializable
     {
         public long Property1 { get; set; }

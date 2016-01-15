@@ -20,12 +20,15 @@ namespace XRoadLib.Serialization
         private readonly ConcurrentDictionary<XmlQualifiedName, ConcurrentDictionary<uint, IServiceMap>> serviceMaps = new ConcurrentDictionary<XmlQualifiedName, ConcurrentDictionary<uint, IServiceMap>>();
         private readonly ConcurrentDictionary<XmlQualifiedName, ITypeMap> systemTypeMaps = new ConcurrentDictionary<XmlQualifiedName, ITypeMap>();
 
+        public string ProducerName { get; }
+
         public SerializerCache(Assembly contractAssembly, XRoadProtocol protocol)
         {
             this.contractAssembly = contractAssembly;
             this.protocol = protocol;
 
-            producerNamespace = protocol.GetProducerNamespace(contractAssembly.GetProducerName());
+            ProducerName = protocol.GetProducerName(contractAssembly);
+            producerNamespace = protocol.GetProducerNamespace(ProducerName);
 
             ITypeMap typeMap = new DateTypeMap();
             systemTypeMaps.GetOrAdd(new XmlQualifiedName("date", NamespaceConstants.XSD), typeMap);
@@ -153,17 +156,17 @@ namespace XRoadLib.Serialization
 
             qualifiedName = new XmlQualifiedName("testSystem", protocol.GetNamespace());
             var serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, true, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
 
             qualifiedName = new XmlQualifiedName("getState", protocol.GetNamespace());
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, integerTypeMap, false), true, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, integerTypeMap, false), XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
 
             qualifiedName = new XmlQualifiedName("listMethods", protocol.GetNamespace());
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, stringArrayTypeMap, false), true, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, stringArrayTypeMap, false), XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
         }
 
@@ -195,11 +198,9 @@ namespace XRoadLib.Serialization
             if (serviceInterface == null)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
-            var configuration = contractAssembly.GetConfigurationAttribute(protocol);
-            var parameterNameProvider = configuration?.ParameterNameProvider != null ? (IParameterNameProvider)Activator.CreateInstance(configuration.ParameterNameProvider) : null;
-
+            var configuration = protocol.GetContractConfiguration(contractAssembly);
             var parameterMaps = serviceInterface.GetParameters()
-                                                .Select((x,i) => new { p = x, m = CreateParameterMap(parameterNameProvider, x, dtoVersion, methodImpl.GetParameters()[i]) })
+                                                .Select((x,i) => new { p = x, m = CreateParameterMap(configuration.ParameterNameProvider, x, dtoVersion, methodImpl.GetParameters()[i]) })
                                                 .Where(x => x.p.IsParameterInVersion(dtoVersion))
                                                 .Select(x => x.m)
                                                 .ToList();
@@ -211,7 +212,7 @@ namespace XRoadLib.Serialization
             var hasMultipartRequest = multipartAttribute != null && multipartAttribute.HasMultipartRequest;
             var hasMultipartResponse = multipartAttribute != null && multipartAttribute.HasMultipartResponse;
 
-            var serviceMap = new ServiceMap(qualifiedName, parameterMaps, resultMap, contractAssembly.HasStrictOperationSignature(protocol), hasMultipartRequest, hasMultipartResponse);
+            var serviceMap = new ServiceMap(qualifiedName, parameterMaps, resultMap, configuration.OperationContentLayoutMode, hasMultipartRequest, hasMultipartResponse);
 
             return serviceMapVersions.GetOrAdd(dtoVersion, serviceMap);
         }
@@ -319,7 +320,7 @@ namespace XRoadLib.Serialization
                 else
                 {
                     var layout = runtimeType.GetLayoutAttribute(protocol);
-                    if (layout == null || layout.PropertyOrder == XRoadPropertyOrder.Strict)
+                    if (layout == null || layout.ContentLayout == XRoadContentLayoutMode.Strict)
                         typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
                     else
                         typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);

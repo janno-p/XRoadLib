@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Schema;
-using XRoadLib;
 using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Header;
@@ -29,7 +28,7 @@ namespace XRoadLib
         private readonly string targetNamespace;
         private readonly string standardHeaderName;
         private readonly uint? version;
-        private readonly bool hasStrictOperationTypes;
+        private readonly XRoadContentLayoutMode operationContentLayoutMode;
         private readonly IParameterNameProvider parameterNameProvider;
 
         private readonly string requestTypeNameFormat;
@@ -59,18 +58,15 @@ namespace XRoadLib
             if (contractAssembly == null)
                 throw new ArgumentNullException(nameof(contractAssembly));
 
-            var producerConfiguration = contractAssembly.GetConfigurationAttribute(protocol);
-            if (producerConfiguration == null)
-                throw new ArgumentException($"Contract assembly `{contractAssembly.GetName().Name}` does not define producer configuration attribute for protocol `{protocol}`.", nameof(contractAssembly));
-
-            var producerName = contractAssembly.GetProducerName();
+            var producerConfiguration = protocol.GetContractConfiguration(contractAssembly);
+            var producerName = protocol.GetProducerName(contractAssembly);
 
             this.contractAssembly = contractAssembly;
             this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerName);
             this.protocol = protocol;
             this.version = version;
 
-            hasStrictOperationTypes = producerConfiguration.StrictOperationSignature;
+            operationContentLayoutMode = producerConfiguration.OperationContentLayoutMode;
 
             xroadNamespace = protocol.GetNamespace();
             targetNamespace = protocol.GetProducerNamespace(producerName);
@@ -100,14 +96,11 @@ namespace XRoadLib
             };
 
             standardHeaderName = producerConfiguration.StandardHeaderName.GetValueOrDefault(STANDARD_HEADER_NAME);
-
             requestTypeNameFormat = producerConfiguration.RequestTypeNameFormat.GetValueOrDefault("{0}");
             responseTypeNameFormat = producerConfiguration.ResponseTypeNameFormat.GetValueOrDefault("{0}Response");
             requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
             responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
-
-            if (producerConfiguration.ParameterNameProvider != null)
-                parameterNameProvider = (IParameterNameProvider)Activator.CreateInstance(producerConfiguration.ParameterNameProvider);
+            parameterNameProvider = producerConfiguration.ParameterNameProvider;
 
             serviceContracts = contractAssembly.GetServiceContracts();
 
@@ -749,7 +742,7 @@ namespace XRoadLib
 
             if (protocol == XRoadProtocol.Version20 || parameters.Count > 1)
             {
-                var schemaParticle = hasStrictOperationTypes ? (XmlSchemaGroupBase)new XmlSchemaSequence() : new XmlSchemaAll();
+                var schemaParticle = operationContentLayoutMode == XRoadContentLayoutMode.Flexible ? (XmlSchemaGroupBase)new XmlSchemaAll() : new XmlSchemaSequence();
 
                 foreach (var parameter in parameters)
                 {

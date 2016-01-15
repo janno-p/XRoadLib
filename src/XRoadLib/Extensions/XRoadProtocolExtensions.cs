@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
+using XRoadLib.Attributes;
+using XRoadLib.Configuration;
 using XRoadLib.Header;
 
 namespace XRoadLib.Extensions
@@ -156,6 +160,42 @@ namespace XRoadLib.Extensions
                 default:
                     throw new ArgumentException($"Unmapped X-Road protocol version `{protocol}`.", nameof(protocol));
             }
+        }
+
+        private static XRoadSupportedProtocolAttribute FindSupportedProtocolAttribute(this XRoadProtocol protocol, Assembly contractAssembly)
+        {
+            return contractAssembly.GetCustomAttributes(typeof(XRoadSupportedProtocolAttribute), false)
+                                   .OfType<XRoadSupportedProtocolAttribute>()
+                                   .SingleOrDefault(attr => attr.Protocol == protocol);
+        }
+
+        private static XRoadSupportedProtocolAttribute GetSupportedProtocolAttribute(this XRoadProtocol protocol, Assembly contractAssembly)
+        {
+            var attribute = protocol.FindSupportedProtocolAttribute(contractAssembly);
+            if (attribute == null)
+                throw new Exception($"Assembly `{contractAssembly.GetName().Name}` does not offer contract for X-Road messaging protocol version `{protocol}`.");
+
+            return attribute;
+        }
+
+        public static string FindProducerName(this XRoadProtocol protocol, Assembly contractAssembly)
+        {
+            return protocol.FindSupportedProtocolAttribute(contractAssembly)?.ProducerName;
+        }
+
+        public static string GetProducerName(this XRoadProtocol protocol, Assembly contractAssembly)
+        {
+            return protocol.GetSupportedProtocolAttribute(contractAssembly).ProducerName;
+        }
+
+        public static IXRoadContractConfiguration GetContractConfiguration(this XRoadProtocol protocol, Assembly contractAssembly)
+        {
+            var attribute = protocol.GetSupportedProtocolAttribute(contractAssembly);
+
+            if (attribute.Configuration != null && !typeof(IXRoadContractConfiguration).IsAssignableFrom(attribute.Configuration))
+                throw new ArgumentException("XRoadSupportedProtocolAttribute Configuration type should implement `IXRoadContractConfiguration` interface.");
+
+            return attribute.Configuration != null ? (IXRoadContractConfiguration)Activator.CreateInstance(attribute.Configuration) : null;
         }
     }
 }

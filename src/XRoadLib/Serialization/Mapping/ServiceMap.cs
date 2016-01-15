@@ -12,17 +12,17 @@ namespace XRoadLib.Serialization.Mapping
         private readonly XmlQualifiedName qualifiedName;
         private readonly IList<IParameterMap> parameters;
         private readonly IParameterMap result;
-        private readonly bool isStrict;
+        private readonly XRoadContentLayoutMode contentLayout;
 
         public bool HasMultipartRequest { get; }
         public bool HasMultipartResponse { get; }
 
-        public ServiceMap(XmlQualifiedName qualifiedName, IList<IParameterMap> parameters, IParameterMap result, bool isStrict, bool hasMultipartRequest, bool hasMultipartResponse)
+        public ServiceMap(XmlQualifiedName qualifiedName, IList<IParameterMap> parameters, IParameterMap result, XRoadContentLayoutMode contentLayout, bool hasMultipartRequest, bool hasMultipartResponse)
         {
             this.qualifiedName = qualifiedName;
             this.parameters = parameters;
             this.result = result;
-            this.isStrict = isStrict;
+            this.contentLayout = contentLayout;
 
             HasMultipartRequest = hasMultipartRequest;
             HasMultipartResponse = hasMultipartResponse;
@@ -35,8 +35,7 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, elementName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{elementName}` element.");
 
-            return isStrict ? DeserializeParametersStrict(reader, context)
-                            : DeserializeParametersNonStrict(reader, context);
+            return contentLayout == XRoadContentLayoutMode.Strict ? DeserializeParametersStrict(reader, context) : DeserializeParametersNonStrict(reader, context);
         }
 
         private IDictionary<string, object> DeserializeParametersStrict(XmlReader reader, SerializationContext context)
