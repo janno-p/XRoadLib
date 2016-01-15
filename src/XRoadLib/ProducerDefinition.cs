@@ -59,7 +59,7 @@ namespace XRoadLib
                 throw new ArgumentNullException(nameof(contractAssembly));
 
             var producerConfiguration = protocol.GetContractConfiguration(contractAssembly);
-            var producerName = protocol.GetProducerName(contractAssembly);
+            var producerName = contractAssembly.GetProducerName();
 
             this.contractAssembly = contractAssembly;
             this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerName);

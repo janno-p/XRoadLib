@@ -20,15 +20,13 @@ namespace XRoadLib.Serialization
         private readonly ConcurrentDictionary<XmlQualifiedName, ConcurrentDictionary<uint, IServiceMap>> serviceMaps = new ConcurrentDictionary<XmlQualifiedName, ConcurrentDictionary<uint, IServiceMap>>();
         private readonly ConcurrentDictionary<XmlQualifiedName, ITypeMap> systemTypeMaps = new ConcurrentDictionary<XmlQualifiedName, ITypeMap>();
 
-        public string ProducerName { get; }
-
         public SerializerCache(Assembly contractAssembly, XRoadProtocol protocol)
         {
             this.contractAssembly = contractAssembly;
             this.protocol = protocol;
 
-            ProducerName = protocol.GetProducerName(contractAssembly);
-            producerNamespace = protocol.GetProducerNamespace(ProducerName);
+            var producerName = contractAssembly.GetProducerName();
+            producerNamespace = protocol.GetProducerNamespace(producerName);
 
             ITypeMap typeMap = new DateTypeMap();
             systemTypeMaps.GetOrAdd(new XmlQualifiedName("date", NamespaceConstants.XSD), typeMap);

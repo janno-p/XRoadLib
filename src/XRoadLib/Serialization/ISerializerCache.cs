@@ -8,8 +8,6 @@ namespace XRoadLib.Serialization
 {
     public interface ISerializerCache
     {
-        string ProducerName { get; }
-
         IServiceMap GetServiceMap(XmlQualifiedName qualifiedName, uint dtoVersion, MethodInfo methodImpl);
 
         ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion, bool undefined = false);

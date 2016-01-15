@@ -15,9 +15,11 @@ using XRoadLib.Tests.Contract.Configuration;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-[assembly: XRoadSupportedProtocol(XRoadProtocol.Version20, "test-producer", Configuration = typeof(XRoadContractConfiguration))]
-[assembly: XRoadSupportedProtocol(XRoadProtocol.Version31, "test-producer", Configuration = typeof(XRoadContractConfiguration))]
-[assembly: XRoadSupportedProtocol(XRoadProtocol.Version40, "test-producer", Configuration = typeof(XRoadContractConfiguration))]
+[assembly: XRoadProducerName("test-producer")]
+
+[assembly: XRoadSupportedProtocol(XRoadProtocol.Version20, Configuration = typeof(XRoadContractConfiguration))]
+[assembly: XRoadSupportedProtocol(XRoadProtocol.Version31, Configuration = typeof(XRoadContractConfiguration))]
+[assembly: XRoadSupportedProtocol(XRoadProtocol.Version40, Configuration = typeof(XRoadContractConfiguration))]
 
 [assembly: XRoadTitle("", "Ilma keeleta palun")]
 [assembly: XRoadTitle("en", "XRoadLib test producer")]

@@ -178,16 +178,6 @@ namespace XRoadLib.Extensions
             return attribute;
         }
 
-        public static string FindProducerName(this XRoadProtocol protocol, Assembly contractAssembly)
-        {
-            return protocol.FindSupportedProtocolAttribute(contractAssembly)?.ProducerName;
-        }
-
-        public static string GetProducerName(this XRoadProtocol protocol, Assembly contractAssembly)
-        {
-            return protocol.GetSupportedProtocolAttribute(contractAssembly).ProducerName;
-        }
-
         public static IXRoadContractConfiguration GetContractConfiguration(this XRoadProtocol protocol, Assembly contractAssembly)
         {
             var attribute = protocol.GetSupportedProtocolAttribute(contractAssembly);

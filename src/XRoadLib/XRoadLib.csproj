@@ -47,6 +47,7 @@
     <Compile Include="Attributes\XRoadAttachmentAttribute.cs" />
     <Compile Include="Attributes\XRoadImportAttribute.cs" />
     <Compile Include="Attributes\XRoadLayoutAttribute.cs" />
+    <Compile Include="Attributes\XRoadProducerNameAttribute.cs" />
     <Compile Include="Configuration\XRoadContractConfigurationBase.cs" />
     <Compile Include="XRoadContentLayoutMode.cs" />
     <Compile Include="Attributes\XRoadServiceAttribute.cs" />

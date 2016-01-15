@@ -8,6 +8,20 @@ namespace XRoadLib.Extensions
 {
     public static class AssemblyExtensions
     {
+        public static string FindProducerName(this Assembly contractAssembly)
+        {
+            return contractAssembly.GetSingleAttribute<XRoadProducerNameAttribute>()?.Value;
+        }
+
+        public static string GetProducerName(this Assembly contractAssembly)
+        {
+            var attribute = contractAssembly.GetSingleAttribute<XRoadProducerNameAttribute>();
+            if (attribute == null)
+                throw new Exception($"Assembly `{contractAssembly.GetName().Name}` does not define X-Road producer name.");
+
+            return attribute.Value;
+        }
+
         public static IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> GetServiceContracts(this Assembly assembly)
         {
             return assembly.GetTypes()
