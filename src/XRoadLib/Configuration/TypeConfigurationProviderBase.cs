@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace XRoadLib.Configuration
 {
     public class TypeConfigurationProviderBase : ITypeConfigurationProvider
     {
-        public virtual XName GetTypeName(Type type)
+        public virtual string GetTypeName(Type type)
         {
             return type.Name;
         }
