@@ -28,27 +28,27 @@ namespace XRoadLib.Header
                 switch (reader.LocalName)
                 {
                     case "authenticator":
-                        Authenticator = reader.ReadInnerXml();
+                        Authenticator = reader.ReadElementContentAsString();
                         return;
 
                     case "userName":
-                        UserName = reader.ReadInnerXml();
+                        UserName = reader.ReadElementContentAsString();
                         return;
 
                     case "position":
-                        Position = reader.ReadInnerXml();
+                        Position = reader.ReadElementContentAsString();
                         return;
 
                     case "unit":
-                        Unit = reader.ReadInnerXml();
+                        Unit = reader.ReadElementContentAsString();
                         return;
 
                     case "issue":
-                        Issue = reader.ReadInnerXml();
+                        Issue = reader.ReadElementContentAsString();
                         return;
 
                     case "service":
-                        var service = XRoadServiceIdentifier.FromString(reader.ReadInnerXml());
+                        var service = XRoadServiceIdentifier.FromString(reader.ReadElementContentAsString());
                         if (Service == null)
                             Service = new XRoadServiceIdentifier();
                         Service.ServiceCode = service.ServiceCode;
@@ -56,48 +56,48 @@ namespace XRoadLib.Header
                         return;
 
                     case "id":
-                        Id = reader.ReadInnerXml();
+                        Id = reader.ReadElementContentAsString();
                         return;
 
                     case "userId":
-                        UserId = reader.ReadInnerXml();
+                        UserId = reader.ReadElementContentAsString();
                         return;
 
                     case "producer":
                         if (Service == null)
                             Service = new XRoadServiceIdentifier();
-                        Service.SubsystemCode = reader.ReadInnerXml();
+                        Service.SubsystemCode = reader.ReadElementContentAsString();
                         return;
 
                     case "consumer":
                         if (Client == null)
                             Client = new XRoadClientIdentifier();
-                        Client.MemberCode = reader.ReadInnerXml();
+                        Client.MemberCode = reader.ReadElementContentAsString();
                         return;
 
                     case "async":
-                        var value = reader.ReadInnerXml().ToLower();
-                        Async = value.Equals("1") || value.Equals("true");
+                        var value = reader.ReadElementContentAsString();
+                        Async = !string.IsNullOrWhiteSpace(value) && XmlConvert.ToBoolean(value);
                         return;
 
                     case "paid":
-                        Paid = reader.ReadInnerXml();
+                        Paid = reader.ReadElementContentAsString();
                         return;
 
                     case "encrypt":
-                        Encrypt = reader.ReadInnerXml();
+                        Encrypt = reader.ReadElementContentAsString();
                         return;
 
                     case "encryptCert":
-                        EncryptCert = reader.ReadInnerXml();
+                        EncryptCert = reader.ReadElementContentAsString();
                         return;
 
                     case "encrypted":
-                        Encrypted = reader.ReadInnerXml();
+                        Encrypted = reader.ReadElementContentAsString();
                         return;
 
                     case "encryptedCert":
-                        EncryptedCert = reader.ReadInnerXml();
+                        EncryptedCert = reader.ReadElementContentAsString();
                         return;
                 }
             }

@@ -1,3 +1,6 @@
+#### 1.0.0-alpha14 - Unreleased
+* Add support for X-Road v6 and X-Road messaging protcol v4.0.
+
 #### 1.0.0-alpha13 - January 14 2016
 * More annotation elements to types and elements.
 * Accept XmlElementAttribute.DataType for parameter elements.

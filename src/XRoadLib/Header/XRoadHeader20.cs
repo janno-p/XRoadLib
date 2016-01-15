@@ -31,27 +31,27 @@ namespace XRoadLib.Header
                 switch (reader.LocalName)
                 {
                     case "autentija":
-                        Autentija = reader.ReadInnerXml();
+                        Autentija = reader.ReadElementContentAsString();
                         return;
 
                     case "ametniknimi":
-                        AmetnikNimi = reader.ReadInnerXml();
+                        AmetnikNimi = reader.ReadElementContentAsString();
                         return;
 
                     case "amet":
-                        Amet = reader.ReadInnerXml();
+                        Amet = reader.ReadElementContentAsString();
                         return;
 
                     case "allasutus":
-                        Allasutus = reader.ReadInnerXml();
+                        Allasutus = reader.ReadElementContentAsString();
                         return;
 
                     case "toimik":
-                        Issue = reader.ReadInnerXml();
+                        Issue = reader.ReadElementContentAsString();
                         return;
 
                     case "nimi":
-                        var service = XRoadServiceIdentifier.FromString(reader.ReadInnerXml());
+                        var service = XRoadServiceIdentifier.FromString(reader.ReadElementContentAsString());
                         if (Service == null)
                             Service = new XRoadServiceIdentifier();
                         Service.ServiceCode = service.ServiceCode;
@@ -59,52 +59,52 @@ namespace XRoadLib.Header
                         return;
 
                     case "id":
-                        Id = reader.ReadInnerXml();
+                        Id = reader.ReadElementContentAsString();
                         return;
 
                     case "isikukood":
-                        UserId = reader.ReadInnerXml();
+                        UserId = reader.ReadElementContentAsString();
                         return;
 
                     case "andmekogu":
                         if (Service == null)
                             Service = new XRoadServiceIdentifier();
-                        Service.SubsystemCode = reader.ReadInnerXml();
+                        Service.SubsystemCode = reader.ReadElementContentAsString();
                         return;
 
                     case "asutus":
                         if (Client == null)
                             Client = new XRoadClientIdentifier();
-                        Client.MemberCode = reader.ReadInnerXml();
+                        Client.MemberCode = reader.ReadElementContentAsString();
                         return;
 
                     case "ametnik":
-                        Ametnik = reader.ReadInnerXml();
+                        Ametnik = reader.ReadElementContentAsString();
                         return;
 
                     case "asynkroonne":
-                        var value = reader.ReadInnerXml().ToLower();
-                        Asünkroonne = value.Equals("1") || value.Equals("true");
+                        var value = reader.ReadElementContentAsString();
+                        Asünkroonne = !string.IsNullOrWhiteSpace(value) && XmlConvert.ToBoolean(value);
                         return;
 
                     case "makstud":
-                        Makstud = reader.ReadInnerXml();
+                        Makstud = reader.ReadElementContentAsString();
                         return;
 
                     case "salastada":
-                        Salastada = reader.ReadInnerXml();
+                        Salastada = reader.ReadElementContentAsString();
                         return;
 
                     case "salastada_sertifikaadiga":
-                        SalastadaSertifikaadiga = reader.ReadInnerXml();
+                        SalastadaSertifikaadiga = reader.ReadElementContentAsString();
                         return;
 
                     case "salastatud":
-                        Salastatud = reader.ReadInnerXml();
+                        Salastatud = reader.ReadElementContentAsString();
                         return;
 
                     case "salastatud_sertifikaadiga":
-                        SalastatudSertifikaadiga = reader.ReadInnerXml();
+                        SalastatudSertifikaadiga = reader.ReadElementContentAsString();
                         return;
                 }
             }
