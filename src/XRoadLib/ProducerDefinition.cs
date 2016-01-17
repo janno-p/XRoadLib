@@ -162,14 +162,13 @@ namespace XRoadLib
         {
             var memberExpression = expression.Body as MemberExpression;
             if (memberExpression == null)
-                throw new ArgumentException($"MemberExpression expected, but was {expression.Body.GetType().Name} ({GetType().Name}).");
-
-            if (memberExpression.Expression != expression.Parameters[0])
-                throw new ArgumentException($"Only parameter members should be used in mapping definition ({GetType().Name}).");
+                throw new ArgumentException($"Only MemberExpression is allowed to use for SOAP header definition, but was {expression.Body.GetType().Name} ({GetType().Name}).", nameof(expression));
 
             var elementName = memberExpression.Member.GetElementName();
-            if (!string.IsNullOrWhiteSpace(elementName))
-                requiredHeaders.Add(elementName);
+            if (string.IsNullOrWhiteSpace(elementName))
+                throw new ArgumentException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.", nameof(expression));
+
+            requiredHeaders.Add(elementName);
 
             return this;
         }
