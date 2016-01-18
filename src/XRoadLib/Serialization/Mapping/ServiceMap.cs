@@ -160,7 +160,7 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, GetRequestElementName(context)))
                 return;
 
-            if (context.Protocol != XRoadProtocol.Version31)
+            if (context.Protocol == XRoadProtocol.Version20)
             {
                 writer.WriteStartElement("paring");
                 writer.WriteAttributes(reader, true);

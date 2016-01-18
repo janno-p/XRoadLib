@@ -59,13 +59,16 @@ namespace XRoadLib
         {
             if (contractAssembly == null)
                 throw new ArgumentNullException(nameof(contractAssembly));
+            this.contractAssembly = contractAssembly;
+
+            if (!protocol.HasDefinedValue())
+                throw new ArgumentException($"Only defined X-Road protocol values are allowed, but was `{protocol}`.", nameof(protocol));
+            this.protocol = protocol;
 
             var producerConfiguration = protocol.GetContractConfiguration(contractAssembly);
             var producerName = contractAssembly.GetProducerName();
 
-            this.contractAssembly = contractAssembly;
             this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerName);
-            this.protocol = protocol;
             this.version = version;
 
             operationContentLayoutMode = producerConfiguration.OperationContentLayoutMode;
@@ -503,7 +506,7 @@ namespace XRoadLib
 
         private void CreateArrayDefinition(XmlSchemaElement element, XmlSchemaObject itemElement, Type type)
         {
-            if (protocol == XRoadProtocol.Version31)
+            if (protocol != XRoadProtocol.Version20)
             {
                 element.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { itemElement } } };
                 return;
@@ -553,10 +556,6 @@ namespace XRoadLib
             serviceDescription.Namespaces.Add(PrefixConstants.SOAP_ENV, NamespaceConstants.SOAP_ENV);
             serviceDescription.Namespaces.Add(PrefixConstants.WSDL, NamespaceConstants.WSDL);
             serviceDescription.Namespaces.Add(PrefixConstants.XMIME, NamespaceConstants.XMIME);
-
-            if (protocol == XRoadProtocol.Version40)
-                serviceDescription.Namespaces.Add(PrefixConstants.ID, NamespaceConstants.XROAD_V4_ID);
-
             serviceDescription.Namespaces.Add(protocol.GetPrefix(), xroadNamespace);
             serviceDescription.Namespaces.Add(PrefixConstants.XSD, NamespaceConstants.XSD);
             serviceDescription.Namespaces.Add("", targetNamespace);
@@ -844,7 +843,7 @@ namespace XRoadLib
 
         private Message CreateOperationMessage(XmlSchemaElement element, MethodInfo methodContract, Message inputMessage = null)
         {
-            if (protocol == XRoadProtocol.Version31)
+            if (protocol != XRoadProtocol.Version20)
                 return new Message
                 {
                     Name = element.Name,
