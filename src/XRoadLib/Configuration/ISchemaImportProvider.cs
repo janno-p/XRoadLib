@@ -1,4 +1,4 @@
-﻿namespace XRoadLib
+﻿namespace XRoadLib.Configuration
 {
     public interface ISchemaImportProvider
     {

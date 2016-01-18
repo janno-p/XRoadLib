@@ -11,7 +11,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public StringTypeMap(XmlQualifiedName xmlQualifiedName = null)
         {
-            this.xmlQualifiedName = xmlQualifiedName ?? new XmlQualifiedName("string", NamespaceHelper.XSD);
+            this.xmlQualifiedName = xmlQualifiedName ?? new XmlQualifiedName("string", NamespaceConstants.XSD);
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)

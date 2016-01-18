@@ -18,13 +18,13 @@ namespace XRoadLib.Serialization
                 throw new ArgumentNullException(nameof(contractAssembly));
             ContractAssembly = contractAssembly;
 
+            ProducerName = contractAssembly.GetProducerName();
+
             if (protocols == null || protocols.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(protocols));
 
             foreach (var protocol in protocols)
                 serializerCaches.Add(protocol, new SerializerCache(ContractAssembly, protocol));
-
-            ProducerName = ContractAssembly.GetProducerName();
         }
 
         public ISerializerCache GetSerializerCache(XRoadProtocol protocol)

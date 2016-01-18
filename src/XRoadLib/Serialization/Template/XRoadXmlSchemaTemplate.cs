@@ -32,7 +32,7 @@ namespace XRoadLib.Serialization.Template
 
         private class XRoadXmlSchemaTemplateNode : IXmlTemplateNode
         {
-            private static readonly XmlQualifiedName arrayTypeName = new XmlQualifiedName("Array", NamespaceHelper.SOAP_ENC);
+            private static readonly XmlQualifiedName arrayTypeName = new XmlQualifiedName("Array", NamespaceConstants.SOAP_ENC);
 
             private readonly XmlSchema schema;
             private readonly XmlSchemaElement nodeElement;

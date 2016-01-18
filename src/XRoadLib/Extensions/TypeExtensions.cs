@@ -134,20 +134,14 @@ namespace XRoadLib.Extensions
             return propertyInfo.GetElementName() ?? propertyInfo.GetFixedPropertyName();
         }
 
-        public static T GetAppliableAttribute<T>(this ICustomAttributeProvider provider, XRoadProtocol protocol)
-            where T : Attribute, IXRoadProtocolAppliable
-        {
-            var attributes = provider.GetCustomAttributes(typeof(T), false)
-                                     .OfType<T>()
-                                     .ToList();
-
-            return attributes.SingleOrDefault(attr => attr.HasAppliesToValue && attr.AppliesTo == protocol)
-                ?? attributes.SingleOrDefault(attr => !attr.HasAppliesToValue);
-        }
-
         public static XRoadImportAttribute GetImportAttribute(this MethodInfo methodInfo, XRoadProtocol protocol)
         {
-            return methodInfo.GetAppliableAttribute<XRoadImportAttribute>(protocol);
+            var attributes = methodInfo.GetCustomAttributes(typeof(XRoadImportAttribute), false)
+                                       .OfType<XRoadImportAttribute>()
+                                       .ToList();
+
+            return attributes.SingleOrDefault(attr => attr.AppliesTo == protocol)
+                ?? attributes.SingleOrDefault(attr => attr.AppliesTo == XRoadProtocol.Undefined);
         }
 
         public static IEnumerable<XRoadMessagePartAttribute> GetExtraMessageParts(this MethodInfo methodInfo)
@@ -275,32 +269,6 @@ namespace XRoadLib.Extensions
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
 
-        internal static XRoadLayoutAttribute GetLayoutAttribute(this Type type, XRoadProtocol protocol)
-        {
-            return type.GetAppliableAttribute<XRoadLayoutAttribute>(protocol);
-        }
-
-        internal static IComparer<PropertyInfo> GetComparer(this Type type, XRoadProtocol protocol)
-        {
-            return type.GetLayoutAttribute(protocol).GetComparer();
-        }
-
-        internal static IComparer<PropertyInfo> GetComparer(this XRoadLayoutAttribute attribute)
-        {
-            var comparerType = attribute?.Comparer;
-
-            return comparerType != null ? (IComparer<PropertyInfo>)Activator.CreateInstance(comparerType)
-                                        : new DefaultComparer();
-        }
-
-        private class DefaultComparer : IComparer<PropertyInfo>
-        {
-            public int Compare(PropertyInfo x, PropertyInfo y)
-            {
-                return string.Compare(x.GetPropertyName(), y.GetPropertyName(), StringComparison.InvariantCultureIgnoreCase);
-            }
-        }
-
         internal static XmlQualifiedName GetQualifiedTypeName(this ICustomAttributeProvider provider)
         {
             var attribute = provider.GetSingleAttribute<XmlElementAttribute>();
@@ -308,7 +276,7 @@ namespace XRoadLib.Extensions
 
             return string.IsNullOrWhiteSpace(dataType)
                 ? null
-                : new XmlQualifiedName(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceHelper.SOAP_ENC : NamespaceHelper.XSD);
+                : new XmlQualifiedName(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceConstants.SOAP_ENC : NamespaceConstants.XSD);
         }
     }
 }

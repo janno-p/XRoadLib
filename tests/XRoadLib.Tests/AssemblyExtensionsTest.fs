@@ -17,7 +17,7 @@ module AssemblyExtensionsTest =
     [<Test>]
     let ``get missing X-Road producer name`` () =
         TestDelegate(fun _ -> typeof<Marker>.Assembly.GetProducerName() |> ignore)
-        |> should (throwWithMessage @"Unable to extract producer name from contract assembly `XRoadLib.Tests`.") typeof<Exception>
+        |> should (throwWithMessage @"Assembly `XRoadLib.Tests` does not define X-Road producer name.") typeof<Exception>
 
     [<Test>]
     let ``find existing X-Road producer name`` () =

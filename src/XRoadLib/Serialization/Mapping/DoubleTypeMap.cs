@@ -7,7 +7,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DoubleTypeMap : TypeMap<double>
     {
-        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("double", NamespaceHelper.XSD);
+        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("double", NamespaceConstants.XSD);
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

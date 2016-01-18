@@ -1,13 +1,14 @@
-﻿using System.Xml;
+﻿using System.Collections.Generic;
+using System.Xml;
 
 namespace XRoadLib.Extensions
 {
     public static class XmlReaderExtensions
     {
-        private static readonly XmlQualifiedName qnXsiNil = new XmlQualifiedName("nil", NamespaceHelper.XSI);
-        private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceHelper.XSI);
-        private static readonly XmlQualifiedName qnSoapEncArray = new XmlQualifiedName("Array", NamespaceHelper.SOAP_ENC);
-        private static readonly XmlQualifiedName qnSoapEncArrayType = new XmlQualifiedName("arrayType", NamespaceHelper.SOAP_ENC);
+        private static readonly XmlQualifiedName qnXsiNil = new XmlQualifiedName("nil", NamespaceConstants.XSI);
+        private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceConstants.XSI);
+        private static readonly XmlQualifiedName qnSoapEncArray = new XmlQualifiedName("Array", NamespaceConstants.SOAP_ENC);
+        private static readonly XmlQualifiedName qnSoapEncArrayType = new XmlQualifiedName("arrayType", NamespaceConstants.SOAP_ENC);
 
         public static bool ReadToElement(this XmlReader reader, string localName)
         {
@@ -84,6 +85,19 @@ namespace XRoadLib.Extensions
                 if (!reader.Read() || reader.Depth < depth)
                     return false;
             }
+        }
+
+        private static readonly ICollection<string> headerNamespaces = new[]
+        {
+            NamespaceConstants.XTEE,
+            NamespaceConstants.XROAD,
+            NamespaceConstants.XROAD_V4,
+            NamespaceConstants.XROAD_V4_REPR
+        };
+
+        public static bool IsHeaderNamespace(this XmlReader reader)
+        {
+            return headerNamespaces.Contains(reader.NamespaceURI);
         }
     }
 }

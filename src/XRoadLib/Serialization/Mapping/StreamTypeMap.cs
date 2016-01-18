@@ -17,7 +17,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
-            if (context.Protocol != XRoadProtocol.Version20 && !reader.ReadToDescendant("Include", NamespaceHelper.XOP))
+            if (context.Protocol != XRoadProtocol.Version20 && !reader.ReadToDescendant("Include", NamespaceConstants.XOP))
                 throw XRoadException.InvalidQuery("Päringu xml-is puudub viide (`xop:Include` element) faili sisule.");
 
             var contentID = reader.GetAttribute("href");
@@ -68,8 +68,8 @@ namespace XRoadLib.Serialization.Mapping
 
             if (context.Protocol != XRoadProtocol.Version20)
             {
-                writer.WriteStartElement(PrefixHelper.XOP, "Include", NamespaceHelper.XOP);
-                writer.WriteAttributeString(PrefixHelper.XMIME, "contentType", NamespaceHelper.XMIME, "application/octet-stream");
+                writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);
+                writer.WriteAttributeString(PrefixConstants.XMIME, "contentType", NamespaceConstants.XMIME, "application/octet-stream");
             }
 
             writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");

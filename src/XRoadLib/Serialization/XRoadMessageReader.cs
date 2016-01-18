@@ -5,8 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using XRoadLib.Header;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
+using XRoadLib.Header;
 
 namespace XRoadLib.Serialization
 {
@@ -58,14 +59,20 @@ namespace XRoadLib.Serialization
             using (var reader = XmlReader.Create(target.ContentStream, new XmlReaderSettings { CloseInput = false }))
             {
                 var protocol = ParseXRoadProtocol(reader);
+                var header = ParseXRoadHeader(reader, protocol);
 
-                target.Header = ParseXRoadHeader(reader, ref protocol);
-                target.Protocol = protocol.GetValueOrDefault(XRoadProtocol.Version31);
+                target.Header = header?.Item1;
+                target.UnresolvedHeaders = header?.Item2;
+                target.Protocol = (header?.Item1?.Protocol).GetValueOrDefault(protocol);
                 target.RootElementName = ParseMessageRootElementName(reader);
             }
 
-            var teenuseNimi = !string.IsNullOrWhiteSpace(target.Header?.Nimi?.Method)
-                ? target.Header.Nimi.Method
+            var xrh4 = target.Header as IXRoadHeader40;
+            if (xrh4 != null && xrh4.ProtocolVersion?.Trim() != "4.0")
+                throw XRoadException.InvalidQuery("Unsupported X-Road v6 protocol version value `{0}`.", xrh4.ProtocolVersion ?? string.Empty);
+
+            var teenuseNimi = !string.IsNullOrWhiteSpace(target.Header?.Service?.ServiceCode)
+                ? target.Header.Service.ServiceCode
                 : (target.RootElementName != null ? target.RootElementName.Name : "");
 
             if (target.Protocol != XRoadProtocol.Version20 && target.IsMultipart && !target.MultipartContentType.Equals("application/xop+xml"))
@@ -74,11 +81,11 @@ namespace XRoadLib.Serialization
             if (isResponse)
                 return;
 
-            if (target.RootElementName == null || string.IsNullOrWhiteSpace(target.Header?.Nimi?.Method))
+            if (target.RootElementName == null || string.IsNullOrWhiteSpace(target.Header?.Service?.ServiceCode))
                 return;
 
-            if (!Equals(target.RootElementName.Name, target.Header.Nimi.Method))
-                throw XRoadException.InvalidQuery("Teenuse nimi `{0}` ei ole vastavuses päringu sisuga `{1}`.", target.Header.Nimi.Method, target.RootElementName);
+            if (!Equals(target.RootElementName.Name, target.Header.Service.ServiceCode))
+                throw XRoadException.InvalidQuery("Teenuse nimi `{0}` ei ole vastavuses päringu sisuga `{1}`.", target.Header.Service.ServiceCode, target.RootElementName);
         }
 
         public void Dispose()
@@ -380,78 +387,46 @@ namespace XRoadLib.Serialization
             return charset;
         }
 
-        private static XRoadProtocol? ParseXRoadProtocol(XmlReader reader)
+        private static XRoadProtocol ParseXRoadProtocol(XmlReader reader)
         {
-            if (!reader.MoveToElement(0, "Envelope", NamespaceHelper.SOAP_ENV))
+            if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
                 throw XRoadException.InvalidQuery("Päringus puudub SOAP-ENV:Envelope element.");
 
-            return reader.GetAttribute("encodingStyle", NamespaceHelper.SOAP_ENV) != null ? XRoadProtocol.Version20 : (XRoadProtocol?)null;
+            return reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV) != null ? XRoadProtocol.Version20 : XRoadProtocol.Undefined;
         }
 
-        private static IXRoadHeader ParseXRoadHeader(XmlReader reader, ref XRoadProtocol? protocol)
+        private static Tuple<XRoadHeaderBase, List<XElement>> ParseXRoadHeader(XmlReader reader, XRoadProtocol protocol)
         {
-            if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceHelper.SOAP_ENV))
+            if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
                 return null;
 
-            var header = new XRoadHeader();
+            var header = protocol.CreateXRoadHeader();
+            var unresolved = new List<XElement>();
 
             while (reader.MoveToElement(2))
-                SetHeader(reader, header, ref protocol);
+            {
+                if (header == null && reader.IsHeaderNamespace())
+                    header = XRoadHeaderBase.FromNamespace(reader.NamespaceURI);
 
-            return header;
+                if (header != null && header.Protocol.DefinesHeadersForNamespace(reader.NamespaceURI))
+                {
+                    header.SetHeaderValue(reader);
+                    continue;
+                }
+
+                unresolved.Add((XElement)XNode.ReadFrom(reader));
+            }
+
+            header?.Validate();
+
+            return Tuple.Create(header, unresolved);
         }
 
         private static XmlQualifiedName ParseMessageRootElementName(XmlReader reader)
         {
-            return (reader.IsCurrentElement(1, "Body", NamespaceHelper.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceHelper.SOAP_ENV)) && reader.MoveToElement(2)
+            return (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV)) && reader.MoveToElement(2)
                 ? new XmlQualifiedName(reader.LocalName, reader.NamespaceURI)
                 : null;
-        }
-
-        private static void SetHeader(XmlReader reader, IXRoadHeader header, ref XRoadProtocol? protocol)
-        {
-            if (protocol == null)
-                protocol = (reader.NamespaceURI == NamespaceHelper.XTEE ? XRoadProtocol.Version20 : (XRoadProtocol?)null)
-                           ?? (reader.NamespaceURI == NamespaceHelper.XROAD ? XRoadProtocol.Version31 : (XRoadProtocol?)null);
-
-            if (protocol == null || reader.NamespaceURI != NamespaceHelper.GetXRoadNamespace(protocol.Value))
-            {
-                header.Unresolved.Add(new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), reader.ReadInnerXml());
-                return;
-            }
-
-            if (protocol.Value == XRoadProtocol.Version20)
-                switch (reader.LocalName)
-                {
-                    case "autentija": header.Autentija = reader.ReadInnerXml(); return;
-                    case "ametniknimi": header.AmetnikNimi = reader.ReadInnerXml(); return;
-                    case "amet": header.Amet = reader.ReadInnerXml(); return;
-                    case "allasutus": header.Allasutus = reader.ReadInnerXml(); return;
-                    case "toimik": header.Toimik = reader.ReadInnerXml(); return;
-                    case "nimi": header.Nimi = new XRoadServiceName(reader.ReadInnerXml()); return;
-                    case "id": header.Id = reader.ReadInnerXml(); return;
-                    case "isikukood": header.Isikukood = reader.ReadInnerXml(); return;
-                    case "andmekogu": header.Andmekogu = reader.ReadInnerXml(); return;
-                    case "asutus": header.Asutus = reader.ReadInnerXml(); return;
-                    case "ametnik": header.Ametnik = reader.ReadInnerXml(); return;
-                }
-
-            if (protocol.Value == XRoadProtocol.Version31)
-                switch (reader.LocalName)
-                {
-                    case "authenticator": header.Autentija = reader.ReadInnerXml(); return;
-                    case "userName": header.AmetnikNimi = reader.ReadInnerXml(); return;
-                    case "position": header.Amet = reader.ReadInnerXml(); return;
-                    case "unit": header.Allasutus = reader.ReadInnerXml(); return;
-                    case "issue": header.Toimik = reader.ReadInnerXml(); return;
-                    case "service": header.Nimi = new XRoadServiceName(reader.ReadInnerXml()); return;
-                    case "id": header.Id = reader.ReadInnerXml(); return;
-                    case "userId": header.Isikukood = reader.ReadInnerXml(); return;
-                    case "producer": header.Andmekogu = reader.ReadInnerXml(); return;
-                    case "consumer": header.Asutus = reader.ReadInnerXml(); return;
-                }
-
-            throw XRoadException.InvalidQuery("Tundmatu X-tee päise element {0}.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI));
         }
     }
 }

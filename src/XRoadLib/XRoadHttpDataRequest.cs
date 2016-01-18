@@ -99,10 +99,10 @@ namespace XRoadLib
             if ((serviceMap = InvokeMetaService(serializerCache, out result)) != null)
                 return result;
 
-            var operationName = RequestMessage.Header?.Nimi?.Method ?? RequestMessage.RootElementName?.Name;
-            var dataService = serviceRunner.GetDataService(operationName);
+            var operationName = RequestMessage.Header?.Service?.ServiceCode ?? RequestMessage.RootElementName?.Name;
+            var dataService = serviceRunner.GetDataService(this, operationName);
 
-            serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, (RequestMessage.Header?.Nimi?.Version).GetValueOrDefault(1u), dataService.Item2);
+            serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, (RequestMessage.Header?.Service?.Version).GetValueOrDefault(1u), dataService.Item2);
 
             var parameters = DeserializeMethodParameters(serviceMap, dataService.Item2);
 
@@ -134,7 +134,7 @@ namespace XRoadLib
 
             var serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, 1u, null);
 
-            result = serviceRunner.InvokeMetaService(metaServiceName);
+            result = serviceRunner.InvokeMetaService(this, metaServiceName);
 
             return serviceMap;
         }
@@ -149,10 +149,10 @@ namespace XRoadLib
             RequestMessage.ContentStream.Position = 0;
             var reader = XmlReader.Create(RequestMessage.ContentStream, beforeDeserializationEventArgs.XmlReaderSettings);
 
-            if (!reader.MoveToElement(0, "Envelope", NamespaceHelper.SOAP_ENV))
-                throw XRoadException.InvalidQuery("Element `{0}:Envelope` is missing from request content.", NamespaceHelper.SOAP);
-            if (!reader.MoveToElement(1, "Body", NamespaceHelper.SOAP_ENV))
-                throw XRoadException.InvalidQuery("Element `{0}:Body` is missing from request content.", NamespaceHelper.SOAP);
+            if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
+                throw XRoadException.InvalidQuery("Element `{0}:Envelope` is missing from request content.", NamespaceConstants.SOAP);
+            if (!reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
+                throw XRoadException.InvalidQuery("Element `{0}:Body` is missing from request content.", NamespaceConstants.SOAP);
             if (!reader.MoveToElement(2, RequestMessage.RootElementName.Name, RequestMessage.RootElementName.Namespace))
                 throw XRoadException.InvalidQuery("Payload is missing from request content.");
 
@@ -186,22 +186,22 @@ namespace XRoadLib
 
                 writer.WriteStartDocument();
 
-                if (reader.MoveToElement(0) && reader.IsCurrentElement(0, "Envelope", NamespaceHelper.SOAP_ENV))
+                if (reader.MoveToElement(0) && reader.IsCurrentElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
                 {
-                    writer.WriteStartElement(reader.Prefix, "Envelope", NamespaceHelper.SOAP_ENV);
+                    writer.WriteStartElement(reader.Prefix, "Envelope", NamespaceConstants.SOAP_ENV);
                     writer.WriteAttributes(reader, true);
                 }
                 else
                 {
-                    writer.WriteStartElement(PrefixHelper.SOAP_ENV, "Envelope", NamespaceHelper.SOAP_ENV);
-                    writer.WriteAttributeString("xmlns", PrefixHelper.SOAP_ENV, NamespaceHelper.XMLNS, NamespaceHelper.SOAP_ENV);
+                    writer.WriteStartElement(PrefixConstants.SOAP_ENV, "Envelope", NamespaceConstants.SOAP_ENV);
+                    writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
                 }
 
-                if (reader.MoveToElement(1) && reader.IsCurrentElement(1, "Header", NamespaceHelper.SOAP_ENV))
+                if (reader.MoveToElement(1) && reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
                     writer.WriteNode(reader, true);
 
-                writer.WriteStartElement("Body", NamespaceHelper.SOAP_ENV);
-                if (reader.IsCurrentElement(1, "Body", NamespaceHelper.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceHelper.SOAP_ENV))
+                writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
+                if (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
                     writer.WriteAttributes(reader, true);
 
                 serviceMap.SerializeResponse(writer, result, context, reader, CustomSerialization);

@@ -43,6 +43,8 @@
     <Compile Include="Attributes\OrderAttribute.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Comparers\OrderComparer.cs" />
+    <Compile Include="Configuration\TypeConfigurationProvider.cs" />
+    <Compile Include="Configuration\XRoadContractConfiguration.cs" />
     <Compile Include="DateTestDto.cs" />
     <Compile Include="InheritsParamType1.cs" />
     <Compile Include="MimeContent.cs" />
@@ -50,7 +52,6 @@
     <Compile Include="ParamType2.cs" />
     <Compile Include="ParamType3.cs" />
     <Compile Include="Person.cs" />
-    <Compile Include="Properties\ProducerInfo.cs" />
     <Compile Include="Subject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IService.cs" />

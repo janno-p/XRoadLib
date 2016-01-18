@@ -8,10 +8,15 @@ namespace XRoadLib.Attributes
     [AttributeUsage(AttributeTargets.Assembly)]
     public class XRoadProducerNameAttribute : Attribute
     {
+        /// <summary>
+        /// X-Road producer name for contract assembly.
+        /// </summary>
         public string Value { get; }
 
         public XRoadProducerNameAttribute(string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentNullException(nameof(value));
             Value = value;
         }
     }

@@ -8,24 +8,18 @@ namespace XRoadLib.Extensions
 {
     public static class AssemblyExtensions
     {
-        public static string FindProducerName(this Assembly assembly)
+        public static string FindProducerName(this Assembly contractAssembly)
         {
-            return assembly.GetSingleAttribute<XRoadProducerNameAttribute>()?.Value;
+            return contractAssembly.GetSingleAttribute<XRoadProducerNameAttribute>()?.Value;
         }
 
-        public static string GetProducerName(this Assembly assembly)
+        public static string GetProducerName(this Assembly contractAssembly)
         {
-            var producerName = assembly.FindProducerName();
+            var attribute = contractAssembly.GetSingleAttribute<XRoadProducerNameAttribute>();
+            if (attribute == null)
+                throw new Exception($"Assembly `{contractAssembly.GetName().Name}` does not define X-Road producer name.");
 
-            if (string.IsNullOrWhiteSpace(producerName))
-                throw new Exception($"Unable to extract producer name from contract assembly `{assembly.GetName().Name}`.");
-
-            return producerName;
-        }
-
-        public static XRoadProducerConfigurationAttribute GetConfigurationAttribute(this Assembly assembly, XRoadProtocol protocol)
-        {
-            return assembly.GetAppliableAttribute<XRoadProducerConfigurationAttribute>(protocol);
+            return attribute.Value;
         }
 
         public static IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> GetServiceContracts(this Assembly assembly)
@@ -38,11 +32,6 @@ namespace XRoadLib.Extensions
                                                          .ToDictionary(x => x.Name, x => x)))
                            .Where(x => x.Item2.Any())
                            .ToDictionary(x => x.Item1, x => (IDictionary<string, XRoadServiceAttribute>)x.Item2);
-        }
-
-        internal static bool HasStrictOperationSignature(this Assembly assembly, XRoadProtocol protocol)
-        {
-            return assembly.GetConfigurationAttribute(protocol)?.StrictOperationSignature ?? true;
         }
     }
 }

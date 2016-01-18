@@ -13,11 +13,11 @@ namespace XRoadLib
         {
             writer.WriteStartDocument();
 
-            writer.WriteStartElement(PrefixHelper.SOAP_ENV, "Envelope", NamespaceHelper.SOAP_ENV);
-            writer.WriteAttributeString("xmlns", PrefixHelper.SOAP_ENV, NamespaceHelper.XMLNS, NamespaceHelper.SOAP_ENV);
+            writer.WriteStartElement(PrefixConstants.SOAP_ENV, "Envelope", NamespaceConstants.SOAP_ENV);
+            writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
 
-            writer.WriteStartElement("Body", NamespaceHelper.SOAP_ENV);
-            writer.WriteStartElement("Fault", NamespaceHelper.SOAP_ENV);
+            writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
+            writer.WriteStartElement("Fault", NamespaceConstants.SOAP_ENV);
 
             var faultFaultCode = (exception as XRoadException)?.FaultCode ?? faultCode ?? ServerFaultCode.InternalError;
             var faultMessage = !string.IsNullOrWhiteSpace(message) ? message : (exception?.Message ?? string.Empty);

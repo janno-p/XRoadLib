@@ -51,7 +51,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (context.Protocol == XRoadProtocol.Version20)
             {
-                writer.WriteTypeAttribute("Array", NamespaceHelper.SOAP_ENC);
+                writer.WriteTypeAttribute("Array", NamespaceConstants.SOAP_ENC);
                 writer.WriteArrayTypeAttribute(elementXmlQualifiedName, valueArray.Length);
             }
 

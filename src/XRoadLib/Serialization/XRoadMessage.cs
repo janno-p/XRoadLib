@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Xml;
+using System.Xml.Linq;
+using XRoadLib.Extensions;
 using XRoadLib.Header;
 using XRoadLib.Serialization.Mapping;
 
@@ -21,6 +23,7 @@ namespace XRoadLib.Serialization
         public Stream ContentStream { get; internal set; }
         public XRoadProtocol Protocol { get; internal set; }
         public IXRoadHeader Header { get; internal set; }
+        public IList<XElement> UnresolvedHeaders { get; set; }
         public XmlQualifiedName RootElementName { get; internal set; }
 
         public IList<XRoadAttachment> AllAttachments => attachments;
@@ -97,10 +100,10 @@ namespace XRoadLib.Serialization
 
         public MetaServiceName GetMetaServiceName()
         {
-            if (Header?.Nimi != null)
-                return Header.Nimi.Method == "getState" ? MetaServiceName.GetState : MetaServiceName.None;
+            if (Header?.Service?.ServiceCode != null)
+                return Header.Service.ServiceCode == "getState" ? MetaServiceName.GetState : MetaServiceName.None;
 
-            if (RootElementName.Namespace != NamespaceHelper.GetXRoadNamespace(Protocol))
+            if (RootElementName.Namespace != Protocol.GetNamespace())
                 return MetaServiceName.Unsupported;
 
             switch (RootElementName.Name)
@@ -122,7 +125,7 @@ namespace XRoadLib.Serialization
 
         public SerializationContext CreateContext()
         {
-            var dtoVersion = (Header?.Nimi?.Version).GetValueOrDefault(1u);
+            var dtoVersion = (Header?.Service?.Version).GetValueOrDefault(1u);
             return new SerializationContext(this, dtoVersion);
         }
     }

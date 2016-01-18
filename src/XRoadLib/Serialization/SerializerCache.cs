@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using XRoadLib.Attributes;
+using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Mapping;
 
@@ -12,6 +13,8 @@ namespace XRoadLib.Serialization
 {
     public sealed class SerializerCache : ISerializerCache
     {
+        private readonly ITypeConfigurationProvider typeConfigurationProvider;
+
         private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
         private readonly string producerNamespace;
@@ -25,78 +28,81 @@ namespace XRoadLib.Serialization
             this.contractAssembly = contractAssembly;
             this.protocol = protocol;
 
-            producerNamespace = NamespaceHelper.GetProducerNamespace(contractAssembly.GetProducerName(), protocol);
+            var producerName = contractAssembly.GetProducerName();
+            producerNamespace = protocol.GetProducerNamespace(producerName);
+
+            typeConfigurationProvider = protocol.GetTypeConfiguration(contractAssembly);
 
             ITypeMap typeMap = new DateTypeMap();
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("date", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("date", NamespaceConstants.XSD), typeMap);
 
             typeMap = new DateTimeTypeMap();
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("dateTime", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("dateTime", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(DateTime).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(DateTime?).ToQualifiedName(), typeMap);
 
             typeMap = new ArrayTypeMap<DateTime>(this);
             if (protocol == XRoadProtocol.Version20)
             {
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("date[]", NamespaceHelper.XSD), typeMap);
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("dateTime[]", NamespaceHelper.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("date[]", NamespaceConstants.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("dateTime[]", NamespaceConstants.XSD), typeMap);
             }
             systemTypeMaps.GetOrAdd(typeof(DateTime[]).ToQualifiedName(), typeMap);
 
             typeMap = new BooleanTypeMap();
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("boolean", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("boolean", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(bool).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(bool?).ToQualifiedName(), typeMap);
 
             typeMap = new ArrayTypeMap<bool>(this);
             if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("boolean[]", NamespaceHelper.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("boolean[]", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(bool[]).ToQualifiedName(), typeMap);
 
             typeMap = new FloatTypeMap();
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("float", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("float", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(float).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(float?).ToQualifiedName(), typeMap);
 
             typeMap = new ArrayTypeMap<float>(this);
             if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("float[]", NamespaceHelper.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("float[]", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(float[]).ToQualifiedName(), typeMap);
 
             typeMap = new DoubleTypeMap();
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("double", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("double", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(double).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(double?).ToQualifiedName(), typeMap);
 
             typeMap = new ArrayTypeMap<double>(this);
             if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("double[]", NamespaceHelper.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("double[]", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(double[]).ToQualifiedName(), typeMap);
 
             typeMap = new DecimalTypeMap();
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("decimal", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("decimal", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(decimal).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(decimal?).ToQualifiedName(), typeMap);
 
             typeMap = new ArrayTypeMap<decimal>(this);
             if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("decimal[]", NamespaceHelper.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("decimal[]", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(decimal[]).ToQualifiedName(), typeMap);
 
             typeMap = new LongTypeMap();
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("long", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("long", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(long).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(long?).ToQualifiedName(), typeMap);
 
             typeMap = new ArrayTypeMap<long>(this);
             if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("long[]", NamespaceHelper.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("long[]", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(long[]).ToQualifiedName(), typeMap);
 
             typeMap = new IntegerTypeMap();
             var integerTypeMap = typeMap;
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("integer", NamespaceHelper.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("int", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("integer", NamespaceConstants.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("int", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(int).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(int?).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(short).ToQualifiedName(), typeMap);
@@ -104,32 +110,32 @@ namespace XRoadLib.Serialization
             typeMap = new ArrayTypeMap<int>(this);
             if (protocol == XRoadProtocol.Version20)
             {
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("integer[]", NamespaceHelper.XSD), typeMap);
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("int[]", NamespaceHelper.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("integer[]", NamespaceConstants.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("int[]", NamespaceConstants.XSD), typeMap);
             }
             systemTypeMaps.GetOrAdd(typeof(int[]).ToQualifiedName(), typeMap);
             systemTypeMaps.GetOrAdd(typeof(short[]).ToQualifiedName(), typeMap);
 
             typeMap = new StringTypeMap();
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("anyURI", NamespaceHelper.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(new XmlQualifiedName("string", NamespaceHelper.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("anyURI", NamespaceConstants.XSD), typeMap);
+            systemTypeMaps.GetOrAdd(new XmlQualifiedName("string", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(string).ToQualifiedName(), typeMap);
 
             typeMap = new ArrayTypeMap<string>(this);
             var stringArrayTypeMap = typeMap;
             if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(new XmlQualifiedName("string[]", NamespaceHelper.XSD), typeMap);
+                systemTypeMaps.GetOrAdd(new XmlQualifiedName("string[]", NamespaceConstants.XSD), typeMap);
             systemTypeMaps.GetOrAdd(typeof(string[]).ToQualifiedName(), typeMap);
 
-            var qualifiedName = new XmlQualifiedName("hexBinary", NamespaceHelper.SOAP_ENC);
+            var qualifiedName = new XmlQualifiedName("hexBinary", NamespaceConstants.SOAP_ENC);
             typeMap = new StreamTypeMap(qualifiedName);
             systemTypeMaps.GetOrAdd(qualifiedName, typeMap);
 
-            qualifiedName = new XmlQualifiedName("base64", NamespaceHelper.SOAP_ENC);
+            qualifiedName = new XmlQualifiedName("base64", NamespaceConstants.SOAP_ENC);
             typeMap = new StreamTypeMap(qualifiedName);
             systemTypeMaps.GetOrAdd(qualifiedName, typeMap);
 
-            qualifiedName = new XmlQualifiedName("base64Binary", NamespaceHelper.SOAP_ENC);
+            qualifiedName = new XmlQualifiedName("base64Binary", NamespaceConstants.SOAP_ENC);
             typeMap = new StreamTypeMap(qualifiedName);
             systemTypeMaps.GetOrAdd(qualifiedName, typeMap);
 
@@ -140,7 +146,7 @@ namespace XRoadLib.Serialization
                 systemTypeMaps.GetOrAdd(typeof(System.IO.MemoryStream).ToQualifiedName(), typeMap);
             }
 
-            qualifiedName = new XmlQualifiedName("base64binary", NamespaceHelper.XSD);
+            qualifiedName = new XmlQualifiedName("base64binary", NamespaceConstants.XSD);
             typeMap = new StreamTypeMap(qualifiedName);
             systemTypeMaps.GetOrAdd(qualifiedName, typeMap);
 
@@ -151,19 +157,19 @@ namespace XRoadLib.Serialization
                 systemTypeMaps.GetOrAdd(typeof(System.IO.MemoryStream).ToQualifiedName(), typeMap);
             }
 
-            qualifiedName = new XmlQualifiedName("testSystem", NamespaceHelper.GetXRoadNamespace(protocol));
+            qualifiedName = new XmlQualifiedName("testSystem", protocol.GetNamespace());
             var serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, true, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
 
-            qualifiedName = new XmlQualifiedName("getState", NamespaceHelper.GetXRoadNamespace(protocol));
+            qualifiedName = new XmlQualifiedName("getState", protocol.GetNamespace());
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, integerTypeMap, false), true, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, integerTypeMap, false), XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
 
-            qualifiedName = new XmlQualifiedName("listMethods", NamespaceHelper.GetXRoadNamespace(protocol));
+            qualifiedName = new XmlQualifiedName("listMethods", protocol.GetNamespace());
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
-            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, stringArrayTypeMap, false), true, false, false));
+            serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, new ParameterMap(this, null, null, stringArrayTypeMap, false), XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
         }
 
@@ -195,11 +201,9 @@ namespace XRoadLib.Serialization
             if (serviceInterface == null)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
-            var configuration = contractAssembly.GetConfigurationAttribute(protocol);
-            var parameterNameProvider = configuration?.ParameterNameProvider != null ? (IParameterNameProvider)Activator.CreateInstance(configuration.ParameterNameProvider) : null;
-
+            var configuration = protocol.GetContractConfiguration(contractAssembly);
             var parameterMaps = serviceInterface.GetParameters()
-                                                .Select((x,i) => new { p = x, m = CreateParameterMap(parameterNameProvider, x, dtoVersion, methodImpl.GetParameters()[i]) })
+                                                .Select((x,i) => new { p = x, m = CreateParameterMap(configuration.ParameterNameProvider, x, dtoVersion, methodImpl.GetParameters()[i]) })
                                                 .Where(x => x.p.IsParameterInVersion(dtoVersion))
                                                 .Select(x => x.m)
                                                 .ToList();
@@ -211,7 +215,7 @@ namespace XRoadLib.Serialization
             var hasMultipartRequest = multipartAttribute != null && multipartAttribute.HasMultipartRequest;
             var hasMultipartResponse = multipartAttribute != null && multipartAttribute.HasMultipartResponse;
 
-            var serviceMap = new ServiceMap(qualifiedName, parameterMaps, resultMap, contractAssembly.HasStrictOperationSignature(protocol), hasMultipartRequest, hasMultipartResponse);
+            var serviceMap = new ServiceMap(qualifiedName, parameterMaps, resultMap, configuration.OperationContentLayoutMode, hasMultipartRequest, hasMultipartResponse);
 
             return serviceMapVersions.GetOrAdd(dtoVersion, serviceMap);
         }
@@ -257,7 +261,7 @@ namespace XRoadLib.Serialization
 
             ITypeMap typeMap;
 
-            if (NamespaceHelper.SOAP_ENC.Equals(qualifiedName.Namespace) || NamespaceHelper.XSD.Equals(qualifiedName.Namespace) || qualifiedName.Namespace.StartsWith("System"))
+            if (NamespaceConstants.SOAP_ENC.Equals(qualifiedName.Namespace) || NamespaceConstants.XSD.Equals(qualifiedName.Namespace) || qualifiedName.Namespace.StartsWith("System"))
             {
                 if (!systemTypeMaps.TryGetValue(qualifiedName, out typeMap))
                     throw XRoadException.UnknownType(qualifiedName.ToString());
@@ -280,7 +284,7 @@ namespace XRoadLib.Serialization
 
             var fixedQualifiedName = qualifiedName;
 
-            var namespaceBase = NamespaceHelper.GetNamespaceBase(qualifiedName.Namespace, protocol);
+            var namespaceBase = protocol.GetProducerNamespaceBase(qualifiedName.Namespace);
             if (!string.IsNullOrWhiteSpace(namespaceBase))
             {
                 fixedQualifiedName = new XmlQualifiedName(qualifiedName.Name, namespaceBase);
@@ -318,11 +322,11 @@ namespace XRoadLib.Serialization
                     typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap<>).MakeGenericType(runtimeType));
                 else
                 {
-                    var layout = runtimeType.GetLayoutAttribute(protocol);
-                    if (layout == null || layout.PropertyOrder == XRoadPropertyOrder.Strict)
-                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
-                    else
+                    var contentLayoutMode = (typeConfigurationProvider?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
+                    if (contentLayoutMode == XRoadContentLayoutMode.Flexible)
                         typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);
+                    else
+                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
                 }
             }
 
@@ -331,7 +335,7 @@ namespace XRoadLib.Serialization
             partialTypeMaps = partialTypeMaps ?? new Dictionary<XmlQualifiedName, ITypeMap>();
             partialTypeMaps.Add(qualifiedName, typeMap);
 
-            typeMap.InitializeProperties(partialTypeMaps, protocol);
+            typeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);
 
             partialTypeMaps.Remove(qualifiedName);
 
@@ -365,15 +369,15 @@ namespace XRoadLib.Serialization
 
             switch (type.FullName)
             {
-                case "System.Byte": return new XmlQualifiedName("byte", NamespaceHelper.XSD);
-                case "System.DateTime": return new XmlQualifiedName("dateTime", NamespaceHelper.XSD);
-                case "System.Boolean": return new XmlQualifiedName("boolean", NamespaceHelper.XSD);
-                case "System.Single": return new XmlQualifiedName("float", NamespaceHelper.XSD);
-                case "System.Double": return new XmlQualifiedName("double", NamespaceHelper.XSD);
-                case "System.Decimal": return new XmlQualifiedName("decimal", NamespaceHelper.XSD);
-                case "System.Int64": return new XmlQualifiedName("long", NamespaceHelper.XSD);
-                case "System.Int32": return new XmlQualifiedName("int", NamespaceHelper.XSD);
-                case "System.String": return new XmlQualifiedName("string", NamespaceHelper.XSD);
+                case "System.Byte": return new XmlQualifiedName("byte", NamespaceConstants.XSD);
+                case "System.DateTime": return new XmlQualifiedName("dateTime", NamespaceConstants.XSD);
+                case "System.Boolean": return new XmlQualifiedName("boolean", NamespaceConstants.XSD);
+                case "System.Single": return new XmlQualifiedName("float", NamespaceConstants.XSD);
+                case "System.Double": return new XmlQualifiedName("double", NamespaceConstants.XSD);
+                case "System.Decimal": return new XmlQualifiedName("decimal", NamespaceConstants.XSD);
+                case "System.Int64": return new XmlQualifiedName("long", NamespaceConstants.XSD);
+                case "System.Int32": return new XmlQualifiedName("int", NamespaceConstants.XSD);
+                case "System.String": return new XmlQualifiedName("string", NamespaceConstants.XSD);
             }
 
             if (type.Assembly == contractAssembly)

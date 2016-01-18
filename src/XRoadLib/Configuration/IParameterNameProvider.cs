@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace XRoadLib
+namespace XRoadLib.Configuration
 {
     public interface IParameterNameProvider
     {

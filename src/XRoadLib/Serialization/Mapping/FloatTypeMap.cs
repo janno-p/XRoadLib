@@ -7,7 +7,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class FloatTypeMap : TypeMap<float>
     {
-        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("float", NamespaceHelper.XSD);
+        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("float", NamespaceConstants.XSD);
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
