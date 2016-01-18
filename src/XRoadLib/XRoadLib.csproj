@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\IXRoadProtocolAppliable.cs" />
     <Compile Include="Attributes\XRoadAddContractAttribute.cs" />
     <Compile Include="Attributes\XRoadAttachmentAttribute.cs" />
     <Compile Include="Attributes\XRoadImportAttribute.cs" />
