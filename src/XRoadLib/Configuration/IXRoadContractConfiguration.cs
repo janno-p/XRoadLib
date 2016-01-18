@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace XRoadLib.Configuration
+﻿namespace XRoadLib.Configuration
 {
     public interface IXRoadContractConfiguration
     {

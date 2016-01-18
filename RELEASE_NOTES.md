@@ -1,5 +1,8 @@
-#### 1.0.0-alpha14 - Unreleased
+#### 1.0.0-alpha14 - January 18 2016
 * Add support for X-Road v6 and X-Road messaging protcol v4.0.
+* Redesign support for different protocol versions.
+* Add interfaces to override default type options.
+* Unhandled SOAP header elements as XElement instead of string representation.
 
 #### 1.0.0-alpha13 - January 14 2016
 * More annotation elements to types and elements.
