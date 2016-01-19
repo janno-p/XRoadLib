@@ -19,6 +19,6 @@ namespace XRoadLib.Serialization.Mapping
 
         public abstract void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context);
 
-        public virtual void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfigurationProvider typeConfigurationProvider) { }
+        public virtual void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfiguration typeConfigurationProvider) { }
     }
 }

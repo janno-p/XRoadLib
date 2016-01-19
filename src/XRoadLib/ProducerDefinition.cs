@@ -30,9 +30,8 @@ namespace XRoadLib
         private readonly string targetNamespace;
         private readonly string standardHeaderName;
         private readonly uint? version;
-        private readonly XRoadContentLayoutMode operationContentLayoutMode;
-        private readonly IParameterNameProvider parameterNameProvider;
-        private readonly ITypeConfigurationProvider typeConfigurationProvider;
+        private readonly IOperationConfiguration operationConfiguration;
+        private readonly ITypeConfiguration typeConfiguration;
 
         private readonly string requestTypeNameFormat;
         private readonly string responseTypeNameFormat;
@@ -72,8 +71,6 @@ namespace XRoadLib
             this.environmentProducerName = environmentProducerName.GetValueOrDefault(producerName);
             this.version = version;
 
-            operationContentLayoutMode = producerConfiguration.OperationContentLayoutMode;
-
             xroadNamespace = protocol.GetNamespace();
             targetNamespace = protocol.GetProducerNamespace(producerName);
 
@@ -106,8 +103,8 @@ namespace XRoadLib
             responseTypeNameFormat = producerConfiguration.ResponseTypeNameFormat.GetValueOrDefault("{0}Response");
             requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
             responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
-            parameterNameProvider = producerConfiguration.ParameterNameProvider;
-            typeConfigurationProvider = producerConfiguration.TypeConfigurationProvider;
+            operationConfiguration = producerConfiguration.OperationConfiguration;
+            typeConfiguration = producerConfiguration.TypeConfiguration;
 
             serviceContracts = contractAssembly.GetServiceContracts();
 
@@ -236,7 +233,7 @@ namespace XRoadLib
             {
                 var type = value.Item1;
                 var schemaType = value.Item2;
-                var properties = type.GetPropertiesSorted(typeConfigurationProvider?.GetPropertyComparer(type) ?? DefaultComparer.Instance, version);
+                var properties = type.GetPropertiesSorted(typeConfiguration?.GetPropertyComparer(type) ?? DefaultComparer.Instance, version);
 
                 var contentParticle = new XmlSchemaSequence();
 
@@ -719,11 +716,13 @@ namespace XRoadLib
 
             if (protocol == XRoadProtocol.Version20 || parameters.Count > 1)
             {
-                var schemaParticle = operationContentLayoutMode == XRoadContentLayoutMode.Flexible ? (XmlSchemaGroupBase)new XmlSchemaAll() : new XmlSchemaSequence();
+                var schemaParticle = operationConfiguration?.GetParameterLayout(method) == XRoadContentLayoutMode.Flexible
+                    ? (XmlSchemaGroupBase)new XmlSchemaAll()
+                    : new XmlSchemaSequence();
 
                 foreach (var parameter in parameters)
                 {
-                    var parameterName = parameter.GetParameterName(parameterNameProvider, operationName);
+                    var parameterName = parameter.GetParameterName(operationConfiguration, operationName);
                     var parameterIsOptional = parameter.GetParameterIsOptional();
 
                     var parameterElement = new XmlSchemaElement { Name = parameterName, Annotation = CreateAnnotationElement(parameter) };
@@ -764,9 +763,14 @@ namespace XRoadLib
 
             if (method.ReturnType != typeof(void))
             {
-                var okElement = new XmlSchemaElement { Name = method.ReturnParameter.GetParameterName(parameterNameProvider, operationName) };
-                AddSchemaType(okElement, method.ReturnType, false, null);
-                responseSequence.Items.Add(new XmlSchemaChoice { Items = { CreateFaultSequence(), okElement } });
+                var elementName = method.ReturnParameter.GetParameterName(operationConfiguration, operationName);
+                if (string.IsNullOrWhiteSpace(elementName))
+                    throw new Exception($"Method `{operationName}` return parameter element name cannot be empty.");
+
+                var valueElement = new XmlSchemaElement { Name = elementName };
+                AddSchemaType(valueElement, method.ReturnType, false, null);
+
+                responseSequence.Items.Add(new XmlSchemaChoice { Items = { CreateFaultSequence(), valueElement } });
             }
             else
             {

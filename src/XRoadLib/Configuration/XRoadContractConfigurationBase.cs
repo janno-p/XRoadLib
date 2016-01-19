@@ -11,10 +11,9 @@
         public virtual string ResponseTypeNameFormat { get; }
         public virtual string RequestMessageNameFormat { get; }
         public virtual string ResponseMessageNameFormat { get; }
-        public virtual XRoadContentLayoutMode OperationContentLayoutMode { get; }
-        public virtual IParameterNameProvider ParameterNameProvider { get; }
         public virtual uint? MinOperationVersion { get; }
         public virtual uint? MaxOperationVersion { get; }
-        public virtual ITypeConfigurationProvider TypeConfigurationProvider { get; }
+        public virtual ITypeConfiguration TypeConfiguration { get; }
+        public virtual IOperationConfiguration OperationConfiguration { get; }
     }
 }

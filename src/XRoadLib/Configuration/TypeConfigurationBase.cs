@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace XRoadLib.Configuration
 {
-    public class TypeConfigurationProviderBase : ITypeConfigurationProvider
+    public class TypeConfigurationBase : ITypeConfiguration
     {
         public virtual string GetTypeName(Type type)
         {
@@ -18,7 +18,7 @@ namespace XRoadLib.Configuration
 
         public virtual IComparer<PropertyInfo> GetPropertyComparer(Type type)
         {
-            return null;
+            return DefaultComparer.Instance;
         }
     }
 }

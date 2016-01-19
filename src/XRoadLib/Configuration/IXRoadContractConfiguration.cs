@@ -52,18 +52,6 @@
         string ResponseMessageNameFormat { get; }
 
         /// <summary>
-        /// Specifies parameter order mode for operation root types:
-        /// `Flexible` mode uses XML Schema `all` element.
-        /// `Strict` mode uses XML Schema `sequence` element.
-        /// </summary>
-        XRoadContentLayoutMode OperationContentLayoutMode { get; }
-
-        /// <summary>
-        /// Specifies class implementing `IParameterNameProvider` which allows enables to customize parameter names.
-        /// </summary>
-        IParameterNameProvider ParameterNameProvider { get; }
-
-        /// <summary>
         /// Minimal version number for operations defined inside attribute target assembly. Used by versioning subsystem.
         /// </summary>
         uint? MinOperationVersion { get; }
@@ -74,9 +62,13 @@
         uint? MaxOperationVersion { get; }
 
         /// <summary>
-        /// Specifies class implementing <see cref="ITypeConfigurationProvider"/> which allows to customize
-        /// appearance of types in service description and serialized messages.
+        /// Allows to customize appearance of types in service description and serialized messages.
         /// </summary>
-        ITypeConfigurationProvider TypeConfigurationProvider { get; }
+        ITypeConfiguration TypeConfiguration { get; }
+
+        /// <summary>
+        /// Allows to customize appearance of operations in service description and serialized messages.
+        /// </summary>
+        IOperationConfiguration OperationConfiguration { get; }
     }
 }

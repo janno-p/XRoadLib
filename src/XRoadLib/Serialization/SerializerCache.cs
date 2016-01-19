@@ -14,7 +14,7 @@ namespace XRoadLib.Serialization
 {
     public sealed class SerializerCache : ISerializerCache
     {
-        private readonly ITypeConfigurationProvider typeConfigurationProvider;
+        private readonly ITypeConfiguration typeConfigurationProvider;
 
         private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
@@ -178,23 +178,24 @@ namespace XRoadLib.Serialization
 
         private IServiceMap AddServiceMap(ConcurrentDictionary<uint, IServiceMap> serviceMapVersions, XName qualifiedName, uint dtoVersion)
         {
-            var serviceInterface = GetServiceInterface(contractAssembly, qualifiedName, dtoVersion);
-            if (serviceInterface == null)
+            var methodInfo = GetServiceInterface(contractAssembly, qualifiedName, dtoVersion);
+            if (methodInfo == null)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
             var configuration = protocol.GetContractConfiguration(contractAssembly);
-            var parameterMaps = serviceInterface.GetParameters()
-                                                .Select(x => CreateParameterMap(qualifiedName.LocalName, configuration.ParameterNameProvider, x, dtoVersion))
-                                                .Where(m => m.ParameterInfo.IsParameterInVersion(dtoVersion))
-                                                .ToList();
+            var parameterMaps = methodInfo.GetParameters()
+                                          .Select(x => CreateParameterMap(qualifiedName.LocalName, configuration.OperationConfiguration, x, dtoVersion))
+                                          .Where(m => m.ParameterInfo.IsParameterInVersion(dtoVersion))
+                                          .ToList();
 
-            var resultMap = CreateParameterMap(qualifiedName.LocalName, configuration.ParameterNameProvider, serviceInterface.ReturnParameter, dtoVersion);
+            var resultMap = CreateParameterMap(qualifiedName.LocalName, configuration.OperationConfiguration, methodInfo.ReturnParameter, dtoVersion);
 
-            var multipartAttribute = serviceInterface.GetSingleAttribute<XRoadAttachmentAttribute>();
+            var multipartAttribute = methodInfo.GetSingleAttribute<XRoadAttachmentAttribute>();
             var hasMultipartRequest = multipartAttribute != null && multipartAttribute.HasMultipartRequest;
             var hasMultipartResponse = multipartAttribute != null && multipartAttribute.HasMultipartResponse;
 
-            var serviceMap = new ServiceMap(qualifiedName, serviceInterface, parameterMaps, resultMap, configuration.OperationContentLayoutMode, hasMultipartRequest, hasMultipartResponse);
+            var layoutMode = (configuration.OperationConfiguration?.GetParameterLayout(methodInfo)).GetValueOrDefault();
+            var serviceMap = new ServiceMap(qualifiedName, methodInfo, parameterMaps, resultMap, layoutMode, hasMultipartRequest, hasMultipartResponse);
 
             return serviceMapVersions.GetOrAdd(dtoVersion, serviceMap);
         }
@@ -208,9 +209,9 @@ namespace XRoadLib.Serialization
                                                        .Any(m => m == qualifiedName.LocalName));
         }
 
-        private IParameterMap CreateParameterMap(string operationName, IParameterNameProvider parameterNameProvider, ParameterInfo parameterInfo, uint dtoVersion)
+        private IParameterMap CreateParameterMap(string operationName, IOperationConfiguration operationConfiguration, ParameterInfo parameterInfo, uint dtoVersion)
         {
-            var parameterName = parameterInfo.GetParameterName(parameterNameProvider, operationName);
+            var parameterName = parameterInfo.GetParameterName(operationConfiguration, operationName);
             var parameterIsOptional = parameterInfo.GetParameterIsOptional();
 
             var qualifiedTypeName = parameterInfo.GetQualifiedTypeName();

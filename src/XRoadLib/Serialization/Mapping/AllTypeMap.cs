@@ -72,7 +72,7 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfigurationProvider typeConfigurationProvider)
+        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfiguration typeConfigurationProvider)
         {
             if (deserializationPropertyMaps.Count > 0)
                 return;

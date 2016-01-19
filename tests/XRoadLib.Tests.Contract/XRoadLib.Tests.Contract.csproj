@@ -42,8 +42,6 @@
   <ItemGroup>
     <Compile Include="Attributes\OrderAttribute.cs" />
     <Compile Include="Class1.cs" />
-    <Compile Include="Comparers\OrderComparer.cs" />
-    <Compile Include="Configuration\TypeConfigurationProvider.cs" />
     <Compile Include="Configuration\XRoadContractConfiguration.cs" />
     <Compile Include="DateTestDto.cs" />
     <Compile Include="InheritsParamType1.cs" />

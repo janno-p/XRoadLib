@@ -189,9 +189,9 @@ namespace XRoadLib.Extensions
             return attribute.Configuration != null ? (IXRoadContractConfiguration)Activator.CreateInstance(attribute.Configuration) : null;
         }
 
-        public static ITypeConfigurationProvider GetTypeConfiguration(this XRoadProtocol protocol, Assembly contractAssembly)
+        public static ITypeConfiguration GetTypeConfiguration(this XRoadProtocol protocol, Assembly contractAssembly)
         {
-            return protocol.GetContractConfiguration(contractAssembly)?.TypeConfigurationProvider;
+            return protocol.GetContractConfiguration(contractAssembly)?.TypeConfiguration;
         }
 
         public static XName GetResponseElementName(this XRoadProtocol protocol)

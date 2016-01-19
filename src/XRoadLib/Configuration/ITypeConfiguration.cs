@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace XRoadLib.Configuration
 {
-    public interface ITypeConfigurationProvider
+    public interface ITypeConfiguration
     {
         string GetTypeName(Type type);
 

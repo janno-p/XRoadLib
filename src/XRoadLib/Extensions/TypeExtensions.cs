@@ -274,14 +274,14 @@ namespace XRoadLib.Extensions
                 : XName.Get(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceConstants.SOAP_ENC : NamespaceConstants.XSD);
         }
 
-        internal static string GetParameterName(this ParameterInfo parameterInfo, IParameterNameProvider parameterNameProvider, string operationName)
+        internal static string GetParameterName(this ParameterInfo parameterInfo, IOperationConfiguration operationConfiguration, string operationName)
         {
-            var parameterName = parameterNameProvider?.GetParameterName(parameterInfo, operationName);
+            var parameterName = operationConfiguration?.GetParameterName(parameterInfo, operationName);
+            if (parameterInfo.Position < 0)
+                return parameterName == string.Empty ? null : (parameterName ?? "value");
+
             if (!string.IsNullOrWhiteSpace(parameterName))
                 return parameterName;
-
-            if (parameterInfo.Position < 0)
-                return "value";
 
             var parameterAttribute = parameterInfo.GetCustomAttributes(typeof(XRoadParameterAttribute), false)
                                                   .OfType<XRoadParameterAttribute>()
