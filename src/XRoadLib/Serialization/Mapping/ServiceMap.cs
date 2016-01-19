@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -137,7 +138,10 @@ namespace XRoadLib.Serialization.Mapping
 
                 var fault = value as IXRoadFault;
                 if (fault == null)
-                    result.Serialize(writer, context.XmlTemplate?.ResponseNode, value, context);
+                {
+                    var responseNode = context.XmlTemplate != null ? context.XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
+                    result.Serialize(writer, responseNode, value, context);
+                }
                 else SerializeFault(writer, fault, context.Protocol);
 
                 writer.WriteEndElement();

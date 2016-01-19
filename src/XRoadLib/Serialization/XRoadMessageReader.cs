@@ -65,6 +65,9 @@ namespace XRoadLib.Serialization
                 target.UnresolvedHeaders = header?.Item2;
                 target.Protocol = (header?.Item1?.Protocol).GetValueOrDefault(protocol);
                 target.RootElementName = ParseMessageRootElementName(reader);
+
+                if (target.Protocol == XRoadProtocol.Undefined && target.RootElementName != null)
+                    target.Protocol = ProtocolFromNamespace(target.RootElementName.NamespaceName);
             }
 
             var xrh4 = target.Header as IXRoadHeader40;
@@ -427,6 +430,14 @@ namespace XRoadLib.Serialization
             return (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV)) && reader.MoveToElement(2)
                 ? XName.Get(reader.LocalName, reader.NamespaceURI)
                 : null;
+        }
+
+        private static XRoadProtocol ProtocolFromNamespace(string ns)
+        {
+            return Enum.GetValues(typeof(XRoadProtocol))
+                       .Cast<XRoadProtocol>()
+                       .Where(protocol => protocol != XRoadProtocol.Undefined)
+                       .FirstOrDefault(protocol => protocol.GetNamespace() == ns);
         }
     }
 }

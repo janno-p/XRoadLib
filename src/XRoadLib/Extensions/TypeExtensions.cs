@@ -280,7 +280,7 @@ namespace XRoadLib.Extensions
             if (!string.IsNullOrWhiteSpace(parameterName))
                 return parameterName;
 
-            if (parameterInfo.IsRetval)
+            if (parameterInfo.Position < 0)
                 return "value";
 
             var parameterAttribute = parameterInfo.GetCustomAttributes(typeof(XRoadParameterAttribute), false)

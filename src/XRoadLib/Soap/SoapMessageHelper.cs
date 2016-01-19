@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Xml;
 using XRoadLib.Extensions;
-using XRoadLib.Soap;
 
-namespace XRoadLib
+namespace XRoadLib.Soap
 {
     public static class SoapMessageHelper
     {

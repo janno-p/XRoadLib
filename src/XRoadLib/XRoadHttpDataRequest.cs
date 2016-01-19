@@ -8,6 +8,7 @@ using XRoadLib.Events;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Soap;
 
 namespace XRoadLib
 {
