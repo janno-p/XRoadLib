@@ -1,3 +1,12 @@
+#### 1.0.0-alpha15 - Unreleased
+* Refactor to use XName instead of XmlQualifiedName.
+* Add deserializer for X-Road standard non-technical fault.
+* Add deserializer for standard SOAP fault.
+* Parameter name customization for contract parameters only.
+* Remove protocol dependency from parameter name selection.
+* Remove XRoadSerializer since it's buggy and is not needed by the library.
+* Add helper method which deserializes SOAP message and handles faults when present.
+
 #### 1.0.0-alpha14 - January 18 2016
 * Add support for X-Road v6 and X-Road messaging protcol v4.0.
 * Redesign support for different protocol versions.
