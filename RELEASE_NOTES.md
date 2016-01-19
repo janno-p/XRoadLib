@@ -1,4 +1,4 @@
-#### 1.0.0-alpha15 - Unreleased
+#### 1.0.0-alpha15 - January 19 2016
 * Refactor to use XName instead of XmlQualifiedName.
 * Add deserializer for X-Road standard non-technical fault.
 * Add deserializer for standard SOAP fault.
