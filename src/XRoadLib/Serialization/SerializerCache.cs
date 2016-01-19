@@ -19,9 +19,11 @@ namespace XRoadLib.Serialization
         private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
 
-        private readonly ConcurrentDictionary<XName, ConcurrentDictionary<uint, ITypeMap>> typeMaps = new ConcurrentDictionary<XName, ConcurrentDictionary<uint, ITypeMap>>();
         private readonly ConcurrentDictionary<XName, ConcurrentDictionary<uint, IServiceMap>> serviceMaps = new ConcurrentDictionary<XName, ConcurrentDictionary<uint, IServiceMap>>();
-        private readonly ConcurrentDictionary<XName, ITypeMap> systemTypeMaps = new ConcurrentDictionary<XName, ITypeMap>();
+        private readonly ConcurrentDictionary<XName, ConcurrentDictionary<uint, Tuple<ITypeMap, ITypeMap>>> xmlTypeMaps = new ConcurrentDictionary<XName, ConcurrentDictionary<uint, Tuple<ITypeMap, ITypeMap>>>();
+        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<uint, ITypeMap>> runtimeTypeMaps = new ConcurrentDictionary<Type, ConcurrentDictionary<uint, ITypeMap>>();
+        private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> systemXmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
+        private readonly ConcurrentDictionary<Type, ITypeMap> systemRuntimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
         public string ProducerNamespace { get; }
 
@@ -35,128 +37,100 @@ namespace XRoadLib.Serialization
 
             typeConfigurationProvider = protocol.GetTypeConfiguration(contractAssembly);
 
-            ITypeMap typeMap = new DateTypeMap();
-            systemTypeMaps.GetOrAdd(XName.Get("date", NamespaceConstants.XSD), typeMap);
+            ITypeMap itemTypeMap = new DateTypeMap();
+            ITypeMap arrayTypeMap = new ArrayTypeMap<DateTime>(this);
+            AddSystemXmlType("date", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
 
-            typeMap = new DateTimeTypeMap();
-            systemTypeMaps.GetOrAdd(XName.Get("dateTime", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(DateTime).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(DateTime?).ToQualifiedName(), typeMap);
+            itemTypeMap = new DateTimeTypeMap();
+            AddSystemXmlType("dateTime", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(DateTime), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(DateTime?), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(DateTime[]), arrayTypeMap);
 
-            typeMap = new ArrayTypeMap<DateTime>(this);
-            if (protocol == XRoadProtocol.Version20)
-            {
-                systemTypeMaps.GetOrAdd(XName.Get("date[]", NamespaceConstants.XSD), typeMap);
-                systemTypeMaps.GetOrAdd(XName.Get("dateTime[]", NamespaceConstants.XSD), typeMap);
-            }
-            systemTypeMaps.GetOrAdd(typeof(DateTime[]).ToQualifiedName(), typeMap);
+            itemTypeMap = new BooleanTypeMap();
+            arrayTypeMap = new ArrayTypeMap<bool>(this);
+            AddSystemXmlType("boolean", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(bool), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(bool?), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(bool[]), arrayTypeMap);
 
-            typeMap = new BooleanTypeMap();
-            systemTypeMaps.GetOrAdd(XName.Get("boolean", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(bool).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(bool?).ToQualifiedName(), typeMap);
+            itemTypeMap = new FloatTypeMap();
+            arrayTypeMap = new ArrayTypeMap<float>(this);
+            AddSystemXmlType("float", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(float), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(float?), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(float[]), arrayTypeMap);
 
-            typeMap = new ArrayTypeMap<bool>(this);
-            if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(XName.Get("boolean[]", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(bool[]).ToQualifiedName(), typeMap);
+            itemTypeMap = new DoubleTypeMap();
+            arrayTypeMap = new ArrayTypeMap<double>(this);
+            AddSystemXmlType("double", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(double), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(double?), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(double[]), arrayTypeMap);
 
-            typeMap = new FloatTypeMap();
-            systemTypeMaps.GetOrAdd(XName.Get("float", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(float).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(float?).ToQualifiedName(), typeMap);
+            itemTypeMap = new DecimalTypeMap();
+            arrayTypeMap = new ArrayTypeMap<decimal>(this);
+            AddSystemXmlType("decimal", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(decimal), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(decimal?), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(decimal[]), arrayTypeMap);
 
-            typeMap = new ArrayTypeMap<float>(this);
-            if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(XName.Get("float[]", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(float[]).ToQualifiedName(), typeMap);
+            itemTypeMap = new LongTypeMap();
+            arrayTypeMap = new ArrayTypeMap<long>(this);
+            AddSystemXmlType("long", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(long), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(long?), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(long[]), arrayTypeMap);
 
-            typeMap = new DoubleTypeMap();
-            systemTypeMaps.GetOrAdd(XName.Get("double", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(double).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(double?).ToQualifiedName(), typeMap);
+            itemTypeMap = new IntegerTypeMap();
+            arrayTypeMap = new ArrayTypeMap<int>(this);
+            AddSystemXmlType("integer", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            AddSystemXmlType("int", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(int), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(int?), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(short), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(int[]), arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(short[]), arrayTypeMap);
 
-            typeMap = new ArrayTypeMap<double>(this);
-            if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(XName.Get("double[]", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(double[]).ToQualifiedName(), typeMap);
+            var integerTypeMap = itemTypeMap;
 
-            typeMap = new DecimalTypeMap();
-            systemTypeMaps.GetOrAdd(XName.Get("decimal", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(decimal).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(decimal?).ToQualifiedName(), typeMap);
+            itemTypeMap = new StringTypeMap();
+            arrayTypeMap = new ArrayTypeMap<string>(this);
+            AddSystemXmlType("anyURI", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            AddSystemXmlType("string", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(string), itemTypeMap);
+            systemRuntimeTypeMaps.GetOrAdd(typeof(string[]), arrayTypeMap);
 
-            typeMap = new ArrayTypeMap<decimal>(this);
-            if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(XName.Get("decimal[]", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(decimal[]).ToQualifiedName(), typeMap);
-
-            typeMap = new LongTypeMap();
-            systemTypeMaps.GetOrAdd(XName.Get("long", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(long).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(long?).ToQualifiedName(), typeMap);
-
-            typeMap = new ArrayTypeMap<long>(this);
-            if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(XName.Get("long[]", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(long[]).ToQualifiedName(), typeMap);
-
-            typeMap = new IntegerTypeMap();
-            var integerTypeMap = typeMap;
-            systemTypeMaps.GetOrAdd(XName.Get("integer", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(XName.Get("int", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(int).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(int?).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(short).ToQualifiedName(), typeMap);
-
-            typeMap = new ArrayTypeMap<int>(this);
-            if (protocol == XRoadProtocol.Version20)
-            {
-                systemTypeMaps.GetOrAdd(XName.Get("integer[]", NamespaceConstants.XSD), typeMap);
-                systemTypeMaps.GetOrAdd(XName.Get("int[]", NamespaceConstants.XSD), typeMap);
-            }
-            systemTypeMaps.GetOrAdd(typeof(int[]).ToQualifiedName(), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(short[]).ToQualifiedName(), typeMap);
-
-            typeMap = new StringTypeMap();
-            systemTypeMaps.GetOrAdd(XName.Get("anyURI", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(XName.Get("string", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(string).ToQualifiedName(), typeMap);
-
-            typeMap = new ArrayTypeMap<string>(this);
-            var stringArrayTypeMap = typeMap;
-            if (protocol == XRoadProtocol.Version20)
-                systemTypeMaps.GetOrAdd(XName.Get("string[]", NamespaceConstants.XSD), typeMap);
-            systemTypeMaps.GetOrAdd(typeof(string[]).ToQualifiedName(), typeMap);
+            var stringArrayTypeMap = arrayTypeMap;
 
             var qualifiedName = XName.Get("hexBinary", NamespaceConstants.SOAP_ENC);
-            typeMap = new StreamTypeMap(qualifiedName);
-            systemTypeMaps.GetOrAdd(qualifiedName, typeMap);
+            itemTypeMap = new StreamTypeMap(qualifiedName);
+            systemXmlTypeMaps.GetOrAdd(qualifiedName, Tuple.Create(itemTypeMap, (ITypeMap)null));
 
             qualifiedName = XName.Get("base64", NamespaceConstants.SOAP_ENC);
-            typeMap = new StreamTypeMap(qualifiedName);
-            systemTypeMaps.GetOrAdd(qualifiedName, typeMap);
+            itemTypeMap = new StreamTypeMap(qualifiedName);
+            systemXmlTypeMaps.GetOrAdd(qualifiedName, Tuple.Create(itemTypeMap, (ITypeMap)null));
 
             qualifiedName = XName.Get("base64Binary", NamespaceConstants.SOAP_ENC);
-            typeMap = new StreamTypeMap(qualifiedName);
-            systemTypeMaps.GetOrAdd(qualifiedName, typeMap);
+            itemTypeMap = new StreamTypeMap(qualifiedName);
+            systemXmlTypeMaps.GetOrAdd(qualifiedName, Tuple.Create(itemTypeMap, (ITypeMap)null));
 
             if (protocol == XRoadProtocol.Version20)
             {
-                systemTypeMaps.GetOrAdd(typeof(System.IO.Stream).ToQualifiedName(), typeMap);
-                systemTypeMaps.GetOrAdd(typeof(System.IO.FileStream).ToQualifiedName(), typeMap);
-                systemTypeMaps.GetOrAdd(typeof(System.IO.MemoryStream).ToQualifiedName(), typeMap);
+                systemRuntimeTypeMaps.GetOrAdd(typeof(System.IO.Stream), itemTypeMap);
+                systemRuntimeTypeMaps.GetOrAdd(typeof(System.IO.FileStream), itemTypeMap);
+                systemRuntimeTypeMaps.GetOrAdd(typeof(System.IO.MemoryStream), itemTypeMap);
             }
 
             qualifiedName = XName.Get("base64binary", NamespaceConstants.XSD);
-            typeMap = new StreamTypeMap(qualifiedName);
-            systemTypeMaps.GetOrAdd(qualifiedName, typeMap);
+            itemTypeMap = new StreamTypeMap(qualifiedName);
+            systemXmlTypeMaps.GetOrAdd(qualifiedName, Tuple.Create(itemTypeMap, (ITypeMap)null));
 
             if (protocol != XRoadProtocol.Version20)
             {
-                systemTypeMaps.GetOrAdd(typeof(System.IO.Stream).ToQualifiedName(), typeMap);
-                systemTypeMaps.GetOrAdd(typeof(System.IO.FileStream).ToQualifiedName(), typeMap);
-                systemTypeMaps.GetOrAdd(typeof(System.IO.MemoryStream).ToQualifiedName(), typeMap);
+                systemRuntimeTypeMaps.GetOrAdd(typeof(System.IO.Stream), itemTypeMap);
+                systemRuntimeTypeMaps.GetOrAdd(typeof(System.IO.FileStream), itemTypeMap);
+                systemRuntimeTypeMaps.GetOrAdd(typeof(System.IO.MemoryStream), itemTypeMap);
             }
 
             qualifiedName = XName.Get("testSystem", protocol.GetNamespace());
@@ -240,80 +214,96 @@ namespace XRoadLib.Serialization
             var parameterIsOptional = parameterInfo.GetParameterIsOptional();
 
             var qualifiedTypeName = parameterInfo.GetQualifiedTypeName();
-            var typeMap = qualifiedTypeName != null ? GetTypeMap(qualifiedTypeName, dtoVersion) : GetTypeMap(parameterInfo.ParameterType, dtoVersion);
+            var typeMap = qualifiedTypeName != null ? GetTypeMap(qualifiedTypeName, parameterInfo.ParameterType.IsArray, dtoVersion) : GetTypeMap(parameterInfo.ParameterType, dtoVersion);
 
             return new ParameterMap(this, parameterName, parameterInfo, typeMap, parameterIsOptional);
         }
 
-        public ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion, bool undefined = false)
+        public ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion)
         {
-            return GetTypeMap(reader.GetTypeAttributeValue(), dtoVersion, null, undefined);
+            var typeValue = reader.GetTypeAttributeValue();
+            return typeValue == null ? null : GetTypeMap(typeValue.Item1, typeValue.Item2, dtoVersion);
         }
 
-        public ITypeMap GetTypeMap(Type runtimeType, uint dtoVersion, IDictionary<XName, ITypeMap> partialTypeMaps = null)
+        public ITypeMap GetTypeMap(Type runtimeType, uint dtoVersion, IDictionary<Type, ITypeMap> partialTypeMaps = null)
         {
-            return runtimeType == null ? null : GetTypeMap(runtimeType.ToQualifiedName(), dtoVersion, partialTypeMaps);
-        }
-
-        public ITypeMap GetTypeMap(XName qualifiedName, uint dtoVersion, IDictionary<XName, ITypeMap> partialTypeMaps = null, bool undefined = false)
-        {
-            if (qualifiedName == null)
+            if (runtimeType == null)
                 return null;
 
             ITypeMap typeMap;
 
-            if (NamespaceConstants.SOAP_ENC.Equals(qualifiedName.NamespaceName) || NamespaceConstants.XSD.Equals(qualifiedName.NamespaceName) || qualifiedName.NamespaceName.StartsWith("System"))
+            if (runtimeType.FullName.StartsWith("System"))
             {
-                if (!systemTypeMaps.TryGetValue(qualifiedName, out typeMap))
-                    throw XRoadException.UnknownType(qualifiedName.ToString());
+                if (!systemRuntimeTypeMaps.TryGetValue(runtimeType, out typeMap))
+                    throw XRoadException.UnknownType(runtimeType.FullName);
                 return typeMap;
             }
 
-            ConcurrentDictionary<uint, ITypeMap> typeMapVersions;
-            var fixedQualifiedName = GetTypeMapVersions(qualifiedName, out typeMapVersions);
-
-            if (!typeMapVersions.TryGetValue(dtoVersion, out typeMap) && (partialTypeMaps == null || !partialTypeMaps.TryGetValue(fixedQualifiedName, out typeMap)))
-                typeMap = AddTypeMap(typeMapVersions, fixedQualifiedName, dtoVersion, partialTypeMaps, undefined);
+            var typeMapVersions = GetTypeMapVersions(runtimeType);
+            if (!typeMapVersions.TryGetValue(dtoVersion, out typeMap) && (partialTypeMaps == null || !partialTypeMaps.TryGetValue(runtimeType, out typeMap)))
+                typeMap = AddTypeMap(typeMapVersions, runtimeType, dtoVersion, partialTypeMaps);
 
             return typeMap;
         }
 
-        private XName GetTypeMapVersions(XName qualifiedName, out ConcurrentDictionary<uint, ITypeMap> typeMapVersions)
+        public ITypeMap GetTypeMap(XName qualifiedName, bool isArray, uint dtoVersion)
         {
-            if (typeMaps.TryGetValue(qualifiedName, out typeMapVersions))
-                return qualifiedName;
+            if (qualifiedName == null)
+                return null;
 
-            var fixedQualifiedName = qualifiedName;
+            Tuple<ITypeMap, ITypeMap> typeMap;
+
+            if (NamespaceConstants.SOAP_ENC.Equals(qualifiedName.NamespaceName) || NamespaceConstants.XSD.Equals(qualifiedName.NamespaceName) || qualifiedName.NamespaceName.StartsWith("System"))
+            {
+                if (!systemXmlTypeMaps.TryGetValue(qualifiedName, out typeMap))
+                    throw XRoadException.UnknownType(qualifiedName.ToString());
+            }
+            else
+            {
+                var typeMapVersions = GetTypeMapVersions(ref qualifiedName);
+                if (!typeMapVersions.TryGetValue(dtoVersion, out typeMap))
+                    typeMap = AddTypeMap(typeMapVersions, qualifiedName, dtoVersion);
+            }
+
+            return isArray ? typeMap.Item2 : typeMap.Item1;
+        }
+
+        private ConcurrentDictionary<uint, ITypeMap> GetTypeMapVersions(Type type)
+        {
+            ConcurrentDictionary<uint, ITypeMap> typeMapVersions;
+            return runtimeTypeMaps.TryGetValue(type, out typeMapVersions) ? typeMapVersions : runtimeTypeMaps.GetOrAdd(type, new ConcurrentDictionary<uint, ITypeMap>());
+        }
+
+        private ConcurrentDictionary<uint, Tuple<ITypeMap, ITypeMap>> GetTypeMapVersions(ref XName qualifiedName)
+        {
+            ConcurrentDictionary<uint, Tuple<ITypeMap, ITypeMap>> typeMapVersions;
+            if (xmlTypeMaps.TryGetValue(qualifiedName, out typeMapVersions))
+                return typeMapVersions;
 
             var namespaceBase = protocol.GetProducerNamespaceBase(qualifiedName.NamespaceName);
             if (!string.IsNullOrWhiteSpace(namespaceBase))
             {
-                fixedQualifiedName = XName.Get(qualifiedName.LocalName, namespaceBase);
-                if (typeMaps.TryGetValue(fixedQualifiedName, out typeMapVersions))
-                    return fixedQualifiedName;
+                qualifiedName = XName.Get(qualifiedName.LocalName, namespaceBase);
+                if (xmlTypeMaps.TryGetValue(qualifiedName, out typeMapVersions))
+                    return typeMapVersions;
             }
 
-            typeMapVersions = typeMaps.GetOrAdd(fixedQualifiedName, new ConcurrentDictionary<uint, ITypeMap>());
-
-            return fixedQualifiedName;
+            return xmlTypeMaps.GetOrAdd(qualifiedName, new ConcurrentDictionary<uint, Tuple<ITypeMap, ITypeMap>>());
         }
 
-        private ITypeMap AddTypeMap(ConcurrentDictionary<uint, ITypeMap> typeMapVersions, XName qualifiedName, uint dtoVersion, IDictionary<XName, ITypeMap> partialTypeMaps, bool undefined = false)
+        private ITypeMap AddTypeMap(ConcurrentDictionary<uint, ITypeMap> typeMapVersions, Type runtimeType, uint dtoVersion, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
             ITypeMap typeMap;
 
-            if ((protocol == XRoadProtocol.Version20 || !qualifiedName.NamespaceName.StartsWith("http://")) && qualifiedName.LocalName.EndsWith("[]"))
+            if (runtimeType.IsArray)
             {
-                var itemTypeName = qualifiedName.LocalName.Substring(0, qualifiedName.LocalName.Length - 2);
-                var itemTypeMap = GetTypeMap(XName.Get(itemTypeName, qualifiedName.NamespaceName), dtoVersion, partialTypeMaps);
-
+                var itemTypeMap = GetTypeMap(runtimeType.GetElementType(), dtoVersion, partialTypeMaps);
                 var typeMapType = typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.RuntimeType);
                 typeMap = (ITypeMap)Activator.CreateInstance(typeMapType, this);
             }
             else
             {
-                var runtimeType = GetRuntimeType(qualifiedName, undefined);
-                if (runtimeType == null)
+                if (runtimeType.Assembly != contractAssembly)
                     return null;
 
                 if (!runtimeType.IsAbstract && runtimeType.GetConstructor(Type.EmptyTypes) == null)
@@ -333,17 +323,54 @@ namespace XRoadLib.Serialization
 
             typeMap.DtoVersion = dtoVersion;
 
-            partialTypeMaps = partialTypeMaps ?? new Dictionary<XName, ITypeMap>();
-            partialTypeMaps.Add(qualifiedName, typeMap);
-
+            partialTypeMaps = partialTypeMaps ?? new Dictionary<Type, ITypeMap>();
+            partialTypeMaps.Add(runtimeType, typeMap);
             typeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);
-
-            partialTypeMaps.Remove(qualifiedName);
+            partialTypeMaps.Remove(runtimeType);
 
             return typeMapVersions.GetOrAdd(typeMap.DtoVersion, typeMap);
         }
 
-        private Type GetRuntimeType(XName qualifiedName, bool undefined)
+        private Tuple<ITypeMap, ITypeMap> AddTypeMap(ConcurrentDictionary<uint, Tuple<ITypeMap, ITypeMap>> typeMapVersions, XName qualifiedName, uint dtoVersion)
+        {
+            var runtimeType = GetRuntimeType(qualifiedName);
+            if (runtimeType == null)
+                return null;
+
+            if (!runtimeType.IsAbstract && runtimeType.GetConstructor(Type.EmptyTypes) == null)
+                throw XRoadException.NoDefaultConstructorForType(runtimeType.Name);
+
+            ITypeMap itemTypeMap;
+
+            if (runtimeType.IsAbstract)
+                itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap<>).MakeGenericType(runtimeType));
+            else
+            {
+                var contentLayoutMode = (typeConfigurationProvider?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
+                if (contentLayoutMode == XRoadContentLayoutMode.Flexible)
+                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);
+                else
+                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
+            }
+
+            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.RuntimeType), this);
+
+            var partialTypeMaps = new Dictionary<Type, ITypeMap>
+            {
+                { itemTypeMap.RuntimeType, itemTypeMap },
+                { arrayTypeMap.RuntimeType, arrayTypeMap }
+            };
+
+            itemTypeMap.DtoVersion = dtoVersion;
+            arrayTypeMap.DtoVersion = dtoVersion;
+
+            itemTypeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);
+            arrayTypeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);
+
+            return typeMapVersions.GetOrAdd(dtoVersion, Tuple.Create(itemTypeMap, arrayTypeMap));
+        }
+
+        private Type GetRuntimeType(XName qualifiedName)
         {
             if (!qualifiedName.NamespaceName.StartsWith("http://"))
             {
@@ -357,7 +384,7 @@ namespace XRoadLib.Serialization
             var runtimeType = contractAssembly.GetTypes()
                                               .Where(type => type.Name.Equals(qualifiedName.LocalName))
                                               .SingleOrDefault(type => type.IsXRoadSerializable());
-            if (undefined || runtimeType != null)
+            if (runtimeType != null)
                 return runtimeType;
 
             throw XRoadException.UnknownType(qualifiedName.ToString());
@@ -385,6 +412,11 @@ namespace XRoadLib.Serialization
                 return XName.Get(type.Name, ProducerNamespace);
 
             throw XRoadException.AndmetüübileVastavNimeruumPuudub(type.FullName);
+        }
+
+        private void AddSystemXmlType(string typeName, string ns, ITypeMap itemTypeMap, ITypeMap arrayTypeMap)
+        {
+            systemXmlTypeMaps.GetOrAdd(XName.Get(typeName, ns), Tuple.Create(itemTypeMap, protocol == XRoadProtocol.Version20 ? arrayTypeMap : null));
         }
     }
 }

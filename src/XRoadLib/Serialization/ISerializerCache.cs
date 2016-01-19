@@ -14,11 +14,11 @@ namespace XRoadLib.Serialization
 
         IServiceMap GetServiceMap(XName qualifiedName, uint dtoVersion);
 
-        ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion, bool undefined = false);
+        ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion);
 
-        ITypeMap GetTypeMap(Type runtimeType, uint dtoVersion, IDictionary<XName, ITypeMap> partialTypeMaps = null);
+        ITypeMap GetTypeMap(XName qualifiedName, bool isArray, uint dtoVersion);
 
-        ITypeMap GetTypeMap(XName qualifiedName, uint dtoVersion, IDictionary<XName, ITypeMap> partialTypeMaps = null, bool undefined = false);
+        ITypeMap GetTypeMap(Type runtimeType, uint dtoVersion, IDictionary<Type, ITypeMap> partialTypeMaps = null);
 
         XName GetXmlTypeName(Type type);
     }

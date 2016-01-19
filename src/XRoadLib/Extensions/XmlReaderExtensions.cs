@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
-using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions
 {
@@ -38,12 +38,12 @@ namespace XRoadLib.Extensions
             }
         }
 
-        public static XName GetTypeAttributeValue(this XmlReader reader)
+        internal static Tuple<XName, bool> GetTypeAttributeValue(this XmlReader reader)
         {
             return GetTypeAttributeValue(reader, qnXsiType);
         }
 
-        private static XName GetTypeAttributeValue(XmlReader reader, XName attributeName, bool isArrayType = false)
+        private static Tuple<XName, bool> GetTypeAttributeValue(XmlReader reader, XName attributeName, bool isArrayType = false)
         {
             var typeValue = reader.GetAttribute(attributeName.LocalName, attributeName.NamespaceName);
             if (typeValue == null)
@@ -56,11 +56,11 @@ namespace XRoadLib.Extensions
             var typeNamespace = reader.LookupNamespace(namespacePrefix);
 
             if (isArrayType)
-                typeName = typeName.Substring(0, typeName.LastIndexOf('[')) + "[]";
+                typeName = typeName.Substring(0, typeName.LastIndexOf('['));
 
             var qualifiedName = typeNamespace == null ? XName.Get(typeName) : XName.Get(typeName, typeNamespace);
 
-            return qualifiedName != qnSoapEncArray ? qualifiedName : GetTypeAttributeValue(reader, qnSoapEncArrayType, true);
+            return qualifiedName != qnSoapEncArray ? Tuple.Create(qualifiedName, isArrayType) : GetTypeAttributeValue(reader, qnSoapEncArrayType, true);
         }
 
         public static void ReadToEndElement(this XmlReader reader)

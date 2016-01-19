@@ -108,7 +108,8 @@ namespace XRoadLib.Serialization.Mapping
             foreach (var value in values)
             {
                 var parameterMap = parameters.Single(x => x.Name == value.Key);
-                parameterMap.Serialize(writer, context.XmlTemplate.GetParameterNode(parameterMap.Name), value.Value, context);
+                var parameterNode = context.XmlTemplate != null ? context.XmlTemplate.GetParameterNode(parameterMap.Name) : XRoadXmlTemplate.EmptyNode;
+                parameterMap.Serialize(writer, parameterNode, value.Value, context);
             }
 
             writer.WriteEndElement();

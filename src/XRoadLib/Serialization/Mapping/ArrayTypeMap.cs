@@ -13,7 +13,6 @@ namespace XRoadLib.Serialization.Mapping
 
         private readonly XName elementQualifiedName;
         private readonly Type elementType = typeof(T);
-        private readonly XName defaultTypeName = typeof(T).ToQualifiedName();
 
         public override bool IsSimpleType => false;
 
@@ -36,7 +35,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.NodeType != XmlNodeType.Element || reader.IsNilElement())
                     continue;
 
-                var typeMap = serializerCache.GetTypeMapFromXsiType(reader, DtoVersion) ?? serializerCache.GetTypeMap(defaultTypeName, DtoVersion);
+                var typeMap = serializerCache.GetTypeMapFromXsiType(reader, DtoVersion) ?? serializerCache.GetTypeMap(elementType, DtoVersion);
 
                 var value = typeMap.Deserialize(reader, templateNode, context);
                 if (value != null)

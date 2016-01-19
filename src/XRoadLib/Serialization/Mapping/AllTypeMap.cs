@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
@@ -73,7 +72,7 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override void InitializeProperties(IDictionary<XName, ITypeMap> partialTypeMaps, ITypeConfigurationProvider typeConfigurationProvider)
+        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfigurationProvider typeConfigurationProvider)
         {
             if (deserializationPropertyMaps.Count > 0)
                 return;
@@ -84,7 +83,7 @@ namespace XRoadLib.Serialization.Mapping
             {
                 var qualifiedTypeName = propertyInfo.GetQualifiedTypeName();
 
-                var typeMap = qualifiedTypeName != null ? serializerCache.GetTypeMap(qualifiedTypeName, DtoVersion, partialTypeMaps)
+                var typeMap = qualifiedTypeName != null ? serializerCache.GetTypeMap(qualifiedTypeName, propertyInfo.PropertyType.IsArray, DtoVersion)
                                                         : serializerCache.GetTypeMap(propertyInfo.PropertyType, DtoVersion, partialTypeMaps);
 
                 var propertyMap = new PropertyMap(serializerCache, propertyInfo, typeMap, RuntimeType);

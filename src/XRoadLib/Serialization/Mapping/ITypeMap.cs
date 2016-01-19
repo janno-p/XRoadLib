@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Configuration;
 using XRoadLib.Serialization.Template;
 
@@ -19,6 +18,6 @@ namespace XRoadLib.Serialization.Mapping
 
         void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context);
 
-        void InitializeProperties(IDictionary<XName, ITypeMap> partialTypeMaps, ITypeConfigurationProvider typeConfigurationProvider);
+        void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfigurationProvider typeConfigurationProvider);
     }
 }

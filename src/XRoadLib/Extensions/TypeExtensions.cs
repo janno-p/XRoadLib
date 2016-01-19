@@ -151,12 +151,6 @@ namespace XRoadLib.Extensions
                              .OfType<XRoadMessagePartAttribute>();
         }
 
-        public static XName ToQualifiedName(this Type type)
-        {
-            var nullableType = Nullable.GetUnderlyingType(type);
-            return nullableType != null ? XName.Get(nullableType.Name + "?", type.Namespace ?? "global::") : XName.Get(type.Name, type.Namespace ?? "global::");
-        }
-
         public static T GetSingleAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(T), false).Cast<T>().SingleOrDefault();
