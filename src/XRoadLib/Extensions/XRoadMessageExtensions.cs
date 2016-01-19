@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
@@ -52,6 +53,8 @@ namespace XRoadLib.Extensions
             message.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(message.ContentStream))
             {
+                reader.MoveToBody();
+
                 var result = serviceMap.DeserializeResponse(reader, context);
 
                 var soapFault = result as ISoapFault;

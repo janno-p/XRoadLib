@@ -10,6 +10,7 @@ namespace XRoadLib.Soap
         public string Details { get; }
 
         public SoapFaultException(ISoapFault soapFault)
+            : base(soapFault?.FaultString)
         {
             if (soapFault == null)
                 throw new ArgumentNullException(nameof(soapFault));

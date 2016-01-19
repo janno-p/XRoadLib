@@ -102,13 +102,18 @@ namespace XRoadLib.Extensions
             return headerNamespaces.Contains(reader.NamespaceURI);
         }
 
-        public static void MoveToPayload(this XmlReader reader, XName rootElementName)
+        public static void MoveToBody(this XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
                 throw XRoadException.InvalidQuery("Element `{0}:Envelope` is missing from request content.", NamespaceConstants.SOAP);
 
             if (!reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
                 throw XRoadException.InvalidQuery("Element `{0}:Body` is missing from request content.", NamespaceConstants.SOAP);
+        }
+
+        public static void MoveToPayload(this XmlReader reader, XName rootElementName)
+        {
+            reader.MoveToBody();
 
             if (!reader.MoveToElement(2, rootElementName.LocalName, rootElementName.NamespaceName))
                 throw XRoadException.InvalidQuery("Payload is missing from request content.");
