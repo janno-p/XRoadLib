@@ -51,27 +51,29 @@ namespace XRoadLib
 
         public static ISoapFault DeserializeSoapFault(XmlReader reader)
         {
+            const int depth = 3;
+
             var fault = new SoapFault();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(4, "faultcode"))
+            if (reader.IsEmptyElement || !reader.MoveToElement(depth, "faultcode"))
                 throw XRoadException.InvalidQuery("SOAP Fault must have `faultcode` element.");
             fault.FaultCode = reader.ReadElementContentAsString();
 
-            if (!reader.MoveToElement(4, "faultstring"))
+            if (!reader.MoveToElement(depth, "faultstring"))
                 throw XRoadException.InvalidQuery("SOAP Fault must have `faultstring` element.");
             fault.FaultString = reader.ReadElementContentAsString();
 
-            var success = reader.MoveToElement(4);
+            var success = reader.MoveToElement(depth);
             if (success && reader.LocalName == "faultactor" && reader.NamespaceURI == "")
             {
                 fault.FaultActor = reader.ReadElementContentAsString();
-                success = reader.MoveToElement(4);
+                success = reader.MoveToElement(depth);
             }
 
             if (success && reader.LocalName == "detail" && reader.NamespaceURI == "")
             {
                 fault.Details = reader.ReadElementContentAsString();
-                success = reader.MoveToElement(4);
+                success = reader.MoveToElement(depth);
             }
 
             if (success)
