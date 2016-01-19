@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions
 {
     public static class XmlReaderExtensions
     {
-        private static readonly XmlQualifiedName qnXsiNil = new XmlQualifiedName("nil", NamespaceConstants.XSI);
-        private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceConstants.XSI);
-        private static readonly XmlQualifiedName qnSoapEncArray = new XmlQualifiedName("Array", NamespaceConstants.SOAP_ENC);
-        private static readonly XmlQualifiedName qnSoapEncArrayType = new XmlQualifiedName("arrayType", NamespaceConstants.SOAP_ENC);
+        private static readonly XName qnXsiNil = XName.Get("nil", NamespaceConstants.XSI);
+        private static readonly XName qnXsiType = XName.Get("type", NamespaceConstants.XSI);
+        private static readonly XName qnSoapEncArray = XName.Get("Array", NamespaceConstants.SOAP_ENC);
+        private static readonly XName qnSoapEncArrayType = XName.Get("arrayType", NamespaceConstants.SOAP_ENC);
 
         public static bool ReadToElement(this XmlReader reader, string localName)
         {
@@ -18,7 +20,7 @@ namespace XRoadLib.Extensions
 
         public static bool IsNilElement(this XmlReader reader)
         {
-            var value = reader.GetAttribute(qnXsiNil.Name, qnXsiNil.Namespace);
+            var value = reader.GetAttribute(qnXsiNil.LocalName, qnXsiNil.NamespaceName);
 
             switch (value)
             {
@@ -36,14 +38,14 @@ namespace XRoadLib.Extensions
             }
         }
 
-        public static XmlQualifiedName GetTypeAttributeValue(this XmlReader reader)
+        public static XName GetTypeAttributeValue(this XmlReader reader)
         {
             return GetTypeAttributeValue(reader, qnXsiType);
         }
 
-        private static XmlQualifiedName GetTypeAttributeValue(XmlReader reader, XmlQualifiedName attributeName, bool isArrayType = false)
+        private static XName GetTypeAttributeValue(XmlReader reader, XName attributeName, bool isArrayType = false)
         {
-            var typeValue = reader.GetAttribute(attributeName.Name, attributeName.Namespace);
+            var typeValue = reader.GetAttribute(attributeName.LocalName, attributeName.NamespaceName);
             if (typeValue == null)
                 return null;
 
@@ -56,7 +58,7 @@ namespace XRoadLib.Extensions
             if (isArrayType)
                 typeName = typeName.Substring(0, typeName.LastIndexOf('[')) + "[]";
 
-            var qualifiedName = new XmlQualifiedName(typeName, typeNamespace);
+            var qualifiedName = typeNamespace == null ? XName.Get(typeName) : XName.Get(typeName, typeNamespace);
 
             return qualifiedName != qnSoapEncArray ? qualifiedName : GetTypeAttributeValue(reader, qnSoapEncArrayType, true);
         }
@@ -98,6 +100,18 @@ namespace XRoadLib.Extensions
         public static bool IsHeaderNamespace(this XmlReader reader)
         {
             return headerNamespaces.Contains(reader.NamespaceURI);
+        }
+
+        public static void MoveToPayload(this XmlReader reader, XName rootElementName)
+        {
+            if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
+                throw XRoadException.InvalidQuery("Element `{0}:Envelope` is missing from request content.", NamespaceConstants.SOAP);
+
+            if (!reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
+                throw XRoadException.InvalidQuery("Element `{0}:Body` is missing from request content.", NamespaceConstants.SOAP);
+
+            if (!reader.MoveToElement(2, rootElementName.LocalName, rootElementName.NamespaceName))
+                throw XRoadException.InvalidQuery("Payload is missing from request content.");
         }
     }
 }

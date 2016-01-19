@@ -13,6 +13,7 @@ open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
 open XRoadLib.Tests.Contract
 
+(*
 [<TestFixture>]
 module XRoadSerializerTest =
     let serializerCache = SerializerCache(typeof<Class1>.Assembly, XRoadProtocol.Version20)
@@ -198,3 +199,4 @@ module XRoadSerializerTest =
                                   @"<SingleProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">8</SingleProperty>"
                                   @"<StaticProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">6</StaticProperty>"
                                   @"</keha>" ] |> String.concat "")
+*)

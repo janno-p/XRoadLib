@@ -4,6 +4,6 @@ namespace XRoadLib.Configuration
 {
     public interface IParameterNameProvider
     {
-        string GetParameterName(ParameterInfo parameterContract, ParameterInfo parameterImpl);
+        string GetParameterName(ParameterInfo parameterContract, string operationName);
     }
 }

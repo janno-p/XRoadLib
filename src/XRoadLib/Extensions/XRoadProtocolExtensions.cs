@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using XRoadLib.Attributes;
 using XRoadLib.Configuration;
 using XRoadLib.Header;
@@ -191,6 +192,11 @@ namespace XRoadLib.Extensions
         public static ITypeConfigurationProvider GetTypeConfiguration(this XRoadProtocol protocol, Assembly contractAssembly)
         {
             return protocol.GetContractConfiguration(contractAssembly)?.TypeConfigurationProvider;
+        }
+
+        public static XName GetResponseElementName(this XRoadProtocol protocol)
+        {
+            return XName.Get(protocol == XRoadProtocol.Version20 ? "keha" : "response");
         }
     }
 }

@@ -14,6 +14,7 @@ open XRoadLib.Serialization.Mapping;
 open XRoadLib.Serialization.Template;
 open XRoadLib.Tests.Contract
 
+(*
 [<TestFixture>]
 module XRoadDeserializerTest =
     let [<Literal>] dtoVersion = 3u
@@ -378,3 +379,4 @@ module XRoadDeserializerTest =
 
         TestDelegate(fun _ -> deserializeRequest templateXml contentXml |> ignore)
         |> should (throwWithMessage "MIME multipart message does not contain content with ID `cid:KcGPT5EOP0BC0DXQ5wmEFA==`.") typeof<XRoadException>
+*)

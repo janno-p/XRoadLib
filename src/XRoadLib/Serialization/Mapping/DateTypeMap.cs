@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlTypes;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
@@ -8,7 +9,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DateTypeMap : TypeMap<DateTime>
     {
-        private readonly XmlQualifiedName xmlQualifiedName = new XmlQualifiedName("date", NamespaceConstants.XSD);
+        private readonly XName qualifiedName = XName.Get("date", NamespaceConstants.XSD);
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
@@ -35,7 +36,7 @@ namespace XRoadLib.Serialization.Mapping
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
         {
             if (context.Protocol == XRoadProtocol.Version20)
-                writer.WriteTypeAttribute(xmlQualifiedName);
+                writer.WriteTypeAttribute(qualifiedName);
 
             writer.WriteValue(XmlConvert.ToString((DateTime)value, "yyyy-MM-dd"));
         }

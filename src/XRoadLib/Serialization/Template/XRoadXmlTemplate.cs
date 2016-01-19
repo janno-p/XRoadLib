@@ -17,7 +17,7 @@ namespace XRoadLib.Serialization.Template
 
         public IDictionary<string, Type> ParameterTypes => parameterTypes;
 
-        public XRoadXmlTemplate(string templateXml, MethodInfo serviceMethod)
+        public XRoadXmlTemplate(string templateXml, MethodInfo methodInfo)
         {
             if (!string.IsNullOrEmpty(templateXml))
             {
@@ -28,11 +28,11 @@ namespace XRoadLib.Serialization.Template
 
             parameterNodes = requestNode?.Elements().ToList() ?? new List<XElement>();
 
-            if (serviceMethod == null)
+            if (methodInfo == null)
                 return;
 
-            parameterNames = serviceMethod.GetParameters().Select(parameter => parameter.Name).ToList();
-            parameterTypes = serviceMethod.GetParameters().ToDictionary(param => param.Name, param => param.ParameterType);
+            parameterNames = methodInfo.GetParameters().Select(parameter => parameter.Name).ToList();
+            parameterTypes = methodInfo.GetParameters().ToDictionary(param => param.Name, param => param.ParameterType);
         }
 
         public XRoadXmlTemplate() : this(null, null)

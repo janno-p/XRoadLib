@@ -73,7 +73,7 @@ namespace XRoadLib.Serialization
 
             var teenuseNimi = !string.IsNullOrWhiteSpace(target.Header?.Service?.ServiceCode)
                 ? target.Header.Service.ServiceCode
-                : (target.RootElementName != null ? target.RootElementName.Name : "");
+                : (target.RootElementName != null ? target.RootElementName.LocalName : "");
 
             if (target.Protocol != XRoadProtocol.Version20 && target.IsMultipart && !target.MultipartContentType.Equals("application/xop+xml"))
                 throw XRoadException.InvalidQuery("Teenuse `{0}` multipart päringu sisuks oodati `application/xop+xml`, kuid edastati `{1}`.", teenuseNimi, target.MultipartContentType);
@@ -84,7 +84,7 @@ namespace XRoadLib.Serialization
             if (target.RootElementName == null || string.IsNullOrWhiteSpace(target.Header?.Service?.ServiceCode))
                 return;
 
-            if (!Equals(target.RootElementName.Name, target.Header.Service.ServiceCode))
+            if (!Equals(target.RootElementName.LocalName, target.Header.Service.ServiceCode))
                 throw XRoadException.InvalidQuery("Teenuse nimi `{0}` ei ole vastavuses päringu sisuga `{1}`.", target.Header.Service.ServiceCode, target.RootElementName);
         }
 
@@ -422,10 +422,10 @@ namespace XRoadLib.Serialization
             return Tuple.Create(header, unresolved);
         }
 
-        private static XmlQualifiedName ParseMessageRootElementName(XmlReader reader)
+        private static XName ParseMessageRootElementName(XmlReader reader)
         {
             return (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV)) && reader.MoveToElement(2)
-                ? new XmlQualifiedName(reader.LocalName, reader.NamespaceURI)
+                ? XName.Get(reader.LocalName, reader.NamespaceURI)
                 : null;
         }
     }

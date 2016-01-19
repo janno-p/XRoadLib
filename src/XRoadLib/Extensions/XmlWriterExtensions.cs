@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using System.Xml.Linq;
 
 namespace XRoadLib.Extensions
 {
@@ -18,9 +19,9 @@ namespace XRoadLib.Extensions
             writer.WriteQualifiedAttribute(qnXsiType.Name, qnXsiType.Namespace, typeName, typeNamespace);
         }
 
-        public static void WriteTypeAttribute(this XmlWriter writer, XmlQualifiedName qualifiedName, string ns = null)
+        public static void WriteTypeAttribute(this XmlWriter writer, XName qualifiedName, string ns = null)
         {
-            writer.WriteTypeAttribute(qualifiedName.Name, ns ?? qualifiedName.Namespace);
+            writer.WriteTypeAttribute(qualifiedName.LocalName, ns ?? qualifiedName.NamespaceName);
         }
 
         private static void WriteArrayTypeAttribute(this XmlWriter writer, string typeName, string typeNamespace, int arraySize)
@@ -31,9 +32,9 @@ namespace XRoadLib.Extensions
             writer.WriteEndAttribute();
         }
 
-        public static void WriteArrayTypeAttribute(this XmlWriter writer, XmlQualifiedName qualifiedName, int arraySize)
+        public static void WriteArrayTypeAttribute(this XmlWriter writer, XName qualifiedName, int arraySize)
         {
-            writer.WriteArrayTypeAttribute(qualifiedName.Name, qualifiedName.Namespace, arraySize);
+            writer.WriteArrayTypeAttribute(qualifiedName.LocalName, qualifiedName.NamespaceName, arraySize);
         }
 
         public static void WriteXteeHeaderElement(this XmlWriter writer, string name, string value, bool writeRaw = false)

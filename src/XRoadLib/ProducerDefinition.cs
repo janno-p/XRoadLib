@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Schema;
 using XRoadLib.Attributes;
 using XRoadLib.Configuration;
@@ -135,13 +136,13 @@ namespace XRoadLib
             }
         }
 
-        public void AddOperation(string name, MethodInfo method, bool isExported)
+        public void AddOperation(string name, MethodInfo methodImpl, bool isExported)
         {
-            var methodContract = method.FindMethodDeclaration(name, serviceContracts);
+            var methodContract = methodImpl.FindMethodDeclaration(name, serviceContracts);
             if (methodContract.Item2.IsHidden || (version.HasValue && !methodContract.Item2.IsDefinedInVersion(version.Value)))
                 return;
 
-            BuildOperationElements(name, methodContract.Item1, method, isExported);
+            BuildOperationElements(name, methodContract.Item1, isExported);
 
             if (isExported)
                 return;
@@ -267,7 +268,7 @@ namespace XRoadLib
                     .ToDictionary(x => x.Item1, x => x.Item2.Keys.ToList()));
         }
 
-        private void AddSchemaType(XmlSchemaElement schemaElement, Type runtimeType, bool isOptional, XmlQualifiedName qualifiedTypeName)
+        private void AddSchemaType(XmlSchemaElement schemaElement, Type runtimeType, bool isOptional, XName qualifiedTypeName)
         {
             var element = schemaElement;
             var type = runtimeType;
@@ -306,7 +307,7 @@ namespace XRoadLib
 
             if (qualifiedTypeName != null)
             {
-                element.SchemaTypeName = new XmlQualifiedName(qualifiedTypeName.Name.Equals("base64") ? "base64Binary" : qualifiedTypeName.Name, NamespaceConstants.XSD);
+                element.SchemaTypeName = new XmlQualifiedName(qualifiedTypeName.LocalName.Equals("base64") ? "base64Binary" : qualifiedTypeName.LocalName, NamespaceConstants.XSD);
                 return;
             }
 
@@ -353,7 +354,7 @@ namespace XRoadLib
             return new XmlQualifiedName(type.Name, targetNamespace);
         }
 
-        private void BuildOperationElements(string name, MethodInfo methodContract, MethodInfo methodImpl, bool isExported)
+        private void BuildOperationElements(string name, MethodInfo methodContract, bool isExported)
         {
             var importAttribute = methodContract.GetImportAttribute(protocol);
             if (importAttribute != null)
@@ -362,7 +363,7 @@ namespace XRoadLib
                 return;
             }
 
-            var operationTypeName = GetOperationTypeName(name, methodContract, methodImpl);
+            var operationTypeName = GetOperationTypeName(name, methodContract);
 
             var requestElement = new XmlSchemaElement
             {
@@ -427,10 +428,10 @@ namespace XRoadLib
             if (IsExistingType(requestName) || IsExistingType(responseName))
                 throw new Exception($"Operation type `{requestName}` already exists with the same name.");
 
-            var requestSequence = CreateOperationRequestSequence(method);
+            var requestSequence = CreateOperationRequestSequence(method, operationName);
             var requestType = new XmlSchemaComplexType { Name = requestName, Particle = requestSequence, Annotation = CreateAnnotationElement(method) };
 
-            var responseType = CreateResponseType(responseName, method, requestSequence);
+            var responseType = CreateResponseType(responseName, method, requestSequence, operationName);
 
             operationTypes.Add(requestName, Tuple.Create(method, requestType, responseType));
         }
@@ -695,7 +696,7 @@ namespace XRoadLib
                 AddMessageType(operation.Item1, operation.Item2);
         }
 
-        private Tuple<XmlQualifiedName, XmlQualifiedName> GetOperationTypeName(string operationName, MethodInfo methodContract, MethodInfo methodImpl)
+        private Tuple<XmlQualifiedName, XmlQualifiedName> GetOperationTypeName(string operationName, MethodInfo methodContract)
         {
             var name = protocol == XRoadProtocol.Version20 ? operationName : GetOperationNameFromMethodInfo(methodContract);
 
@@ -706,34 +707,11 @@ namespace XRoadLib
             if (!operationTypes.TryGetValue(requestTypeName, out value) || methodContract != value.Item1)
                 throw new Exception($"Unrecognized type `{requestTypeName}`");
 
-            UpdateParameterNames(value.Item2, methodContract, methodImpl);
-
             return Tuple.Create(new XmlQualifiedName(requestTypeName, targetNamespace),
                                 new XmlQualifiedName(responseTypeName, targetNamespace));
         }
 
-        private void UpdateParameterNames(XmlSchemaComplexType requestType, MethodInfo methodContract, MethodInfo methodImpl)
-        {
-            if (parameterNameProvider == null)
-                return;
-
-            var particle = (XmlSchemaGroupBase)requestType.Particle;
-
-            var parameterExists = methodContract.GetParameters()
-                .Select(x => Tuple.Create(x, !version.HasValue || x.IsParameterInVersion(version.Value)))
-                .ToList();
-
-            var parameters = methodImpl.GetParameters()
-                .Zip(parameterExists, (x, y) => Tuple.Create(Tuple.Create(y.Item1, x), y.Item2))
-                .Where(x => x.Item2)
-                .Select(x => x.Item1)
-                .ToList();
-
-            for (var i = 0; i < parameters.Count; i++)
-                ((XmlSchemaElement)particle.Items[i]).Name = parameterNameProvider.GetParameterName(parameters[i].Item1, parameters[i].Item2);
-        }
-
-        private XmlSchemaGroupBase CreateOperationRequestSequence(MethodInfo method)
+        private XmlSchemaGroupBase CreateOperationRequestSequence(MethodInfo method, string operationName)
         {
             var requestElement = new XmlSchemaElement { Name = "request" };
 
@@ -745,16 +723,13 @@ namespace XRoadLib
 
                 foreach (var parameter in parameters)
                 {
-                    var parameterAttribute = parameter.GetCustomAttributes(typeof(XRoadParameterAttribute), false)
-                                                      .OfType<XRoadParameterAttribute>()
-                                                      .SingleOrDefault();
-
-                    var parameterName = !string.IsNullOrWhiteSpace(parameterAttribute?.Name) && protocol != XRoadProtocol.Version20
-                        ? parameterAttribute.Name
-                        : parameter.Name;
+                    var parameterName = parameter.GetParameterName(parameterNameProvider, operationName);
+                    var parameterIsOptional = parameter.GetParameterIsOptional();
 
                     var parameterElement = new XmlSchemaElement { Name = parameterName, Annotation = CreateAnnotationElement(parameter) };
-                    AddSchemaType(parameterElement, parameter.ParameterType, parameterAttribute != null && parameterAttribute.IsOptional, parameter.GetQualifiedTypeName());
+
+                    AddSchemaType(parameterElement, parameter.ParameterType, parameterIsOptional, parameter.GetQualifiedTypeName());
+
                     schemaParticle.Items.Add(parameterElement);
                 }
 
@@ -770,7 +745,7 @@ namespace XRoadLib
             return new XmlSchemaSequence { Items = { requestElement } };
         }
 
-        private XmlSchemaComplexType CreateResponseType(string responseName, MethodInfo method, XmlSchemaGroupBase requestSequence)
+        private XmlSchemaComplexType CreateResponseType(string responseName, MethodInfo method, XmlSchemaGroupBase requestSequence, string operationName)
         {
             if (protocol == XRoadProtocol.Version20)
             {
@@ -789,7 +764,7 @@ namespace XRoadLib
 
             if (method.ReturnType != typeof(void))
             {
-                var okElement = new XmlSchemaElement { Name = "value" };
+                var okElement = new XmlSchemaElement { Name = method.ReturnParameter.GetParameterName(parameterNameProvider, operationName) };
                 AddSchemaType(okElement, method.ReturnType, false, null);
                 responseSequence.Items.Add(new XmlSchemaChoice { Items = { CreateFaultSequence(), okElement } });
             }

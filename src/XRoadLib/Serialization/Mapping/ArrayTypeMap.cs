@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
@@ -10,16 +11,16 @@ namespace XRoadLib.Serialization.Mapping
     {
         private readonly ISerializerCache serializerCache;
 
-        private readonly XmlQualifiedName elementXmlQualifiedName;
+        private readonly XName elementQualifiedName;
         private readonly Type elementType = typeof(T);
-        private readonly XmlQualifiedName defaultTypeName = typeof(T).ToQualifiedName();
+        private readonly XName defaultTypeName = typeof(T).ToQualifiedName();
 
         public override bool IsSimpleType => false;
 
         public ArrayTypeMap(ISerializerCache serializerCache)
         {
             this.serializerCache = serializerCache;
-            elementXmlQualifiedName = serializerCache.GetXmlTypeName(typeof(T));
+            elementQualifiedName = serializerCache.GetXmlTypeName(typeof(T));
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -52,7 +53,7 @@ namespace XRoadLib.Serialization.Mapping
             if (context.Protocol == XRoadProtocol.Version20)
             {
                 writer.WriteTypeAttribute("Array", NamespaceConstants.SOAP_ENC);
-                writer.WriteArrayTypeAttribute(elementXmlQualifiedName, valueArray.Length);
+                writer.WriteArrayTypeAttribute(elementQualifiedName, valueArray.Length);
             }
 
             foreach (var element in valueArray)

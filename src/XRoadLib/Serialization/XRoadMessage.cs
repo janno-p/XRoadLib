@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Header;
@@ -24,7 +23,7 @@ namespace XRoadLib.Serialization
         public XRoadProtocol Protocol { get; internal set; }
         public IXRoadHeader Header { get; internal set; }
         public IList<XElement> UnresolvedHeaders { get; set; }
-        public XmlQualifiedName RootElementName { get; internal set; }
+        public XName RootElementName { get; internal set; }
 
         public IList<XRoadAttachment> AllAttachments => attachments;
         public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }
@@ -106,7 +105,7 @@ namespace XRoadLib.Serialization
             if (RootElementName.Namespace != Protocol.GetNamespace())
                 return MetaServiceName.Unsupported;
 
-            switch (RootElementName.Name)
+            switch (RootElementName.LocalName)
             {
                 case "listMethods":
                     return MetaServiceName.ListMethods;

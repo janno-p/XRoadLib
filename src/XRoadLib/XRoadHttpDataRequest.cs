@@ -99,16 +99,16 @@ namespace XRoadLib
             if ((serviceMap = InvokeMetaService(serializerCache, out result)) != null)
                 return result;
 
-            var operationName = RequestMessage.Header?.Service?.ServiceCode ?? RequestMessage.RootElementName?.Name;
-            var dataService = serviceRunner.GetDataService(this, operationName);
+            var operationName = RequestMessage.Header?.Service?.ServiceCode ?? RequestMessage.RootElementName?.LocalName;
+            var serviceObject = serviceRunner.GetServiceObject(this, operationName);
 
-            serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, (RequestMessage.Header?.Service?.Version).GetValueOrDefault(1u), dataService.Item2);
+            serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, (RequestMessage.Header?.Service?.Version).GetValueOrDefault(1u));
 
-            var parameters = DeserializeMethodParameters(serviceMap, dataService.Item2);
+            var parameters = DeserializeMethodParameters(serviceMap);
 
             try
             {
-                result = InvokeDataMethod(dataService.Item1, dataService.Item2, parameters);
+                result = InvokeDataMethod(serviceObject, serviceMap.MethodInfo, parameters);
             }
             catch (Exception exception)
             {
@@ -132,29 +132,24 @@ namespace XRoadLib
             if (metaServiceName == MetaServiceName.None)
                 return null;
 
-            var serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, 1u, null);
+            var serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, 1u);
 
             result = serviceRunner.InvokeMetaService(this, metaServiceName);
 
             return serviceMap;
         }
 
-        private IDictionary<string, object> DeserializeMethodParameters(IServiceMap serviceMap, MethodInfo methodInfo)
+        private IDictionary<string, object> DeserializeMethodParameters(IServiceMap serviceMap)
         {
             var context = RequestMessage.CreateContext();
 
-            var beforeDeserializationEventArgs = new BeforeDeserializationEventArgs(context, methodInfo);
+            var beforeDeserializationEventArgs = new BeforeDeserializationEventArgs(context, serviceMap);
             BeforeDeserialization?.Invoke(this, beforeDeserializationEventArgs);
 
             RequestMessage.ContentStream.Position = 0;
             var reader = XmlReader.Create(RequestMessage.ContentStream, beforeDeserializationEventArgs.XmlReaderSettings);
 
-            if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
-                throw XRoadException.InvalidQuery("Element `{0}:Envelope` is missing from request content.", NamespaceConstants.SOAP);
-            if (!reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
-                throw XRoadException.InvalidQuery("Element `{0}:Body` is missing from request content.", NamespaceConstants.SOAP);
-            if (!reader.MoveToElement(2, RequestMessage.RootElementName.Name, RequestMessage.RootElementName.Namespace))
-                throw XRoadException.InvalidQuery("Payload is missing from request content.");
+            reader.MoveToPayload(RequestMessage.RootElementName);
 
             var parameters = serviceMap.DeserializeRequest(reader, context);
 

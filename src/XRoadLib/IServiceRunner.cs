@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using XRoadLib.Serialization;
+﻿using XRoadLib.Serialization;
 
 namespace XRoadLib
 {
@@ -8,6 +6,6 @@ namespace XRoadLib
     {
         object InvokeMetaService(XRoadHttpDataRequest sender, MetaServiceName metaServiceName);
 
-        Tuple<object, MethodInfo> GetDataService(XRoadHttpDataRequest sender, string name);
+        object GetServiceObject(XRoadHttpDataRequest sender, string name);
     }
 }

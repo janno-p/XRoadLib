@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Xml;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public interface IServiceMap
     {
+        MethodInfo MethodInfo { get; }
+
         bool HasMultipartRequest { get; }
 
         bool HasMultipartResponse { get; }

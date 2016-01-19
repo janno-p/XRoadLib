@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
@@ -7,11 +8,11 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class StringTypeMap : TypeMap<string>
     {
-        private readonly XmlQualifiedName xmlQualifiedName;
+        private readonly XName qualifiedName;
 
-        public StringTypeMap(XmlQualifiedName xmlQualifiedName = null)
+        public StringTypeMap(XName qualifiedName = null)
         {
-            this.xmlQualifiedName = xmlQualifiedName ?? new XmlQualifiedName("string", NamespaceConstants.XSD);
+            this.qualifiedName = qualifiedName ?? XName.Get("string", NamespaceConstants.XSD);
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -27,7 +28,7 @@ namespace XRoadLib.Serialization.Mapping
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
         {
             if (context.Protocol == XRoadProtocol.Version20)
-                writer.WriteTypeAttribute(xmlQualifiedName);
+                writer.WriteTypeAttribute(qualifiedName);
 
             var valueString = value.ToString();
 

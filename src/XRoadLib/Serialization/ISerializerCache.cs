@@ -1,21 +1,25 @@
-﻿using System.Reflection;
-using System.Xml;
+﻿using System.Xml;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Serialization
 {
     public interface ISerializerCache
     {
-        IServiceMap GetServiceMap(XmlQualifiedName qualifiedName, uint dtoVersion, MethodInfo methodImpl);
+        string ProducerNamespace { get; }
+
+        IServiceMap GetServiceMap(string operationName, uint dtoVersion);
+
+        IServiceMap GetServiceMap(XName qualifiedName, uint dtoVersion);
 
         ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion, bool undefined = false);
 
-        ITypeMap GetTypeMap(Type runtimeType, uint dtoVersion, IDictionary<XmlQualifiedName, ITypeMap> partialTypeMaps = null);
+        ITypeMap GetTypeMap(Type runtimeType, uint dtoVersion, IDictionary<XName, ITypeMap> partialTypeMaps = null);
 
-        ITypeMap GetTypeMap(XmlQualifiedName qualifiedName, uint dtoVersion, IDictionary<XmlQualifiedName, ITypeMap> partialTypeMaps = null, bool undefined = false);
+        ITypeMap GetTypeMap(XName qualifiedName, uint dtoVersion, IDictionary<XName, ITypeMap> partialTypeMaps = null, bool undefined = false);
 
-        XmlQualifiedName GetXmlTypeName(Type type);
+        XName GetXmlTypeName(Type type);
     }
 }

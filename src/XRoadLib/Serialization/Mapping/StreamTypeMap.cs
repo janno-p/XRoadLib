@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
@@ -8,9 +9,9 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class StreamTypeMap : TypeMap<XRoadAttachment>
     {
-        private readonly XmlQualifiedName qualifiedName;
+        private readonly XName qualifiedName;
 
-        public StreamTypeMap(XmlQualifiedName qualifiedName)
+        public StreamTypeMap(XName qualifiedName)
         {
             this.qualifiedName = qualifiedName;
         }

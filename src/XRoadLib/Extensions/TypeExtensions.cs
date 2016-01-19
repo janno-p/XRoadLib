@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
+using XRoadLib.Configuration;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions
@@ -150,10 +151,10 @@ namespace XRoadLib.Extensions
                              .OfType<XRoadMessagePartAttribute>();
         }
 
-        public static XmlQualifiedName ToQualifiedName(this Type type)
+        public static XName ToQualifiedName(this Type type)
         {
             var nullableType = Nullable.GetUnderlyingType(type);
-            return nullableType != null ? new XmlQualifiedName(nullableType.Name + "?", type.Namespace) : new XmlQualifiedName(type.Name, type.Namespace);
+            return nullableType != null ? XName.Get(nullableType.Name + "?", type.Namespace ?? "global::") : XName.Get(type.Name, type.Namespace ?? "global::");
         }
 
         public static T GetSingleAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
@@ -269,14 +270,38 @@ namespace XRoadLib.Extensions
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
 
-        internal static XmlQualifiedName GetQualifiedTypeName(this ICustomAttributeProvider provider)
+        internal static XName GetQualifiedTypeName(this ICustomAttributeProvider provider)
         {
             var attribute = provider.GetSingleAttribute<XmlElementAttribute>();
             var dataType = attribute?.DataType;
 
             return string.IsNullOrWhiteSpace(dataType)
                 ? null
-                : new XmlQualifiedName(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceConstants.SOAP_ENC : NamespaceConstants.XSD);
+                : XName.Get(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceConstants.SOAP_ENC : NamespaceConstants.XSD);
+        }
+
+        internal static string GetParameterName(this ParameterInfo parameterInfo, IParameterNameProvider parameterNameProvider, string operationName)
+        {
+            var parameterName = parameterNameProvider?.GetParameterName(parameterInfo, operationName);
+            if (!string.IsNullOrWhiteSpace(parameterName))
+                return parameterName;
+
+            if (parameterInfo.IsRetval)
+                return "value";
+
+            var parameterAttribute = parameterInfo.GetCustomAttributes(typeof(XRoadParameterAttribute), false)
+                                                  .OfType<XRoadParameterAttribute>()
+                                                  .SingleOrDefault();
+
+            return (parameterAttribute?.Name).GetValueOrDefault(parameterInfo.Name);
+        }
+
+        internal static bool GetParameterIsOptional(this ParameterInfo parameterInfo)
+        {
+            return parameterInfo.GetCustomAttributes(typeof(XRoadParameterAttribute), false)
+                                .OfType<XRoadParameterAttribute>()
+                                .Select(x => x.IsOptional)
+                                .SingleOrDefault();
         }
     }
 }

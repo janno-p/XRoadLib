@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Xml;
 using XRoadLib.Extensions;
-using XRoadLib.Serialization;
-using XRoadLib.Serialization.Mapping;
 using XRoadLib.Soap;
 
 namespace XRoadLib
@@ -49,6 +47,37 @@ namespace XRoadLib
             writer.WriteEndElement();
 
             writer.Flush();
+        }
+
+        public static ISoapFault DeserializeSoapFault(XmlReader reader)
+        {
+            var fault = new SoapFault();
+
+            if (reader.IsEmptyElement || !reader.MoveToElement(4, "faultcode"))
+                throw XRoadException.InvalidQuery("SOAP Fault must have `faultcode` element.");
+            fault.FaultCode = reader.ReadElementContentAsString();
+
+            if (!reader.MoveToElement(4, "faultstring"))
+                throw XRoadException.InvalidQuery("SOAP Fault must have `faultstring` element.");
+            fault.FaultString = reader.ReadElementContentAsString();
+
+            var success = reader.MoveToElement(4);
+            if (success && reader.LocalName == "faultactor" && reader.NamespaceURI == "")
+            {
+                fault.FaultActor = reader.ReadElementContentAsString();
+                success = reader.MoveToElement(4);
+            }
+
+            if (success && reader.LocalName == "detail" && reader.NamespaceURI == "")
+            {
+                fault.Details = reader.ReadElementContentAsString();
+                success = reader.MoveToElement(4);
+            }
+
+            if (success)
+                throw XRoadException.InvalidQuery("Unexpected element `{0}:{1}` in SOAP Fault element.", reader.NamespaceURI, reader.LocalName);
+
+            return fault;
         }
     }
 }
