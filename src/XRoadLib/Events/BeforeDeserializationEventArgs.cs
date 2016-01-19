@@ -4,8 +4,6 @@ using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Events
 {
-    public delegate void BeforeDeserializationEventHandler(XRoadHttpDataRequest sender, BeforeDeserializationEventArgs e);
-
     public class BeforeDeserializationEventArgs : EventArgs
     {
         public IServiceMap ServiceMap { get; }

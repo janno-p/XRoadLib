@@ -66,10 +66,7 @@
     <Compile Include="Attributes\XRoadSupportedProtocolAttribute.cs" />
     <Compile Include="Attributes\XRoadTitleAttribute.cs" />
     <Compile Include="Configuration\IXRoadContractConfiguration.cs" />
-    <Compile Include="Events\AfterSerializationEventArgs.cs" />
     <Compile Include="Events\BeforeDeserializationEventArgs.cs" />
-    <Compile Include="Events\BeforeSerializationEventArgs.cs" />
-    <Compile Include="Events\ExceptionOccuredEventArgs.cs" />
     <Compile Include="Events\InvocationErrorEventArgs.cs" />
     <Compile Include="Extensions\IXRoadLifetime.cs" />
     <Compile Include="Extensions\XRoadProtocolExtensions.cs" />
@@ -78,7 +75,6 @@
     <Compile Include="Header\XRoadHeader40.cs" />
     <Compile Include="Header\XRoadHeaderBase.cs" />
     <Compile Include="Configuration\ISchemaImportProvider.cs" />
-    <Compile Include="IServiceRunner.cs" />
     <Compile Include="ProducerDefinition.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
@@ -147,7 +143,7 @@
     <Compile Include="Soap\ClientFaultCode.cs" />
     <Compile Include="Soap\FaultCode.cs" />
     <Compile Include="Soap\ServerFaultCode.cs" />
-    <Compile Include="XRoadHttpDataRequest.cs" />
+    <Compile Include="ServiceRequestHandler.cs" />
     <Compile Include="XRoadProtocol.cs" />
     <Compile Include="XRoadException.cs" />
   </ItemGroup>

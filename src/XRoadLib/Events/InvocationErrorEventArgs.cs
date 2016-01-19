@@ -2,8 +2,6 @@
 
 namespace XRoadLib.Events
 {
-    public delegate void InvocationErrorHandler(XRoadHttpDataRequest sender, InvocationErrorEventArgs e);
-
     public class InvocationErrorEventArgs : EventArgs
     {
         public Exception Exception { get; }

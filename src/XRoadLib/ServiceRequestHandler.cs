@@ -12,86 +12,96 @@ using XRoadLib.Soap;
 
 namespace XRoadLib
 {
-    public delegate void EventHandler(XRoadHttpDataRequest sender, EventArgs e);
-
-    public class XRoadHttpDataRequest : IDisposable
+    public abstract class ServiceRequestHandler : IHttpHandler
     {
         private const string RESPONSE_CONTENT_TYPE = "text/xml; charset=utf-8";
 
-        private readonly HttpContext httpContext;
         private readonly IProtocolSerializerCache protocolSerializerCache;
-        private readonly IServiceRunner serviceRunner;
 
-        public XRoadMessage RequestMessage { get; private set; }
-        public XRoadMessage ResponseMessage { get; private set; }
-
-        public event ExceptionOccuredEventHandler ExceptionOccured;
-        public event EventHandler RequestLoaded;
-        public event InvocationErrorHandler InvocationError;
-        public event BeforeDeserializationEventHandler BeforeDeserialization;
-        public event EventHandler AfterDeserialization;
-        public event BeforeSerializationEventHandler BeforeSerialization;
-        public event AfterSerializationEventHandler AfterSerialization;
+        protected XRoadMessage requestMessage;
+        protected XRoadMessage responseMessage;
 
         public string StoragePath { get; set; }
         public ICustomSerialization CustomSerialization { get; set; }
 
-        public XRoadHttpDataRequest(HttpContext httpContext, IProtocolSerializerCache protocolSerializerCache, IServiceRunner serviceRunner)
-        {
-            if (httpContext == null)
-                throw new ArgumentNullException(nameof(httpContext));
-            this.httpContext = httpContext;
+        public bool IsReusable => false;
 
+        protected ServiceRequestHandler(IProtocolSerializerCache protocolSerializerCache)
+        {
             if (protocolSerializerCache == null)
                 throw new ArgumentNullException(nameof(protocolSerializerCache));
             this.protocolSerializerCache = protocolSerializerCache;
-
-            if (serviceRunner == null)
-                throw new ArgumentNullException(nameof(serviceRunner));
-            this.serviceRunner = serviceRunner;
-
-            RequestMessage = new XRoadMessage();
-            ResponseMessage = new XRoadMessage(new MemoryStream());
         }
 
-        public void Process()
+        public void ProcessRequest(HttpContext httpContext)
         {
             httpContext.Request.InputStream.Position = 0;
             httpContext.Response.ContentType = RESPONSE_CONTENT_TYPE;
 
-            try
+            using (requestMessage = new XRoadMessage())
+            using (responseMessage = new XRoadMessage(new MemoryStream()))
             {
-                ProcessRequest();
+                try
+                {
+                    HandleRequest(httpContext);
+                }
+                catch (Exception exception)
+                {
+                    OnExceptionOccured(httpContext, exception, null, null, null, null);
+                }
             }
-            catch (Exception exception)
-            {
-                var e = new ExceptionOccuredEventArgs(exception);
-                ExceptionOccured?.Invoke(this, e);
 
-                using (var writer = new XmlTextWriter(httpContext.Response.OutputStream, httpContext.Response.ContentEncoding))
-                    SoapMessageHelper.SerializeSoapFaultResponse(writer, e.Code, e.Message, e.Actor, e.Detail, exception);
-            }
+            requestMessage = null;
+            responseMessage = null;
         }
 
-        private void ProcessRequest()
+        protected abstract object InvokeMetaService(MetaServiceName metaServiceName);
+
+        protected abstract object GetServiceObject(string operationName);
+
+        protected virtual void OnExceptionOccured(HttpContext httpContext, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
+        {
+            using (var writer = new XmlTextWriter(httpContext.Response.OutputStream, httpContext.Response.ContentEncoding))
+                SoapMessageHelper.SerializeSoapFaultResponse(writer, faultCode, faultString, faultActor, details, exception);
+        }
+
+        protected virtual void OnRequestLoaded()
+        { }
+
+        protected virtual void OnInvocationError(InvocationErrorEventArgs args)
+        { }
+
+        protected virtual void OnBeforeDeserialization(BeforeDeserializationEventArgs args)
+        { }
+
+        protected virtual void OnAfterDeserialization()
+        { }
+
+        protected virtual void OnBeforeSerialization(object result, SerializationContext context)
+        { }
+
+        protected virtual void OnAfterSerialization(object result)
+        { }
+
+        private void HandleRequest(HttpContext httpContext)
         {
             if (httpContext.Request.InputStream.Length == 0)
                 throw XRoadException.InvalidQuery("Empty request content");
 
-            RequestMessage.LoadRequest(httpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()));
-            ResponseMessage.Copy(RequestMessage);
+            requestMessage.LoadRequest(httpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()));
+            responseMessage.Copy(requestMessage);
 
-            var serializerCache = protocolSerializerCache.GetSerializerCache(RequestMessage.Protocol);
+            var serializerCache = protocolSerializerCache.GetSerializerCache(requestMessage.Protocol);
 
-            RequestLoaded?.Invoke(this, new EventArgs());
+            OnRequestLoaded();
 
             IServiceMap serviceMap;
             var result = InvokeServiceMethod(serializerCache, out serviceMap);
 
             if (serviceMap.HasMultipartResponse)
-                ResponseMessage.IsMultipart = true;
+                responseMessage.IsMultipart = true;
 
-            SerializeXRoadResponse(result, serviceMap);
+            SerializeXRoadResponse(httpContext, result, serviceMap);
         }
 
         private object InvokeServiceMethod(ISerializerCache serializerCache, out IServiceMap serviceMap)
@@ -100,10 +110,10 @@ namespace XRoadLib
             if ((serviceMap = InvokeMetaService(serializerCache, out result)) != null)
                 return result;
 
-            var operationName = RequestMessage.Header?.Service?.ServiceCode ?? RequestMessage.RootElementName?.LocalName;
-            var serviceObject = serviceRunner.GetServiceObject(this, operationName);
+            var operationName = requestMessage.Header?.Service?.ServiceCode ?? requestMessage.RootElementName?.LocalName;
+            var serviceObject = GetServiceObject(operationName);
 
-            serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, (RequestMessage.Header?.Service?.Version).GetValueOrDefault(1u));
+            serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName, (requestMessage.Header?.Service?.Version).GetValueOrDefault(1u));
 
             var parameters = DeserializeMethodParameters(serviceMap);
 
@@ -114,7 +124,7 @@ namespace XRoadLib
             catch (Exception exception)
             {
                 var e = new InvocationErrorEventArgs(exception);
-                InvocationError?.Invoke(this, e);
+                OnInvocationError(e);
 
                 if (e.Result != null)
                     return e.Result;
@@ -129,32 +139,32 @@ namespace XRoadLib
         {
             result = null;
 
-            var metaServiceName = RequestMessage.GetMetaServiceName();
+            var metaServiceName = requestMessage.GetMetaServiceName();
             if (metaServiceName == MetaServiceName.None)
                 return null;
 
-            var serviceMap = serializerCache.GetServiceMap(RequestMessage.RootElementName, 1u);
+            var serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName, 1u);
 
-            result = serviceRunner.InvokeMetaService(this, metaServiceName);
+            result = InvokeMetaService(metaServiceName);
 
             return serviceMap;
         }
 
         private IDictionary<string, object> DeserializeMethodParameters(IServiceMap serviceMap)
         {
-            var context = RequestMessage.CreateContext();
+            var context = requestMessage.CreateContext();
 
             var beforeDeserializationEventArgs = new BeforeDeserializationEventArgs(context, serviceMap);
-            BeforeDeserialization?.Invoke(this, beforeDeserializationEventArgs);
+            OnBeforeDeserialization(beforeDeserializationEventArgs);
 
-            RequestMessage.ContentStream.Position = 0;
-            var reader = XmlReader.Create(RequestMessage.ContentStream, beforeDeserializationEventArgs.XmlReaderSettings);
+            requestMessage.ContentStream.Position = 0;
+            var reader = XmlReader.Create(requestMessage.ContentStream, beforeDeserializationEventArgs.XmlReaderSettings);
 
-            reader.MoveToPayload(RequestMessage.RootElementName);
+            reader.MoveToPayload(requestMessage.RootElementName);
 
             var parameters = serviceMap.DeserializeRequest(reader, context);
 
-            AfterDeserialization?.Invoke(this, new EventArgs());
+            OnAfterDeserialization();
 
             return parameters;
         }
@@ -170,15 +180,15 @@ namespace XRoadLib
             return methodInfo.Invoke(targetObject, methodParams);
         }
 
-        private void SerializeXRoadResponse(object result, IServiceMap serviceMap)
+        private void SerializeXRoadResponse(HttpContext httpContext, object result, IServiceMap serviceMap)
         {
-            var context = ResponseMessage.CreateContext();
-            BeforeSerialization?.Invoke(this, new BeforeSerializationEventArgs(result, context));
+            var context = responseMessage.CreateContext();
+            OnBeforeSerialization(result, context);
 
-            RequestMessage.ContentStream.Position = 0;
-            using (var reader = XmlReader.Create(RequestMessage.ContentStream, new XmlReaderSettings { CloseInput = false }))
+            requestMessage.ContentStream.Position = 0;
+            using (var reader = XmlReader.Create(requestMessage.ContentStream, new XmlReaderSettings { CloseInput = false }))
             {
-                var writer = new XmlTextWriter(ResponseMessage.ContentStream, ResponseMessage.ContentEncoding);
+                var writer = new XmlTextWriter(responseMessage.ContentStream, responseMessage.ContentEncoding);
 
                 writer.WriteStartDocument();
 
@@ -206,18 +216,9 @@ namespace XRoadLib
                 writer.Flush();
             }
 
-            ResponseMessage.SaveTo(httpContext);
+            responseMessage.SaveTo(httpContext);
 
-            AfterSerialization?.Invoke(this, new AfterSerializationEventArgs(result));
-        }
-
-        public void Dispose()
-        {
-            RequestMessage?.Dispose();
-            RequestMessage = null;
-
-            ResponseMessage?.Dispose();
-            ResponseMessage = null;
+            OnAfterSerialization(result);
         }
     }
 }
