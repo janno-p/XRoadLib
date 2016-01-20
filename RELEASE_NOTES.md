@@ -1,4 +1,4 @@
-#### 1.0.0-alpha16 - Unreleased
+#### 1.0.0-alpha16 - January 20 2016
 * Add basic handlers for data and service description requests.
 * Fix bugs of previous releases.
 
