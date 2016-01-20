@@ -36,7 +36,13 @@ namespace XRoadLib.Serialization.Mapping
                 return false;
             }
 
-            var concreteTypeMap = typeMap.IsSimpleType ? typeMap : (serializerCache.GetTypeMapFromXsiType(reader, typeMap.DtoVersion) ?? typeMap);
+            string typeAttribute;
+            if (typeMap.IsAnonymous && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
+                throw XRoadException.InvalidQuery("Expected anonymous type, but `{0}` was given.", typeAttribute);
+
+            var concreteTypeMap = typeMap.IsAnonymous || typeMap.IsSimpleType
+                ? typeMap
+                : (serializerCache.GetTypeMapFromXsiType(reader, typeMap.DtoVersion) ?? typeMap);
 
             var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, context);
             if (propertyValue == null)

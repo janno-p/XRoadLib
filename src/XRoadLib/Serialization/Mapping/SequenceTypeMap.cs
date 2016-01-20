@@ -62,7 +62,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
         {
-            if (context.Protocol == XRoadProtocol.Version20 || runtimeType != fieldType)
+            if (!IsAnonymous && (context.Protocol == XRoadProtocol.Version20 || runtimeType != fieldType))
                 writer.WriteTypeAttribute(serializerCache.GetXmlTypeName(value.GetType()), templateNode?.Namespace);
 
             foreach (var propertyMap in propertyMaps)

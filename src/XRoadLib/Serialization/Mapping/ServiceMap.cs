@@ -55,7 +55,18 @@ namespace XRoadLib.Serialization.Mapping
             {
                 var parameterMap = parameterEnumerator.Current;
                 var parameterNode = templateNodeEnumerator != null ? templateNodeEnumerator.Current : XRoadXmlTemplate.EmptyNode;
-                parameterValues.Add(Tuple.Create(parameterMap.ParameterInfo.Name, parameters.Count < 2 ? parameterMap.DeserializeRoot(reader, parameterNode, context) : parameterMap.Deserialize(reader, parameterNode, context)));
+
+                object value;
+                if (parameters.Count < 2)
+                    parameterValues.Add(Tuple.Create(parameterMap.ParameterInfo.Name, parameterMap.DeserializeRoot(reader, parameterNode, context)));
+                else if (parameterMap.TryDeserialize(reader, parameterNode, context, out value))
+                    parameterValues.Add(Tuple.Create(parameterMap.ParameterInfo.Name, value));
+                else
+                {
+                    parameterValues.Add(Tuple.Create(parameterMap.ParameterInfo.Name, (object)null));
+                    continue;
+                }
+
                 reader.Read();
             }
 

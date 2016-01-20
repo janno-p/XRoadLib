@@ -11,14 +11,14 @@ open XRoadLib
 open XRoadLib.Extensions
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
+open XRoadLib.Serialization.Template
 open XRoadLib.Tests.Contract
 
-(*
 [<TestFixture>]
 module XRoadSerializerTest =
     let serializerCache = SerializerCache(typeof<Class1>.Assembly, XRoadProtocol.Version20)
 
-    let serializeWithContext elementName value dtoVersion addEnvelope isMultipart f =
+    let serializeWithContext<'T> elementName (value: 'T) dtoVersion addEnvelope isMultipart f =
         use message = new XRoadMessage(XRoadProtocol.Version20, IsMultipart = isMultipart)
 
         use stream = new MemoryStream()
@@ -31,8 +31,13 @@ module XRoadSerializerTest =
             writer.WriteAttributeString("xmlns", PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD)
             writer.WriteAttributeString("xmlns", "tns", NamespaceConstants.XMLNS, XRoadProtocol.Version20.GetProducerNamespace("test-producer"))
 
-        let serializer = XRoadSerializer(serializerCache)
-        serializer.SerializeElement(writer, elementName, value, new SerializationContext(message, dtoVersion))
+        writer.WriteStartElement(elementName)
+
+        let context = SerializationContext(message, dtoVersion)
+        let typeMap = serializerCache.GetTypeMap(typeof<'T>, context.DtoVersion)
+        typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, typeof<'T>, context)
+
+        writer.WriteEndElement()
 
         if addEnvelope then writer.WriteEndElement()
 
@@ -120,11 +125,6 @@ module XRoadSerializerTest =
         |> shouldSerializeTo """<keha d1p1:type="d1p2:Array" d1p2:arrayType="d1p3:long[3]" xmlns:d1p3="http://www.w3.org/2001/XMLSchema" xmlns:d1p2="http://schemas.xmlsoap.org/soap/encoding/" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><item d1p1:type="d1p3:long">5</item><item d1p1:type="d1p3:long">4</item><item d1p1:type="d1p3:long">3</item></keha>"""
 
     [<Test>]
-    let ``can serialize null string value`` () =
-        (null: string)
-        |> shouldSerializeTo """<keha d1p1:nil="1" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance" />"""
-
-    [<Test>]
     let ``can serialize short dateTime value`` () =
         DateTime(2000, 10, 12)
         |> shouldSerializeTo """<keha d1p1:type="d1p2:dateTime" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">2000-10-12T00:00:00</keha>"""
@@ -199,4 +199,16 @@ module XRoadSerializerTest =
                                   @"<SingleProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">8</SingleProperty>"
                                   @"<StaticProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">6</StaticProperty>"
                                   @"</keha>" ] |> String.concat "")
-*)
+
+    let [<Test>] ``can serialize anonymous type`` () =
+        let entity = Wsdl.ContainerType()
+        entity.KnownProperty <- "value"
+        entity.AnonymousProperty <- Wsdl.AnonymousType(Property1 = "1", Property2 = "2", Property3 = "3")
+        entity |> shouldSerializeTo ([ @"<keha d1p1:type=""d1p2:ContainerType"" xmlns:d1p2=""http://producers.test-producer.xtee.riik.ee/producer/test-producer"" xmlns:d1p1=""http://www.w3.org/2001/XMLSchema-instance"">"
+                                       @"<AnonymousProperty>"
+                                       @"<Property1 d1p1:type=""d3p1:string"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema"">1</Property1>"
+                                       @"<Property2 d1p1:type=""d3p1:string"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema"">2</Property2>"
+                                       @"<Property3 d1p1:type=""d3p1:string"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema"">3</Property3>"
+                                       @"</AnonymousProperty>"
+                                       @"<KnownProperty d1p1:type=""d2p1:string"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">value</KnownProperty>"
+                                       @"</keha>" ] |> String.concat "")

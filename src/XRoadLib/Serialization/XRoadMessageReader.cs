@@ -99,11 +99,11 @@ namespace XRoadLib.Serialization
 
         private string GetContentType()
         {
-            var contentTypeKey = headers.Keys
-                                        .Cast<string>()
-                                        .FirstOrDefault(key => key.Trim()
-                                                                  .ToLower()
-                                                                  .Equals("content-type"));
+            var contentTypeKey = headers?.Keys
+                                         .Cast<string>()
+                                         .FirstOrDefault(key => key.Trim()
+                                                                   .ToLower()
+                                                                   .Equals("content-type"));
 
             return contentTypeKey == null ? "text/xml; charset=UTF-8" : headers[contentTypeKey];
         }

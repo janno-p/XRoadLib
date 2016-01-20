@@ -12,6 +12,7 @@ namespace XRoadLib.Serialization.Mapping
         protected readonly Type runtimeType = typeof(T);
 
         public uint DtoVersion { get; set; }
+        public bool IsAnonymous { get; set; }
         public Type RuntimeType => runtimeType;
         public virtual bool IsSimpleType => true;
 

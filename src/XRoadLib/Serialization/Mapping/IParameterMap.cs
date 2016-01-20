@@ -10,7 +10,7 @@ namespace XRoadLib.Serialization.Mapping
 
         ParameterInfo ParameterInfo { get; }
 
-        object Deserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context);
+        bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context, out object value);
 
         object DeserializeRoot(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context);
 

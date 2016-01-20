@@ -37,6 +37,8 @@ namespace XRoadLib.Serialization
 
             typeConfigurationProvider = protocol.GetTypeConfiguration(contractAssembly);
 
+            systemRuntimeTypeMaps.GetOrAdd(typeof(void), new VoidTypeMap());
+
             ITypeMap itemTypeMap = new DateTypeMap();
             ITypeMap arrayTypeMap = new ArrayTypeMap<DateTime>(this);
             AddSystemXmlType("date", NamespaceConstants.XSD, itemTypeMap, arrayTypeMap);
@@ -320,6 +322,8 @@ namespace XRoadLib.Serialization
                     else
                         typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
                 }
+
+                typeMap.IsAnonymous = runtimeType.IsAnonymous();
             }
 
             typeMap.DtoVersion = dtoVersion;
@@ -363,6 +367,8 @@ namespace XRoadLib.Serialization
             };
 
             itemTypeMap.DtoVersion = dtoVersion;
+            itemTypeMap.IsAnonymous = runtimeType.IsAnonymous();
+
             arrayTypeMap.DtoVersion = dtoVersion;
 
             itemTypeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);

@@ -1,38 +1,48 @@
 ﻿namespace XRoadLib.Tests
 
 open FsUnit
-open NUnit.Framework;
+open NUnit.Framework
 open System
 open System.IO
-open System.Linq;
-open System.Reflection;
+open System.Linq
+open System.Reflection
 open System.Text
 open System.Xml
-open XRoadLib;
-open XRoadLib.Serialization;
-open XRoadLib.Serialization.Mapping;
-open XRoadLib.Serialization.Template;
+open XRoadLib
+open XRoadLib.Extensions
+open XRoadLib.Serialization
+open XRoadLib.Serialization.Mapping
+open XRoadLib.Serialization.Template
 open XRoadLib.Tests.Contract
 
-(*
 [<TestFixture>]
 module XRoadDeserializerTest =
     let [<Literal>] dtoVersion = 3u
     let serializerCache = SerializerCache(typeof<Class1>.Assembly, XRoadProtocol.Version20)
+
+    let serviceMap = serializerCache.GetServiceMap("Service1", 1u)
 
     let deserializeRequest templateXml contentXml =
         let template = XRoadXmlTemplate(templateXml, typeof<IService>.GetMethod("Service1"))
         use stream = new MemoryStream()
         use writer = new StreamWriter(stream)
         writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>")
+        writer.WriteLine(@"<soapenv:Envelope xmlns:soapenv=""{0}"" soapenv:encodingStyle=""{1}"">", NamespaceConstants.SOAP_ENV, NamespaceConstants.SOAP_ENC)
+        writer.WriteLine(@"<soapenv:Body>")
+        writer.WriteLine(@"<tns:Service1 xmlns:tns=""{0}"">", serializerCache.ProducerNamespace)
         writer.WriteLine(contentXml: string)
+        writer.WriteLine("@</tns:Service1>")
+        writer.WriteLine("@</soapenv:Body>")
+        writer.WriteLine("@</soapenv:Envelope>")
         writer.Flush()
         stream.Position <- 0L
         use reader = XmlReader.Create(stream)
-        use message = new XRoadMessage(XRoadProtocol.Version20)
-        let serializer = XRoadSerializer(serializerCache)
+        use messageReader = new XRoadMessageReader(stream, null, Encoding.UTF8, null)
+        use message = new XRoadMessage()
+        messageReader.Read(message, false)
         let context = SerializationContext(message, dtoVersion, XmlTemplate = template)
-        serializer.Deserialize(reader, "keha", context)
+        reader.MoveToPayload(System.Xml.Linq.XName.Get("Service1", serializerCache.ProducerNamespace))
+        serviceMap.DeserializeRequest(reader, context)
 
     [<Test>]
     let ``can handle optional parameters`` () =
@@ -53,7 +63,7 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 1
+        table.Count |> should equal 3
         table.ContainsKey "param1" |> should be True
         table.["param1"] |> should be instanceOfType<ParamType1>
 
@@ -86,7 +96,7 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 1
+        table.Count |> should equal 3
         table.ContainsKey "param1" |> should be True
         table.["param1"] |> should be instanceOfType<ParamType1>
 
@@ -122,7 +132,7 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 1
+        table.Count |> should equal 3
         table.ContainsKey "param1" |> should be True
         table.["param1"] |> should be instanceOfType<ParamType1>
 
@@ -154,7 +164,7 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 1
+        table.Count |> should equal 3
         table.ContainsKey "param1" |> should be True
         table.["param1"] |> should be instanceOfType<ParamType1>
 
@@ -190,7 +200,7 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 1
+        table.Count |> should equal 3
         table.ContainsKey "param1" |> should be True
         table.["param1"] |> should be instanceOfType<ParamType1>
 
@@ -241,9 +251,11 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 2
+        table.Count |> should equal 3
         table.ContainsKey "param1" |> should be True
         table.["param1"] |> should be instanceOfType<ParamType1>
+        table.ContainsKey "param2" |> should be True
+        table.["param2"] |> should be Null
         table.ContainsKey "param3" |> should be True
         table.["param3"] |> should be instanceOfType<ParamType3>
 
@@ -303,7 +315,7 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 1
+        table.Count |> should equal 3
         table.ContainsKey "param3" |> should be True
         table.["param3"] |> should be instanceOfType<ParamType3>
 
@@ -331,7 +343,7 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 1
+        table.Count |> should equal 3
         table.ContainsKey "param1" |> should be True
         table.["param1"] |> should be instanceOfType<InheritsParamType1>
 
@@ -352,9 +364,13 @@ module XRoadDeserializerTest =
 
         let table = deserializeRequest templateXml contentXml
         table |> should not' (be Null)
-        table.Count |> should equal 1
-        table.ContainsKey("keha") |> should be True
-        table.["keha"] |> should be Null
+        table.Count |> should equal 3
+        table.ContainsKey("param1") |> should be True
+        table.["param1"] |> should be Null
+        table.ContainsKey("param2") |> should be True
+        table.["param2"] |> should be Null
+        table.ContainsKey("param3") |> should be True
+        table.["param3"] |> should be Null
 
     [<Test>]
     let ``cannot deserialize message when MIME content is missing`` () =
@@ -379,4 +395,52 @@ module XRoadDeserializerTest =
 
         TestDelegate(fun _ -> deserializeRequest templateXml contentXml |> ignore)
         |> should (throwWithMessage "MIME multipart message does not contain content with ID `cid:KcGPT5EOP0BC0DXQ5wmEFA==`.") typeof<XRoadException>
-*)
+
+    let [<Test>] ``can deserialize anonymous type`` () =
+        use stream = new MemoryStream()
+        use writer = new StreamWriter(stream, Encoding.UTF8)
+        writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>")
+        writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, serializerCache.ProducerNamespace)
+        writer.WriteLine(@"<AnonymousProperty>")
+        writer.WriteLine(@"<Property1 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">1</Property1>", NamespaceConstants.XSD)
+        writer.WriteLine(@"<Property2 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">2</Property2>", NamespaceConstants.XSD)
+        writer.WriteLine(@"<Property3 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">3</Property3>", NamespaceConstants.XSD)
+        writer.WriteLine(@"</AnonymousProperty>")
+        writer.WriteLine(@"<KnownProperty xsi:type=""xsd:string"" xmlns:xsd=""{0}"">value</KnownProperty>", NamespaceConstants.XSD)
+        writer.WriteLine(@"</entity>")
+        writer.Flush()
+        stream.Position <- 0L
+        use reader = XmlReader.Create(stream)
+        reader.MoveToElement(0) |> ignore
+        let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>, 1u)
+        use message = new XRoadMessage()
+        let entity = typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, SerializationContext(message, 1u))
+        entity |> should not' (be Null)
+        entity |> should be instanceOfType<Wsdl.ContainerType>
+        let container = unbox<Wsdl.ContainerType> entity
+        container.KnownProperty |> should equal "value"
+        container.AnonymousProperty |> should not' (be Null)
+        container.AnonymousProperty.Property1 |> should equal "1"
+        container.AnonymousProperty.Property2 |> should equal "2"
+        container.AnonymousProperty.Property3 |> should equal "3"
+
+    let [<Test>] ``anonymous type should not have explicit type`` () =
+        use stream = new MemoryStream()
+        use writer = new StreamWriter(stream, Encoding.UTF8)
+        writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>")
+        writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, serializerCache.ProducerNamespace)
+        writer.WriteLine(@"<AnonymousProperty xsi:type=""Test"">")
+        writer.WriteLine(@"<Property1 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">1</Property1>", NamespaceConstants.XSD)
+        writer.WriteLine(@"<Property2 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">2</Property2>", NamespaceConstants.XSD)
+        writer.WriteLine(@"<Property3 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">3</Property3>", NamespaceConstants.XSD)
+        writer.WriteLine(@"</AnonymousProperty>")
+        writer.WriteLine(@"<KnownProperty xsi:type=""xsd:string"" xmlns:xsd=""{0}"">value</KnownProperty>", NamespaceConstants.XSD)
+        writer.WriteLine(@"</entity>")
+        writer.Flush()
+        stream.Position <- 0L
+        use reader = XmlReader.Create(stream)
+        reader.MoveToElement(0) |> ignore
+        let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>, 1u)
+        use message = new XRoadMessage()
+        TestDelegate(fun _ -> typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, SerializationContext(message, 1u)) |> ignore)
+        |> should (throwWithMessage "Expected anonymous type, but `Test` was given.") typeof<XRoadException>

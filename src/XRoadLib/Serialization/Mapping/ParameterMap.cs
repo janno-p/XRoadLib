@@ -24,15 +24,22 @@ namespace XRoadLib.Serialization.Mapping
             this.isOptional = isOptional;
         }
 
-        public object Deserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context)
+        public bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context, out object value)
         {
+            value = null;
             if (!reader.MoveToElement(4))
-                return null;
+                return false;
 
-            if (reader.LocalName != Name && !isOptional)
+            if (reader.LocalName != Name)
+            {
+                if (isOptional)
+                    return false;
                 throw XRoadException.InvalidQuery($"Oodati elementi `{Name}`, aga leiti `{reader.LocalName}`.");
+            }
 
-            return DeserializeRoot(reader, parameterNode, context);
+            value = DeserializeRoot(reader, parameterNode, context);
+
+            return true;
         }
 
         public object DeserializeRoot(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context)

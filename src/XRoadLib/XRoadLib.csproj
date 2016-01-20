@@ -56,6 +56,7 @@
     <Compile Include="Handler\ServiceDescriptionHandler.cs" />
     <Compile Include="Handler\ServiceHandlerBase.cs" />
     <Compile Include="Handler\ServiceRequestHandler.cs" />
+    <Compile Include="Serialization\Mapping\VoidTypeMap.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />
     <Compile Include="Soap\ISoapFault.cs" />
