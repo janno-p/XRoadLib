@@ -84,7 +84,10 @@ namespace XRoadLib.Serialization.Mapping
 
             while (reader.Read() && reader.MoveToElement(4))
             {
-                var parameter = parameters.Single(x => x.Name == reader.LocalName);
+                var parameter = parameters.SingleOrDefault(x => x.Name == reader.LocalName);
+                if (parameter == null)
+                    throw XRoadException.InvalidQuery("Unexpected parameter `{0}` in operation `{1}` request.", reader.LocalName, qualifiedName.LocalName);
+
                 var parameterNode = context.XmlTemplate != null ? context.XmlTemplate.GetParameterNode(parameter.ParameterInfo.Name) : XRoadXmlTemplate.EmptyNode;
                 parameterValues.Add(parameter.ParameterInfo.Name, parameter.DeserializeRoot(reader, parameterNode, context));
             }
