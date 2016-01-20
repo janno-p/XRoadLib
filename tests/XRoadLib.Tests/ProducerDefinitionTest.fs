@@ -18,6 +18,7 @@ module ProducerDefinitionTest =
     let xrd nm = XName.Get(nm, NamespaceConstants.XROAD)
     let xtee nm = XName.Get(nm, NamespaceConstants.XTEE)
     let xml nm = XName.Get(nm, NamespaceConstants.XML)
+    let xsd nm = XName.Get(nm, NamespaceConstants.XSD)
 
     let attributeValueShouldEqual value (a: XAttribute) =
         a |> should not' (be Null)
@@ -145,3 +146,25 @@ module ProducerDefinitionTest =
         noCode.Length |> should equal 1
         noCode.Head |> should not' (be Null)
         noCode.Head.Value |> should equal "Ilma keeleta palun"
+
+    let [<Test>] ``Anonymous type should be nested under container type`` () =
+        let doc = ProducerDefinition(contractAssembly, XRoadProtocol.Version31) |> getDocument
+        let definitions = doc.Elements(wsdl "definitions") |> Seq.exactlyOne
+        let types = definitions.Elements(wsdl "types") |> Seq.exactlyOne
+        let schema = types.Elements(xsd "schema") |> Seq.exactlyOne
+        schema.Elements(xsd "complexType") |> Seq.filter (fun e -> e.Attribute(xn "name").Value = "AnonymousType") |> Seq.isEmpty |> should be True
+        let containerType = schema.Elements(xsd "complexType") |> Seq.filter (fun e -> e.Attribute(xn "name").Value = "ContainerType") |> Seq.exactlyOne
+        let containerTypeParticle = containerType.Elements() |> Seq.exactlyOne
+        containerTypeParticle.Name |> should equal (xsd "sequence")
+        containerTypeParticle.Elements().Count() |> should equal 2
+        let knownProperty = containerTypeParticle.Elements(xsd "element") |> Seq.filter (fun e -> e.Attribute(xn "name").Value = "KnownProperty") |> Seq.exactlyOne
+        knownProperty.Attribute(xn "type").Value |> should equal "xsd:string"
+        let anonymousProperty = containerTypeParticle.Elements(xsd "element") |> Seq.filter (fun e -> e.Attribute(xn "name").Value = "AnonymousProperty") |> Seq.exactlyOne
+        anonymousProperty.Attribute(xn "type") |> should be Null
+        let anonymousType = anonymousProperty.Elements() |> Seq.exactlyOne
+        anonymousType.Name |> should equal (xsd "complexType")
+        let anonymousSequence = anonymousType.Elements() |> Seq.exactlyOne
+        anonymousSequence.Name |> should equal (xsd "sequence")
+        anonymousSequence.Elements().Count() |> should equal 3
+        anonymousSequence.Elements() |> Seq.zip [ "Property1"; "Property2"; "Property3"] |> Seq.iter (fun (name, el) -> el.Attribute(xn "name").Value |> should equal name)
+

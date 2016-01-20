@@ -16,6 +16,11 @@ namespace XRoadLib.Extensions
 
     public static class TypeExtensions
     {
+        public static bool IsAnonymous(this Type type)
+        {
+            return (type.GetSingleAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();
+        }
+
         public static bool IsXRoadSerializable(this Type type)
         {
             var baseType = type.BaseType;

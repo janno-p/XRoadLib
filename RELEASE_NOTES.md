@@ -1,3 +1,6 @@
+#### 1.0.0-alpha17 - Unreleased
+* Add support for anonymous types.
+
 #### 1.0.0-alpha16 - January 20 2016
 * Add basic handlers for data and service description requests.
 * Fix bugs of previous releases.

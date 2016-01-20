@@ -55,6 +55,7 @@
     <Compile Include="IService.cs" />
     <Compile Include="TestDto.cs" />
     <Compile Include="WsdlChangesTestDto.cs" />
+    <Compile Include="Wsdl\AnonymousTypeTest.cs" />
     <Compile Include="XRoadBinaryTestDto.cs" />
     <Compile Include="XRoadHexTestDto.cs" />
   </ItemGroup>

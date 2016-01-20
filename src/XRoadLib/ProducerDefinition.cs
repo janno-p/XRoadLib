@@ -219,7 +219,7 @@ namespace XRoadLib
 
         private void AddTypes()
         {
-            foreach (var type in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable() && (!version.HasValue || type.ExistsInVersion(version.Value))))
+            foreach (var type in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable() && !type.IsAnonymous() && (!version.HasValue || type.ExistsInVersion(version.Value))))
             {
                 if (IsExistingType(type.Name))
                     throw new Exception($"Multiple type definitions for same name `{type.Name}`.");
@@ -229,28 +229,29 @@ namespace XRoadLib
             }
 
             foreach (var value in schemaTypes.Values)
+                AddComplexTypeContent(value.Item1, value.Item2);
+        }
+
+        private void AddComplexTypeContent(Type type, XmlSchemaComplexType schemaType)
+        {
+            var properties = type.GetPropertiesSorted(typeConfiguration?.GetPropertyComparer(type) ?? DefaultComparer.Instance, version);
+
+            var contentParticle = new XmlSchemaSequence();
+
+            foreach (var property in properties)
             {
-                var type = value.Item1;
-                var schemaType = value.Item2;
-                var properties = type.GetPropertiesSorted(typeConfiguration?.GetPropertyComparer(type) ?? DefaultComparer.Instance, version);
-
-                var contentParticle = new XmlSchemaSequence();
-
-                foreach (var property in properties)
-                {
-                    var propertyElement = new XmlSchemaElement { Name = property.GetPropertyName(), Annotation = CreateAnnotationElement(property) };
-                    AddSchemaType(propertyElement, property.PropertyType, true, property.GetQualifiedTypeName());
-                    contentParticle.Items.Add(propertyElement);
-                }
-
-                if (type.BaseType != typeof(XRoadSerializable))
-                {
-                    var extension = new XmlSchemaComplexContentExtension { BaseTypeName = GetComplexTypeName(type.BaseType), Particle = contentParticle };
-                    var complexContent = new XmlSchemaComplexContent { Content = extension };
-                    schemaType.ContentModel = complexContent;
-                }
-                else schemaType.Particle = contentParticle;
+                var propertyElement = new XmlSchemaElement { Name = property.GetPropertyName(), Annotation = CreateAnnotationElement(property) };
+                AddSchemaType(propertyElement, property.PropertyType, true, property.GetQualifiedTypeName());
+                contentParticle.Items.Add(propertyElement);
             }
+
+            if (type.BaseType != typeof(XRoadSerializable))
+            {
+                var extension = new XmlSchemaComplexContentExtension { BaseTypeName = GetComplexTypeName(type.BaseType), Particle = contentParticle };
+                var complexContent = new XmlSchemaComplexContent { Content = extension };
+                schemaType.ContentModel = complexContent;
+            }
+            else schemaType.Particle = contentParticle;
         }
 
         private void AddServiceContracts()
@@ -321,7 +322,14 @@ namespace XRoadLib
             }
 
             element.IsNillable = true;
-            element.SchemaTypeName = GetComplexTypeName(type);
+
+            if (type.IsAnonymous())
+            {
+                var schemaType = new XmlSchemaComplexType { Name = type.Name, IsAbstract = type.IsAbstract, Annotation = CreateAnnotationElement(type) };
+                AddComplexTypeContent(type, schemaType);
+                element.SchemaType = schemaType;
+            }
+            else element.SchemaTypeName = GetComplexTypeName(type);
         }
 
         private XmlQualifiedName GetSimpleTypeName(Type type)
