@@ -53,6 +53,9 @@
     <Compile Include="Configuration\TypeConfigurationBase.cs" />
     <Compile Include="Configuration\XRoadContractConfigurationBase.cs" />
     <Compile Include="Extensions\XRoadMessageExtensions.cs" />
+    <Compile Include="Handler\ServiceDescriptionHandler.cs" />
+    <Compile Include="Handler\ServiceHandlerBase.cs" />
+    <Compile Include="Handler\ServiceRequestHandler.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />
     <Compile Include="Soap\ISoapFault.cs" />
@@ -143,7 +146,6 @@
     <Compile Include="Soap\ClientFaultCode.cs" />
     <Compile Include="Soap\FaultCode.cs" />
     <Compile Include="Soap\ServerFaultCode.cs" />
-    <Compile Include="ServiceRequestHandler.cs" />
     <Compile Include="XRoadProtocol.cs" />
     <Compile Include="XRoadException.cs" />
   </ItemGroup>

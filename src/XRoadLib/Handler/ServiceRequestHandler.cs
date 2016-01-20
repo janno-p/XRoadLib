@@ -8,23 +8,15 @@ using XRoadLib.Events;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
-using XRoadLib.Soap;
 
-namespace XRoadLib
+namespace XRoadLib.Handler
 {
-    public abstract class ServiceRequestHandler : IHttpHandler
+    public abstract class ServiceRequestHandler : ServiceHandlerBase
     {
-        private const string RESPONSE_CONTENT_TYPE = "text/xml; charset=utf-8";
-
         private readonly IProtocolSerializerCache protocolSerializerCache;
-
-        protected XRoadMessage requestMessage;
-        protected XRoadMessage responseMessage;
 
         public string StoragePath { get; set; }
         public ICustomSerialization CustomSerialization { get; set; }
-
-        public bool IsReusable => false;
 
         protected ServiceRequestHandler(IProtocolSerializerCache protocolSerializerCache)
         {
@@ -33,37 +25,9 @@ namespace XRoadLib
             this.protocolSerializerCache = protocolSerializerCache;
         }
 
-        public void ProcessRequest(HttpContext httpContext)
-        {
-            httpContext.Request.InputStream.Position = 0;
-            httpContext.Response.ContentType = RESPONSE_CONTENT_TYPE;
-
-            using (requestMessage = new XRoadMessage())
-            using (responseMessage = new XRoadMessage(new MemoryStream()))
-            {
-                try
-                {
-                    HandleRequest(httpContext);
-                }
-                catch (Exception exception)
-                {
-                    OnExceptionOccured(httpContext, exception, null, null, null, null);
-                }
-            }
-
-            requestMessage = null;
-            responseMessage = null;
-        }
-
         protected abstract object InvokeMetaService(MetaServiceName metaServiceName);
 
         protected abstract object GetServiceObject(string operationName);
-
-        protected virtual void OnExceptionOccured(HttpContext httpContext, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
-        {
-            using (var writer = new XmlTextWriter(httpContext.Response.OutputStream, httpContext.Response.ContentEncoding))
-                SoapMessageHelper.SerializeSoapFaultResponse(writer, faultCode, faultString, faultActor, details, exception);
-        }
 
         protected virtual void OnRequestLoaded()
         { }
@@ -83,7 +47,7 @@ namespace XRoadLib
         protected virtual void OnAfterSerialization(object result)
         { }
 
-        private void HandleRequest(HttpContext httpContext)
+        protected override void HandleRequest(HttpContext httpContext)
         {
             if (httpContext.Request.InputStream.Length == 0)
                 throw XRoadException.InvalidQuery("Empty request content");
