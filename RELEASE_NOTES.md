@@ -1,3 +1,7 @@
+#### 1.0.0-alpha16 - Unreleased
+* Add basic handlers for data and service description requests.
+* Fix bugs of previous releases.
+
 #### 1.0.0-alpha15 - January 19 2016
 * Refactor to use XName instead of XmlQualifiedName.
 * Add deserializer for X-Road standard non-technical fault.

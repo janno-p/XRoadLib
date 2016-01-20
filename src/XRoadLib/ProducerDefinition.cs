@@ -133,33 +133,32 @@ namespace XRoadLib
             }
         }
 
-        public void AddOperation(string name, MethodInfo methodImpl, bool isExported)
+        private void AddOperation(string operationName, XRoadServiceAttribute operationContract, MethodInfo methodInfo)
         {
-            var methodContract = methodImpl.FindMethodDeclaration(name, serviceContracts);
-            if (methodContract.Item2.IsHidden || (version.HasValue && !methodContract.Item2.IsDefinedInVersion(version.Value)))
+            if (operationContract.IsHidden || (version.HasValue && !operationContract.IsDefinedInVersion(version.Value)))
                 return;
 
-            BuildOperationElements(name, methodContract.Item1, isExported);
+            BuildOperationElements(operationName, methodInfo, operationContract.IsAbstract);
 
-            if (isExported)
+            if (operationContract.IsAbstract)
                 return;
 
-            var serviceVersion = version.GetValueOrDefault(methodContract.Item2.AddedInVersion);
+            var serviceVersion = version.GetValueOrDefault(operationContract.AddedInVersion);
 
             var operationBinding = new OperationBinding
             {
-                Name = name,
+                Name = operationName,
                 Extensions = { CreateXRoadVersionBindingElement(serviceVersion) },
                 Input = new InputBinding(),
                 Output = new OutputBinding()
             };
 
-            BuildOperationBinding(operationBinding, methodContract.Item1);
+            BuildOperationBinding(operationBinding, methodInfo);
 
             binding.Operations.Add(operationBinding);
         }
 
-        public ProducerDefinition AddHeader<T>(Expression<Func<IXRoadHeader, T>> expression)
+        public void AddHeader<T>(Expression<Func<IXRoadHeader, T>> expression)
         {
             var memberExpression = expression.Body as MemberExpression;
             if (memberExpression == null)
@@ -170,12 +169,12 @@ namespace XRoadLib
                 throw new ArgumentException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.", nameof(expression));
 
             requiredHeaders.Add(elementName);
-
-            return this;
         }
 
         private void WriteServiceDescription(XmlWriter writer)
         {
+            AddOperations();
+
             var serviceDescription = new ServiceDescription { TargetNamespace = targetNamespace };
             AddServiceDescriptionNamespaces(serviceDescription);
 
@@ -263,6 +262,12 @@ namespace XRoadLib
                         .ToDictionary(y => y.Key, y => y.Value)))
                     .Where(x => x.Item2.Any())
                     .ToDictionary(x => x.Item1, x => x.Item2.Keys.ToList()));
+        }
+
+        private void AddOperations()
+        {
+            foreach (var op in serviceContracts.SelectMany(x => x.Value.Select(y => Tuple.Create(y.Key, y.Value, x.Key))).OrderBy(x => x.Item1))
+                AddOperation(op.Item1, op.Item2, op.Item3);
         }
 
         private void AddSchemaType(XmlSchemaElement schemaElement, Type runtimeType, bool isOptional, XName qualifiedTypeName)
