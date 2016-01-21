@@ -5,7 +5,7 @@ using XRoadLib.Header;
 
 namespace XRoadLib.Handler
 {
-    public abstract class ServiceDescriptionHandler : ServiceHandlerBase
+    public abstract class ServiceDescriptionHandlerBase : ServiceHandlerBase
     {
         protected readonly Assembly contractAssembly;
         protected readonly string producerName;
@@ -14,7 +14,7 @@ namespace XRoadLib.Handler
         protected virtual XRoadProtocol Protocol => XRoadProtocol.Undefined;
         protected virtual uint? Version => null;
 
-        protected ServiceDescriptionHandler(Assembly contractAssembly)
+        protected ServiceDescriptionHandlerBase(Assembly contractAssembly)
         {
             this.contractAssembly = contractAssembly;
             producerName = contractAssembly.GetProducerName();

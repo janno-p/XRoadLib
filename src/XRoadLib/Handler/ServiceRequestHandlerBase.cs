@@ -11,14 +11,14 @@ using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Handler
 {
-    public abstract class ServiceRequestHandler : ServiceHandlerBase
+    public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
         private readonly IProtocolSerializerCache protocolSerializerCache;
 
         public string StoragePath { get; set; }
         public ICustomSerialization CustomSerialization { get; set; }
 
-        protected ServiceRequestHandler(IProtocolSerializerCache protocolSerializerCache)
+        protected ServiceRequestHandlerBase(IProtocolSerializerCache protocolSerializerCache)
         {
             if (protocolSerializerCache == null)
                 throw new ArgumentNullException(nameof(protocolSerializerCache));
