@@ -1,13 +1,12 @@
 ﻿using System;
-using XRoadLib.Extensions;
 
 namespace XRoadLib.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class XRoadServiceAttribute : Attribute, IXRoadLifetime
+    public class XRoadServiceAttribute : Attribute
     {
-        private uint? addedInVersion;
-        private uint? removedInVersion;
+        internal uint? addedInVersion;
+        internal uint? removedInVersion;
 
         public string Name { get; }
 
@@ -16,9 +15,6 @@ namespace XRoadLib.Attributes
 
         public uint AddedInVersion { get { return addedInVersion.GetValueOrDefault(1u); } set { addedInVersion = value; } }
         public uint RemovedInVersion { get { return removedInVersion.GetValueOrDefault(uint.MaxValue); } set { removedInVersion = value; } }
-
-        uint? IXRoadLifetime.AddedInVersion => addedInVersion;
-        uint? IXRoadLifetime.RemovedInVersion => removedInVersion;
 
         public XRoadServiceAttribute(string name)
         {

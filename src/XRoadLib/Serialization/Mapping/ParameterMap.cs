@@ -9,19 +9,19 @@ namespace XRoadLib.Serialization.Mapping
     {
         private readonly ISerializerCache serializerCache;
         private readonly ITypeMap defaultTypeMap;
-        private readonly bool isOptional;
+        private readonly bool isRequired;
 
         public string Name { get; }
         public ParameterInfo ParameterInfo { get; }
 
-        public ParameterMap(ISerializerCache serializerCache, string name, ParameterInfo parameterInfo, ITypeMap defaultTypeMap, bool isOptional)
+        public ParameterMap(ISerializerCache serializerCache, string name, ParameterInfo parameterInfo, ITypeMap defaultTypeMap, bool isRequired)
         {
             Name = name;
             ParameterInfo = parameterInfo;
 
             this.serializerCache = serializerCache;
             this.defaultTypeMap = defaultTypeMap;
-            this.isOptional = isOptional;
+            this.isRequired = isRequired;
         }
 
         public bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context, out object value)
@@ -32,7 +32,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (reader.LocalName != Name)
             {
-                if (isOptional)
+                if (!isRequired)
                     return false;
                 throw XRoadException.InvalidQuery($"Oodati elementi `{Name}`, aga leiti `{reader.LocalName}`.");
             }

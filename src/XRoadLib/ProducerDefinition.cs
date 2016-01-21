@@ -135,7 +135,7 @@ namespace XRoadLib
 
         private void AddOperation(string operationName, XRoadServiceAttribute operationContract, MethodInfo methodInfo)
         {
-            if (operationContract.IsHidden || (version.HasValue && !operationContract.IsDefinedInVersion(version.Value)))
+            if (operationContract.IsHidden || (version.HasValue && !operationContract.ExistsInVersion(version.Value)))
                 return;
 
             BuildOperationElements(operationName, methodInfo, operationContract.IsAbstract);
@@ -241,7 +241,11 @@ namespace XRoadLib
             foreach (var property in properties)
             {
                 var propertyElement = new XmlSchemaElement { Name = property.GetPropertyName(), Annotation = CreateAnnotationElement(property) };
-                AddSchemaType(propertyElement, property.PropertyType, true, property.GetQualifiedTypeName());
+
+                if (!property.IsRequiredElement())
+                    propertyElement.MinOccurs = 0;
+
+                AddSchemaType(propertyElement, property.PropertyType, property.GetQualifiedTypeName());
                 contentParticle.Items.Add(propertyElement);
             }
 
@@ -259,7 +263,7 @@ namespace XRoadLib
             AddMessageTypes(
                 serviceContracts.Select(kvp => Tuple.Create(kvp.Key,
                     kvp.Value
-                        .Where(v => !v.Value.IsHidden && (!version.HasValue || v.Value.IsDefinedInVersion(version.Value)))
+                        .Where(v => !v.Value.IsHidden && (!version.HasValue || v.Value.ExistsInVersion(version.Value)))
                         .ToDictionary(y => y.Key, y => y.Value)))
                     .Where(x => x.Item2.Any())
                     .ToDictionary(x => x.Item1, x => x.Item2.Keys.ToList()));
@@ -271,13 +275,10 @@ namespace XRoadLib
                 AddOperation(op.Item1, op.Item2, op.Item3);
         }
 
-        private void AddSchemaType(XmlSchemaElement schemaElement, Type runtimeType, bool isOptional, XName qualifiedTypeName)
+        private void AddSchemaType(XmlSchemaElement schemaElement, Type runtimeType, XName qualifiedTypeName)
         {
             var element = schemaElement;
             var type = runtimeType;
-
-            if (isOptional)
-                element.MinOccurs = 0;
 
             while (type.IsArray)
             {
@@ -725,7 +726,7 @@ namespace XRoadLib
         {
             var requestElement = new XmlSchemaElement { Name = "request" };
 
-            var parameters = method.GetParameters().Where(p => (!version.HasValue || p.IsParameterInVersion(version.Value))).ToList();
+            var parameters = method.GetParameters().Where(p => (!version.HasValue || p.ExistsInVersion(version.Value))).ToList();
 
             if (protocol == XRoadProtocol.Version20 || parameters.Count > 1)
             {
@@ -736,11 +737,12 @@ namespace XRoadLib
                 foreach (var parameter in parameters)
                 {
                     var parameterName = parameter.GetParameterName(operationConfiguration, operationName);
-                    var parameterIsOptional = parameter.GetParameterIsOptional();
 
                     var parameterElement = new XmlSchemaElement { Name = parameterName, Annotation = CreateAnnotationElement(parameter) };
+                    if (!parameter.IsRequiredElement())
+                        parameterElement.MinOccurs = 0;
 
-                    AddSchemaType(parameterElement, parameter.ParameterType, parameterIsOptional, parameter.GetQualifiedTypeName());
+                    AddSchemaType(parameterElement, parameter.ParameterType, parameter.GetQualifiedTypeName());
 
                     schemaParticle.Items.Add(parameterElement);
                 }
@@ -751,7 +753,7 @@ namespace XRoadLib
                 requestElement.SchemaType = new XmlSchemaComplexType { Particle = schemaParticle };
             }
             else if (parameters.Count == 1)
-                AddSchemaType(requestElement, parameters.Single().ParameterType, false, parameters.Single().GetQualifiedTypeName());
+                AddSchemaType(requestElement, parameters.Single().ParameterType, parameters.Single().GetQualifiedTypeName());
             else requestElement.SchemaType = new XmlSchemaComplexType();
 
             return new XmlSchemaSequence { Items = { requestElement } };
@@ -765,7 +767,7 @@ namespace XRoadLib
                     return new XmlSchemaComplexType { Name = responseName, Particle = new XmlSchemaSequence(), Annotation = CreateAnnotationElement(method) };
 
                 var tempElement = new XmlSchemaElement();
-                AddSchemaType(tempElement, method.ReturnType, false, null);
+                AddSchemaType(tempElement, method.ReturnType, null);
 
                 var complexContent = (XmlSchemaComplexContent)((XmlSchemaComplexType)tempElement.SchemaType).ContentModel;
 
@@ -781,7 +783,7 @@ namespace XRoadLib
                     throw new Exception($"Method `{operationName}` return parameter element name cannot be empty.");
 
                 var valueElement = new XmlSchemaElement { Name = elementName };
-                AddSchemaType(valueElement, method.ReturnType, false, null);
+                AddSchemaType(valueElement, method.ReturnType, null);
 
                 responseSequence.Items.Add(new XmlSchemaChoice { Items = { CreateFaultSequence(), valueElement } });
             }

@@ -47,6 +47,7 @@
     <Compile Include="Attributes\XRoadAttachmentAttribute.cs" />
     <Compile Include="Attributes\XRoadImportAttribute.cs" />
     <Compile Include="Attributes\XRoadProducerNameAttribute.cs" />
+    <Compile Include="Attributes\XRoadRequiredAttribute.cs" />
     <Compile Include="Configuration\DefaultComparer.cs" />
     <Compile Include="Configuration\IOperationConfiguration.cs" />
     <Compile Include="Configuration\ITypeConfiguration.cs" />
@@ -66,14 +67,12 @@
     <Compile Include="XRoadContentLayoutMode.cs" />
     <Compile Include="Attributes\XRoadServiceAttribute.cs" />
     <Compile Include="Attributes\XRoadMessagePartAttribute.cs" />
-    <Compile Include="Attributes\XRoadParameterAttribute.cs" />
     <Compile Include="Attributes\XRoadRemoveContractAttribute.cs" />
     <Compile Include="Attributes\XRoadSupportedProtocolAttribute.cs" />
     <Compile Include="Attributes\XRoadTitleAttribute.cs" />
     <Compile Include="Configuration\IXRoadContractConfiguration.cs" />
     <Compile Include="Events\BeforeDeserializationEventArgs.cs" />
     <Compile Include="Events\InvocationErrorEventArgs.cs" />
-    <Compile Include="Extensions\IXRoadLifetime.cs" />
     <Compile Include="Extensions\XRoadProtocolExtensions.cs" />
     <Compile Include="Header\IXRoadHeader.cs" />
     <Compile Include="Header\XRoadHeader31.cs" />

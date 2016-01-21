@@ -68,8 +68,7 @@ namespace XRoadLib.Extensions
 
         public static string GetElementName(this ICustomAttributeProvider attributeProvider)
         {
-            var elementAttribute = attributeProvider.GetSingleAttribute<XmlElementAttribute>();
-            return !string.IsNullOrWhiteSpace(elementAttribute?.ElementName) ? elementAttribute.ElementName : null;
+            return (attributeProvider.GetSingleAttribute<XmlElementAttribute>()?.ElementName).GetValueOrDefault();
         }
 
         public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)
@@ -79,6 +78,11 @@ namespace XRoadLib.Extensions
                 provider.GetSingleAttribute<XRoadAddContractAttribute>()?.Version,
                 provider.GetSingleAttribute<XRoadRemoveContractAttribute>()?.Version
                 );
+        }
+
+        public static bool ExistsInVersion(this XRoadServiceAttribute attribute, uint version)
+        {
+            return IsVersionInRange(version, attribute.addedInVersion, attribute.removedInVersion);
         }
 
         public static bool HasMultipartRequest(this MethodInfo methodInfo)
@@ -100,23 +104,9 @@ namespace XRoadLib.Extensions
             return methodInfo.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
                              .OfType<XRoadServiceAttribute>()
                              .Where(x => includeHidden || !x.IsHidden)
-                             .Where(x => x.IsDefinedInVersion(version))
+                             .Where(x => IsVersionInRange(version, x.addedInVersion, x.removedInVersion))
                              .Select(x => x.Name)
                              .ToList();
-        }
-
-        public static bool IsParameterInVersion(this ParameterInfo parameter, uint version)
-        {
-            var attribute = parameter.GetCustomAttributes(typeof(XRoadParameterAttribute), false)
-                                      .OfType<XRoadParameterAttribute>()
-                                      .SingleOrDefault();
-
-            return attribute == null || attribute.IsDefinedInVersion(version);
-        }
-
-        public static bool IsDefinedInVersion<T>(this T instance, uint version) where T : IXRoadLifetime
-        {
-            return IsVersionInRange(version, instance.AddedInVersion, instance.RemovedInVersion);
         }
 
         private static bool IsVersionInRange(uint version, uint? versionAdded, uint? versionRemoved)
@@ -264,7 +254,7 @@ namespace XRoadLib.Extensions
             return Tuple.Create(methodContract, serviceAttribute);
         }
 
-        internal static string GetValueOrDefault(this string value, string defaultValue)
+        internal static string GetValueOrDefault(this string value, string defaultValue = null)
         {
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
@@ -288,19 +278,12 @@ namespace XRoadLib.Extensions
             if (!string.IsNullOrWhiteSpace(parameterName))
                 return parameterName;
 
-            var parameterAttribute = parameterInfo.GetCustomAttributes(typeof(XRoadParameterAttribute), false)
-                                                  .OfType<XRoadParameterAttribute>()
-                                                  .SingleOrDefault();
-
-            return (parameterAttribute?.Name).GetValueOrDefault(parameterInfo.Name);
+            return parameterInfo.GetElementName() ?? parameterInfo.Name;
         }
 
-        internal static bool GetParameterIsOptional(this ParameterInfo parameterInfo)
+        internal static bool IsRequiredElement(this ICustomAttributeProvider provider)
         {
-            return parameterInfo.GetCustomAttributes(typeof(XRoadParameterAttribute), false)
-                                .OfType<XRoadParameterAttribute>()
-                                .Select(x => x.IsOptional)
-                                .SingleOrDefault();
+            return provider.GetSingleAttribute<XRoadRequiredAttribute>() != null;
         }
     }
 }
