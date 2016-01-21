@@ -54,11 +54,13 @@ namespace XRoadLib.Extensions
             var typeName = namespaceSeparatorIndex < 0 ? typeValue : typeValue.Substring(namespaceSeparatorIndex + 1);
 
             var typeNamespace = reader.LookupNamespace(namespacePrefix);
+            if (typeNamespace == null)
+                throw XRoadException.InvalidQuery("Undefined namespace prefix `{0}` given in XML message for element `{1}` xsi:type.", namespacePrefix, reader.LocalName);
 
             if (isArrayType)
                 typeName = typeName.Substring(0, typeName.LastIndexOf('['));
 
-            var qualifiedName = typeNamespace == null ? XName.Get(typeName) : XName.Get(typeName, typeNamespace);
+            var qualifiedName = XName.Get(typeName, typeNamespace);
 
             return qualifiedName != qnSoapEncArray ? Tuple.Create(qualifiedName, isArrayType) : GetTypeAttributeValue(reader, qnSoapEncArrayType, true);
         }
@@ -69,7 +71,9 @@ namespace XRoadLib.Extensions
                 return;
 
             var currentDepth = reader.Depth;
-            while (reader.Read() && currentDepth < reader.Depth) {}
+
+            while (reader.Read() && currentDepth < reader.Depth)
+            { }
         }
 
         public static bool IsCurrentElement(this XmlReader reader, int depth, string name, string @namespace = "")
