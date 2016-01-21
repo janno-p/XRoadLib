@@ -325,7 +325,7 @@ namespace XRoadLib
 
             if (type.IsAnonymous())
             {
-                var schemaType = new XmlSchemaComplexType { Name = type.Name, IsAbstract = type.IsAbstract, Annotation = CreateAnnotationElement(type) };
+                var schemaType = new XmlSchemaComplexType { IsAbstract = type.IsAbstract, Annotation = CreateAnnotationElement(type) };
                 AddComplexTypeContent(type, schemaType);
                 element.SchemaType = schemaType;
             }

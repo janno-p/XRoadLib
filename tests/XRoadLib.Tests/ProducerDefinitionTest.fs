@@ -163,6 +163,7 @@ module ProducerDefinitionTest =
         anonymousProperty.Attribute(xn "type") |> should be Null
         let anonymousType = anonymousProperty.Elements() |> Seq.exactlyOne
         anonymousType.Name |> should equal (xsd "complexType")
+        anonymousType.Attribute(xn "name") |> should be Null
         let anonymousSequence = anonymousType.Elements() |> Seq.exactlyOne
         anonymousSequence.Name |> should equal (xsd "sequence")
         anonymousSequence.Elements().Count() |> should equal 3
