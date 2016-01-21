@@ -1,3 +1,6 @@
+#### 1.0.0-alpha18 - January 21 2016
+* Bug: anonymous type name in service description.
+
 #### 1.0.0-alpha17 - January 21 2016
 * Add support for anonymous types.
 * Fix error messages.
