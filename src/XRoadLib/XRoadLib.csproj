@@ -30,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\XRoadLib.pfx</AssemblyOriginatorKeyFile>
+    <DocumentationFile>bin\Release\XRoadLib.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

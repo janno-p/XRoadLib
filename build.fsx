@@ -2,17 +2,18 @@
 // FAKE build script
 // --------------------------------------------------------------------------------------
 
-#r @"packages/FAKE/tools/FakeLib.dll"
+#r @"packages/build/FAKE/tools/FakeLib.dll"
 open Fake
 open Fake.Git
 open Fake.AssemblyInfoFile
 open Fake.ReleaseNotesHelper
+open Fake.Testing.NUnit3
 open Fake.UserInputHelper
 open System
 open System.IO
 #if MONO
 #else
-#load "packages/SourceLink.Fake/tools/Fake.fsx"
+#load "packages/build/SourceLink.Fake/tools/Fake.fsx"
 open SourceLink
 #endif
 
@@ -48,7 +49,7 @@ let tags = "x-tee x-road xtee xroad"
 let solutionFile  = "XRoadLib.sln"
 
 // Pattern specifying assemblies to be tested using NUnit
-let testAssemblies = "tests/**/bin/Debug/*Tests*.dll"
+let testAssemblies = "tests/**/bin/Debug/*Tests.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -59,7 +60,7 @@ let gitHome = "https://github.com/" + gitOwner
 let gitName = "XRoadLib"
 
 // The url for the raw files hosted
-let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/janno-p"
+let gitRaw = environVarOrDefault "gitRaw" ("https://raw.github.com/" + gitOwner)
 
 // Strong name key file for assembly signing
 let keyFile = "src" @@ "XRoadLib.pfx"
@@ -101,9 +102,9 @@ Target "AssemblyInfo" (fun _ ->
     |> Seq.map getProjectDetails
     |> Seq.iter (fun (projFileName, projectName, folderName, attributes) ->
         match projFileName with
-        | Fsproj -> CreateFSharpAssemblyInfo (folderName @@ "AssemblyInfo.fs") attributes
-        | Csproj -> CreateCSharpAssemblyInfo ((folderName @@ "Properties") @@ "AssemblyInfo.cs") attributes
-        | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName @@ "My Project") @@ "AssemblyInfo.vb") attributes
+        | Fsproj -> CreateFSharpAssemblyInfo (folderName </> "AssemblyInfo.fs") attributes
+        | Csproj -> CreateCSharpAssemblyInfo ((folderName </> "Properties") </> "AssemblyInfo.cs") attributes
+        | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName </> "My Project") </> "AssemblyInfo.vb") attributes
         | Shproj -> ()
         )
 )
@@ -114,7 +115,7 @@ Target "AssemblyInfo" (fun _ ->
 Target "CopyBinaries" (fun _ ->
     !! "src/**/*.??proj"
     -- "src/**/*.shproj"
-    |>  Seq.map (fun f -> ((System.IO.Path.GetDirectoryName f) @@ "bin/Release", "bin" @@ (System.IO.Path.GetFileNameWithoutExtension f)))
+    |>  Seq.map (fun f -> ((System.IO.Path.GetDirectoryName f) </> "bin/Release", "bin" </> (System.IO.Path.GetFileNameWithoutExtension f)))
     |>  Seq.iter (fun (fromDir, toDir) -> CopyDir toDir fromDir (fun _ -> true))
 )
 
@@ -134,13 +135,21 @@ Target "CleanDocs" (fun _ ->
 
 Target "BuildDebug" (fun _ ->
     !! solutionFile
+#if MONO
+    |> MSBuildDebugExt "" [ ("DefineConstants", "MONO"); ("DefineConstants", "DEBUG") ] "Rebuild"
+#else
     |> MSBuildDebug "" "Rebuild"
+#endif
     |> ignore
 )
 
 Target "Build" (fun _ ->
     !! solutionFile
+#if MONO
+    |> MSBuildReleaseExt "" [ ("DefineConstants", "MONO") ] "Rebuild"
+#else
     |> MSBuildRelease "" "Rebuild"
+#endif
     |> ignore
 )
 
@@ -149,11 +158,10 @@ Target "Build" (fun _ ->
 
 Target "RunTests" (fun _ ->
     !! testAssemblies
-    |> NUnit (fun p ->
+    |> NUnit3 (fun p ->
         { p with
-            DisableShadowCopy = true
             TimeOut = TimeSpan.FromMinutes 20.
-            OutputFile = "TestResults.xml" })
+            ResultSpecs = ["TestResults.xml"] })
 )
 
 #if MONO
@@ -196,7 +204,7 @@ Target "PublishNuget" (fun _ ->
 // Generate the documentation
 
 
-let fakePath = "packages" @@ "FAKE" @@ "tools" @@ "FAKE.exe"
+let fakePath = "packages" </> "build" </> "FAKE" </> "tools" </> "FAKE.exe"
 let fakeStartInfo script workingDirectory args fsiargs environmentVars =
     (fun (info: System.Diagnostics.ProcessStartInfo) ->
         info.FileName <- System.IO.Path.GetFullPath fakePath
@@ -294,8 +302,8 @@ F# Project Scaffold ({0})
 =========================
 *)
 """
-    let targetDir = "docs/content" @@ lang
-    let targetFile = targetDir @@ "index.fsx"
+    let targetDir = "docs/content" </> lang
+    let targetFile = targetDir </> "index.fsx"
     ensureDirectory targetDir
     System.IO.File.WriteAllText(targetFile, System.String.Format(content, lang))
 
@@ -311,14 +319,14 @@ Target "AddLangDocs" (fun _ ->
 
         let templateFileName = "template.cshtml"
         let templateDir = "docs/tools/templates"
-        let langTemplateDir = templateDir @@ lang
-        let langTemplateFileName = langTemplateDir @@ templateFileName
+        let langTemplateDir = templateDir </> lang
+        let langTemplateFileName = langTemplateDir </> templateFileName
 
         if System.IO.File.Exists(langTemplateFileName) then
             failwithf "Documents for specified language '%s' have already been added." lang
 
         ensureDirectory langTemplateDir
-        Copy langTemplateDir [ templateDir @@ templateFileName ]
+        Copy langTemplateDir [ templateDir </> templateFileName ]
 
         createIndexFsx lang)
 )
@@ -341,7 +349,7 @@ Target "ReleaseDocs" (fun _ ->
     Branches.push tempDocsDir
 )
 
-#load "paket-files/fsharp/FAKE/modules/Octokit/Octokit.fsx"
+#load "paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 open Octokit
 
 Target "Release" (fun _ ->

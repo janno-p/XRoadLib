@@ -5,6 +5,10 @@ set -o pipefail
 
 cd `dirname $0`
 
+PAKET_BOOTSTRAPPER_EXE=.paket/paket.bootstrapper.exe
+PAKET_EXE=.paket/paket.exe
+FAKE_EXE=packages/build/FAKE/tools/FAKE.exe
+
 FSIARGS=""
 OS=${OS:-"unknown"}
 if [[ "$OS" != "Windows_NT" ]]
@@ -21,7 +25,7 @@ function run() {
   fi
 }
 
-run .paket/paket.bootstrapper.exe
+run $PAKET_BOOTSTRAPPER_EXE prerelease
 
 if [[ "$OS" != "Windows_NT" ]] &&
        [ ! -e ~/.config/.mono/certs ]
@@ -29,9 +33,6 @@ then
   mozroots --import --sync --quiet
 fi
 
-run .paket/paket.exe restore
-
-[ ! -e build.fsx ] && run .paket/paket.exe update
-[ ! -e build.fsx ] && run packages/FAKE/tools/FAKE.exe init.fsx
-run packages/FAKE/tools/FAKE.exe "$@" $FSIARGS build.fsx
+run $PAKET_EXE restore
+run $FAKE_EXE "$@" $FSIARGS build.fsx
 

@@ -1,11 +1,18 @@
 source https://nuget.org/api/v2
 
-nuget FSharp.Formatting
-nuget NUnit ~> 2
-nuget NUnit.Runners ~> 2
-nuget FAKE
-nuget SourceLink.Fake
+group Build
+    source https://nuget.org/api/v2
 
-github fsharp/FAKE modules/Octokit/Octokit.fsx
+    nuget FAKE
+    nuget FSharp.Formatting
+    nuget SourceLink.Fake
 
-nuget FsUnit
+    github fsharp/FAKE modules/Octokit/Octokit.fsx
+
+group Test
+    source https://nuget.org/api/v2
+
+    nuget FSharp.Core
+    nuget FsUnit
+    nuget NUnit
+    nuget NUnit.Runners
