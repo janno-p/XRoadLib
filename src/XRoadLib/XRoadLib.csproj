@@ -55,9 +55,9 @@
     <Compile Include="Configuration\TypeConfigurationBase.cs" />
     <Compile Include="Configuration\XRoadContractConfigurationBase.cs" />
     <Compile Include="Extensions\XRoadMessageExtensions.cs" />
-    <Compile Include="Handler\ServiceDescriptionHandler.cs" />
+    <Compile Include="Handler\ServiceDescriptionHandlerBase.cs" />
     <Compile Include="Handler\ServiceHandlerBase.cs" />
-    <Compile Include="Handler\ServiceRequestHandler.cs" />
+    <Compile Include="Handler\ServiceRequestHandlerBase.cs" />
     <Compile Include="Serialization\Mapping\VoidTypeMap.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />
