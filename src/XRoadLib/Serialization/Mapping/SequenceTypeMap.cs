@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
@@ -9,14 +10,16 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class SequenceTypeMap<T> : TypeMap<T> where T : class, IXRoadSerializable, new()
     {
+        private readonly XName typeName;
         private readonly ISerializerCache serializerCache;
         private readonly IList<IPropertyMap> propertyMaps = new List<IPropertyMap>();
 
         public override bool IsSimpleType => false;
 
-        public SequenceTypeMap(ISerializerCache serializerCache)
+        public SequenceTypeMap(ISerializerCache serializerCache, XName typeName)
         {
             this.serializerCache = serializerCache;
+            this.typeName = typeName;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -57,7 +60,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.LocalName == properties.Current.PropertyName)
                     return;
 
-            throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", RuntimeType.Name, reader.LocalName);
+            throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", typeName, reader.LocalName);
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
@@ -82,7 +85,7 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(comparer, DtoVersion))
             {
-                var qualifiedTypeName = propertyInfo.GetQualifiedTypeName();
+                var qualifiedTypeName = propertyInfo.GetQualifiedElementDataType();
 
                 var typeMap = qualifiedTypeName != null ? serializerCache.GetTypeMap(qualifiedTypeName, propertyInfo.PropertyType.IsArray, DtoVersion)
                                                         : serializerCache.GetTypeMap(propertyInfo.PropertyType, DtoVersion, partialTypeMaps);

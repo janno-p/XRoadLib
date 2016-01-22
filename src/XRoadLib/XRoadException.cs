@@ -1,5 +1,5 @@
 using System;
-using XRoadLib.Extensions;
+using System.Xml.Linq;
 using XRoadLib.Soap;
 
 namespace XRoadLib
@@ -19,9 +19,9 @@ namespace XRoadLib
             return new XRoadException(new ClientFaultCode("UnknownType"), "Unknown type `{0}`.", typeName);
         }
 
-        public static XRoadException UnknownProperty(Type type, string propertyName)
+        public static XRoadException UnknownProperty(string propertyName, XName typeName)
         {
-            return new XRoadException(new ClientFaultCode("UnknownProperty"), "Type '{0}' does not define property '{1}' (property names are case-sensitive).", type.GetTypeName(), propertyName);
+            return new XRoadException(new ClientFaultCode("UnknownProperty"), "Type '{0}' does not define property '{1}' (property names are case-sensitive).", typeName, propertyName);
         }
 
         public static XRoadException ParameterUndefinedInTemplate(string parameterName)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
@@ -9,15 +10,17 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class AllTypeMap<T> : TypeMap<T> where T : class, IXRoadSerializable, new()
     {
+        private readonly XName typeName;
         private readonly ISerializerCache serializerCache;
         private readonly IDictionary<string, IPropertyMap> deserializationPropertyMaps = new Dictionary<string, IPropertyMap>();
         private readonly IList<IPropertyMap> serializationPropertyMaps = new List<IPropertyMap>();
 
         public override bool IsSimpleType => false;
 
-        public AllTypeMap(ISerializerCache serializerCache)
+        public AllTypeMap(ISerializerCache serializerCache, XName typeName)
         {
             this.serializerCache = serializerCache;
+            this.typeName = typeName;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -56,7 +59,7 @@ namespace XRoadLib.Serialization.Mapping
             if (deserializationPropertyMaps.TryGetValue(reader.LocalName, out propertyMap))
                 return propertyMap;
 
-            throw XRoadException.UnknownProperty(runtimeType, reader.LocalName);
+            throw XRoadException.UnknownProperty(reader.LocalName, typeName);
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
@@ -81,7 +84,7 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(comparer, DtoVersion))
             {
-                var qualifiedTypeName = propertyInfo.GetQualifiedTypeName();
+                var qualifiedTypeName = propertyInfo.GetQualifiedElementDataType();
 
                 var typeMap = qualifiedTypeName != null ? serializerCache.GetTypeMap(qualifiedTypeName, propertyInfo.PropertyType.IsArray, DtoVersion)
                                                         : serializerCache.GetTypeMap(propertyInfo.PropertyType, DtoVersion, partialTypeMaps);

@@ -68,6 +68,7 @@
     <Compile Include="AssemblyExtensionsTest.fs" />
     <Compile Include="NamespaceHelperTest.fs" />
     <Compile Include="ProducerDefinitionTest.fs" />
+    <Compile Include="SchemaBuilderTest.fs" />
     <Compile Include="SoapFaultCodesTest.fs" />
     <Compile Include="XRoadDeserializerTest.fs" />
     <Compile Include="XRoadFilterMapTest.fs" />

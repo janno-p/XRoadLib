@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace XRoadLib.Configuration
 {
@@ -8,7 +9,7 @@ namespace XRoadLib.Configuration
     {
         string GetPropertyName(PropertyInfo propertyInfo);
 
-        string GetTypeName(Type type);
+        XName GetTypeName(Type type);
 
         XRoadContentLayoutMode GetContentLayoutMode(Type type);
 

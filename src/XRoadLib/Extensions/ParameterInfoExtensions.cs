@@ -8,13 +8,10 @@ namespace XRoadLib.Extensions
         internal static string GetParameterName(this ParameterInfo parameterInfo, IOperationConfiguration operationConfiguration)
         {
             var customName = operationConfiguration?.GetParameterName(parameterInfo);
-            if (parameterInfo.Position < 0)
-                return customName ?? "value";
-
-            if (!string.IsNullOrWhiteSpace(customName))
+            if (customName != null)
                 return customName;
 
-            return parameterInfo.GetElementName() ?? parameterInfo.Name;
+            return parameterInfo.GetElementName() ?? parameterInfo.Name.GetValueOrDefault("value");
         }
     }
 }

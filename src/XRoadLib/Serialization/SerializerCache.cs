@@ -14,7 +14,7 @@ namespace XRoadLib.Serialization
 {
     public sealed class SerializerCache : ISerializerCache
     {
-        private readonly ITypeConfiguration typeConfigurationProvider;
+        private readonly ITypeConfiguration typeConfiguration;
 
         private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
@@ -35,7 +35,7 @@ namespace XRoadLib.Serialization
             var producerName = contractAssembly.GetProducerName();
             ProducerNamespace = protocol.GetProducerNamespace(producerName);
 
-            typeConfigurationProvider = protocol.GetTypeConfiguration(contractAssembly);
+            typeConfiguration = protocol.GetTypeConfiguration(contractAssembly);
 
             systemRuntimeTypeMaps.GetOrAdd(typeof(void), new VoidTypeMap());
 
@@ -215,7 +215,7 @@ namespace XRoadLib.Serialization
         {
             var parameterName = parameterInfo.GetParameterName(operationConfiguration);
 
-            var qualifiedTypeName = parameterInfo.GetQualifiedTypeName();
+            var qualifiedTypeName = parameterInfo.GetQualifiedElementDataType();
             var typeMap = qualifiedTypeName != null ? GetTypeMap(qualifiedTypeName, parameterInfo.ParameterType.IsArray, dtoVersion) : GetTypeMap(parameterInfo.ParameterType, dtoVersion);
 
             return new ParameterMap(this, parameterName, parameterInfo, typeMap, parameterInfo.IsRequiredElement());
@@ -315,11 +315,11 @@ namespace XRoadLib.Serialization
                     typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap<>).MakeGenericType(runtimeType));
                 else
                 {
-                    var contentLayoutMode = (typeConfigurationProvider?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
+                    var contentLayoutMode = (typeConfiguration?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
                     if (contentLayoutMode == XRoadContentLayoutMode.Flexible)
-                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);
+                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetComplexTypeName(typeConfiguration, protocol));
                     else
-                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
+                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetComplexTypeName(typeConfiguration, protocol));
                 }
 
                 typeMap.IsAnonymous = runtimeType.IsAnonymous();
@@ -329,7 +329,7 @@ namespace XRoadLib.Serialization
 
             partialTypeMaps = partialTypeMaps ?? new Dictionary<Type, ITypeMap>();
             partialTypeMaps.Add(runtimeType, typeMap);
-            typeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);
+            typeMap.InitializeProperties(partialTypeMaps, typeConfiguration);
             partialTypeMaps.Remove(runtimeType);
 
             return typeMapVersions.GetOrAdd(typeMap.DtoVersion, typeMap);
@@ -350,11 +350,11 @@ namespace XRoadLib.Serialization
                 itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap<>).MakeGenericType(runtimeType));
             else
             {
-                var contentLayoutMode = (typeConfigurationProvider?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
+                var contentLayoutMode = (typeConfiguration?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
                 if (contentLayoutMode == XRoadContentLayoutMode.Flexible)
-                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this);
+                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetComplexTypeName(typeConfiguration, protocol));
                 else
-                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this);
+                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetComplexTypeName(typeConfiguration, protocol));
             }
 
             var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.RuntimeType), this);
@@ -370,8 +370,8 @@ namespace XRoadLib.Serialization
 
             arrayTypeMap.DtoVersion = dtoVersion;
 
-            itemTypeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);
-            arrayTypeMap.InitializeProperties(partialTypeMaps, typeConfigurationProvider);
+            itemTypeMap.InitializeProperties(partialTypeMaps, typeConfiguration);
+            arrayTypeMap.InitializeProperties(partialTypeMaps, typeConfiguration);
 
             return typeMapVersions.GetOrAdd(dtoVersion, Tuple.Create(itemTypeMap, arrayTypeMap));
         }

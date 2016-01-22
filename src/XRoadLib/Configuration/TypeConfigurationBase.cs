@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using XRoadLib.Extensions;
+using System.Xml.Linq;
 
 namespace XRoadLib.Configuration
 {
@@ -19,9 +19,9 @@ namespace XRoadLib.Configuration
             return null;
         }
 
-        public virtual string GetTypeName(Type type)
+        public virtual XName GetTypeName(Type type)
         {
-            return type.Name;
+            return null;
         }
 
         public virtual XRoadContentLayoutMode GetContentLayoutMode(Type type)

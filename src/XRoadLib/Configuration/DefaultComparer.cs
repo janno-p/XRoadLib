@@ -18,7 +18,10 @@ namespace XRoadLib.Configuration
 
         public int Compare(PropertyInfo x, PropertyInfo y)
         {
-            return string.Compare(x.GetPropertyName(typeConfiguration), y.GetPropertyName(typeConfiguration), StringComparison.InvariantCultureIgnoreCase);
+            var orderCompare = x.GetElementOrder().CompareTo(y.GetElementOrder());
+            return orderCompare == 0
+                ? string.Compare(x.GetPropertyName(typeConfiguration), y.GetPropertyName(typeConfiguration), StringComparison.InvariantCultureIgnoreCase)
+                : orderCompare;
         }
     }
 }
