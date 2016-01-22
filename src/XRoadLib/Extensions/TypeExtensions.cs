@@ -6,7 +6,6 @@ using System.Reflection.Emit;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
-using XRoadLib.Configuration;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions
@@ -109,25 +108,14 @@ namespace XRoadLib.Extensions
                              .ToList();
         }
 
-        private static bool IsVersionInRange(uint version, uint? versionAdded, uint? versionRemoved)
+        internal static bool IsVersionInRange(uint version, uint? versionAdded, uint? versionRemoved)
         {
             return version >= versionAdded.GetValueOrDefault() && version < versionRemoved.GetValueOrDefault(uint.MaxValue);
-        }
-
-        private static string GetFixedPropertyName(this PropertyInfo propertyInfo)
-        {
-            var nameStart = propertyInfo.Name.LastIndexOf('.');
-            return nameStart >= 0 ? propertyInfo.Name.Substring(nameStart + 1) : propertyInfo.Name;
         }
 
         public static string GetTypeName(this Type type)
         {
             return type.Name;
-        }
-
-        public static string GetPropertyName(this PropertyInfo propertyInfo)
-        {
-            return propertyInfo.GetElementName() ?? propertyInfo.GetFixedPropertyName();
         }
 
         public static XRoadImportAttribute GetImportAttribute(this MethodInfo methodInfo, XRoadProtocol protocol)
@@ -267,18 +255,6 @@ namespace XRoadLib.Extensions
             return string.IsNullOrWhiteSpace(dataType)
                 ? null
                 : XName.Get(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceConstants.SOAP_ENC : NamespaceConstants.XSD);
-        }
-
-        internal static string GetParameterName(this ParameterInfo parameterInfo, IOperationConfiguration operationConfiguration, string operationName)
-        {
-            var parameterName = operationConfiguration?.GetParameterName(parameterInfo, operationName);
-            if (parameterInfo.Position < 0)
-                return parameterName == string.Empty ? null : (parameterName ?? "value");
-
-            if (!string.IsNullOrWhiteSpace(parameterName))
-                return parameterName;
-
-            return parameterInfo.GetElementName() ?? parameterInfo.Name;
         }
 
         internal static bool IsRequiredElement(this ICustomAttributeProvider provider)

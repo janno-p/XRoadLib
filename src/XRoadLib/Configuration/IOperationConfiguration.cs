@@ -19,6 +19,6 @@ namespace XRoadLib.Configuration
         /// <summary>
         /// Specifies alternative names for operation parameters.
         /// </summary>
-        string GetParameterName(ParameterInfo parameterInfo, string operationName);
+        string GetParameterName(ParameterInfo parameterInfo);
     }
 }

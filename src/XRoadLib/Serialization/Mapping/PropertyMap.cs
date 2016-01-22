@@ -16,12 +16,12 @@ namespace XRoadLib.Serialization.Mapping
 
         public string PropertyName { get; }
 
-        public PropertyMap(ISerializerCache serializerCache, PropertyInfo propertyInfo, ITypeMap typeMap, Type ownerType)
+        public PropertyMap(ISerializerCache serializerCache, string propertyName, PropertyInfo propertyInfo, ITypeMap typeMap, Type ownerType)
         {
             this.serializerCache = serializerCache;
             this.typeMap = typeMap;
 
-            PropertyName = propertyInfo.GetPropertyName();
+            PropertyName = propertyName;
             getValueMethod = propertyInfo.CreateGetValueMethod();
             setValueMethod = propertyInfo.CreateSetValueMethod();
 

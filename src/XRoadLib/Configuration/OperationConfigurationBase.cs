@@ -14,7 +14,7 @@ namespace XRoadLib.Configuration
             return false;
         }
 
-        public virtual string GetParameterName(ParameterInfo parameterInfo, string operationName)
+        public virtual string GetParameterName(ParameterInfo parameterInfo)
         {
             return null;
         }

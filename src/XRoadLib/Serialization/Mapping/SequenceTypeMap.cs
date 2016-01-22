@@ -73,12 +73,12 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfiguration typeConfigurationProvider)
+        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfiguration typeConfiguration)
         {
             if (propertyMaps.Count > 0)
                 return;
 
-            var comparer = typeConfigurationProvider?.GetPropertyComparer(runtimeType) ?? DefaultComparer.Instance;
+            var comparer = typeConfiguration?.GetPropertyComparer(runtimeType) ?? DefaultComparer.Instance;
 
             foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(comparer, DtoVersion))
             {
@@ -87,7 +87,9 @@ namespace XRoadLib.Serialization.Mapping
                 var typeMap = qualifiedTypeName != null ? serializerCache.GetTypeMap(qualifiedTypeName, propertyInfo.PropertyType.IsArray, DtoVersion)
                                                         : serializerCache.GetTypeMap(propertyInfo.PropertyType, DtoVersion, partialTypeMaps);
 
-                propertyMaps.Add(new PropertyMap(serializerCache, propertyInfo, typeMap, RuntimeType));
+                var propertyName = propertyInfo.GetPropertyName(typeConfiguration);
+
+                propertyMaps.Add(new PropertyMap(serializerCache, propertyName, propertyInfo, typeMap, RuntimeType));
             }
         }
     }

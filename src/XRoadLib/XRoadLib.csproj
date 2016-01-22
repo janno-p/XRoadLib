@@ -54,6 +54,10 @@
     <Compile Include="Configuration\OperationConfigurationBase.cs" />
     <Compile Include="Configuration\TypeConfigurationBase.cs" />
     <Compile Include="Configuration\XRoadContractConfigurationBase.cs" />
+    <Compile Include="Description\SchemaBuilder.cs" />
+    <Compile Include="Description\XRoadSchemaBuilder.cs" />
+    <Compile Include="Extensions\ParameterInfoExtensions.cs" />
+    <Compile Include="Extensions\PropertyInfoExtensions.cs" />
     <Compile Include="Extensions\XRoadMessageExtensions.cs" />
     <Compile Include="Handler\ServiceDescriptionHandlerBase.cs" />
     <Compile Include="Handler\ServiceHandlerBase.cs" />

@@ -6,6 +6,8 @@ namespace XRoadLib.Configuration
 {
     public interface ITypeConfiguration
     {
+        string GetPropertyName(PropertyInfo propertyInfo);
+
         string GetTypeName(Type type);
 
         XRoadContentLayoutMode GetContentLayoutMode(Type type);

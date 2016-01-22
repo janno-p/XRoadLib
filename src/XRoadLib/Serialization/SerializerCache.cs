@@ -186,11 +186,11 @@ namespace XRoadLib.Serialization
 
             var configuration = protocol.GetContractConfiguration(contractAssembly);
             var parameterMaps = methodInfo.GetParameters()
-                                          .Select(x => CreateParameterMap(qualifiedName.LocalName, configuration.OperationConfiguration, x, dtoVersion))
+                                          .Select(x => CreateParameterMap(configuration.OperationConfiguration, x, dtoVersion))
                                           .Where(m => m.ParameterInfo.ExistsInVersion(dtoVersion))
                                           .ToList();
 
-            var resultMap = CreateParameterMap(qualifiedName.LocalName, configuration.OperationConfiguration, methodInfo.ReturnParameter, dtoVersion);
+            var resultMap = CreateParameterMap(configuration.OperationConfiguration, methodInfo.ReturnParameter, dtoVersion);
 
             var multipartAttribute = methodInfo.GetSingleAttribute<XRoadAttachmentAttribute>();
             var hasMultipartRequest = multipartAttribute != null && multipartAttribute.HasMultipartRequest;
@@ -211,9 +211,9 @@ namespace XRoadLib.Serialization
                                                        .Any(m => m == qualifiedName.LocalName));
         }
 
-        private IParameterMap CreateParameterMap(string operationName, IOperationConfiguration operationConfiguration, ParameterInfo parameterInfo, uint dtoVersion)
+        private IParameterMap CreateParameterMap(IOperationConfiguration operationConfiguration, ParameterInfo parameterInfo, uint dtoVersion)
         {
-            var parameterName = parameterInfo.GetParameterName(operationConfiguration, operationName);
+            var parameterName = parameterInfo.GetParameterName(operationConfiguration);
 
             var qualifiedTypeName = parameterInfo.GetQualifiedTypeName();
             var typeMap = qualifiedTypeName != null ? GetTypeMap(qualifiedTypeName, parameterInfo.ParameterType.IsArray, dtoVersion) : GetTypeMap(parameterInfo.ParameterType, dtoVersion);
