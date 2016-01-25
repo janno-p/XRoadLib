@@ -1,3 +1,9 @@
+#### 1.0.0-alpha19 - January 25 2016
+* Remove XRoadParameterAttribute in favor of XmlElementAttribute
+* Rename default handlers.
+* More customizations for collections.
+* Add description for enumeration types.
+
 #### 1.0.0-alpha18 - January 21 2016
 * Bug: anonymous type name in service description.
 
