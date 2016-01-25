@@ -125,7 +125,7 @@ namespace XRoadLib.Extensions
             return typeof(Stream).IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.XSD) : null;
         }
 
-        internal static XName GetComplexTypeName(this Type type, ITypeConfiguration typeConfiguration, XRoadProtocol protocol)
+        internal static XName GetProducerTypeName(this Type type, ITypeConfiguration typeConfiguration, XRoadProtocol protocol)
         {
             var name = typeConfiguration?.GetTypeName(type);
             if (name != null)

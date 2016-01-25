@@ -317,9 +317,9 @@ namespace XRoadLib.Serialization
                 {
                     var contentLayoutMode = (typeConfiguration?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
                     if (contentLayoutMode == XRoadContentLayoutMode.Flexible)
-                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetComplexTypeName(typeConfiguration, protocol));
+                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetProducerTypeName(typeConfiguration, protocol));
                     else
-                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetComplexTypeName(typeConfiguration, protocol));
+                        typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetProducerTypeName(typeConfiguration, protocol));
                 }
 
                 typeMap.IsAnonymous = runtimeType.IsAnonymous();
@@ -352,9 +352,9 @@ namespace XRoadLib.Serialization
             {
                 var contentLayoutMode = (typeConfiguration?.GetContentLayoutMode(runtimeType)).GetValueOrDefault();
                 if (contentLayoutMode == XRoadContentLayoutMode.Flexible)
-                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetComplexTypeName(typeConfiguration, protocol));
+                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetProducerTypeName(typeConfiguration, protocol));
                 else
-                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetComplexTypeName(typeConfiguration, protocol));
+                    itemTypeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(runtimeType), this, runtimeType.GetProducerTypeName(typeConfiguration, protocol));
             }
 
             var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.RuntimeType), this);

@@ -49,7 +49,7 @@ namespace XRoadLib.Description
 
             foreach (var definedType in definedTypes)
             {
-                var typeName = definedType.GetComplexTypeName(typeConfiguration, protocol);
+                var typeName = definedType.GetProducerTypeName(typeConfiguration, protocol);
                 if (typeName.NamespaceName != targetNamespace)
                     continue;
 
@@ -78,7 +78,7 @@ namespace XRoadLib.Description
 
         internal XmlQualifiedName GetSchemaTypeName(Type type)
         {
-            var name = type.GetSystemTypeName() ?? type.GetComplexTypeName(typeConfiguration, protocol);
+            var name = type.GetSystemTypeName() ?? type.GetProducerTypeName(typeConfiguration, protocol);
 
             if (name.NamespaceName != targetNamespace)
             {
@@ -176,9 +176,21 @@ namespace XRoadLib.Description
 
             if (elementType.IsAnonymous())
             {
-                var schemaType = new XmlSchemaComplexType { Annotation = xRoadSchema.CreateAnnotationFor(elementType) };
-                AddComplexTypeContent(elementType, schemaType);
+                XmlSchemaType schemaType;
+                if (elementType.IsEnum)
+                {
+                    schemaType = new XmlSchemaSimpleType();
+                    AddEnumTypeContent(elementType, (XmlSchemaSimpleType)schemaType);
+                }
+                else
+                {
+                    schemaType = new XmlSchemaComplexType();
+                    AddComplexTypeContent(elementType, (XmlSchemaComplexType)schemaType);
+                }
+
+                schemaElement.Annotation = xRoadSchema.CreateAnnotationFor(elementType);
                 schemaElement.SchemaType = schemaType;
+
                 return;
             }
 
@@ -218,6 +230,20 @@ namespace XRoadLib.Description
             RequiredImports.Add(NamespaceConstants.XMIME);
 
             schemaElement.UnhandledAttributes = new[] { xRoadSchema.CreateExpectedContentType("application/octet-stream") };
+        }
+
+        private void AddEnumTypeContent(Type type, XmlSchemaSimpleType schemaType)
+        {
+            var restriction = new XmlSchemaSimpleTypeRestriction { BaseTypeName = GetSchemaTypeName(typeof(string)) };
+
+            foreach (var name in Enum.GetNames(type))
+            {
+                var memberInfo = type.GetMember(name).Single();
+                var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
+                restriction.Facets.Add(new XmlSchemaEnumerationFacet { Value = (attribute?.Name).GetValueOrDefault(name) });
+            }
+
+            schemaType.Content = restriction;
         }
 
         private void AddComplexTypeContent(Type type, XmlSchemaComplexType schemaType)
