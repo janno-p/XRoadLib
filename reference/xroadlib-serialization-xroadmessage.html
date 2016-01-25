@@ -50,10 +50,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '309', 309)" onmouseover="showTip(event, '309', 309)">
+          <code onmouseout="hideTip(event, '302', 302)" onmouseover="showTip(event, '302', 302)">
             new()
           </code>
-          <div class="tip" id="309">
+          <div class="tip" id="302">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -64,10 +64,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '310', 310)" onmouseover="showTip(event, '310', 310)">
+          <code onmouseout="hideTip(event, '303', 303)" onmouseover="showTip(event, '303', 303)">
             new(protocol)
           </code>
-          <div class="tip" id="310">
+          <div class="tip" id="303">
             <strong>Signature:</strong> protocol:XRoadProtocol -&gt; unit<br />
                       </div>
         </td>
@@ -78,10 +78,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '311', 311)" onmouseover="showTip(event, '311', 311)">
+          <code onmouseout="hideTip(event, '304', 304)" onmouseover="showTip(event, '304', 304)">
             new(contentStream)
           </code>
-          <div class="tip" id="311">
+          <div class="tip" id="304">
             <strong>Signature:</strong> contentStream:Stream -&gt; unit<br />
                       </div>
         </td>
@@ -92,10 +92,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '312', 312)" onmouseover="showTip(event, '312', 312)">
+          <code onmouseout="hideTip(event, '305', 305)" onmouseover="showTip(event, '305', 305)">
             new(contentStream, protocol)
           </code>
-          <div class="tip" id="312">
+          <div class="tip" id="305">
             <strong>Signature:</strong> (contentStream:Stream * protocol:XRoadProtocol) -&gt; unit<br />
                       </div>
         </td>
@@ -114,10 +114,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '313', 313)" onmouseover="showTip(event, '313', 313)">
+          <code onmouseout="hideTip(event, '306', 306)" onmouseover="showTip(event, '306', 306)">
             AllAttachments
           </code>
-          <div class="tip" id="313">
+          <div class="tip" id="306">
             <strong>Signature:</strong> IList&lt;XRoadAttachment&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -129,8 +129,108 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '314', 314)" onmouseover="showTip(event, '314', 314)">
+          <code onmouseout="hideTip(event, '307', 307)" onmouseover="showTip(event, '307', 307)">
             ContentEncoding()
+          </code>
+          <div class="tip" id="307">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '308', 308)" onmouseover="showTip(event, '308', 308)">
+            ContentStream()
+          </code>
+          <div class="tip" id="308">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '309', 309)" onmouseover="showTip(event, '309', 309)">
+            Copy(message)
+          </code>
+          <div class="tip" id="309">
+            <strong>Signature:</strong> message:XRoadMessage -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '310', 310)" onmouseover="showTip(event, '310', 310)">
+            CreateContext()
+          </code>
+          <div class="tip" id="310">
+            <strong>Signature:</strong> unit -&gt; SerializationContext<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '311', 311)" onmouseover="showTip(event, '311', 311)">
+            Dispose()
+          </code>
+          <div class="tip" id="311">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '312', 312)" onmouseover="showTip(event, '312', 312)">
+            GetAttachment(contentID)
+          </code>
+          <div class="tip" id="312">
+            <strong>Signature:</strong> contentID:string -&gt; XRoadAttachment<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '313', 313)" onmouseover="showTip(event, '313', 313)">
+            GetMetaServiceName()
+          </code>
+          <div class="tip" id="313">
+            <strong>Signature:</strong> unit -&gt; MetaServiceName<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '314', 314)" onmouseover="showTip(event, '314', 314)">
+            Header()
           </code>
           <div class="tip" id="314">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -144,7 +244,7 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '315', 315)" onmouseover="showTip(event, '315', 315)">
-            ContentStream()
+            IsMultipart()
           </code>
           <div class="tip" id="315">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -158,10 +258,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '316', 316)" onmouseover="showTip(event, '316', 316)">
-            Copy(message)
+            LoadRequest(httpContext, storagePath)
           </code>
           <div class="tip" id="316">
-            <strong>Signature:</strong> message:XRoadMessage -&gt; unit<br />
+            <strong>Signature:</strong> (httpContext:HttpContext * storagePath:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -172,10 +272,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '317', 317)" onmouseover="showTip(event, '317', 317)">
-            CreateContext()
+            LoadRequest(...)
           </code>
           <div class="tip" id="317">
-            <strong>Signature:</strong> unit -&gt; SerializationContext<br />
+            <strong>Signature:</strong> (stream:Stream * headers:NameValueCollection * contentEncoding:Encoding * storagePath:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -186,11 +286,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '318', 318)" onmouseover="showTip(event, '318', 318)">
-            Dispose()
+            LoadResponse(...)
           </code>
           <div class="tip" id="318">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
+            <strong>Signature:</strong> (stream:Stream * headers:NameValueCollection * contentEncoding:Encoding * storagePath:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -201,10 +300,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '319', 319)" onmouseover="showTip(event, '319', 319)">
-            GetAttachment(contentID)
+            MultipartContentAttachments
           </code>
           <div class="tip" id="319">
-            <strong>Signature:</strong> contentID:string -&gt; XRoadAttachment<br />
+            <strong>Signature:</strong> IEnumerable&lt;XRoadAttachment&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -216,10 +315,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '320', 320)" onmouseover="showTip(event, '320', 320)">
-            GetMetaServiceName()
+            MultipartContentType()
           </code>
           <div class="tip" id="320">
-            <strong>Signature:</strong> unit -&gt; MetaServiceName<br />
+            <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -230,7 +329,7 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '321', 321)" onmouseover="showTip(event, '321', 321)">
-            Header()
+            Protocol()
           </code>
           <div class="tip" id="321">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -244,7 +343,7 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '322', 322)" onmouseover="showTip(event, '322', 322)">
-            IsMultipart()
+            RootElementName()
           </code>
           <div class="tip" id="322">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -258,108 +357,9 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '323', 323)" onmouseover="showTip(event, '323', 323)">
-            LoadRequest(httpContext, storagePath)
-          </code>
-          <div class="tip" id="323">
-            <strong>Signature:</strong> (httpContext:HttpContext * storagePath:string) -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '324', 324)" onmouseover="showTip(event, '324', 324)">
-            LoadRequest(...)
-          </code>
-          <div class="tip" id="324">
-            <strong>Signature:</strong> (stream:Stream * headers:NameValueCollection * contentEncoding:Encoding * storagePath:string) -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '325', 325)" onmouseover="showTip(event, '325', 325)">
-            LoadResponse(...)
-          </code>
-          <div class="tip" id="325">
-            <strong>Signature:</strong> (stream:Stream * headers:NameValueCollection * contentEncoding:Encoding * storagePath:string) -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '326', 326)" onmouseover="showTip(event, '326', 326)">
-            MultipartContentAttachments
-          </code>
-          <div class="tip" id="326">
-            <strong>Signature:</strong> IEnumerable&lt;XRoadAttachment&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '327', 327)" onmouseover="showTip(event, '327', 327)">
-            MultipartContentType()
-          </code>
-          <div class="tip" id="327">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '328', 328)" onmouseover="showTip(event, '328', 328)">
-            Protocol()
-          </code>
-          <div class="tip" id="328">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '329', 329)" onmouseover="showTip(event, '329', 329)">
-            RootElementName()
-          </code>
-          <div class="tip" id="329">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '330', 330)" onmouseover="showTip(event, '330', 330)">
             SaveTo(httpContext)
           </code>
-          <div class="tip" id="330">
+          <div class="tip" id="323">
             <strong>Signature:</strong> httpContext:HttpContext -&gt; unit<br />
                       </div>
         </td>
@@ -370,10 +370,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '331', 331)" onmouseover="showTip(event, '331', 331)">
+          <code onmouseout="hideTip(event, '324', 324)" onmouseover="showTip(event, '324', 324)">
             SaveTo(...)
           </code>
-          <div class="tip" id="331">
+          <div class="tip" id="324">
             <strong>Signature:</strong> (textWriter:TextWriter * outputStream:Stream * setContentType:Action&lt;string&gt; * appendHeader:Action&lt;string,string&gt;) -&gt; unit<br />
                       </div>
         </td>
@@ -384,10 +384,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '332', 332)" onmouseover="showTip(event, '332', 332)">
+          <code onmouseout="hideTip(event, '325', 325)" onmouseover="showTip(event, '325', 325)">
             UnresolvedHeaders()
           </code>
-          <div class="tip" id="332">
+          <div class="tip" id="325">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>

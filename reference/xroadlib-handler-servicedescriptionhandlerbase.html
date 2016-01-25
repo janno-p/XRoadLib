@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>IXRoadFilterMap - XRoadLib</title>
+    <title>ServiceDescriptionHandlerBase - XRoadLib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Janno Põldma"/>
@@ -35,12 +35,34 @@
 
 
 
-<h1>IXRoadFilterMap</h1>
+<h1>ServiceDescriptionHandlerBase</h1>
 <p>
-  <span>Namespace: XRoadLib.Serialization</span><br />
+  <span>Namespace: XRoadLib.Handler</span><br />
 </p>
 <div class="xmldoc">
 </div>
+  <h3>Constructors</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Constructor</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '164', 164)" onmouseover="showTip(event, '164', 164)">
+            new(contractAssembly)
+          </code>
+          <div class="tip" id="164">
+            <strong>Signature:</strong> contractAssembly:Assembly -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
@@ -50,11 +72,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '273', 273)" onmouseover="showTip(event, '273', 273)">
-            EnabledProperties
+          <code onmouseout="hideTip(event, '165', 165)" onmouseover="showTip(event, '165', 165)">
+            EnvironmentProducerName
           </code>
-          <div class="tip" id="273">
-            <strong>Signature:</strong> ISet&lt;string&gt;<br />
+          <div class="tip" id="165">
+            <strong>Signature:</strong> string<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -65,11 +87,26 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '274', 274)" onmouseover="showTip(event, '274', 274)">
-            GroupName
+          <code onmouseout="hideTip(event, '166', 166)" onmouseover="showTip(event, '166', 166)">
+            Protocol
           </code>
-          <div class="tip" id="274">
-            <strong>Signature:</strong> string<br />
+          <div class="tip" id="166">
+            <strong>Signature:</strong> XRoadProtocol<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '167', 167)" onmouseover="showTip(event, '167', 167)">
+            Version
+          </code>
+          <div class="tip" id="167">
+            <strong>Signature:</strong> Nullable&lt;uint32&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
