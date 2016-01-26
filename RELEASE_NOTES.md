@@ -1,3 +1,7 @@
+#### 1.0.0-alpha20 - Unreleased
+* Improve protocol v4.0 generated service description.
+* Bug fix: add X-Road namespace to imports when title element is used in schema.
+
 #### 1.0.0-alpha19 - January 25 2016
 * Remove XRoadParameterAttribute in favor of XmlElementAttribute
 * Rename default handlers.

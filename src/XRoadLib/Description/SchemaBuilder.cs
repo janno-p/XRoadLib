@@ -21,6 +21,7 @@ namespace XRoadLib.Description
         private readonly XRoadProtocol protocol;
         private readonly XRoadSchemaBuilder xRoadSchema;
         private readonly XNamespace targetNamespace;
+        private readonly XNamespace xRoadNamespace;
         private readonly ITypeConfiguration typeConfiguration;
         private readonly IOperationConfiguration operationConfiguration;
 
@@ -38,6 +39,7 @@ namespace XRoadLib.Description
             operationConfiguration = configuration?.OperationConfiguration;
             typeConfiguration = configuration?.TypeConfiguration;
             xRoadSchema = new XRoadSchemaBuilder(protocol);
+            xRoadNamespace = protocol.GetNamespace();
         }
 
         internal void BuildTypes(Assembly contractAssembly)
@@ -56,7 +58,7 @@ namespace XRoadLib.Description
                 if (schemaTypes.ContainsKey(typeName.LocalName))
                     throw new Exception($"Multiple type definitions for same name `{typeName}`.");
 
-                var schemaType = new XmlSchemaComplexType { Name = typeName.LocalName, IsAbstract = definedType.IsAbstract, Annotation = xRoadSchema.CreateAnnotationFor(definedType) };
+                var schemaType = new XmlSchemaComplexType { Name = typeName.LocalName, IsAbstract = definedType.IsAbstract, Annotation = CreateSchemaAnnotation(definedType) };
 
                 schemaTypes.Add(typeName.LocalName, Tuple.Create(definedType, (XmlSchemaType)schemaType));
             }
@@ -123,9 +125,25 @@ namespace XRoadLib.Description
             return CreateSchemaElement(propertyInfo, propertyName, propertyType);
         }
 
+        internal XmlSchemaAnnotation CreateSchemaAnnotation(ICustomAttributeProvider source)
+        {
+            var nodes = source.GetXRoadTitles()
+                              .Where(title => !string.IsNullOrWhiteSpace(title.Item2))
+                              .Select(title => xRoadSchema.CreateXRoadTitle(title.Item1, title.Item2))
+                              .Cast<XmlNode>()
+                              .ToArray();
+
+            if (!nodes.Any())
+                return null;
+
+            RequiredImports.Add(xRoadNamespace.NamespaceName);
+
+            return new XmlSchemaAnnotation { Items = { new XmlSchemaAppInfo { Markup = nodes } } };
+        }
+
         private XmlSchemaElement CreateSchemaElement(ICustomAttributeProvider source, string name, Type type)
         {
-            var schemaElement = new XmlSchemaElement { Name = name, Annotation = xRoadSchema.CreateAnnotationFor(source) };
+            var schemaElement = new XmlSchemaElement { Name = name, Annotation = CreateSchemaAnnotation(source) };
 
             if (!source.IsRequiredElement())
                 schemaElement.MinOccurs = 0;
@@ -188,7 +206,7 @@ namespace XRoadLib.Description
                     AddComplexTypeContent(elementType, (XmlSchemaComplexType)schemaType);
                 }
 
-                schemaElement.Annotation = xRoadSchema.CreateAnnotationFor(elementType);
+                schemaElement.Annotation = CreateSchemaAnnotation(elementType);
                 schemaElement.SchemaType = schemaType;
 
                 return;

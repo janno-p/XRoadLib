@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Schema;
 using XRoadLib.Extensions;
 
 namespace XRoadLib.Description
@@ -19,17 +18,6 @@ namespace XRoadLib.Description
         {
             xroadPrefix = protocol.GetPrefix();
             xroadNamespace = protocol.GetNamespace();
-        }
-
-        internal XmlSchemaAnnotation CreateAnnotationFor(ICustomAttributeProvider source)
-        {
-            var nodes = source.GetXRoadTitles()
-                              .Where(title => !string.IsNullOrWhiteSpace(title.Item2))
-                              .Select(title => CreateXRoadTitle(title.Item1, title.Item2))
-                              .Cast<XmlNode>()
-                              .ToArray();
-
-            return nodes.Length > 0 ? new XmlSchemaAnnotation { Items = { new XmlSchemaAppInfo { Markup = nodes } } } : null;
         }
 
         internal XmlElement CreateDocumentationFor(ICustomAttributeProvider provider)

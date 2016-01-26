@@ -18,7 +18,6 @@ namespace XRoadLib
     public sealed class ProducerDefinition
     {
         private const string STANDARD_HEADER_NAME = "stdhdr";
-        private const string DEFAULT_LOCATION = "http://TURVASERVER/cgi-bin/consumer_proxy";
 
         private readonly SchemaBuilder schemaBuilder;
         private readonly XRoadSchemaBuilder xRoadSchema;
@@ -49,8 +48,20 @@ namespace XRoadLib
         private readonly IDictionary<string, XmlSchemaElement> schemaElements = new SortedDictionary<string, XmlSchemaElement>();
         private readonly IDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType, XmlQualifiedName>> operationTypes = new SortedDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType, XmlQualifiedName>>();
 
+        private string location;
+
         public string HeaderMessage { private get; set; }
-        public string Location { private get; set; }
+
+        public string Location
+        {
+            private get
+            {
+                if (!string.IsNullOrWhiteSpace(location))
+                    return location;
+                return protocol < XRoadProtocol.Version40 ? "http://TURVASERVER/cgi-bin/consumer_proxy" : "http://INSERT_CORRECT_SERVICE_URL";
+            }
+            set { location = value; }
+        }
 
         public ProducerDefinition(Assembly contractAssembly, XRoadProtocol protocol, uint? version = null, string environmentProducerName = null)
         {
@@ -87,9 +98,11 @@ namespace XRoadLib
             servicePort = new Port
             {
                 Name = producerConfiguration.ServicePortName.GetValueOrDefault($"{producerName}Port"),
-                Binding = new XmlQualifiedName(binding.Name, targetNamespace),
-                Extensions = { xRoadSchema.CreateAddressBinding(environmentProducerName.GetValueOrDefault(producerName)) }
+                Binding = new XmlQualifiedName(binding.Name, targetNamespace)
             };
+
+            if (protocol < XRoadProtocol.Version40)
+                servicePort.Extensions.Add(xRoadSchema.CreateAddressBinding(environmentProducerName.GetValueOrDefault(producerName)));
 
             service = new Service
             {
@@ -204,13 +217,11 @@ namespace XRoadLib
             foreach (var message in messages)
                 serviceDescription.Messages.Add(message);
 
-            foreach (var title in contractAssembly.GetXRoadTitles().OrderBy(t => t.Item1.ToLower()))
-                servicePort.Extensions.Add(xRoadSchema.CreateXRoadTitle(title.Item1, title.Item2));
+            if (protocol < XRoadProtocol.Version40)
+                foreach (var title in contractAssembly.GetXRoadTitles().OrderBy(t => t.Item1.ToLower()))
+                    servicePort.Extensions.Add(xRoadSchema.CreateXRoadTitle(title.Item1, title.Item2));
 
-            servicePort.Extensions.Add(new SoapAddressBinding
-            {
-                Location = string.IsNullOrWhiteSpace(Location) ? DEFAULT_LOCATION : Location
-            });
+            servicePort.Extensions.Add(new SoapAddressBinding { Location = Location });
 
             serviceDescription.Services.Add(service);
 
@@ -514,7 +525,7 @@ namespace XRoadLib
         private Tuple<XmlQualifiedName, XmlSchemaComplexType> CreateOperationRequestType(string requestName, MethodInfo method)
         {
             var parameters = method.GetParameters().Where(p => !version.HasValue || p.ExistsInVersion(version.Value)).ToList();
-            var complexType = new XmlSchemaComplexType { Name = requestName, Annotation = xRoadSchema.CreateAnnotationFor(method) };
+            var complexType = new XmlSchemaComplexType { Name = requestName, Annotation = schemaBuilder.CreateSchemaAnnotation(method) };
             var requestElement = new XmlSchemaElement { Name = "request" };
 
             if (parameters.Count == 0)
@@ -564,7 +575,7 @@ namespace XRoadLib
 
         private XmlSchemaComplexType CreateResponseType(string responseName, MethodInfo method, XmlSchemaGroupBase requestSequence, string operationName)
         {
-            var complexType = new XmlSchemaComplexType { Name = responseName, Annotation = xRoadSchema.CreateAnnotationFor(method) };
+            var complexType = new XmlSchemaComplexType { Name = responseName, Annotation = schemaBuilder.CreateSchemaAnnotation(method) };
 
             var faultSequence = schemaBuilder.CreateFaultSequence(method);
             if (faultSequence != null && method.ReturnType == typeof(void))
@@ -626,7 +637,7 @@ namespace XRoadLib
             {
                 Name = responseName,
                 Particle = new XmlSchemaSequence { Items = { requestSequence.Items[0], responseElement } },
-                Annotation = xRoadSchema.CreateAnnotationFor(method)
+                Annotation = schemaBuilder.CreateSchemaAnnotation(method)
             };
         }
 
