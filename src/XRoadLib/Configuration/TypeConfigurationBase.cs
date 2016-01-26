@@ -14,6 +14,11 @@ namespace XRoadLib.Configuration
             defaultComparer = new DefaultComparer(this);
         }
 
+        public virtual bool? GetPropertyIsNullable(PropertyInfo propertyInfo, bool isArrayItem)
+        {
+            return null;
+        }
+
         public virtual string GetPropertyName(PropertyInfo propertyInfo)
         {
             return null;

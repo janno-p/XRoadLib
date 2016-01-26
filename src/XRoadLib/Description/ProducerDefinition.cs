@@ -9,11 +9,10 @@ using System.Xml;
 using System.Xml.Schema;
 using XRoadLib.Attributes;
 using XRoadLib.Configuration;
-using XRoadLib.Description;
 using XRoadLib.Extensions;
 using XRoadLib.Header;
 
-namespace XRoadLib
+namespace XRoadLib.Description
 {
     public sealed class ProducerDefinition
     {
@@ -76,7 +75,7 @@ namespace XRoadLib
             var producerConfiguration = protocol.GetContractConfiguration(contractAssembly);
             var producerName = contractAssembly.GetProducerName();
 
-            if (version.HasValue && !TypeExtensions.IsVersionInRange(version.Value, producerConfiguration.MinOperationVersion, producerConfiguration.MaxOperationVersion))
+            if (version.HasValue && !TypeExtensions.IsVersionInRange(version.Value, producerConfiguration.MinOperationVersion, producerConfiguration.MaxOperationVersion + 1u))
                 throw new ArgumentOutOfRangeException($"Web service contract does not offser support for `v{version.Value}` services in protocol version `{protocol}`.", nameof(version));
             this.version = version;
 
@@ -540,8 +539,9 @@ namespace XRoadLib
 
             if (parameters.Count == 1)
             {
-                var parameterElement = schemaBuilder.CreateSchemaElement(parameters.Single());
-                if (!string.IsNullOrWhiteSpace(parameterElement.Name))
+                var parameter = parameters.Single();
+                var parameterElement = schemaBuilder.CreateSchemaElement(parameter, true);
+                if (string.IsNullOrWhiteSpace(parameterElement.Name))
                 {
                     if (protocol == XRoadProtocol.Version20)
                         return parameterElement.SchemaType != null
@@ -643,12 +643,8 @@ namespace XRoadLib
 
         private void AddOperationTypes(XmlSchema schema)
         {
-            foreach (var operationType in operationTypes.Values.OrderBy(x => x.Item2.Name))
-            {
-                schema.Items.Add(operationType.Item2);
-                if (protocol != XRoadProtocol.Version20 || operationType.Item1.ReturnType.IsArray)
-                    schema.Items.Add(operationType.Item3);
-            }
+            foreach (var operationType in operationTypes.Values.Select(x => x.Item2).Concat(operationTypes.Values.Select(x => x.Item3)).Where(x => x != null).OrderBy(x => x.Name))
+                schema.Items.Add(operationType);
         }
 
         private void AddSchemaElements(XmlSchema schema)
@@ -679,10 +675,10 @@ namespace XRoadLib
             else message.Parts.Add(new MessagePart { Name = "keha", Type = element.SchemaTypeName });
 
             if (inputMessage == null && methodContract.HasMultipartRequest())
-                message.Parts.Add(new MessagePart { Name = "p1", Type = schemaBuilder.GetSchemaTypeName(typeof(Stream)) });
+                message.Parts.Add(new MessagePart { Name = "file", Type = schemaBuilder.GetSchemaTypeName(typeof(Stream)) });
 
             if (inputMessage != null && methodContract.HasMultipartResponse())
-                message.Parts.Add(new MessagePart { Name = "p2", Type = schemaBuilder.GetSchemaTypeName(typeof(Stream)) });
+                message.Parts.Add(new MessagePart { Name = "file", Type = schemaBuilder.GetSchemaTypeName(typeof(Stream)) });
 
             return message;
         }

@@ -26,7 +26,7 @@ namespace XRoadLib.Description
         private readonly IOperationConfiguration operationConfiguration;
 
         internal ISet<string> RequiredImports { get; } = new SortedSet<string>();
-        internal IEnumerable<XmlSchemaType> SchemaTypes => schemaTypes.Values.Select(x => x.Item2);
+        internal IEnumerable<XmlSchemaType> SchemaTypes => schemaTypes.Values.Select(x => x.Item2).OrderBy(x => x.Name);
 
         internal bool this[string typeName] => schemaTypes.ContainsKey(typeName);
 
@@ -67,9 +67,11 @@ namespace XRoadLib.Description
                 AddComplexTypeContent(value.Item1, (XmlSchemaComplexType)value.Item2);
         }
 
-        internal XmlSchemaElement CreateSchemaElement(ParameterInfo parameterInfo)
+        internal XmlSchemaElement CreateSchemaElement(ParameterInfo parameterInfo, bool defaultNameNull = false)
         {
-            var parameterName = parameterInfo.GetParameterName(operationConfiguration);
+            var parameterName = defaultNameNull ? parameterInfo.GetCustomizedParameterName(operationConfiguration)
+                                                : parameterInfo.GetParameterName(operationConfiguration);
+
             var parameterType = parameterInfo.ParameterType;
 
             if (parameterType.IsArray && parameterType.GetArrayRank() > 1)
@@ -141,6 +143,19 @@ namespace XRoadLib.Description
             return new XmlSchemaAnnotation { Items = { new XmlSchemaAppInfo { Markup = nodes } } };
         }
 
+        private bool? GetSourceIsNullable(ICustomAttributeProvider source, bool isArrayItem)
+        {
+            var propertyInfo = source as PropertyInfo;
+            if (propertyInfo != null)
+                return typeConfiguration?.GetPropertyIsNullable(propertyInfo, isArrayItem);
+
+            var parameterInfo = source as ParameterInfo;
+            if (parameterInfo != null)
+                return operationConfiguration?.GetPropertyIsNullable(parameterInfo, isArrayItem);
+
+            return null;
+        }
+
         private XmlSchemaElement CreateSchemaElement(ICustomAttributeProvider source, string name, Type type)
         {
             var schemaElement = new XmlSchemaElement { Name = name, Annotation = CreateSchemaAnnotation(source) };
@@ -148,9 +163,12 @@ namespace XRoadLib.Description
             if (!source.IsRequiredElement())
                 schemaElement.MinOccurs = 0;
 
+            if (GetSourceIsNullable(source, false).GetValueOrDefault())
+                schemaElement.IsNillable = true;
+
             var elementAttribute = source.GetSingleAttribute<XmlElementAttribute>();
-            if (elementAttribute != null)
-                schemaElement.IsNillable = elementAttribute.IsNullable;
+            if ((elementAttribute?.IsNullable).GetValueOrDefault())
+                schemaElement.IsNillable = true;
 
             if (type.IsArray && elementAttribute != null)
             {
@@ -162,10 +180,15 @@ namespace XRoadLib.Description
                 var arrayAttribute = source.GetSingleAttribute<XmlArrayAttribute>();
                 var arrayItemAttribute = source.GetSingleAttribute<XmlArrayItemAttribute>();
 
-                schemaElement.IsNillable = (arrayAttribute?.IsNullable).GetValueOrDefault();
+                if ((arrayAttribute?.IsNullable).GetValueOrDefault())
+                    schemaElement.IsNillable = true;
 
                 var itemName = (arrayItemAttribute?.ElementName).GetValueOrDefault("item");
-                var itemElement = new XmlSchemaElement { Name = itemName, MinOccurs = 0, MaxOccursString = "unbounded", IsNillable = (arrayItemAttribute?.IsNullable).GetValueOrDefault() };
+                var itemElement = new XmlSchemaElement { Name = itemName, MinOccurs = 0, MaxOccursString = "unbounded" };
+
+                if (GetSourceIsNullable(source, true).GetValueOrDefault() || (arrayItemAttribute?.IsNullable).GetValueOrDefault())
+                    itemElement.IsNillable = true;
+
                 UpdateSchemaElementWithType(itemElement, source.GetQualifiedArrayItemDataType(), type.GetElementType());
 
                 AddArrayItemToSchemaElement(schemaElement, itemElement);

@@ -83,7 +83,7 @@
     <Compile Include="Header\XRoadHeader40.cs" />
     <Compile Include="Header\XRoadHeaderBase.cs" />
     <Compile Include="Configuration\ISchemaImportProvider.cs" />
-    <Compile Include="ProducerDefinition.cs" />
+    <Compile Include="Description\ProducerDefinition.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\XmlReaderExtensions.cs" />

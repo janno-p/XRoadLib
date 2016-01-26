@@ -7,6 +7,7 @@ open System.IO
 open System.Linq
 open System.Xml.Linq
 open XRoadLib
+open XRoadLib.Description
 
 [<TestFixture>]
 module ProducerDefinitionTest =

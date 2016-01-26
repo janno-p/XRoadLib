@@ -20,5 +20,7 @@ namespace XRoadLib.Configuration
         /// Specifies alternative names for operation parameters.
         /// </summary>
         string GetParameterName(ParameterInfo parameterInfo);
+
+        bool? GetPropertyIsNullable(ParameterInfo parameterInfo, bool isArrayItem);
     }
 }

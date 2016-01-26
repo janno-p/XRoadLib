@@ -18,5 +18,10 @@ namespace XRoadLib.Configuration
         {
             return null;
         }
+
+        public virtual bool? GetPropertyIsNullable(ParameterInfo parameterInfo, bool isArrayItem)
+        {
+            return null;
+        }
     }
 }

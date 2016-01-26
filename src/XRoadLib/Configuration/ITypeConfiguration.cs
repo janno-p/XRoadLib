@@ -7,6 +7,8 @@ namespace XRoadLib.Configuration
 {
     public interface ITypeConfiguration
     {
+        bool? GetPropertyIsNullable(PropertyInfo propertyInfo, bool isArrayItem);
+
         string GetPropertyName(PropertyInfo propertyInfo);
 
         XName GetTypeName(Type type);
