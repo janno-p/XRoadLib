@@ -1,4 +1,4 @@
-#### 1.0.0-alpha20 - Unreleased
+#### 1.0.0-alpha20 - January 26 2016
 * Improve protocol v4.0 generated service description.
 * Bug fix: add X-Road namespace to imports when title element is used in schema.
 
