@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,9 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\OrderAttribute.cs" />
     <Compile Include="Class1.cs" />
-    <Compile Include="Configuration\XRoadContractConfiguration.cs" />
+    <Compile Include="Configuration\CustomXRoad31Protocol.cs" />
     <Compile Include="DateTestDto.cs" />
     <Compile Include="InheritsParamType1.cs" />
     <Compile Include="MimeContent.cs" />

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XRoadLib.Events
+namespace XRoadLib.Handler.Events
 {
     public class InvocationErrorEventArgs : EventArgs
     {

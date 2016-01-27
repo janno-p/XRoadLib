@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
@@ -14,6 +16,8 @@ namespace XRoadLib.Protocols
 {
     public abstract class Protocol<THeader> : IProtocol<THeader> where THeader : IXRoadHeader, new()
     {
+        public const string STANDARD_HEADER_NAME = "RequiredHeaders";
+
         public abstract string Name { get; }
 
         public Style Style { get; }
@@ -66,6 +70,11 @@ namespace XRoadLib.Protocols
         public virtual bool IsDefinedByEnvelope(XmlReader reader)
         {
             return false;
+        }
+
+        public void WriteServiceDescription(Assembly contractAssembly, Stream outputStream)
+        {
+            throw new NotImplementedException();
         }
     }
 }

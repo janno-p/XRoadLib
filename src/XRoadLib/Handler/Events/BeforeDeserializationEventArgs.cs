@@ -2,7 +2,7 @@
 using System.Xml;
 using XRoadLib.Serialization.Mapping;
 
-namespace XRoadLib.Events
+namespace XRoadLib.Handler.Events
 {
     public class BeforeDeserializationEventArgs : EventArgs
     {
