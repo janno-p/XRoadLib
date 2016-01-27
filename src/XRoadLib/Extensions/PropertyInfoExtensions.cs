@@ -1,28 +1,11 @@
 ﻿using System.Reflection;
 using System.Reflection.Emit;
-using System.Xml.Serialization;
 using XRoadLib.Attributes;
-using XRoadLib.Configuration;
 
 namespace XRoadLib.Extensions
 {
     internal static class PropertyInfoExtensions
     {
-        internal static string GetPropertyName(this PropertyInfo propertyInfo, ITypeConfiguration typeConfiguration)
-        {
-            var customName = typeConfiguration?.GetPropertyName(propertyInfo);
-            if (!string.IsNullOrWhiteSpace(customName))
-                return customName;
-
-            var elementName = propertyInfo.GetElementName();
-            if (!string.IsNullOrWhiteSpace(elementName))
-                return elementName;
-
-            var start = propertyInfo.Name.LastIndexOf('.');
-
-            return start >= 0 ? propertyInfo.Name.Substring(start + 1) : propertyInfo.Name;
-        }
-
         internal static GetValueMethod CreateGetValueMethod(this PropertyInfo propertyInfo)
         {
             var type = propertyInfo.DeclaringType;
@@ -80,11 +63,6 @@ namespace XRoadLib.Extensions
             generator.Emit(OpCodes.Ret);
 
             return (SetValueMethod)dynamicSet.CreateDelegate(typeof(SetValueMethod));
-        }
-
-        internal static int GetElementOrder(this PropertyInfo propertyInfo)
-        {
-            return (propertyInfo.GetSingleAttribute<XmlElementAttribute>()?.Order).GetValueOrDefault();
         }
     }
 }

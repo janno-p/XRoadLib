@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -17,15 +18,15 @@ namespace XRoadLib.Serialization.Mapping
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
-            if (context.Protocol != XRoadProtocol.Version20 && !reader.ReadToDescendant("Include", NamespaceConstants.XOP))
-                throw XRoadException.InvalidQuery("Päringu xml-is puudub viide (`xop:Include` element) faili sisule.");
+            if (context.BinaryMode == BinaryMode.Xop && !reader.ReadToDescendant("Include", NamespaceConstants.XOP))
+                throw XRoadException.InvalidQuery("Missing `xop:Include` reference to multipart content.");
 
             var contentID = reader.GetAttribute("href");
 
             if (string.IsNullOrWhiteSpace(contentID))
             {
-                if (context.Protocol != XRoadProtocol.Version20)
-                    throw XRoadException.InvalidQuery("Päringu xml-is puudub viide (`xop:Include` elemendi `href` atribuut) faili sisule.");
+                if (context.BinaryMode != BinaryMode.Inline)
+                    throw XRoadException.InvalidQuery("Missing `href` attribute to multipart content.");
 
                 var tempAttachment = new XRoadAttachment(new MemoryStream()) { IsMultipartContent = false };
                 context.AttachmentManager.AllAttachments.Add(tempAttachment);
@@ -58,14 +59,14 @@ namespace XRoadLib.Serialization.Mapping
 
             context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
 
-            if (context.Protocol == XRoadProtocol.Version20 && !context.IsMultipart)
+            if (context.BinaryMode == BinaryMode.Inline)
             {
                 attachment.IsMultipartContent = false;
                 attachment.WriteAsBase64(writer);
                 return;
             }
 
-            if (context.Protocol != XRoadProtocol.Version20)
+            if (context.BinaryMode == BinaryMode.Xop)
             {
                 writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);
                 writer.WriteAttributeString(PrefixConstants.XMIME, "contentType", NamespaceConstants.XMIME, "application/octet-stream");
@@ -73,7 +74,7 @@ namespace XRoadLib.Serialization.Mapping
 
             writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
 
-            if (context.Protocol != XRoadProtocol.Version20)
+            if (context.BinaryMode == BinaryMode.Xop)
                 writer.WriteEndElement();
         }
     }

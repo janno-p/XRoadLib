@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
-using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions
@@ -66,9 +65,10 @@ namespace XRoadLib.Extensions
                                     .Select(x => Tuple.Create(x.LanguageCode, x.Value));
         }
 
-        public static string GetElementName(this ICustomAttributeProvider attributeProvider)
+        public static XName GetElementName(this ICustomAttributeProvider attributeProvider)
         {
-            return (attributeProvider.GetSingleAttribute<XmlElementAttribute>()?.ElementName).GetValueOrDefault();
+            var attribute = attributeProvider.GetSingleAttribute<XmlElementAttribute>();
+            return attribute == null ? null : XName.Get(attribute.ElementName, attribute.Namespace ?? "");
         }
 
         public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)
