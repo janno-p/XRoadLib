@@ -18,12 +18,12 @@ namespace XRoadLib.Serialization.Mapping
             throw new NotImplementedException();
         }
 
-        public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
+        public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
             throw new NotImplementedException();
         }
 
-        public void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, TypeDefinition typeDefinition)
+        public void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, IEnumerable<PropertyDefinition> propertyDefinitions)
         {
             throw new NotImplementedException();
         }

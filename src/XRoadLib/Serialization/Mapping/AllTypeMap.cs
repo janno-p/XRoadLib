@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -10,17 +9,17 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class AllTypeMap<T> : TypeMap<T> where T : class, IXRoadSerializable, new()
     {
-        private readonly XName typeName;
         private readonly ISerializerCache serializerCache;
         private readonly IDictionary<string, IPropertyMap> deserializationPropertyMaps = new Dictionary<string, IPropertyMap>();
         private readonly IList<IPropertyMap> serializationPropertyMaps = new List<IPropertyMap>();
+        private readonly TypeDefinition typeDefinition;
 
         public override bool IsSimpleType => false;
 
-        public AllTypeMap(ISerializerCache serializerCache, XName typeName)
+        public AllTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
         {
             this.serializerCache = serializerCache;
-            this.typeName = typeName;
+            this.typeDefinition = typeDefinition;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -59,13 +58,12 @@ namespace XRoadLib.Serialization.Mapping
             if (deserializationPropertyMaps.TryGetValue(reader.LocalName, out propertyMap))
                 return propertyMap;
 
-            throw XRoadException.UnknownProperty(reader.LocalName, typeName);
+            throw XRoadException.UnknownProperty(reader.LocalName, typeDefinition.Name);
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            if (!IsAnonymous && (context.Protocol == XRoadProtocol.Version20 || runtimeType != fieldType))
-                writer.WriteTypeAttribute(serializerCache.GetXmlTypeName(value.GetType()), templateNode?.Namespace);
+            context.Protocol.Style.WriteType(writer, typeDefinition, expectedType);
 
             foreach (var propertyMap in serializationPropertyMaps)
             {
@@ -75,23 +73,18 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, TypeDefinition typeDefinition)
+        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, IEnumerable<PropertyDefinition> propertyDefinitions)
         {
             if (deserializationPropertyMaps.Count > 0)
                 return;
 
-            var comparer = typeConfiguration?.GetPropertyComparer(runtimeType) ?? DefaultComparer.Instance;
-
-            foreach (var propertyInfo in RuntimeType.GetAllPropertiesSorted(comparer, DtoVersion))
+            foreach (var propertyDefinition in propertyDefinitions)
             {
-                var qualifiedTypeName = propertyInfo.GetQualifiedElementDataType();
+                var typeMap = propertyDefinition.TypeName != null
+                    ? serializerCache.GetTypeMap(propertyDefinition.TypeName, propertyDefinition.ItemProperty != null, DtoVersion)
+                    : serializerCache.GetTypeMap(propertyDefinition.RuntimeInfo.PropertyType, DtoVersion, partialTypeMaps);
 
-                var typeMap = qualifiedTypeName != null ? serializerCache.GetTypeMap(qualifiedTypeName, propertyInfo.PropertyType.IsArray, DtoVersion)
-                                                        : serializerCache.GetTypeMap(propertyInfo.PropertyType, DtoVersion, partialTypeMaps);
-
-                var propertyName = propertyInfo.GetPropertyName(typeConfiguration);
-
-                var propertyMap = new PropertyMap(serializerCache, propertyName, propertyInfo, typeMap, RuntimeType);
+                var propertyMap = new PropertyMap(serializerCache, propertyDefinition.Name.LocalName, propertyDefinition.RuntimeInfo, typeMap, RuntimeType);
 
                 deserializationPropertyMaps.Add(propertyMap.PropertyName, propertyMap);
                 serializationPropertyMaps.Add(propertyMap);
