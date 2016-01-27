@@ -65,8 +65,7 @@ namespace XRoadLib.Handler
             IServiceMap serviceMap;
             var result = InvokeServiceMethod(requestMessage.Protocol.SerializerCache, out serviceMap);
 
-            if (serviceMap.HasMultipartResponse)
-                responseMessage.IsMultipart = true;
+            responseMessage.BinaryContentMode = serviceMap.OperationDefinition.ResponseBinaryMode;
 
             SerializeXRoadResponse(httpContext, result, serviceMap);
         }
@@ -86,7 +85,7 @@ namespace XRoadLib.Handler
 
             try
             {
-                result = InvokeDataMethod(serviceObject, serviceMap.MethodInfo, parameters);
+                result = InvokeDataMethod(serviceObject, serviceMap.OperationDefinition.RuntimeInfo, parameters);
             }
             catch (Exception exception)
             {

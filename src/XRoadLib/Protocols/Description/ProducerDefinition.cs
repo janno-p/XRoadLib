@@ -13,23 +13,8 @@ namespace XRoadLib.Protocols.Description
 {
     public sealed class ProducerDefinition
     {
-        private const string STANDARD_HEADER_NAME = "stdhdr";
-
-        private readonly SchemaBuilder schemaBuilder;
-        private readonly XRoadSchemaBuilder xRoadSchema;
-
         private readonly Assembly contractAssembly;
-        private readonly XRoadProtocol protocol;
-        private readonly string xroadNamespace;
-        private readonly string targetNamespace;
-        private readonly string standardHeaderName;
-        private readonly uint? version;
-        private readonly IOperationConfiguration operationConfiguration;
-
-        private readonly string requestTypeNameFormat;
-        private readonly string responseTypeNameFormat;
-        private readonly string requestMessageNameFormat;
-        private readonly string responseMessageNameFormat;
+        private readonly IProtocol protocol;
 
         private readonly Binding binding;
         private readonly PortType portType;
@@ -38,80 +23,40 @@ namespace XRoadLib.Protocols.Description
 
         private readonly IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts;
 
-        private readonly ICollection<string> requiredHeaders = new SortedSet<string>();
         private readonly IList<Message> messages = new List<Message>();
         private readonly IList<XmlSchemaImport> schemaImports = new List<XmlSchemaImport>();
         private readonly IDictionary<string, XmlSchemaElement> schemaElements = new SortedDictionary<string, XmlSchemaElement>();
         private readonly IDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType, XmlQualifiedName>> operationTypes = new SortedDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType, XmlQualifiedName>>();
 
-        private string location;
-
-        public string HeaderMessage { private get; set; }
-
-        public string Location
-        {
-            private get
-            {
-                if (!string.IsNullOrWhiteSpace(location))
-                    return location;
-                return protocol < XRoadProtocol.Version40 ? "http://TURVASERVER/cgi-bin/consumer_proxy" : "http://INSERT_CORRECT_SERVICE_URL";
-            }
-            set { location = value; }
-        }
-
-        public ProducerDefinition(Assembly contractAssembly, XRoadProtocol protocol, uint? version = null, string environmentProducerName = null)
+        public ProducerDefinition(Assembly contractAssembly, IProtocol protocol)
         {
             if (contractAssembly == null)
                 throw new ArgumentNullException(nameof(contractAssembly));
             this.contractAssembly = contractAssembly;
 
-            if (!protocol.HasDefinedValue())
-                throw new ArgumentException($"Only defined X-Road protocol values are allowed, but was `{protocol}`.", nameof(protocol));
+            if (protocol == null)
+                throw new ArgumentNullException(nameof(protocol));
             this.protocol = protocol;
 
-            var producerConfiguration = protocol.GetContractConfiguration(contractAssembly);
-            var producerName = contractAssembly.GetProducerName();
-
-            if (version.HasValue && !TypeExtensions.IsVersionInRange(version.Value, producerConfiguration.MinOperationVersion, producerConfiguration.MaxOperationVersion + 1u))
-                throw new ArgumentOutOfRangeException($"Web service contract does not offser support for `v{version.Value}` services in protocol version `{protocol}`.", nameof(version));
-            this.version = version;
-
-            xroadNamespace = protocol.GetNamespace();
-            targetNamespace = protocol.GetProducerNamespace(producerName);
-            xRoadSchema = new XRoadSchemaBuilder(protocol);
-
-            portType = new PortType
-            {
-                Name = producerConfiguration.PortTypeName.GetValueOrDefault($"{producerName}PortType")
-            };
+            portType = new PortType { Name = "PortTypeName" };
 
             binding = new Binding
             {
-                Name = producerConfiguration.BindingName.GetValueOrDefault($"{producerName}Binding"),
-                Type = new XmlQualifiedName(portType.Name, targetNamespace)
+                Name = "BindingName",
+                Type = new XmlQualifiedName(portType.Name, protocol.ProducerNamespace)
             };
 
             servicePort = new Port
             {
-                Name = producerConfiguration.ServicePortName.GetValueOrDefault($"{producerName}Port"),
-                Binding = new XmlQualifiedName(binding.Name, targetNamespace)
+                Name = "PortName",
+                Binding = new XmlQualifiedName(binding.Name, protocol.ProducerNamespace)
             };
-
-            if (protocol < XRoadProtocol.Version40)
-                servicePort.Extensions.Add(xRoadSchema.CreateAddressBinding(environmentProducerName.GetValueOrDefault(producerName)));
 
             service = new Service
             {
-                Name = producerConfiguration.ServiceName.GetValueOrDefault($"{producerName}Service"),
+                Name = "ServiceName",
                 Ports = { servicePort }
             };
-
-            standardHeaderName = producerConfiguration.StandardHeaderName.GetValueOrDefault(STANDARD_HEADER_NAME);
-            requestTypeNameFormat = producerConfiguration.RequestTypeNameFormat.GetValueOrDefault("{0}");
-            responseTypeNameFormat = producerConfiguration.ResponseTypeNameFormat.GetValueOrDefault("{0}Response");
-            requestMessageNameFormat = producerConfiguration.RequestMessageNameFormat.GetValueOrDefault("{0}");
-            responseMessageNameFormat = producerConfiguration.ResponseMessageNameFormat.GetValueOrDefault("{0}Response");
-            operationConfiguration = producerConfiguration.OperationConfiguration;
 
             serviceContracts = contractAssembly.GetServiceContracts();
 
@@ -171,10 +116,10 @@ namespace XRoadLib.Protocols.Description
         {
             AddOperations();
 
-            var serviceDescription = new ServiceDescription { TargetNamespace = targetNamespace };
+            var serviceDescription = new ServiceDescription { TargetNamespace = protocol.ProducerNamespace };
             AddServiceDescriptionNamespaces(serviceDescription);
 
-            var schema = new XmlSchema { TargetNamespace = targetNamespace };
+            var schema = new XmlSchema { TargetNamespace = protocol.ProducerNamespace };
             CreateXmlSchemaImports(schema);
 
             foreach (var schemaType in schemaBuilder.SchemaTypes)
@@ -200,13 +145,11 @@ namespace XRoadLib.Protocols.Description
             foreach (var message in messages)
                 serviceDescription.Messages.Add(message);
 
-            if (protocol < XRoadProtocol.Version40)
-                foreach (var title in contractAssembly.GetXRoadTitles().OrderBy(t => t.Item1.ToLower()))
-                    servicePort.Extensions.Add(xRoadSchema.CreateXRoadTitle(title.Item1, title.Item2));
-
-            servicePort.Extensions.Add(new SoapAddressBinding { Location = Location });
+            servicePort.Extensions.Add(new SoapAddressBinding { Location = "" });
 
             serviceDescription.Services.Add(service);
+
+            protocol.ExportServiceDescription(serviceDescription);
 
             serviceDescription.Write(writer);
         }
@@ -312,8 +255,6 @@ namespace XRoadLib.Protocols.Description
         {
             return schemaBuilder[typeName] || operationTypes.ContainsKey(typeName);
         }
-
-        #region Contract definitions that depend on X-Road protocol version
 
         private void BuildImportedOperationElements(string name, MethodInfo methodContract, XRoadImportAttribute importAttribute)
         {
@@ -666,7 +607,5 @@ namespace XRoadLib.Protocols.Description
 
             return message;
         }
-
-        #endregion
     }
 }

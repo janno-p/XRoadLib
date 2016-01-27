@@ -21,6 +21,10 @@ namespace XRoadLib.Protocols
 
         public abstract string Name { get; }
 
+        public virtual string RequestPartNameInRequest => "request";
+        public virtual string RequestPartNameInResponse => "request";
+        public virtual string ResponsePartNameInResponse => "response";
+
         public Style Style { get; }
         public string ProducerNamespace { get; }
         public ISerializerCache SerializerCache { get; }
@@ -45,7 +49,7 @@ namespace XRoadLib.Protocols
         public virtual void ExportOperation(OperationDefinition operation)
         { }
 
-        public virtual void ExportServiceDescription(ServiceDescription serviceDescription, Context context)
+        public virtual void ExportServiceDescription(ServiceDescription serviceDescription)
         { }
 
         public void AddMandatoryHeaderElement<T>(Expression<Func<THeader, T>> expression)

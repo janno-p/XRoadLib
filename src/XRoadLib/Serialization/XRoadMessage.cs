@@ -20,7 +20,6 @@ namespace XRoadLib.Serialization
 
         private readonly List<XRoadAttachment> attachments = new List<XRoadAttachment>();
 
-        public bool IsMultipart { get; set; }
         public string MultipartContentType { get; internal set; }
         public Encoding ContentEncoding { get; internal set; }
         public Stream ContentStream { get; internal set; }

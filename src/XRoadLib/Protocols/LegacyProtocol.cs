@@ -15,9 +15,6 @@ namespace XRoadLib.Protocols
 
     public abstract class LegacyProtocol<THeader> : Protocol<THeader>, ILegacyProtocol where THeader : IXRoadHeader, new()
     {
-        protected abstract string RequestPartName { get; }
-        protected abstract string ResponsePartName { get; }
-
         protected abstract string XRoadPrefix { get; }
 
         public abstract string XRoadNamespace { get; }
@@ -33,7 +30,7 @@ namespace XRoadLib.Protocols
             ProducerName = producerName;
         }
 
-        public override void ExportServiceDescription(ServiceDescription serviceDescription, Context context)
+        public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {
             var document = new XmlDocument();
 

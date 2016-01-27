@@ -15,6 +15,12 @@ namespace XRoadLib.Protocols
     {
         string Name { get; }
 
+        string RequestPartNameInRequest { get; }
+
+        string RequestPartNameInResponse { get; }
+
+        string ResponsePartNameInResponse { get; }
+
         string ProducerNamespace { get; }
 
         Style Style { get; }
@@ -29,7 +35,7 @@ namespace XRoadLib.Protocols
 
         void ExportOperation(OperationDefinition operation);
 
-        void ExportServiceDescription(ServiceDescription serviceDescription, Context context);
+        void ExportServiceDescription(ServiceDescription serviceDescription);
 
         IXRoadHeader CreateHeader();
 

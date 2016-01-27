@@ -56,7 +56,7 @@ namespace XRoadLib.Serialization
             target.ContentEncoding = contentEncoding;
             target.ContentStream = new MemoryStream();
 
-            ReadMessageParts(target);
+            var isMultipart = ReadMessageParts(target);
 
             target.ContentStream.Position = 0;
 
@@ -75,7 +75,7 @@ namespace XRoadLib.Serialization
             if (xrh4 != null && xrh4.ProtocolVersion?.Trim() != "4.0")
                 throw XRoadException.InvalidQuery("Unsupported X-Road v6 protocol version value `{0}`.", xrh4.ProtocolVersion ?? string.Empty);
 
-            if (target.IsMultipart)
+            if (isMultipart)
                 target.BinaryContentMode = BinaryMode.SoapAttachment;
 
             if (target.MultipartContentType.Equals(XRoadMessage.MULTIPART_CONTENT_TYPE_XOP))
@@ -108,15 +108,14 @@ namespace XRoadLib.Serialization
             return contentTypeKey == null ? "text/xml; charset=UTF-8" : headers[contentTypeKey];
         }
 
-        private void ReadMessageParts(XRoadMessage target)
+        private bool ReadMessageParts(XRoadMessage target)
         {
             contentType = GetContentType();
 
-            target.IsMultipart = IsMultipartMsg(contentType);
-            if (!target.IsMultipart)
+            if (!IsMultipartMsg(contentType))
             {
                 ReadNextPart(target.ContentStream, GetByteDecoder(null), contentEncoding, null);
-                return;
+                return false;
             }
 
             target.MultipartContentType = GetMultipartContentType(contentType);
@@ -148,6 +147,8 @@ namespace XRoadLib.Serialization
 
                 lastLine = ReadNextPart(targetStream, GetByteDecoder(partTransferEncoding), contentEncoding, multipartBoundaryMarker);
             } while (StreamPosition < stream.Length && !BufferStartsWith(lastLine, multipartEndMarker));
+
+            return true;
         }
 
         private byte[] ReadNextPart(Stream targetStream, Func<byte[], Encoding, byte[]> decoder, Encoding useEncoding, byte[] boundaryMarker)

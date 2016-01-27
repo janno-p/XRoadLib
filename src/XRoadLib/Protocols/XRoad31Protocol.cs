@@ -6,8 +6,6 @@ namespace XRoadLib.Protocols
     public class XRoad31Protocol : LegacyProtocol<XRoadHeader31>
     {
         protected override string XRoadPrefix => PrefixConstants.XROAD;
-        protected override string RequestPartName => "request";
-        protected override string ResponsePartName => "response";
 
         public override string XRoadNamespace => NamespaceConstants.XROAD;
         public override string Name => "3.1";

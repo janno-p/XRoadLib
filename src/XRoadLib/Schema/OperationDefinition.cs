@@ -19,6 +19,8 @@ namespace XRoadLib.Schema
 
         public bool HideXRoadFaultDefinition { get; set; }
 
+        public bool ProhibitRequestPartInResponse { get; set; }
+
         public uint Version { get; set; }
     }
 }

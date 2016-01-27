@@ -51,7 +51,6 @@
     <Compile Include="Schema\DefinitionState.cs" />
     <Compile Include="Schema\ParameterComparer.cs" />
     <Compile Include="Schema\PropertyComparer.cs" />
-    <Compile Include="Context.cs" />
     <Compile Include="Protocols\Description\SchemaBuilder.cs" />
     <Compile Include="Protocols\Description\XRoadSchemaBuilder.cs" />
     <Compile Include="Extensions\ParameterInfoExtensions.cs" />

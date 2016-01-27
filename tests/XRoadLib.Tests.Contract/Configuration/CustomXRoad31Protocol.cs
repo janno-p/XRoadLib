@@ -6,12 +6,12 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {
-    public class CustomXRoad31Protocol : XRoad20Protocol
+    public class CustomXRoad31Protocol : XRoad31Protocol
     {
         public static IProtocol Instance { get; } = new CustomXRoad31Protocol();
 
         private CustomXRoad31Protocol()
-            : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer")
+            : base("test-producer", "http://test-producer.x-road.ee/producer/")
         {
             Titles.Add("", "Ilma keeleta palun");
             Titles.Add("en", "XRoadLib test producer");
@@ -19,9 +19,9 @@ namespace XRoadLib.Tests.Contract.Configuration
             Titles.Add("pt", "Portugalikeelne loba ...");
         }
 
-        public override void ExportServiceDescription(ServiceDescription serviceDescription, Context context)
+        public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {
-            base.ExportServiceDescription(serviceDescription, context);
+            base.ExportServiceDescription(serviceDescription);
 
             // Customize port type name:
             serviceDescription.PortTypes[0].Name = "TestProducerPortType";

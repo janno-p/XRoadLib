@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -17,32 +16,26 @@ namespace XRoadLib.Serialization.Mapping
         private readonly XName qualifiedName;
         private readonly IList<IParameterMap> parameters;
         private readonly IParameterMap result;
-        private readonly XRoadContentLayoutMode contentLayout;
 
-        public MethodInfo MethodInfo { get; }
-        public bool HasMultipartRequest { get; }
-        public bool HasMultipartResponse { get; }
+        public OperationDefinition OperationDefinition { get; }
 
-        public ServiceMap(XName qualifiedName, MethodInfo methodInfo, IList<IParameterMap> parameters, IParameterMap result, OperationDefinition operationDefinition)
+        public ServiceMap(XName qualifiedName, IList<IParameterMap> parameters, IParameterMap result, OperationDefinition operationDefinition)
         {
             this.qualifiedName = qualifiedName;
             this.parameters = parameters;
             this.result = result;
-            this.contentLayout = contentLayout;
 
-            MethodInfo = methodInfo;
-            HasMultipartRequest = hasMultipartRequest;
-            HasMultipartResponse = hasMultipartResponse;
+            OperationDefinition = operationDefinition;
         }
 
         public IDictionary<string, object> DeserializeRequest(XmlReader reader, SerializationContext context)
         {
-            var elementName = GetRequestElementName(context);
+            var requestName = context.Protocol.RequestPartNameInRequest;
 
-            if (!reader.MoveToElement(3, elementName))
-                throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{elementName}` element.");
+            if (!reader.MoveToElement(3, requestName))
+                throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
-            return contentLayout == XRoadContentLayoutMode.Strict ? DeserializeParametersStrict(reader, context) : DeserializeParametersNonStrict(reader, context);
+            return OperationDefinition.HasStrictContentOrder ? DeserializeParametersStrict(reader, context) : DeserializeParametersNonStrict(reader, context);
         }
 
         private IDictionary<string, object> DeserializeParametersStrict(XmlReader reader, SerializationContext context)
@@ -103,7 +96,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public object DeserializeResponse(XmlReader reader, SerializationContext context)
         {
-            var elementName = context.Protocol.GetResponseElementName();
+            var responseName = context.Protocol.ResponsePartNameInResponse;
             var parameterNode = context.XmlTemplate != null ? context.XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
 
             if (!reader.MoveToElement(2))
@@ -112,8 +105,8 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.NamespaceURI == NamespaceConstants.SOAP_ENV && reader.LocalName == "Fault")
                 return SoapMessageHelper.DeserializeSoapFault(reader);
 
-            if (!reader.MoveToElement(3, elementName.LocalName))
-                throw XRoadException.InvalidQuery($"Expected payload element `{elementName}` was not found in SOAP message.");
+            if (!reader.MoveToElement(3, responseName))
+                throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` was not found in SOAP message.");
 
             return result.DeserializeRoot(reader, parameterNode, context);
         }
@@ -121,7 +114,7 @@ namespace XRoadLib.Serialization.Mapping
         public void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, SerializationContext context)
         {
             writer.WriteStartElement(qualifiedName.LocalName, qualifiedName.NamespaceName);
-            writer.WriteStartElement(GetRequestElementName(context));
+            writer.WriteStartElement(context.Protocol.RequestPartNameInRequest);
 
             foreach (var value in values)
             {
@@ -149,8 +142,8 @@ namespace XRoadLib.Serialization.Mapping
             if (result != null)
             {
                 if (Equals(namespaceInContext, ""))
-                    writer.WriteStartElement(context.Protocol.GetResponseElementName().LocalName);
-                else writer.WriteStartElement(context.Protocol.GetResponseElementName().LocalName, "");
+                    writer.WriteStartElement(context.Protocol.ResponsePartNameInResponse);
+                else writer.WriteStartElement(context.Protocol.ResponsePartNameInResponse, "");
 
                 var fault = value as IXRoadFault;
                 if (fault == null)
@@ -187,12 +180,12 @@ namespace XRoadLib.Serialization.Mapping
 
             writer.WriteAttributes(reader, true);
 
-            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, GetRequestElementName(context)))
+            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, context.Protocol.RequestPartNameInRequest))
                 return;
 
-            if (context.Protocol == XRoadProtocol.Version20)
+            if (context.Protocol.RequestPartNameInRequest != context.Protocol.RequestPartNameInResponse)
             {
-                writer.WriteStartElement("paring");
+                writer.WriteStartElement(context.Protocol.RequestPartNameInResponse);
                 writer.WriteAttributes(reader, true);
 
                 while (reader.MoveToElement(4))
@@ -201,11 +194,6 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteEndElement();
             }
             else writer.WriteNode(reader, true);
-        }
-
-        private static string GetRequestElementName(SerializationContext context)
-        {
-            return context.Protocol == XRoadProtocol.Version20 ? "keha" : "request";
         }
     }
 }

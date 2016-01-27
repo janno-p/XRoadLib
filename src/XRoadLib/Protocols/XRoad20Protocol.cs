@@ -7,11 +7,12 @@ namespace XRoadLib.Protocols
     public class XRoad20Protocol : LegacyProtocol<XRoadHeader20>
     {
         protected override string XRoadPrefix => PrefixConstants.XTEE;
-        protected override string RequestPartName => "keha";
-        protected override string ResponsePartName => "keha";
 
         public override string XRoadNamespace => NamespaceConstants.XTEE;
         public override string Name => "2.0";
+        public override string RequestPartNameInRequest => "keha";
+        public override string RequestPartNameInResponse => "paring";
+        public override string ResponsePartNameInResponse => "keha";
 
         public XRoad20Protocol(string producerName, string producerNamespace)
             : this(producerName, producerNamespace, new RpcEncodedStyle())

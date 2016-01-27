@@ -25,7 +25,7 @@ namespace XRoadLib.Protocols
             AddMandatoryHeaderElement(x => x.Issue);
         }
 
-        public override void ExportServiceDescription(ServiceDescription serviceDescription, Context context)
+        public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {
             var servicePort = serviceDescription.Services[0].Ports[0];
 

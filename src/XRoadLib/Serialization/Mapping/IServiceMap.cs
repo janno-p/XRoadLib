@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 using System.Xml;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public interface IServiceMap
     {
-        MethodInfo MethodInfo { get; }
-
-        bool HasMultipartRequest { get; }
-
-        bool HasMultipartResponse { get; }
+        OperationDefinition OperationDefinition { get; }
 
         IDictionary<string, object> DeserializeRequest(XmlReader reader, SerializationContext context);
 
