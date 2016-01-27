@@ -62,6 +62,13 @@
     <Compile Include="Handler\ServiceDescriptionHandlerBase.cs" />
     <Compile Include="Handler\ServiceHandlerBase.cs" />
     <Compile Include="Handler\ServiceRequestHandlerBase.cs" />
+    <Compile Include="Protocols\DocLiteralProtocol.cs" />
+    <Compile Include="Protocols\IProtocol.cs" />
+    <Compile Include="Protocols\Protocol.cs" />
+    <Compile Include="Protocols\RpcEncodedProtocol.cs" />
+    <Compile Include="Protocols\XRoad20Protocol.cs" />
+    <Compile Include="Protocols\XRoad31Protocol.cs" />
+    <Compile Include="Protocols\XRoad40Protocol.cs" />
     <Compile Include="Serialization\Mapping\VoidTypeMap.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />

@@ -2,7 +2,6 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -57,8 +56,7 @@ namespace XRoadLib.Serialization.Mapping
             var attachment = new XRoadAttachment((Stream)value);
             context.AttachmentManager.AllAttachments.Add(attachment);
 
-            if (context.Protocol == XRoadProtocol.Version20)
-                writer.WriteTypeAttribute(qualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
 
             if (context.Protocol == XRoadProtocol.Version20 && !context.IsMultipart)
             {

@@ -10,7 +10,7 @@ using System.Xml.Schema;
 using XRoadLib.Attributes;
 using XRoadLib.Configuration;
 using XRoadLib.Extensions;
-using XRoadLib.Header;
+using XRoadLib.Protocols.Headers;
 
 namespace XRoadLib.Description
 {
@@ -35,8 +35,8 @@ namespace XRoadLib.Description
         private readonly string responseMessageNameFormat;
 
         private readonly Binding binding;
-        private readonly Port servicePort;
         private readonly PortType portType;
+        private readonly Port servicePort;
         private readonly Service service;
 
         private readonly IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts;
@@ -168,19 +168,6 @@ namespace XRoadLib.Description
             BuildOperationBinding(operationBinding, methodInfo);
 
             binding.Operations.Add(operationBinding);
-        }
-
-        public void AddHeader<T>(Expression<Func<IXRoadHeader, T>> expression)
-        {
-            var memberExpression = expression.Body as MemberExpression;
-            if (memberExpression == null)
-                throw new ArgumentException($"Only MemberExpression is allowed to use for SOAP header definition, but was {expression.Body.GetType().Name} ({GetType().Name}).", nameof(expression));
-
-            var elementName = memberExpression.Member.GetElementName();
-            if (string.IsNullOrWhiteSpace(elementName))
-                throw new ArgumentException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.", nameof(expression));
-
-            requiredHeaders.Add(elementName);
         }
 
         private void WriteServiceDescription(XmlWriter writer)

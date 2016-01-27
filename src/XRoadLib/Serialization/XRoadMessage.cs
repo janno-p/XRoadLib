@@ -6,24 +6,29 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Xml.Linq;
-using XRoadLib.Extensions;
-using XRoadLib.Header;
+using XRoadLib.Protocols;
+using XRoadLib.Protocols.Headers;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Serialization
 {
     public class XRoadMessage : IAttachmentManager
     {
+        public const string MULTIPART_CONTENT_TYPE_SOAP = "text/xml";
+        public const string MULTIPART_CONTENT_TYPE_XOP = "application/xop+xml";
+
         private readonly List<XRoadAttachment> attachments = new List<XRoadAttachment>();
 
         public bool IsMultipart { get; set; }
         public string MultipartContentType { get; internal set; }
         public Encoding ContentEncoding { get; internal set; }
         public Stream ContentStream { get; internal set; }
-        public XRoadProtocol Protocol { get; internal set; }
+        public IProtocol Protocol { get; internal set; }
         public IXRoadHeader Header { get; internal set; }
         public IList<XElement> UnresolvedHeaders { get; set; }
         public XName RootElementName { get; internal set; }
+        public BinaryContentMode BinaryContentMode { get; internal set; }
 
         public IList<XRoadAttachment> AllAttachments => attachments;
         public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }
@@ -33,7 +38,8 @@ namespace XRoadLib.Serialization
             ContentEncoding = Encoding.UTF8;
         }
 
-        public XRoadMessage(XRoadProtocol protocol) : this()
+        public XRoadMessage(IProtocol protocol)
+            : this()
         {
             Protocol = protocol;
         }
@@ -43,7 +49,7 @@ namespace XRoadLib.Serialization
             ContentStream = contentStream;
         }
 
-        public XRoadMessage(Stream contentStream, XRoadProtocol protocol)
+        public XRoadMessage(Stream contentStream, IProtocol protocol)
             : this(contentStream)
         {
             Protocol = protocol;
@@ -54,20 +60,20 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
-        public void LoadRequest(HttpContext httpContext, string storagePath)
+        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<IProtocol> supportedProtocols)
         {
-            LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers, httpContext.Request.ContentEncoding, storagePath);
+            LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers, httpContext.Request.ContentEncoding, storagePath, supportedProtocols);
         }
 
-        public void LoadRequest(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath)
+        public void LoadRequest(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<IProtocol> supportedProtocols)
         {
-            using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath))
+            using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
                 reader.Read(this);
         }
 
-        public void LoadResponse(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath)
+        public void LoadResponse(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<IProtocol> supportedProtocols)
         {
-            using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath))
+            using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
                 reader.Read(this, true);
         }
 
@@ -102,7 +108,8 @@ namespace XRoadLib.Serialization
             if (Header?.Service?.ServiceCode != null)
                 return Header.Service.ServiceCode == "getState" ? MetaServiceName.GetState : MetaServiceName.None;
 
-            if (RootElementName.Namespace != Protocol.GetNamespace())
+            var legacyProtocol = Protocol as ILegacyProtocol;
+            if (legacyProtocol == null || RootElementName.Namespace != legacyProtocol.XRoadNamespace)
                 return MetaServiceName.Unsupported;
 
             switch (RootElementName.LocalName)

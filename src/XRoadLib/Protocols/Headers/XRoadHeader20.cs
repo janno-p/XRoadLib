@@ -1,11 +1,9 @@
 ﻿using System.Xml;
 
-namespace XRoadLib.Header
+namespace XRoadLib.Protocols.Headers
 {
-    internal class XRoadHeader20 : XRoadHeaderBase, IXRoadHeader20
+    public class XRoadHeader20 : XRoadHeaderBase, IXRoadHeader20
     {
-        public override XRoadProtocol Protocol => XRoadProtocol.Version20;
-
         public string Asutus => Client.MemberCode;
         public string Andmekogu => Service?.SubsystemCode;
         public string Isikukood => UserId;

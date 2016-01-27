@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Serialization
 {
@@ -30,7 +31,10 @@ namespace XRoadLib.Serialization
             var boundaryMarker = Guid.NewGuid().ToString();
             var contentID = Convert.ToBase64String(new MD5CryptoServiceProvider().ComputeHash(source.ContentStream));
 
-            var contentTypeType = source.Protocol == XRoadProtocol.Version20 ? "text/xml" : "application/xop+xml";
+            var contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_SOAP;
+            if (source.BinaryContentMode == BinaryContentMode.Xop)
+                contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_XOP;
+
             setContentType(string.Format("multipart/related; type=\"{2}\"; start=\"{0}\"; boundary=\"{1}\"", contentID, boundaryMarker, contentTypeType));
             appendHeader("MIME-Version", "1.0");
 
@@ -40,9 +44,9 @@ namespace XRoadLib.Serialization
 
             foreach (var attachment in source.MultipartContentAttachments)
             {
-                if (source.Protocol == XRoadProtocol.Version20)
-                    SerializeAttachment(attachment, boundaryMarker);
-                else SerializeXopAttachment(attachment, boundaryMarker);
+                if (source.BinaryContentMode == BinaryContentMode.Xop)
+                    SerializeXopAttachment(attachment, boundaryMarker);
+                else SerializeAttachment(attachment, boundaryMarker);
             }
 
             writer.WriteLine();

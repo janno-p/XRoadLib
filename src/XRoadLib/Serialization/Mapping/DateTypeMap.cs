@@ -35,8 +35,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
         {
-            if (context.Protocol == XRoadProtocol.Version20)
-                writer.WriteTypeAttribute(qualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
 
             writer.WriteValue(XmlConvert.ToString((DateTime)value, "yyyy-MM-dd"));
         }

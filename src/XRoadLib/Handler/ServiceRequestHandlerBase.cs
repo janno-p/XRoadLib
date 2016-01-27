@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Xml;
 using XRoadLib.Events;
 using XRoadLib.Extensions;
+using XRoadLib.Protocols;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
@@ -13,16 +15,16 @@ namespace XRoadLib.Handler
 {
     public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
-        private readonly IProtocolSerializerCache protocolSerializerCache;
+        private readonly ICollection<IProtocol> supportedProtocols;
 
         public string StoragePath { get; set; }
         public ICustomSerialization CustomSerialization { get; set; }
 
-        protected ServiceRequestHandlerBase(IProtocolSerializerCache protocolSerializerCache)
+        protected ServiceRequestHandlerBase(IEnumerable<IProtocol> supportedProtocols)
         {
-            if (protocolSerializerCache == null)
-                throw new ArgumentNullException(nameof(protocolSerializerCache));
-            this.protocolSerializerCache = protocolSerializerCache;
+            if (supportedProtocols == null)
+                throw new ArgumentNullException(nameof(supportedProtocols));
+            this.supportedProtocols = new List<IProtocol>(supportedProtocols);
         }
 
         protected abstract object InvokeMetaService(MetaServiceName metaServiceName);
@@ -52,15 +54,16 @@ namespace XRoadLib.Handler
             if (httpContext.Request.InputStream.Length == 0)
                 throw XRoadException.InvalidQuery("Empty request content");
 
-            requestMessage.LoadRequest(httpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()));
-            responseMessage.Copy(requestMessage);
+            requestMessage.LoadRequest(httpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), supportedProtocols);
+            if (requestMessage.Protocol == null)
+                throw XRoadException.InvalidQuery("Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {0}.", string.Join(", ", supportedProtocols.Select(x => $@"""{x.Name}""")));
 
-            var serializerCache = protocolSerializerCache.GetSerializerCache(requestMessage.Protocol);
+            responseMessage.Copy(requestMessage);
 
             OnRequestLoaded();
 
             IServiceMap serviceMap;
-            var result = InvokeServiceMethod(serializerCache, out serviceMap);
+            var result = InvokeServiceMethod(requestMessage.Protocol.SerializerCache, out serviceMap);
 
             if (serviceMap.HasMultipartResponse)
                 responseMessage.IsMultipart = true;

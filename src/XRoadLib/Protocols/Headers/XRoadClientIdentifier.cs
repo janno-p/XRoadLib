@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml.Serialization;
 
-namespace XRoadLib.Header
+namespace XRoadLib.Protocols.Headers
 {
     [XmlInclude(typeof(IXRoadIdentifier))]
     [XmlType("XRoadClientIdentifierType", Namespace = NamespaceConstants.XROAD_V4_ID)]

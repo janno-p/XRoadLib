@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
-using XRoadLib.Configuration;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions
@@ -123,34 +122,6 @@ namespace XRoadLib.Extensions
             if (type == typeof(long)) return XName.Get("long", NamespaceConstants.XSD);
             if (type == typeof(string)) return XName.Get("string", NamespaceConstants.XSD);
             return typeof(Stream).IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.XSD) : null;
-        }
-
-        internal static XName GetProducerTypeName(this Type type, ITypeConfiguration typeConfiguration, XRoadProtocol protocol)
-        {
-            var name = typeConfiguration?.GetTypeName(type);
-            if (name != null)
-                return name;
-
-            var typeNamespace = protocol.GetProducerNamespace(type.Assembly.GetProducerName());
-            var typeName = (type.GetSingleAttribute<XmlTypeAttribute>()?.TypeName).GetValueOrDefault(type.Name);
-
-            return XName.Get(typeName, typeNamespace);
-        }
-
-        public static XRoadImportAttribute GetImportAttribute(this MethodInfo methodInfo, XRoadProtocol protocol)
-        {
-            var attributes = methodInfo.GetCustomAttributes(typeof(XRoadImportAttribute), false)
-                                       .OfType<XRoadImportAttribute>()
-                                       .ToList();
-
-            return attributes.SingleOrDefault(attr => attr.AppliesTo == protocol)
-                ?? attributes.SingleOrDefault(attr => attr.AppliesTo == XRoadProtocol.Undefined);
-        }
-
-        public static IEnumerable<XRoadMessagePartAttribute> GetExtraMessageParts(this MethodInfo methodInfo)
-        {
-            return methodInfo.GetCustomAttributes(typeof(XRoadMessagePartAttribute), false)
-                             .OfType<XRoadMessagePartAttribute>();
         }
 
         public static T GetSingleAttribute<T>(this ICustomAttributeProvider customAttributeProvider)

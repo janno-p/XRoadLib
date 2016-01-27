@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace XRoadLib.Header
+namespace XRoadLib.Protocols.Headers
 {
     public interface IXRoadHeader40
     {

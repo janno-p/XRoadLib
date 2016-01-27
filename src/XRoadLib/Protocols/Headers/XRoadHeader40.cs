@@ -1,12 +1,10 @@
 ﻿using System.Xml;
 using XRoadLib.Extensions;
 
-namespace XRoadLib.Header
+namespace XRoadLib.Protocols.Headers
 {
-    internal class XRoadHeader40 : XRoadHeaderBase, IXRoadHeader40
+    public class XRoadHeader40 : XRoadHeaderBase, IXRoadHeader40
     {
-        public override XRoadProtocol Protocol => XRoadProtocol.Version40;
-
         public XRoadCentralServiceIdentifier CentralService { get; private set; }
         public XRoadRepresentedParty RepresentedParty { get; private set; }
 

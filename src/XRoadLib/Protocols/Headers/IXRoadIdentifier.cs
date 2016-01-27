@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace XRoadLib.Header
+namespace XRoadLib.Protocols.Headers
 {
     /// <summary>
     /// Globally unique identifier in the XRoad system. Identifier consists of object type specifier and list of

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
+using XRoadLib.Protocols;
 using XRoadLib.Serialization.Template;
 using XRoadLib.Soap;
 
@@ -166,17 +167,15 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
-        private static void SerializeFault(XmlWriter writer, IXRoadFault fault, XRoadProtocol protocol)
+        private static void SerializeFault(XmlWriter writer, IXRoadFault fault, IProtocol protocol)
         {
             writer.WriteStartElement("faultCode");
-            if (protocol == XRoadProtocol.Version20)
-                writer.WriteTypeAttribute("string", NamespaceConstants.XSD);
+            protocol.Style.WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));
             writer.WriteValue(fault.FaultCode);
             writer.WriteEndElement();
 
             writer.WriteStartElement("faultString");
-            if (protocol == XRoadProtocol.Version20)
-                writer.WriteTypeAttribute("string", NamespaceConstants.XSD);
+            protocol.Style.WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));
             writer.WriteValue(fault.FaultString);
             writer.WriteEndElement();
         }

@@ -1,11 +1,9 @@
 ﻿using System.Xml;
 
-namespace XRoadLib.Header
+namespace XRoadLib.Protocols.Headers
 {
-    internal class XRoadHeader31 : XRoadHeaderBase, IXRoadHeader31
+    public class XRoadHeader31 : XRoadHeaderBase, IXRoadHeader31
     {
-        public override XRoadProtocol Protocol => XRoadProtocol.Version31;
-
         public string Consumer => Client.MemberCode;
         public string Producer => Service.SubsystemCode;
         string IXRoadHeader31.Service => Service.ToFullName();

@@ -77,13 +77,6 @@ namespace XRoadLib.Description
             return element;
         }
 
-        internal XmlElement CreateAddressBinding(string producerName)
-        {
-            var element = document.CreateElement(xroadPrefix, "address", xroadNamespace);
-            element.SetAttribute("producer", producerName);
-            return element;
-        }
-
         internal XmlAttribute CreateEncodedArrayTypeAttribute(XName qualifiedName)
         {
             var attribute = document.CreateAttribute(PrefixConstants.WSDL, "arrayType", NamespaceConstants.WSDL);

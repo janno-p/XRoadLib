@@ -37,27 +37,6 @@ namespace XRoadLib.Extensions
             writer.WriteArrayTypeAttribute(qualifiedName.LocalName, qualifiedName.NamespaceName, arraySize);
         }
 
-        public static void WriteXteeHeaderElement(this XmlWriter writer, string name, string value, bool writeRaw = false)
-        {
-            writer.WriteHeaderElement(XRoadProtocol.Version20.GetNamespace(), name, value, writeRaw);
-        }
-
-        public static void WriteHeaderElement(this XmlWriter writer, string @namespace, string name, string value, bool writeRaw = false)
-        {
-            writer.WriteStartElement(name, @namespace);
-            writer.WriteTypeAttribute("string", NamespaceConstants.XSD);
-
-            if (!string.IsNullOrEmpty(value))
-            {
-                if (writeRaw)
-                    writer.WriteRaw(value);
-                else
-                    writer.WriteValue(value);
-            }
-
-            writer.WriteEndElement();
-        }
-
         public static void WriteNilAttribute(this XmlWriter writer)
         {
             writer.WriteAttributeString("nil", NamespaceConstants.XSI, "1");

@@ -1,4 +1,5 @@
 ﻿using System;
+using XRoadLib.Protocols;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -12,7 +13,7 @@ namespace XRoadLib.Serialization.Mapping
         public XRoadMessage Message { get; }
 
         public IAttachmentManager AttachmentManager => Message;
-        public XRoadProtocol Protocol => Message.Protocol;
+        public IProtocol Protocol => Message.Protocol;
         public bool IsMultipart => Message.IsMultipart;
 
         public SerializationContext(XRoadMessage message, uint dtoVersion)

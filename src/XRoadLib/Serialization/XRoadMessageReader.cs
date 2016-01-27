@@ -7,7 +7,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Header;
+using XRoadLib.Protocols;
+using XRoadLib.Protocols.Headers;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Serialization
 {
@@ -24,6 +26,7 @@ namespace XRoadLib.Serialization
 
         private static readonly byte[] newLine = { (byte)'\r', (byte)'\n' };
 
+        private readonly ICollection<IProtocol> supportedProtocols;
         private readonly NameValueCollection headers;
         private readonly Encoding contentEncoding;
         private readonly string storagePath;
@@ -34,12 +37,13 @@ namespace XRoadLib.Serialization
 
         private long StreamPosition => stream.Position - (peekedByte.HasValue ? 1 : 0);
 
-        public XRoadMessageReader(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath)
+        public XRoadMessageReader(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<IProtocol> supportedProtocols)
         {
             this.contentEncoding = contentEncoding;
             this.headers = headers;
             this.storagePath = storagePath;
             this.stream = stream;
+            this.supportedProtocols = new List<IProtocol>(supportedProtocols);
         }
 
         public void Read(XRoadMessage target, bool isResponse = false)
@@ -59,27 +63,23 @@ namespace XRoadLib.Serialization
             using (var reader = XmlReader.Create(target.ContentStream, new XmlReaderSettings { CloseInput = false }))
             {
                 var protocol = ParseXRoadProtocol(reader);
-                var header = ParseXRoadHeader(reader, protocol);
+                ParseXRoadHeader(target, reader, protocol);
 
-                target.Header = header?.Item1;
-                target.UnresolvedHeaders = header?.Item2;
-                target.Protocol = (header?.Item1?.Protocol).GetValueOrDefault(protocol);
                 target.RootElementName = ParseMessageRootElementName(reader);
 
-                if (target.Protocol == XRoadProtocol.Undefined && target.RootElementName != null)
-                    target.Protocol = ProtocolFromNamespace(target.RootElementName.NamespaceName);
+                if (target.Protocol == null && target.RootElementName != null)
+                    target.Protocol = supportedProtocols.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
             }
 
             var xrh4 = target.Header as IXRoadHeader40;
             if (xrh4 != null && xrh4.ProtocolVersion?.Trim() != "4.0")
                 throw XRoadException.InvalidQuery("Unsupported X-Road v6 protocol version value `{0}`.", xrh4.ProtocolVersion ?? string.Empty);
 
-            var teenuseNimi = !string.IsNullOrWhiteSpace(target.Header?.Service?.ServiceCode)
-                ? target.Header.Service.ServiceCode
-                : (target.RootElementName != null ? target.RootElementName.LocalName : "");
+            if (target.IsMultipart)
+                target.BinaryContentMode = BinaryContentMode.SoapAttachment;
 
-            if (target.Protocol != XRoadProtocol.Version20 && target.IsMultipart && !target.MultipartContentType.Equals("application/xop+xml"))
-                throw XRoadException.InvalidQuery("Teenuse `{0}` multipart päringu sisuks oodati `application/xop+xml`, kuid edastati `{1}`.", teenuseNimi, target.MultipartContentType);
+            if (target.MultipartContentType.Equals(XRoadMessage.MULTIPART_CONTENT_TYPE_XOP))
+                target.BinaryContentMode = BinaryContentMode.Xop;
 
             if (isResponse)
                 return;
@@ -390,39 +390,44 @@ namespace XRoadLib.Serialization
             return charset;
         }
 
-        private static XRoadProtocol ParseXRoadProtocol(XmlReader reader)
+        private IProtocol ParseXRoadProtocol(XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
                 throw XRoadException.InvalidQuery("Päringus puudub SOAP-ENV:Envelope element.");
 
-            return reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV) != null ? XRoadProtocol.Version20 : XRoadProtocol.Undefined;
+            return supportedProtocols.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }
 
-        private static Tuple<XRoadHeaderBase, List<XElement>> ParseXRoadHeader(XmlReader reader, XRoadProtocol protocol)
+        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IProtocol protocol)
         {
             if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
-                return null;
+                return;
 
-            var header = protocol.CreateXRoadHeader();
+            var header = protocol?.CreateHeader();
             var unresolved = new List<XElement>();
 
             while (reader.MoveToElement(2))
             {
-                if (header == null && reader.IsHeaderNamespace())
-                    header = XRoadHeaderBase.FromNamespace(reader.NamespaceURI);
-
-                if (header != null && header.Protocol.DefinesHeadersForNamespace(reader.NamespaceURI))
+                if (protocol == null)
                 {
-                    header.SetHeaderValue(reader);
+                    protocol = supportedProtocols.SingleOrDefault(p => p.IsHeaderNamespace(reader.NamespaceURI));
+                    header = protocol?.CreateHeader();
+                }
+
+                if (protocol == null || header == null || !protocol.IsHeaderNamespace(reader.NamespaceURI))
+                {
+                    unresolved.Add((XElement)XNode.ReadFrom(reader));
                     continue;
                 }
 
-                unresolved.Add((XElement)XNode.ReadFrom(reader));
+                header.SetHeaderValue(reader);
             }
 
             header?.Validate();
 
-            return Tuple.Create(header, unresolved);
+            target.Header = header;
+            target.UnresolvedHeaders = unresolved;
+            target.Protocol = protocol;
         }
 
         private static XName ParseMessageRootElementName(XmlReader reader)
@@ -430,14 +435,6 @@ namespace XRoadLib.Serialization
             return (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV)) && reader.MoveToElement(2)
                 ? XName.Get(reader.LocalName, reader.NamespaceURI)
                 : null;
-        }
-
-        private static XRoadProtocol ProtocolFromNamespace(string ns)
-        {
-            return Enum.GetValues(typeof(XRoadProtocol))
-                       .Cast<XRoadProtocol>()
-                       .Where(protocol => protocol != XRoadProtocol.Undefined)
-                       .FirstOrDefault(protocol => protocol.GetNamespace() == ns);
         }
     }
 }

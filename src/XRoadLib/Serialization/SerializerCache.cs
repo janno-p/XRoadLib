@@ -8,16 +8,15 @@ using System.Xml.Linq;
 using XRoadLib.Attributes;
 using XRoadLib.Configuration;
 using XRoadLib.Extensions;
+using XRoadLib.Protocols;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Serialization
 {
     public sealed class SerializerCache : ISerializerCache
     {
-        private readonly ITypeConfiguration typeConfiguration;
-
         private readonly Assembly contractAssembly;
-        private readonly XRoadProtocol protocol;
+        private readonly IProtocol protocol;
 
         private readonly ConcurrentDictionary<XName, ConcurrentDictionary<uint, IServiceMap>> serviceMaps = new ConcurrentDictionary<XName, ConcurrentDictionary<uint, IServiceMap>>();
         private readonly ConcurrentDictionary<XName, ConcurrentDictionary<uint, Tuple<ITypeMap, ITypeMap>>> xmlTypeMaps = new ConcurrentDictionary<XName, ConcurrentDictionary<uint, Tuple<ITypeMap, ITypeMap>>>();
@@ -25,17 +24,12 @@ namespace XRoadLib.Serialization
         private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> systemXmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
         private readonly ConcurrentDictionary<Type, ITypeMap> systemRuntimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
-        public string ProducerNamespace { get; }
+        public string ProducerNamespace => protocol.ProducerNamespace;
 
-        public SerializerCache(Assembly contractAssembly, XRoadProtocol protocol)
+        public SerializerCache(Assembly contractAssembly, IProtocol protocol)
         {
             this.contractAssembly = contractAssembly;
             this.protocol = protocol;
-
-            var producerName = contractAssembly.GetProducerName();
-            ProducerNamespace = protocol.GetProducerNamespace(producerName);
-
-            typeConfiguration = protocol.GetTypeConfiguration(contractAssembly);
 
             systemRuntimeTypeMaps.GetOrAdd(typeof(void), new VoidTypeMap());
 
@@ -135,17 +129,21 @@ namespace XRoadLib.Serialization
                 systemRuntimeTypeMaps.GetOrAdd(typeof(System.IO.MemoryStream), itemTypeMap);
             }
 
-            qualifiedName = XName.Get("testSystem", protocol.GetNamespace());
+            var legacyProtocol = protocol as LegacyProtocol;
+            if (legacyProtocol == null)
+                return;
+
+            qualifiedName = XName.Get("testSystem", legacyProtocol.XRoadNamespace);
             var serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
             serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, null, XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
 
-            qualifiedName = XName.Get("getState", protocol.GetNamespace());
+            qualifiedName = XName.Get("getState", legacyProtocol.XRoadNamespace);
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
             serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, new ParameterMap(this, null, null, integerTypeMap, true), XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
 
-            qualifiedName = XName.Get("listMethods", protocol.GetNamespace());
+            qualifiedName = XName.Get("listMethods", legacyProtocol.XRoadNamespace);
             serviceMap = new ConcurrentDictionary<uint, IServiceMap>();
             serviceMap.GetOrAdd(1u, new ServiceMap(qualifiedName, null, null, new ParameterMap(this, null, null, stringArrayTypeMap, true), XRoadContentLayoutMode.Strict, false, false));
             serviceMaps.GetOrAdd(qualifiedName, serviceMap);
