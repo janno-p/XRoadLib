@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using XRoadLib.Configuration;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -23,7 +23,7 @@ namespace XRoadLib.Serialization.Mapping
             throw new NotImplementedException();
         }
 
-        public void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfiguration typeConfigurationProvider)
+        public void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, TypeDefinition typeDefinition)
         {
             throw new NotImplementedException();
         }

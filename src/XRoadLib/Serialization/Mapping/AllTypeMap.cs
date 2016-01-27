@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
-using XRoadLib.Configuration;
 using XRoadLib.Extensions;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -75,7 +75,7 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, ITypeConfiguration typeConfiguration)
+        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, TypeDefinition typeDefinition)
         {
             if (deserializationPropertyMaps.Count > 0)
                 return;

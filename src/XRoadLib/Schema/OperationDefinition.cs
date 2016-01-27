@@ -13,7 +13,9 @@ namespace XRoadLib.Schema
 
         public string ResponseMessageName { get; set; }
 
-        public BinaryContentMode BinaryContentMode { get; set; }
+        public BinaryMode RequestBinaryMode { get; set; }
+
+        public BinaryMode ResponseBinaryMode { get; set; }
 
         public bool HideXRoadFaultDefinition { get; set; }
 

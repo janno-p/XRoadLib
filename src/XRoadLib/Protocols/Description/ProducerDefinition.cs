@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Schema;
 using XRoadLib.Attributes;
-using XRoadLib.Configuration;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols.Headers;
 
-namespace XRoadLib.Description
+namespace XRoadLib.Protocols.Description
 {
     public sealed class ProducerDefinition
     {

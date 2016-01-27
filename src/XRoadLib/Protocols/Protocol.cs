@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Protocols.Headers;
+using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 

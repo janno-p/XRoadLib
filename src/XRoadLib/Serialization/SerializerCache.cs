@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Attributes;
-using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Protocols;
 using XRoadLib.Serialization.Mapping;

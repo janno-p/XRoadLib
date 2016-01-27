@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using XRoadLib.Protocols.Headers;
+using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 

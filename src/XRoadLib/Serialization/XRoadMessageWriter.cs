@@ -32,7 +32,7 @@ namespace XRoadLib.Serialization
             var contentID = Convert.ToBase64String(new MD5CryptoServiceProvider().ComputeHash(source.ContentStream));
 
             var contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_SOAP;
-            if (source.BinaryContentMode == BinaryContentMode.Xop)
+            if (source.BinaryContentMode == BinaryMode.Xop)
                 contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_XOP;
 
             setContentType(string.Format("multipart/related; type=\"{2}\"; start=\"{0}\"; boundary=\"{1}\"", contentID, boundaryMarker, contentTypeType));
@@ -44,7 +44,7 @@ namespace XRoadLib.Serialization
 
             foreach (var attachment in source.MultipartContentAttachments)
             {
-                if (source.BinaryContentMode == BinaryContentMode.Xop)
+                if (source.BinaryContentMode == BinaryMode.Xop)
                     SerializeXopAttachment(attachment, boundaryMarker);
                 else SerializeAttachment(attachment, boundaryMarker);
             }

@@ -76,10 +76,10 @@ namespace XRoadLib.Serialization
                 throw XRoadException.InvalidQuery("Unsupported X-Road v6 protocol version value `{0}`.", xrh4.ProtocolVersion ?? string.Empty);
 
             if (target.IsMultipart)
-                target.BinaryContentMode = BinaryContentMode.SoapAttachment;
+                target.BinaryContentMode = BinaryMode.SoapAttachment;
 
             if (target.MultipartContentType.Equals(XRoadMessage.MULTIPART_CONTENT_TYPE_XOP))
-                target.BinaryContentMode = BinaryContentMode.Xop;
+                target.BinaryContentMode = BinaryMode.Xop;
 
             if (isResponse)
                 return;

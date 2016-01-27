@@ -7,11 +7,10 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using XRoadLib.Configuration;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization;
 
-namespace XRoadLib.Description
+namespace XRoadLib.Protocols.Description
 {
     internal class SchemaBuilder
     {

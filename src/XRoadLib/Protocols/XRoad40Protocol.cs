@@ -1,5 +1,6 @@
 ﻿using System.Web.Services.Description;
 using XRoadLib.Protocols.Headers;
+using XRoadLib.Protocols.Styles;
 
 namespace XRoadLib.Protocols
 {

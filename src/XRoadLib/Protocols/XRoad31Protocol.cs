@@ -1,4 +1,5 @@
 ﻿using XRoadLib.Protocols.Headers;
+using XRoadLib.Protocols.Styles;
 
 namespace XRoadLib.Protocols
 {

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions

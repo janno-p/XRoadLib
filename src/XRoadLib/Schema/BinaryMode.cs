@@ -1,6 +1,6 @@
 ﻿namespace XRoadLib.Schema
 {
-    public enum BinaryContentMode
+    public enum BinaryMode
     {
         Inline,
         SoapAttachment,

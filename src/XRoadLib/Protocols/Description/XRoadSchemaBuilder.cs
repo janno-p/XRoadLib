@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 
-namespace XRoadLib.Description
+namespace XRoadLib.Protocols.Description
 {
     internal class XRoadSchemaBuilder
     {

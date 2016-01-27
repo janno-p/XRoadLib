@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Protocols;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 using XRoadLib.Soap;
 
@@ -22,7 +23,7 @@ namespace XRoadLib.Serialization.Mapping
         public bool HasMultipartRequest { get; }
         public bool HasMultipartResponse { get; }
 
-        public ServiceMap(XName qualifiedName, MethodInfo methodInfo, IList<IParameterMap> parameters, IParameterMap result, XRoadContentLayoutMode contentLayout, bool hasMultipartRequest, bool hasMultipartResponse)
+        public ServiceMap(XName qualifiedName, MethodInfo methodInfo, IList<IParameterMap> parameters, IParameterMap result, OperationDefinition operationDefinition)
         {
             this.qualifiedName = qualifiedName;
             this.parameters = parameters;

@@ -49,11 +49,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             var valueArray = (Array)value;
 
-            if (context.Protocol == XRoadProtocol.Version20)
-            {
-                writer.WriteTypeAttribute("Array", NamespaceConstants.SOAP_ENC);
-                writer.WriteArrayTypeAttribute(elementQualifiedName, valueArray.Length);
-            }
+            context.Protocol.Style.WriteExplicitArrayType(writer, elementQualifiedName, valueArray.Length);
 
             foreach (var element in valueArray)
             {
