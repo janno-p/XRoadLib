@@ -6,6 +6,8 @@ namespace XRoadLib.Schema
     {
         public OperationDefinition Owner { get; }
 
+        public TypeDefinition TypeDefinition { get; set; }
+
         public ParameterDefinition(OperationDefinition owner)
         {
             Owner = owner;

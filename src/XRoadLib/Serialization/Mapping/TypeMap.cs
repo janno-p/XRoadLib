@@ -14,6 +14,7 @@ namespace XRoadLib.Serialization.Mapping
         public uint DtoVersion { get; set; }
         public Type RuntimeType => runtimeType;
         public virtual bool IsSimpleType => true;
+        public virtual bool IsAnonymous => false;
 
         public abstract object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);
 

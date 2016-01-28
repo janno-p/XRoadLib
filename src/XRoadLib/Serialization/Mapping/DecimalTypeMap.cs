@@ -7,7 +7,12 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DecimalTypeMap : TypeMap<decimal>
     {
+        public static ITypeMap Instance { get; } = new DecimalTypeMap();
+
         private readonly XName qualifiedName = XName.Get("decimal", NamespaceConstants.XSD);
+
+        private DecimalTypeMap()
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

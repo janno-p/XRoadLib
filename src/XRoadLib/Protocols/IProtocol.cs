@@ -33,6 +33,8 @@ namespace XRoadLib.Protocols
 
         void ExportParameter(ParameterDefinition parameter);
 
+        void ExportProperty(PropertyDefinition parameter);
+
         void ExportType(TypeDefinition type);
 
         void ExportOperation(OperationDefinition operation);

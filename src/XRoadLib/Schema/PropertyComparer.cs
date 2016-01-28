@@ -1,6 +1,8 @@
-﻿namespace XRoadLib.Schema
+﻿using System.Reflection;
+
+namespace XRoadLib.Schema
 {
-    public class PropertyComparer : ContentComparer<ParameterDefinition>
+    public class PropertyComparer : ContentComparer<PropertyInfo, PropertyDefinition>
     {
         public static PropertyComparer Instance { get; } = new PropertyComparer();
 

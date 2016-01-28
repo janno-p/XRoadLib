@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -14,12 +15,15 @@ namespace XRoadLib.Serialization.Mapping
         private readonly IList<IPropertyMap> serializationPropertyMaps = new List<IPropertyMap>();
         private readonly TypeDefinition typeDefinition;
 
+        public override bool IsAnonymous { get; }
         public override bool IsSimpleType => false;
 
         public AllTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
         {
             this.serializerCache = serializerCache;
             this.typeDefinition = typeDefinition;
+
+            IsAnonymous = typeDefinition.IsAnonymous;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -78,14 +82,8 @@ namespace XRoadLib.Serialization.Mapping
             if (deserializationPropertyMaps.Count > 0)
                 return;
 
-            foreach (var propertyDefinition in propertyDefinitions)
+            foreach (var propertyMap in propertyDefinitions.Select(propertyDefinition => new PropertyMap(serializerCache, propertyDefinition)))
             {
-                var typeMap = propertyDefinition.TypeName != null
-                    ? serializerCache.GetTypeMap(propertyDefinition.TypeName, propertyDefinition.ItemDefinition != null, DtoVersion)
-                    : serializerCache.GetTypeMap(propertyDefinition.RuntimeInfo.PropertyType, DtoVersion, partialTypeMaps);
-
-                var propertyMap = new PropertyMap(serializerCache, propertyDefinition, typeMap);
-
                 deserializationPropertyMaps.Add(propertyMap.PropertyName, propertyMap);
                 serializationPropertyMaps.Add(propertyMap);
             }

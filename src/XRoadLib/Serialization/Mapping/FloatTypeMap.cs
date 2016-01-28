@@ -7,7 +7,12 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class FloatTypeMap : TypeMap<float>
     {
+        public static ITypeMap Instance { get; } = new FloatTypeMap();
+
         private readonly XName qualifiedName = XName.Get("float", NamespaceConstants.XSD);
+
+        private FloatTypeMap()
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

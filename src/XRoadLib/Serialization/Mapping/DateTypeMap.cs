@@ -2,14 +2,18 @@
 using System.Data.SqlTypes;
 using System.Xml;
 using System.Xml.Linq;
-using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public class DateTypeMap : TypeMap<DateTime>
     {
+        public static ITypeMap Instance { get; } = new DateTypeMap();
+
         private readonly XName qualifiedName = XName.Get("date", NamespaceConstants.XSD);
+
+        private DateTypeMap()
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

@@ -7,7 +7,12 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class BooleanTypeMap : TypeMap<bool>
     {
+        public static ITypeMap Instance { get; } = new BooleanTypeMap();
+
         private readonly XName qualifiedName = XName.Get("boolean", NamespaceConstants.XSD);
+
+        private BooleanTypeMap()
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

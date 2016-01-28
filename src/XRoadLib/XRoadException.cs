@@ -54,9 +54,9 @@ namespace XRoadLib
             return new XRoadException(new ClientFaultCode("UnsupportedDateValue"), "Päring sisaldab kuupäeva, mis on varasem kui '{0}'.", kuupäev);
         }
 
-        public static XRoadException NoDefaultConstructorForType(string typeName)
+        public static XRoadException NoDefaultConstructorForType(XName qualifiedName)
         {
-            return new XRoadException(ServerFaultCode.InternalError, "The type '{0}' does not have default constructor.", typeName);
+            return new XRoadException(ServerFaultCode.InternalError, "The type '{0}' does not have default constructor.", qualifiedName);
         }
 
         public static XRoadException PäringusPuudubAttachment(string attachmentContentID)

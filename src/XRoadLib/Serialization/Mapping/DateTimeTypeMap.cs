@@ -8,7 +8,12 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DateTimeTypeMap : TypeMap<DateTime>
     {
+        public static ITypeMap Instance { get; } = new DateTimeTypeMap();
+
         private readonly XName qualifiedName = XName.Get("dateTime", NamespaceConstants.XSD);
+
+        private DateTimeTypeMap()
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace XRoadLib.Schema
 {
-    public abstract class ContentComparer<T> : IComparer<ContentDefinition<T>>
+    public abstract class ContentComparer<T, TDefinition> : IComparer<TDefinition>
+        where TDefinition : ContentDefinition<T>
     {
-        public int Compare(ContentDefinition<T> x, ContentDefinition<T> y)
+        public int Compare(TDefinition x, TDefinition y)
         {
             var orderValue = x.Order.CompareTo(y.Order);
             if (orderValue != 0)

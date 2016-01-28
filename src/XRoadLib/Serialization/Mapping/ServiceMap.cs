@@ -13,15 +13,13 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class ServiceMap : IServiceMap
     {
-        private readonly XName qualifiedName;
         private readonly IList<IParameterMap> parameters;
         private readonly IParameterMap result;
 
         public OperationDefinition OperationDefinition { get; }
 
-        public ServiceMap(XName qualifiedName, IList<IParameterMap> parameters, IParameterMap result, OperationDefinition operationDefinition)
+        public ServiceMap(OperationDefinition operationDefinition, IList<IParameterMap> parameters, IParameterMap result)
         {
-            this.qualifiedName = qualifiedName;
             this.parameters = parameters;
             this.result = result;
 
@@ -81,7 +79,7 @@ namespace XRoadLib.Serialization.Mapping
             {
                 var parameter = parameters.SingleOrDefault(x => x.Name == reader.LocalName);
                 if (parameter == null)
-                    throw XRoadException.InvalidQuery("Unexpected parameter `{0}` in operation `{1}` request.", reader.LocalName, qualifiedName.LocalName);
+                    throw XRoadException.InvalidQuery("Unexpected parameter `{0}` in operation `{1}` request.", reader.LocalName, OperationDefinition.Name.LocalName);
 
                 var parameterNode = context.XmlTemplate != null ? context.XmlTemplate.GetParameterNode(parameter.ParameterInfo.Name) : XRoadXmlTemplate.EmptyNode;
                 parameterValues.Add(parameter.ParameterInfo.Name, parameter.DeserializeRoot(reader, parameterNode, context));
@@ -113,7 +111,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, SerializationContext context)
         {
-            writer.WriteStartElement(qualifiedName.LocalName, qualifiedName.NamespaceName);
+            writer.WriteStartElement(OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
             writer.WriteStartElement(context.Protocol.RequestPartNameInRequest);
 
             foreach (var value in values)
@@ -129,11 +127,11 @@ namespace XRoadLib.Serialization.Mapping
 
         public void SerializeResponse(XmlWriter writer, object value, SerializationContext context, XmlReader requestReader, ICustomSerialization customSerialization)
         {
-            var containsRequest = requestReader.MoveToElement(2, qualifiedName.LocalName, qualifiedName.NamespaceName);
+            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
 
             if (containsRequest)
-                writer.WriteStartElement(requestReader.Prefix, $"{qualifiedName.LocalName}Response", qualifiedName.NamespaceName);
-            else writer.WriteStartElement($"{qualifiedName.LocalName}Response", qualifiedName.NamespaceName);
+                writer.WriteStartElement(requestReader.Prefix, $"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
+            else writer.WriteStartElement($"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
 
             var namespaceInContext = requestReader.NamespaceURI;
             if (containsRequest)

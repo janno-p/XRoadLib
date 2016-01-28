@@ -43,6 +43,12 @@ namespace XRoadLib.Protocols
 
         protected abstract void DefineMandatoryHeaderElements();
 
+        public virtual void ExportParameter(ParameterDefinition parameter)
+        { }
+
+        public virtual void ExportProperty(PropertyDefinition parameter)
+        { }
+
         public virtual void ExportType(TypeDefinition type)
         { }
 

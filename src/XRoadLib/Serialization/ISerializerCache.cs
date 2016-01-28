@@ -20,6 +20,8 @@ namespace XRoadLib.Serialization
 
         ITypeMap GetTypeMap(Type runtimeType, uint dtoVersion, IDictionary<Type, ITypeMap> partialTypeMaps = null);
 
+        Tuple<ITypeMap, ITypeMap> GetTypeMaps(XName qualifiedName, uint dtoVersion);
+
         XName GetXmlTypeName(Type type);
     }
 }

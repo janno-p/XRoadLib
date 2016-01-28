@@ -7,7 +7,12 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class LongTypeMap : TypeMap<long>
     {
+        public static ITypeMap Instance { get; } = new LongTypeMap();
+
         private readonly XName qualifiedName = XName.Get("long", NamespaceConstants.XSD);
+
+        private LongTypeMap()
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

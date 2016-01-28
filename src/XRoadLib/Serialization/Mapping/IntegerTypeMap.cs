@@ -7,7 +7,12 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class IntegerTypeMap : TypeMap<int>
     {
+        public static ITypeMap Instance { get; } = new IntegerTypeMap();
+
         private readonly XName qualifiedName = XName.Get("int", NamespaceConstants.XSD);
+
+        private IntegerTypeMap()
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

@@ -7,7 +7,12 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DoubleTypeMap : TypeMap<double>
     {
+        public static ITypeMap Instance { get; } = new DoubleTypeMap();
+
         private readonly XName qualifiedName = XName.Get("double", NamespaceConstants.XSD);
+
+        private DoubleTypeMap()
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

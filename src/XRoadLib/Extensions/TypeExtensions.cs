@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions
@@ -34,26 +35,26 @@ namespace XRoadLib.Extensions
             return false;
         }
 
-        public static IEnumerable<PropertyInfo> GetPropertiesSorted(this Type type, IComparer<PropertyInfo> comparer, uint? version)
+        public static IEnumerable<PropertyDefinition> GetPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, Func<PropertyInfo, PropertyDefinition> createDefinition)
         {
             if (comparer == null)
                 throw new ArgumentNullException(nameof(comparer));
 
             var properties = type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-                                 .Where(prop => (!prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null) &&
-                                                (!version.HasValue || prop.ExistsInVersion(version.Value)));
+                                 .Where(prop => !prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null)
+                                 .Select(createDefinition);
 
-            return new SortedSet<PropertyInfo>(properties, comparer);
+            return new SortedSet<PropertyDefinition>(properties, comparer);
         }
 
-        public static IEnumerable<PropertyInfo> GetAllPropertiesSorted(this Type type, IComparer<PropertyInfo> comparer, uint? version)
+        public static IEnumerable<PropertyDefinition> GetAllPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, Func<PropertyInfo, PropertyDefinition> createDefinition)
         {
-            var properties = new List<PropertyInfo>();
+            var properties = new List<PropertyDefinition>();
 
             if (type.BaseType != typeof(XRoadSerializable))
-                properties.AddRange(type.BaseType.GetAllPropertiesSorted(comparer, version));
+                properties.AddRange(type.BaseType.GetAllPropertiesSorted(comparer, createDefinition));
 
-            properties.AddRange(type.GetPropertiesSorted(comparer, version));
+            properties.AddRange(type.GetPropertiesSorted(comparer, createDefinition));
 
             return properties;
         }

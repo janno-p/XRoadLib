@@ -1,4 +1,6 @@
-﻿namespace XRoadLib.Schema
+﻿using XRoadLib.Serialization.Mapping;
+
+namespace XRoadLib.Schema
 {
     public abstract class ContentDefinition<TRuntimeInfo> : Definition<TRuntimeInfo>
     {
@@ -8,8 +10,8 @@
 
         public PropertyDefinition ItemDefinition { get; set; }
 
-        public TypeDefinition TypeDefinition { get; set; }
-
         public int Order { get; set; }
+
+        public ITypeMap TypeMap { get; set; }
     }
 }
