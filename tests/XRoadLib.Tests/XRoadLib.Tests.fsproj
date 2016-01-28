@@ -63,6 +63,7 @@
   -->
   <Import Project="..\..\.paket\paket.targets" />
   <ItemGroup>
+    <Compile Include="Globals.fs" />
     <Compile Include="Mapping\DateTest.fs" />
     <Compile Include="Mapping\DateTimeTest.fs" />
     <Compile Include="AssemblyExtensionsTest.fs" />
@@ -92,6 +93,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <ProjectReference Include="..\..\src\XRoadLib\XRoadLib.csproj">

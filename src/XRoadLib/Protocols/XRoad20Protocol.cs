@@ -3,6 +3,7 @@ using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Protocols
 {

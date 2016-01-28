@@ -78,7 +78,7 @@ namespace XRoadLib.Serialization
             if (isMultipart)
                 target.BinaryContentMode = BinaryMode.SoapAttachment;
 
-            if (target.MultipartContentType.Equals(XRoadMessage.MULTIPART_CONTENT_TYPE_XOP))
+            if (XRoadMessage.MULTIPART_CONTENT_TYPE_XOP.Equals(target.MultipartContentType))
                 target.BinaryContentMode = BinaryMode.Xop;
 
             if (isResponse)

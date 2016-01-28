@@ -52,6 +52,8 @@ namespace XRoadLib.Protocols
         XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition);
 
         XmlElement CreateTitleElement(string languageCode, string value);
+
+        void SetContractAssembly(Assembly assembly);
     }
 
     public interface IProtocol<THeader> : IProtocol where THeader : IXRoadHeader

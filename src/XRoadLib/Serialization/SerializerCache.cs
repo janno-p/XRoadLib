@@ -29,15 +29,15 @@ namespace XRoadLib.Serialization
 
             AddSystemRuntimeType(null, typeof(void), new VoidTypeMap(), null);
 
-            var qualifiedName = XName.Get("date", NamespaceConstants.XSD);
+            var qualifiedName = XName.Get("dateTime", NamespaceConstants.XSD);
             ITypeMap arrayTypeMap = new ArrayTypeMap<DateTime>(this, qualifiedName);
-            AddSystemXmlType(qualifiedName, typeof(DateTime), DateTypeMap.Instance, arrayTypeMap);
-            AddSystemRuntimeType(qualifiedName, typeof(DateTime), DateTypeMap.Instance, arrayTypeMap);
-
-            qualifiedName = XName.Get("dateTime", NamespaceConstants.XSD);
-            arrayTypeMap = new ArrayTypeMap<DateTime>(this, qualifiedName);
             AddSystemXmlType(qualifiedName, typeof(DateTime), DateTimeTypeMap.Instance, arrayTypeMap);
             AddSystemRuntimeType(qualifiedName, typeof(DateTime), DateTimeTypeMap.Instance, arrayTypeMap);
+
+            qualifiedName = XName.Get("date", NamespaceConstants.XSD);
+            arrayTypeMap = new ArrayTypeMap<DateTime>(this, qualifiedName);
+            AddSystemXmlType(qualifiedName, typeof(DateTime), DateTypeMap.Instance, arrayTypeMap);
+            AddSystemRuntimeType(qualifiedName, typeof(DateTime), DateTypeMap.Instance, arrayTypeMap);
 
             qualifiedName = XName.Get("boolean", NamespaceConstants.XSD);
             arrayTypeMap = new ArrayTypeMap<bool>(this, qualifiedName);

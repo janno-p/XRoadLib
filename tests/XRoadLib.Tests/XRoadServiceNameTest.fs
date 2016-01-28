@@ -4,7 +4,7 @@ open FsUnit
 open NUnit.Framework
 open System
 open XRoadLib
-open XRoadLib.Header
+open XRoadLib.Protocols.Headers
 
 [<TestFixture>]
 module XRoadServiceNameTest =

@@ -7,11 +7,14 @@ open System.Xml
 open System.Xml.Linq
 open System.Xml.Schema
 open XRoadLib
-open XRoadLib.Description
+open XRoadLib.Protocols.Description
 open XRoadLib.Tests.Contract.Wsdl
 
 [<TestFixture>]
 type ``document literal style array schema`` () =
+    class
+    end
+    (*
     let qn n ns = XmlQualifiedName(n, ns)
     let (?) (typ: Type) propertyName = typ.GetProperty(propertyName)
     let schemaBuilder = SchemaBuilder(XRoadProtocol.Version31, XNamespace.Get("tns"), null, Nullable())
@@ -96,4 +99,4 @@ type ``rpc encoded style array schema`` () =
         itemElement.Annotation |> should be Null
         itemElement.SchemaType |> should be Null
         schemaBuilder.RequiredImports.Contains(NamespaceConstants.SOAP_ENC) |> should be True
-
+    *)

@@ -7,6 +7,8 @@ open XRoadLib.Extensions
 
 [<TestFixture>]
 module NamespaceHelperTest =
+    ()
+    (*
     [<TestCase("test", -1, ExpectedException = typeof<ArgumentOutOfRangeException >, ExpectedMessage = "Specified argument was out of the range of valid values.", MatchType = MessageMatch.Contains)>]
     [<TestCase("test", XRoadProtocol.Undefined, ExpectedException = typeof<ArgumentOutOfRangeException >, ExpectedMessage = "Specified argument was out of the range of valid values.", MatchType = MessageMatch.Contains)>]
     [<TestCase("test", XRoadProtocol.Version20, Result = "http://producers.test.xtee.riik.ee/producer/test")>]
@@ -30,3 +32,4 @@ module NamespaceHelperTest =
     [<TestCase(XRoadProtocol.Version40, Result = "xrd")>]
     let ``get prefix for protocol version`` (protocol: XRoadProtocol) =
         protocol.GetPrefix()
+    *)

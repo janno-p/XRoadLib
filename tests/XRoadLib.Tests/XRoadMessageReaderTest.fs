@@ -7,6 +7,7 @@ open System.IO
 open System.Text
 open System.Xml.Linq
 open XRoadLib
+open XRoadLib.Protocols.Headers
 open XRoadLib.Serialization
 
 [<TestFixture>]
@@ -14,7 +15,7 @@ module XRoadMessageReaderTest =
     [<Test>]
     let ``can handle buffer limit`` () =
         use stream = new MemoryStream(Array.init 10 (fun _ -> 32uy))
-        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath())
+        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath(), [])
         stream.Position <- 0L
 
         let mutable chunk = [| |]
@@ -34,7 +35,7 @@ module XRoadMessageReaderTest =
     [<Test>]
     let ``can handle line marker`` () =
         use stream = new MemoryStream([| 32uy; 32uy; 32uy; 32uy; 13uy; 10uy; 32uy; 32uy; 32uy; 32uy |])
-        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath())
+        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath(), [])
         stream.Position <- 0L
 
         let mutable chunk = [| |]
@@ -48,7 +49,7 @@ module XRoadMessageReaderTest =
     [<Test>]
     let ``can handle chunk beginning with marker`` () =
         use stream = new MemoryStream([| 32uy; 32uy; 32uy; 32uy; 13uy; 10uy; 32uy; 32uy; 32uy; 32uy |])
-        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath())
+        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath(), [])
         stream.Position <- 0L
 
         let mutable chunk = [| |]
@@ -68,7 +69,7 @@ module XRoadMessageReaderTest =
     [<Test>]
     let ``can handle splitting marker`` () =
         use stream = new MemoryStream([| 32uy; 32uy; 32uy; 32uy; 13uy; 10uy; 32uy; 32uy; 32uy; 32uy |])
-        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath())
+        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath(), [])
         stream.Position <- 0L
 
         let mutable chunk = [| |]
@@ -82,7 +83,7 @@ module XRoadMessageReaderTest =
     [<Test>]
     let ``can handle multiple markers in a row`` () =
         use stream = new MemoryStream([| 40uy; 13uy; 10uy; 13uy; 10uy; 13uy; 10uy; 13uy; 10uy; 40uy |])
-        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath())
+        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath(), [])
         stream.Position <- 0L
 
         let mutable chunk = [| |]
@@ -105,7 +106,7 @@ module XRoadMessageReaderTest =
     [<Test>]
     let ``can handle recurring marker buffer limit`` () =
         use stream = new MemoryStream([| 40uy; 13uy; 13uy; 13uy; 13uy; 13uy; 13uy; 10uy; 33uy; 34uy; 40uy; 40uy |])
-        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath())
+        use reader = new XRoadMessageReader(stream, new NameValueCollection(), Encoding.UTF8, Path.GetTempPath(), [])
         stream.Position <- 0L
 
         let mutable chunk = [| |]
@@ -130,7 +131,7 @@ module Util =
         streamWriter.WriteLine(@"</Envelope>")
         streamWriter.Flush()
         stream.Position <- 0L
-        use reader = new XRoadMessageReader(stream, NameValueCollection(), Encoding.UTF8, Path.GetTempPath())
+        use reader = new XRoadMessageReader(stream, NameValueCollection(), Encoding.UTF8, Path.GetTempPath(), [Globals.XRoadProtocol20; Globals.XRoadProtocol31; Globals.XRoadProtocol40])
         use msg = new XRoadMessage()
         reader.Read(msg, false)
         msg.Header, msg.UnresolvedHeaders, msg.Protocol
@@ -142,9 +143,9 @@ module XRoadHeader20Tests =
     let testHeader name value =
         let xhr,_,pr = parseHeader (sprintf "<xrd:%s>%s</xrd:%s>" name value name)
         xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<Header.IXRoadHeader20>
-        pr |> should equal XRoadProtocol.Version20
-        xhr, xhr :?> Header.IXRoadHeader20
+        xhr |> should be instanceOfType<IXRoadHeader20>
+        pr |> should be (sameAs Globals.XRoadProtocol20)
+        xhr, xhr :?> IXRoadHeader20
 
     [<Test>]
     let ``can parse asutus value`` () =
@@ -269,9 +270,9 @@ module XRoadHeader31Tests =
     let testHeader name value =
         let xhr,_,pr = parseHeader (sprintf "<xrd:%s>%s</xrd:%s>" name value name)
         xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<Header.IXRoadHeader31>
-        pr |> should equal XRoadProtocol.Version31
-        xhr, xhr :?> Header.IXRoadHeader31
+        xhr |> should be instanceOfType<IXRoadHeader31>
+        pr |> should be (sameAs Globals.XRoadProtocol31)
+        xhr, xhr :?> IXRoadHeader31
 
     [<Test>]
     let ``can parse empty element`` () =
@@ -397,7 +398,7 @@ module XRoadHeader40Tests =
         let hdr,uhs,pr = parseHeader ""
         hdr |> should be Null
         uhs.Count |> should equal 0
-        pr |> should equal XRoadProtocol.Undefined
+        pr |> should be Null
 
     [<Test>]
     let ``validates presence of client element`` () =
@@ -460,12 +461,12 @@ module XRoadHeader40Tests =
     let ``collects client mandatory values`` () =
         let xrh,_,pr = parseHeader (minimalValidHeader "")
         xrh |> should not' (be Null)
-        pr |> should equal XRoadProtocol.Version40
+        pr |> should be (sameAs Globals.XRoadProtocol40)
         xrh.Client |> should not' (be Null)
         xrh.Client.XRoadInstance |> should equal "EE"
         xrh.Client.MemberClass |> should equal "GOV"
         xrh.Client.MemberCode |> should equal "12345"
-        xrh.Client.ObjectType |> should equal XRoadLib.Header.XRoadObjectType.Member
+        xrh.Client.ObjectType |> should equal XRoadObjectType.Member
         xrh.Client.SubsystemCode |> should be Null
         xrh.Id |> should equal "ABCDE"
         xrh.Issue |> should be Null
@@ -477,7 +478,7 @@ module XRoadHeader40Tests =
     let ``collects unqualified soap header elements, but cannot detect protocol version`` () =
         let xrh,uhs,pr = parseHeader @"<x><test>bla</test></x><y /><z />"
         xrh |> should be Null
-        pr |> should equal XRoadProtocol.Undefined
+        pr |> should be Null
         uhs.Count |> should equal 3
         let el_x = uhs |> Seq.tryFind (fun x -> x.Name.LocalName = "x")
         el_x.IsSome |> should be True
@@ -492,12 +493,12 @@ module XRoadHeader40Tests =
     let ``collects unqualified soap headers that are mixed with X-Road elements`` () =
         let xrh,uhs,pr = parseHeader @"<x /><xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><y /><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion><z />"
         xrh |> should not' (be Null)
-        pr |> should equal XRoadProtocol.Version40
+        pr |> should be (sameAs Globals.XRoadProtocol40)
         xrh.Client |> should not' (be Null)
         xrh.Client.XRoadInstance |> should equal "EE"
         xrh.Client.MemberClass |> should equal "GOV"
         xrh.Client.MemberCode |> should equal "12345"
-        xrh.Client.ObjectType |> should equal XRoadLib.Header.XRoadObjectType.Member
+        xrh.Client.ObjectType |> should equal XRoadObjectType.Member
         xrh.Client.SubsystemCode |> should be Null
         xrh.Id |> should equal "ABCDE"
         xrh.Issue |> should be Null
@@ -609,10 +610,10 @@ module XRoadHeader40Tests =
     let ``valid centralService element`` () =
         let xhr,_,_ = parseHeader (minimalValidHeader @"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance>FI</id:xRoadInstance><id:serviceCode>fun</id:serviceCode></xrd:centralService>")
         xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<XRoadLib.Header.IXRoadHeader40>
-        let xhr4 = xhr :?> XRoadLib.Header.IXRoadHeader40
+        xhr |> should be instanceOfType<IXRoadHeader40>
+        let xhr4 = xhr :?> IXRoadHeader40
         xhr4.CentralService |> should not' (be Null)
-        xhr4.CentralService.ObjectType |> should equal XRoadLib.Header.XRoadObjectType.CentralService
+        xhr4.CentralService.ObjectType |> should equal XRoadObjectType.CentralService
         xhr4.CentralService.XRoadInstance |> should equal "FI"
         xhr4.CentralService.ServiceCode |> should equal "fun"
 
@@ -635,8 +636,8 @@ module XRoadHeader40Tests =
     let ``can handle missing optional element for representedParty element`` () =
         let xhr,_,_ = parseHeader (minimalValidHeader @"<repr:representedParty><repr:partyCode /></repr:representedParty>")
         xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<XRoadLib.Header.IXRoadHeader40>
-        let xhr4 = xhr :?> XRoadLib.Header.IXRoadHeader40
+        xhr |> should be instanceOfType<IXRoadHeader40>
+        let xhr4 = xhr :?> IXRoadHeader40
         xhr4.RepresentedParty |> should not' (be Null)
         xhr4.RepresentedParty.Class |> should be Null
         xhr4.RepresentedParty.Code |> should equal ""
@@ -645,8 +646,8 @@ module XRoadHeader40Tests =
     let ``can handle optional element value for representedParty element`` () =
         let xhr,_,_ = parseHeader (minimalValidHeader @"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>")
         xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<XRoadLib.Header.IXRoadHeader40>
-        let xhr4 = xhr :?> XRoadLib.Header.IXRoadHeader40
+        xhr |> should be instanceOfType<IXRoadHeader40>
+        let xhr4 = xhr :?> IXRoadHeader40
         xhr4.RepresentedParty |> should not' (be Null)
         xhr4.RepresentedParty.Class |> should equal "CLS"
         xhr4.RepresentedParty.Code |> should equal "COD"
@@ -660,7 +661,7 @@ module XRoadHeader40Tests =
     let ``wrong protocol is left unresolved`` () =
         let xhr,uhs,pr = parseHeader (minimalValidHeader @"<x:userId xmlns:x=""http://x-road.ee/xsd/x-road.xsd"">Mr. X</x:userId>")
         xhr |> should not' (be Null)
-        pr |> should equal XRoadProtocol.Version40
+        pr |> should be (sameAs Globals.XRoadProtocol40)
         uhs.Count |> should equal 1
         uhs.[0].Name.LocalName |> should equal "userId"
         uhs.[0].Name.NamespaceName |> should equal NamespaceConstants.XROAD

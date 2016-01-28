@@ -10,6 +10,7 @@ open XRoadLib.Extensions
 module AssemblyExtensionsTest =
     type Marker = class end
 
+    (*
     [<Test>]
     let ``find missing X-Road producer name`` () =
         typeof<Marker>.Assembly.FindProducerName() |> should be Null
@@ -26,3 +27,4 @@ module AssemblyExtensionsTest =
     [<Test>]
     let ``get existing X-Road producer name`` () =
         typeof<XRoadLib.Tests.Contract.Class1>.Assembly.GetProducerName() |> should equal "test-producer"
+    *)

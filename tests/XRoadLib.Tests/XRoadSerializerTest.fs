@@ -9,6 +9,7 @@ open System.Text
 open System.Xml
 open XRoadLib
 open XRoadLib.Extensions
+open XRoadLib.Schema
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
 open XRoadLib.Serialization.Template
@@ -16,10 +17,10 @@ open XRoadLib.Tests.Contract
 
 [<TestFixture>]
 module XRoadSerializerTest =
-    let serializerCache = SerializerCache(typeof<Class1>.Assembly, XRoadProtocol.Version20)
+    let serializerCache = SerializerCache(typeof<Class1>.Assembly, Globals.XRoadProtocol20)
 
     let serializeWithContext<'T> elementName (value: 'T) dtoVersion addEnvelope isMultipart f =
-        use message = new XRoadMessage(XRoadProtocol.Version20, IsMultipart = isMultipart)
+        use message = new XRoadMessage(Globals.XRoadProtocol20, BinaryContentMode = BinaryMode.SoapAttachment)
 
         use stream = new MemoryStream()
         use writer = new XmlTextWriter(stream, Encoding.UTF8)
@@ -29,12 +30,12 @@ module XRoadSerializerTest =
             writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC)
             writer.WriteAttributeString("xmlns", PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI)
             writer.WriteAttributeString("xmlns", PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD)
-            writer.WriteAttributeString("xmlns", "tns", NamespaceConstants.XMLNS, XRoadProtocol.Version20.GetProducerNamespace("test-producer"))
+            writer.WriteAttributeString("xmlns", "tns", NamespaceConstants.XMLNS, Globals.XRoadProtocol20.ProducerNamespace)
 
         writer.WriteStartElement(elementName)
 
         let context = SerializationContext(message, dtoVersion)
-        let typeMap = serializerCache.GetTypeMap(typeof<'T>, context.DtoVersion)
+        let typeMap = serializerCache.GetTypeMap(typeof<'T>)
         typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, typeof<'T>, context)
 
         writer.WriteEndElement()

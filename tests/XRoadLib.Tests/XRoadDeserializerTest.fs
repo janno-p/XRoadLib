@@ -18,9 +18,9 @@ open XRoadLib.Tests.Contract
 [<TestFixture>]
 module XRoadDeserializerTest =
     let [<Literal>] dtoVersion = 3u
-    let serializerCache = SerializerCache(typeof<Class1>.Assembly, XRoadProtocol.Version20)
+    let serializerCache = SerializerCache(typeof<Class1>.Assembly, Globals.XRoadProtocol20)
 
-    let serviceMap = serializerCache.GetServiceMap("Service1", 1u)
+    let serviceMap = serializerCache.GetServiceMap("Service1")
 
     let deserializeRequest templateXml contentXml =
         let template = XRoadXmlTemplate(templateXml, typeof<IService>.GetMethod("Service1"))
@@ -29,7 +29,7 @@ module XRoadDeserializerTest =
         writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>")
         writer.WriteLine(@"<soapenv:Envelope xmlns:soapenv=""{0}"" soapenv:encodingStyle=""{1}"">", NamespaceConstants.SOAP_ENV, NamespaceConstants.SOAP_ENC)
         writer.WriteLine(@"<soapenv:Body>")
-        writer.WriteLine(@"<tns:Service1 xmlns:tns=""{0}"">", serializerCache.ProducerNamespace)
+        writer.WriteLine(@"<tns:Service1 xmlns:tns=""{0}"">", Globals.XRoadProtocol20.ProducerNamespace)
         writer.WriteLine(contentXml: string)
         writer.WriteLine("@</tns:Service1>")
         writer.WriteLine("@</soapenv:Body>")
@@ -37,11 +37,11 @@ module XRoadDeserializerTest =
         writer.Flush()
         stream.Position <- 0L
         use reader = XmlReader.Create(stream)
-        use messageReader = new XRoadMessageReader(stream, null, Encoding.UTF8, null)
+        use messageReader = new XRoadMessageReader(stream, null, Encoding.UTF8, null, [Globals.XRoadProtocol20])
         use message = new XRoadMessage()
         messageReader.Read(message, false)
         let context = SerializationContext(message, dtoVersion, XmlTemplate = template)
-        reader.MoveToPayload(System.Xml.Linq.XName.Get("Service1", serializerCache.ProducerNamespace))
+        reader.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol20.ProducerNamespace))
         serviceMap.DeserializeRequest(reader, context)
 
     [<Test>]
@@ -400,7 +400,7 @@ module XRoadDeserializerTest =
         use stream = new MemoryStream()
         use writer = new StreamWriter(stream, Encoding.UTF8)
         writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>")
-        writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, serializerCache.ProducerNamespace)
+        writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, Globals.XRoadProtocol20.ProducerNamespace)
         writer.WriteLine(@"<AnonymousProperty>")
         writer.WriteLine(@"<Property1 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">1</Property1>", NamespaceConstants.XSD)
         writer.WriteLine(@"<Property2 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">2</Property2>", NamespaceConstants.XSD)
@@ -412,7 +412,7 @@ module XRoadDeserializerTest =
         stream.Position <- 0L
         use reader = XmlReader.Create(stream)
         reader.MoveToElement(0) |> ignore
-        let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>, 1u)
+        let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>)
         use message = new XRoadMessage()
         let entity = typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, SerializationContext(message, 1u))
         entity |> should not' (be Null)
@@ -428,7 +428,7 @@ module XRoadDeserializerTest =
         use stream = new MemoryStream()
         use writer = new StreamWriter(stream, Encoding.UTF8)
         writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>")
-        writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, serializerCache.ProducerNamespace)
+        writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, Globals.XRoadProtocol20.ProducerNamespace)
         writer.WriteLine(@"<AnonymousProperty xsi:type=""Test"">")
         writer.WriteLine(@"<Property1 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">1</Property1>", NamespaceConstants.XSD)
         writer.WriteLine(@"<Property2 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">2</Property2>", NamespaceConstants.XSD)
@@ -440,7 +440,7 @@ module XRoadDeserializerTest =
         stream.Position <- 0L
         use reader = XmlReader.Create(stream)
         reader.MoveToElement(0) |> ignore
-        let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>, 1u)
+        let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>)
         use message = new XRoadMessage()
         TestDelegate(fun _ -> typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, SerializationContext(message, 1u)) |> ignore)
         |> should (throwWithMessage "Expected anonymous type, but `Test` was given.") typeof<XRoadException>

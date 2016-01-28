@@ -30,7 +30,7 @@ namespace XRoadLib.Protocols
 
         public Style Style { get; }
         public string ProducerNamespace { get; }
-        public ISerializerCache SerializerCache { get; }
+        public ISerializerCache SerializerCache { get; private set; }
         public ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>();
 
         protected Protocol(string producerNamespace, Style style)
@@ -121,6 +121,11 @@ namespace XRoadLib.Protocols
             titleElement.Attributes.Append(attribute);
 
             return titleElement;
+        }
+
+        public void SetContractAssembly(Assembly assembly)
+        {
+            SerializerCache = new SerializerCache(assembly, this);
         }
     }
 }

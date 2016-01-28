@@ -6,12 +6,13 @@ open System
 open System.IO
 open System.Xml
 open XRoadLib
+open XRoadLib.Protocols
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
 
 [<AutoOpen>]
 module MappingTestHelpers =
-    let deserializeValue<'T when 'T :> ITypeMap> value =
+    let deserializeValue value (typeMap: ITypeMap) =
         use stream = new MemoryStream()
         use writer = new StreamWriter(stream)
         writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>")
@@ -22,15 +23,14 @@ module MappingTestHelpers =
         use reader = XmlReader.Create(stream)
         while reader.Read() && (reader.NodeType <> XmlNodeType.Element) do ()
 
-        use message = new XRoadMessage(XRoadProtocol.Version20)
+        use message = new XRoadMessage(Globals.XRoadProtocol20)
         let context = SerializationContext(message, 1u)
 
-        let typeMap = Activator.CreateInstance<'T>()
         typeMap.Deserialize(reader, null, context)
 
 [<TestFixture>]
 module DateTest =
-    let deserializeValue = deserializeValue<DateTypeMap>
+    let deserializeValue x = DateTypeMap.Instance |> deserializeValue x
 
     [<Test>]
     let ``can deserialize plain date`` () =
