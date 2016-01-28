@@ -6,7 +6,9 @@
 
         public bool IsOptional { get; set; }
 
-        public PropertyDefinition ItemProperty { get; set; }
+        public PropertyDefinition ItemDefinition { get; set; }
+
+        public TypeDefinition TypeDefinition { get; set; }
 
         public int Order { get; set; }
     }

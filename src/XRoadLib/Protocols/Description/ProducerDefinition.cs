@@ -219,7 +219,7 @@ namespace XRoadLib.Protocols.Description
             if (methodInfo.DeclaringType == null)
                 throw new ArgumentException("Declaring type is missing.", nameof(methodInfo));
 
-            if (methodInfo.DeclaringType.Name.StartsWith("I") && methodInfo.DeclaringType.Name.Length > 1 && char.IsUpper(methodInfo.DeclaringType.Name[1]))
+            if (methodInfo.DeclaringType.Name.StartsWith("I", StringComparison.InvariantCulture) && methodInfo.DeclaringType.Name.Length > 1 && char.IsUpper(methodInfo.DeclaringType.Name[1]))
                 return methodInfo.DeclaringType.Name.Substring(1);
 
             return methodInfo.DeclaringType.Name;

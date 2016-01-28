@@ -14,8 +14,6 @@ namespace XRoadLib.Serialization.Mapping
 
         bool IsSimpleType { get; }
 
-        bool IsAnonymous { get; set; }
-
         object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);
 
         void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context);

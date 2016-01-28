@@ -31,6 +31,8 @@ namespace XRoadLib.Protocols
 
         bool IsDefinedByEnvelope(XmlReader reader);
 
+        void ExportParameter(ParameterDefinition parameter);
+
         void ExportType(TypeDefinition type);
 
         void ExportOperation(OperationDefinition operation);

@@ -385,7 +385,7 @@ namespace XRoadLib.Serialization
 
             charset = charset.ToLower().Replace("cp", "");
 
-            if (charset.StartsWith("125"))
+            if (charset.StartsWith("125", StringComparison.InvariantCulture))
                 charset = "windows-" + charset;
 
             return charset;

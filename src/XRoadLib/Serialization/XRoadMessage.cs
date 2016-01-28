@@ -79,7 +79,7 @@ namespace XRoadLib.Serialization
         public void SaveTo(HttpContext httpContext)
         {
             using (var writer = new XRoadMessageWriter(httpContext.Response.Output, httpContext.Response.OutputStream))
-                writer.Write(this, contentType => httpContext.Response.ContentType = contentType, (name, value) => httpContext.Response.AppendHeader(name, value));
+                writer.Write(this, contentType => httpContext.Response.ContentType = contentType, httpContext.Response.AppendHeader);
         }
 
         public void SaveTo(TextWriter textWriter, Stream outputStream, Action<string> setContentType, Action<string, string> appendHeader)

@@ -23,8 +23,6 @@ namespace XRoadLib.Schema
                 definition.Name = XName.Get(start >= 0 ? propertyInfo.Name.Substring(start + 1) : propertyInfo.Name);
             }
 
-            throw new NotImplementedException();
-
             return definition;
         }
 
@@ -38,8 +36,6 @@ namespace XRoadLib.Schema
             var definition = new ParameterDefinition(ownerDefinition);
 
             definition.Name = parameterInfo.GetElementName() ?? XName.Get(parameterInfo.Name.GetValueOrDefault("response"));
-
-            throw new NotImplementedException();
 
             return definition;
         }

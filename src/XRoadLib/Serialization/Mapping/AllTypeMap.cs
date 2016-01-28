@@ -81,10 +81,10 @@ namespace XRoadLib.Serialization.Mapping
             foreach (var propertyDefinition in propertyDefinitions)
             {
                 var typeMap = propertyDefinition.TypeName != null
-                    ? serializerCache.GetTypeMap(propertyDefinition.TypeName, propertyDefinition.ItemProperty != null, DtoVersion)
+                    ? serializerCache.GetTypeMap(propertyDefinition.TypeName, propertyDefinition.ItemDefinition != null, DtoVersion)
                     : serializerCache.GetTypeMap(propertyDefinition.RuntimeInfo.PropertyType, DtoVersion, partialTypeMaps);
 
-                var propertyMap = new PropertyMap(serializerCache, propertyDefinition.Name.LocalName, propertyDefinition.RuntimeInfo, typeMap, RuntimeType);
+                var propertyMap = new PropertyMap(serializerCache, propertyDefinition, typeMap);
 
                 deserializationPropertyMaps.Add(propertyMap.PropertyName, propertyMap);
                 serializationPropertyMaps.Add(propertyMap);

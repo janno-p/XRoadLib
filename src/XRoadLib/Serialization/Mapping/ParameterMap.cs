@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Xml;
 using XRoadLib.Extensions;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -10,18 +11,16 @@ namespace XRoadLib.Serialization.Mapping
         private readonly ISerializerCache serializerCache;
         private readonly ITypeMap defaultTypeMap;
         private readonly bool isRequired;
+        private readonly ParameterDefinition parameterDefinition;
 
-        public string Name { get; }
-        public ParameterInfo ParameterInfo { get; }
+        public string Name => parameterDefinition.Name.LocalName;
+        public ParameterInfo ParameterInfo => parameterDefinition.RuntimeInfo;
 
-        public ParameterMap(ISerializerCache serializerCache, string name, ParameterInfo parameterInfo, ITypeMap defaultTypeMap, bool isRequired)
+        public ParameterMap(ISerializerCache serializerCache, ParameterDefinition parameterDefinition, ITypeMap defaultTypeMap)
         {
-            Name = name;
-            ParameterInfo = parameterInfo;
-
+            this.parameterDefinition = parameterDefinition;
             this.serializerCache = serializerCache;
             this.defaultTypeMap = defaultTypeMap;
-            this.isRequired = isRequired;
         }
 
         public bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context, out object value)

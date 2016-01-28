@@ -15,9 +15,9 @@ namespace XRoadLib.Handler
             this.contractAssembly = contractAssembly;
         }
 
-        protected override void HandleRequest(HttpContext context)
+        protected override void HandleRequest(HttpContext httpContext)
         {
-            Protocol.WriteServiceDescription(contractAssembly, context.Response.OutputStream);
+            Protocol.WriteServiceDescription(contractAssembly, httpContext.Response.OutputStream);
         }
     }
 }

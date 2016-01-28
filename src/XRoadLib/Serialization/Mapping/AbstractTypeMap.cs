@@ -13,7 +13,7 @@ namespace XRoadLib.Serialization.Mapping
             throw XRoadException.TypeAttributeRequired(RuntimeType.Name);
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
             throw new NotImplementedException();
         }

@@ -52,7 +52,7 @@ namespace XRoadLib.Serialization.Mapping
             return attachment.ContentStream;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
             var attachment = new XRoadAttachment((Stream)value);
             context.AttachmentManager.AllAttachments.Add(attachment);

@@ -2,7 +2,6 @@
 using System.Data.SqlTypes;
 using System.Xml;
 using System.Xml.Linq;
-using XRoadLib.Extensions;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -18,7 +17,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var value = reader.ReadString();
 
-            if (string.IsNullOrEmpty(value) || value.StartsWith("0001-01-01T00:00:00"))
+            if (string.IsNullOrEmpty(value) || value.StartsWith("0001-01-01T00:00:00", StringComparison.InvariantCulture))
                 return null;
 
             var dateTime = XmlConvert.ToDateTimeOffset(value).DateTime;
@@ -35,7 +34,7 @@ namespace XRoadLib.Serialization.Mapping
             return dateTime;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
             context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
 

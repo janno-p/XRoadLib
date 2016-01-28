@@ -1,31 +1,32 @@
-﻿using System;
-using System.Reflection;
-using System.Xml;
+﻿using System.Xml;
 using XRoadLib.Extensions;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public class PropertyMap : IPropertyMap
     {
-        private readonly ISerializerCache serializerCache;
+        private readonly bool hasAnonymousType;
         private readonly bool isFilterable;
+        private readonly ISerializerCache serializerCache;
         private readonly GetValueMethod getValueMethod;
         private readonly SetValueMethod setValueMethod;
         private readonly ITypeMap typeMap;
+        private readonly PropertyDefinition propertyDefinition;
 
-        public string PropertyName { get; }
+        public string PropertyName => propertyDefinition.Name.LocalName;
 
-        public PropertyMap(ISerializerCache serializerCache, string propertyName, PropertyInfo propertyInfo, ITypeMap typeMap, Type ownerType)
+        public PropertyMap(ISerializerCache serializerCache, PropertyDefinition propertyDefinition, ITypeMap typeMap)
         {
+            this.propertyDefinition = propertyDefinition;
             this.serializerCache = serializerCache;
             this.typeMap = typeMap;
 
-            PropertyName = propertyName;
-            getValueMethod = propertyInfo.CreateGetValueMethod();
-            setValueMethod = propertyInfo.CreateSetValueMethod();
-
-            isFilterable = ownerType.IsFilterableField(PropertyName);
+            hasAnonymousType = propertyDefinition.TypeDefinition.IsAnonymous;
+            getValueMethod = propertyDefinition.RuntimeInfo.CreateGetValueMethod();
+            setValueMethod = propertyDefinition.RuntimeInfo.CreateSetValueMethod();
+            isFilterable = propertyDefinition.Owner.RuntimeInfo.IsFilterableField(PropertyName);
         }
 
         public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, SerializationContext context)
@@ -37,10 +38,10 @@ namespace XRoadLib.Serialization.Mapping
             }
 
             string typeAttribute;
-            if (typeMap.IsAnonymous && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
+            if (hasAnonymousType && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
                 throw XRoadException.InvalidQuery("Expected anonymous type, but `{0}` was given.", typeAttribute);
 
-            var concreteTypeMap = typeMap.IsAnonymous || typeMap.IsSimpleType
+            var concreteTypeMap = hasAnonymousType || typeMap.IsSimpleType
                 ? typeMap
                 : (serializerCache.GetTypeMapFromXsiType(reader, typeMap.DtoVersion) ?? typeMap);
 

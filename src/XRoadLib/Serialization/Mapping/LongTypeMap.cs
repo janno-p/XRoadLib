@@ -19,7 +19,7 @@ namespace XRoadLib.Serialization.Mapping
             return string.IsNullOrEmpty(value) ? defaultValue : XmlConvert.ToInt64(value);
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
             context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
 

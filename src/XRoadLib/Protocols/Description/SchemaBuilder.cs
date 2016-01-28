@@ -162,8 +162,7 @@ namespace XRoadLib.Protocols.Description
             if (!source.IsRequiredElement())
                 schemaElement.MinOccurs = 0;
 
-            if (GetSourceIsNullable(source, false).GetValueOrDefault())
-                schemaElement.IsNillable = true;
+            schemaElement.IsNillable |= GetSourceIsNullable(source, false).GetValueOrDefault();
 
             var elementAttribute = source.GetSingleAttribute<XmlElementAttribute>();
             if ((elementAttribute?.IsNullable).GetValueOrDefault())

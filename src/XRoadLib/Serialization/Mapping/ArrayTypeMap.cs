@@ -45,7 +45,7 @@ namespace XRoadLib.Serialization.Mapping
             return items.ToArray();
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type fieldType, SerializationContext context)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
             var valueArray = (Array)value;
 
