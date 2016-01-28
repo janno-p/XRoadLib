@@ -21,8 +21,10 @@ namespace XRoadLib.Schema
             var typeAttribute = type.GetSingleAttribute<XmlTypeAttribute>();
             var isAnonymous = typeAttribute != null && typeAttribute.AnonymousType;
 
+            var normalizedType = Nullable.GetUnderlyingType(type) ?? type;
+
             if (!isAnonymous)
-                qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(type.Name),
+                qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(normalizedType.Name),
                                           typeAttribute?.Namespace ?? protocol.ProducerNamespace);
 
             return new TypeDefinition
@@ -31,30 +33,32 @@ namespace XRoadLib.Schema
                 HasStrictContentOrder = true,
                 IsAnonymous = isAnonymous,
                 Name = qualifiedName,
-                RuntimeInfo = type,
+                RuntimeInfo = normalizedType,
                 State = DefinitionState.Default
             };
         }
 
-        public static PropertyDefinition ConvertProperty(PropertyInfo propertyInfo, TypeDefinition ownerDefinition, IProtocol protocol, IDictionary<Type, ITypeMap> partialTypeMaps)
+        private static void AddContentDefinition<T>(ContentDefinition<T> contentDefinition, IProtocol protocol, IDictionary<Type, ITypeMap> partialTypeMaps)
+            where T : ICustomAttributeProvider
         {
-            var elementAttribute = propertyInfo.GetSingleAttribute<XmlElementAttribute>();
-            var arrayAttribute = propertyInfo.GetSingleAttribute<XmlArrayAttribute>();
-            var arrayItemAttribute = propertyInfo.GetSingleAttribute<XmlArrayItemAttribute>();
+            var sourceInfo = contentDefinition.RuntimeInfo;
+
+            var elementAttribute = sourceInfo.GetSingleAttribute<XmlElementAttribute>();
+            var arrayAttribute = sourceInfo.GetSingleAttribute<XmlArrayAttribute>();
+            var arrayItemAttribute = sourceInfo.GetSingleAttribute<XmlArrayItemAttribute>();
 
             if (elementAttribute != null && (arrayAttribute != null || arrayItemAttribute != null))
-                throw new Exception($"Property `{propertyInfo.DeclaringType?.Name}.{propertyInfo.Name}` should not define XmlElement and XmlArray(Item) attributes at the same time.");
+                throw new Exception($"Property `{contentDefinition.ContainerName}.{contentDefinition.RuntimeName}` should not define XmlElement and XmlArray(Item) attributes at the same time.");
 
-            var startIndex = propertyInfo.Name.LastIndexOf('.');
-            var propertyName = startIndex >= 0 ? propertyInfo.Name.Substring(startIndex + 1) : propertyInfo.Name;
+            var propertyName = contentDefinition.RuntimeName;
 
             XName qualifiedName = null;
             XName itemQualifiedName = null;
 
-            if (propertyInfo.PropertyType.IsArray)
+            if (contentDefinition.RuntimeType.IsArray)
             {
-                if (propertyInfo.PropertyType.IsArray && propertyInfo.PropertyType.GetArrayRank() > 1)
-                    throw new Exception($"Property `{propertyInfo.Name}` of type `{propertyInfo.DeclaringType?.FullName}` declares multi-dimensional array, which is not supported.");
+                if (contentDefinition.RuntimeType.GetArrayRank() > 1)
+                    throw new Exception($"Property `{contentDefinition.RuntimeName}` of type `{contentDefinition.ContainerName}` declares multi-dimensional array, which is not supported.");
 
                 var containerName = XName.Get((arrayAttribute?.ElementName).GetValueOrDefault(propertyName), arrayAttribute?.Namespace ?? "");
 
@@ -74,33 +78,43 @@ namespace XRoadLib.Schema
             else
             {
                 if (arrayAttribute != null || arrayItemAttribute != null)
-                    throw new Exception($"Property `{propertyInfo.DeclaringType?.Name}.{propertyInfo.Name}` should not define XmlArray(Item) attribute, because it's not array type.");
-                qualifiedName = XName.Get((elementAttribute?.ElementName).GetValueOrDefault(propertyName), elementAttribute?.Namespace ?? "");
+                    throw new Exception($"Property `{contentDefinition.ContainerName}.{contentDefinition.RuntimeName}` should not define XmlArray(Item) attribute, because it's not array type.");
+                var name = (elementAttribute?.ElementName).GetValueOrDefault(propertyName);
+                qualifiedName = name != null ? XName.Get(name, elementAttribute?.Namespace ?? "") : null;
             }
 
             var customTypeName = (elementAttribute?.DataType).GetValueOrDefault(arrayItemAttribute?.DataType);
 
-            return new PropertyDefinition(ownerDefinition)
+            contentDefinition.Name = qualifiedName;
+            contentDefinition.IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault() || (arrayAttribute?.IsNullable).GetValueOrDefault();
+            contentDefinition.Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault());
+
+            contentDefinition.TypeMap = GetPropertyTypeMap(customTypeName,
+                                                           contentDefinition.RuntimeType.IsArray ? contentDefinition.RuntimeType.GetElementType()
+                                                                                                 : contentDefinition.RuntimeType,
+                                                           contentDefinition.RuntimeType.IsArray,
+                                                           partialTypeMaps,
+                                                           protocol);
+
+            contentDefinition.UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType);
+
+            contentDefinition.ArrayItemDefinition = new ArrayItemDefinition
             {
-                Name = qualifiedName,
-                RuntimeInfo = propertyInfo,
-                IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault() || (arrayAttribute?.IsNullable).GetValueOrDefault(),
+                Name = itemQualifiedName,
+                IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
                 IsOptional = false,
-                ItemDefinition = new PropertyDefinition(ownerDefinition)
-                {
-                    Name = itemQualifiedName,
-                    RuntimeInfo = propertyInfo,
-                    IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
-                    IsOptional = true,
-                    State = DefinitionState.Default,
-                    TypeMap = partialTypeMaps != null ? GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), false, partialTypeMaps, protocol) : null,
-                    UseXop = typeof(Stream).IsAssignableFrom(propertyInfo.PropertyType.GetElementType())
-                },
-                Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault()),
-                State = DefinitionState.Default,
-                TypeMap = partialTypeMaps != null ? GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), propertyInfo.PropertyType.IsArray, partialTypeMaps, protocol) : null,
-                UseXop = typeof(Stream).IsAssignableFrom(propertyInfo.PropertyType)
+                TypeMap = GetPropertyTypeMap(customTypeName, contentDefinition.RuntimeType.GetElementType(), false, partialTypeMaps, protocol),
+                UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType.GetElementType())
             };
+        }
+
+        private static PropertyDefinition ConvertProperty(PropertyInfo propertyInfo, TypeDefinition ownerDefinition, IProtocol protocol, IDictionary<Type, ITypeMap> partialTypeMaps)
+        {
+            var propertyDefinition = new PropertyDefinition(ownerDefinition) { RuntimeInfo = propertyInfo };
+
+            AddContentDefinition(propertyDefinition, protocol, partialTypeMaps);
+
+            return propertyDefinition;
         }
 
         private static ITypeMap GetPropertyTypeMap(string customTypeName, Type runtimeType, bool isArray, IDictionary<Type, ITypeMap> partialTypeMaps, IProtocol protocol)
@@ -133,13 +147,16 @@ namespace XRoadLib.Schema
             };
         }
 
-        public static ParameterDefinition ConvertParameter(ParameterInfo parameterInfo, OperationDefinition ownerDefinition)
+        public static ParameterDefinition ConvertParameter(ParameterInfo parameterInfo, OperationDefinition ownerDefinition, IProtocol protocol)
         {
-            return new ParameterDefinition(ownerDefinition)
-            {
-                Name = parameterInfo.GetElementName() ?? XName.Get(parameterInfo.Name.GetValueOrDefault("response")),
-                RuntimeInfo = parameterInfo
-            };
+            var parameterDefinition = new ParameterDefinition(ownerDefinition) { RuntimeInfo = parameterInfo };
+
+            AddContentDefinition(parameterDefinition, protocol, null);
+
+            if (parameterDefinition.Name == null)
+                parameterDefinition.Name = XName.Get("response");
+
+            return parameterDefinition;
         }
 
         public static IEnumerable<PropertyDefinition> GetDescriptionProperties(IProtocol protocol, TypeDefinition typeDefinition)

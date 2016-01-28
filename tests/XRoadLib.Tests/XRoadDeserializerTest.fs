@@ -38,7 +38,7 @@ module XRoadDeserializerTest =
         stream.Position <- 0L
         use reader = XmlReader.Create(stream)
         use messageReader = new XRoadMessageReader(stream, null, Encoding.UTF8, null, [Globals.XRoadProtocol20])
-        use message = new XRoadMessage()
+        use message = new XRoadMessage(Globals.XRoadProtocol20)
         messageReader.Read(message, false)
         let context = SerializationContext(message, dtoVersion, XmlTemplate = template)
         reader.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol20.ProducerNamespace))

@@ -86,7 +86,7 @@ namespace XRoadLib
 
         public static XRoadException InvalidQuery(string message, params object[] args)
         {
-            return new XRoadException(new ClientFaultCode("InvalidQuery"), string.Format(message, args));
+            return new XRoadException(new ClientFaultCode("InvalidQuery"), message, args);
         }
 
         public static XRoadException UnsupportedQuery()

@@ -83,18 +83,18 @@ namespace XRoadLib.Serialization
             arrayTypeMap = new ArrayTypeMap<int>(this, qualifiedName);
             AddSystemXmlType(qualifiedName, typeof(string), new StringTypeMap(qualifiedName), arrayTypeMap);
 
-            qualifiedName = XName.Get("hexBinary", NamespaceConstants.XSD);
+            qualifiedName = XName.Get("base64Binary", NamespaceConstants.XSD);
             ITypeMap typeMap = new StreamTypeMap(qualifiedName);
             arrayTypeMap = new ArrayTypeMap<int>(this, qualifiedName);
             AddSystemXmlType(qualifiedName, typeof(Stream), typeMap, arrayTypeMap);
             AddSystemRuntimeType(qualifiedName, typeof(Stream), typeMap, arrayTypeMap);
 
-            qualifiedName = XName.Get("base64", NamespaceConstants.XSD);
+            qualifiedName = XName.Get("hexBinary", NamespaceConstants.XSD);
             typeMap = new StreamTypeMap(qualifiedName);
             arrayTypeMap = new ArrayTypeMap<int>(this, qualifiedName);
             AddSystemXmlType(qualifiedName, typeof(Stream), typeMap, arrayTypeMap);
 
-            qualifiedName = XName.Get("base64Binary", NamespaceConstants.XSD);
+            qualifiedName = XName.Get("base64", NamespaceConstants.XSD);
             typeMap = new StreamTypeMap(qualifiedName);
             arrayTypeMap = new ArrayTypeMap<int>(this, qualifiedName);
             AddSystemXmlType(qualifiedName, typeof(Stream), typeMap, arrayTypeMap);
@@ -150,11 +150,11 @@ namespace XRoadLib.Serialization
 
         private IParameterMap CreateParameterMap(OperationDefinition operationDefinition, ParameterInfo parameterInfo)
         {
-            var parameterDefinition = MetaDataConverter.ConvertParameter(parameterInfo, operationDefinition);
+            var parameterDefinition = MetaDataConverter.ConvertParameter(parameterInfo, operationDefinition, protocol);
             protocol.ExportParameter(parameterDefinition);
 
-            var typeMap = parameterDefinition.TypeDefinition.Name != null
-                ? GetTypeMap(parameterDefinition.TypeDefinition.Name, parameterInfo.ParameterType.IsArray)
+            var typeMap = parameterDefinition.TypeMap.QualifiedName != null
+                ? GetTypeMap(parameterDefinition.TypeMap.QualifiedName, parameterInfo.ParameterType.IsArray)
                 : GetTypeMap(parameterInfo.ParameterType);
 
             return new ParameterMap(this, parameterDefinition, typeMap);
@@ -171,9 +171,11 @@ namespace XRoadLib.Serialization
             if (runtimeType == null)
                 return null;
 
+            var normalizedType = Nullable.GetUnderlyingType(runtimeType) ?? runtimeType;
+
             ITypeMap typeMap;
-            if (!runtimeTypeMaps.TryGetValue(runtimeType, out typeMap) && (partialTypeMaps == null || !partialTypeMaps.TryGetValue(runtimeType, out typeMap)))
-                typeMap = AddTypeMap(runtimeType, partialTypeMaps);
+            if (!runtimeTypeMaps.TryGetValue(normalizedType, out typeMap) && (partialTypeMaps == null || !partialTypeMaps.TryGetValue(normalizedType, out typeMap)))
+                typeMap = AddTypeMap(normalizedType, partialTypeMaps);
 
             return typeMap;
         }
@@ -201,7 +203,7 @@ namespace XRoadLib.Serialization
             {
                 var itemTypeMap = GetTypeMap(typeDefinition.RuntimeInfo.GetElementType(), partialTypeMaps);
                 var typeMapType = typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.RuntimeType);
-                typeMap = (ITypeMap)Activator.CreateInstance(typeMapType, this);
+                typeMap = (ITypeMap)Activator.CreateInstance(typeMapType, this, null);
             }
             else
             {
@@ -247,7 +249,7 @@ namespace XRoadLib.Serialization
             else
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(typeDefinition.RuntimeInfo), this, typeDefinition);
 
-            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.RuntimeInfo), this);
+            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.RuntimeInfo), this, qualifiedName);
 
             var partialTypeMaps = new Dictionary<Type, ITypeMap>
             {

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace XRoadLib.Schema
 {
@@ -6,11 +7,13 @@ namespace XRoadLib.Schema
     {
         public OperationDefinition Owner { get; }
 
-        public TypeDefinition TypeDefinition { get; set; }
-
         public ParameterDefinition(OperationDefinition owner)
         {
             Owner = owner;
         }
+
+        public override string ContainerName => $"{RuntimeInfo.Member.DeclaringType?.FullName}.{RuntimeInfo.Member.Name}";
+        public override string RuntimeName => RuntimeInfo.Name;
+        public override Type RuntimeType => RuntimeInfo.ParameterType;
     }
 }

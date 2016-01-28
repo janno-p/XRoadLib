@@ -17,8 +17,6 @@ open XRoadLib.Tests.Contract
 
 [<TestFixture>]
 module XRoadSerializerTest =
-    let serializerCache = SerializerCache(typeof<Class1>.Assembly, Globals.XRoadProtocol20)
-
     let serializeWithContext<'T> elementName (value: 'T) dtoVersion addEnvelope isMultipart f =
         use message = new XRoadMessage(Globals.XRoadProtocol20, BinaryContentMode = BinaryMode.SoapAttachment)
 
@@ -35,7 +33,7 @@ module XRoadSerializerTest =
         writer.WriteStartElement(elementName)
 
         let context = SerializationContext(message, dtoVersion)
-        let typeMap = serializerCache.GetTypeMap(typeof<'T>)
+        let typeMap = Globals.XRoadProtocol20.SerializerCache.GetTypeMap(typeof<'T>)
         typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, typeof<'T>, context)
 
         writer.WriteEndElement()
@@ -149,13 +147,13 @@ module XRoadSerializerTest =
     let ``can serialize binary value`` () =
         use stream = new MemoryStream()
         XRoadBinaryTestDto(Sisu = stream)
-        |> shouldSerializeMultipartTo 1 """<keha d1p1:type="d1p2:XRoadBinaryTestDto" xmlns:d1p2="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><Sisu d1p1:type="d2p1:base64Binary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p1="http://schemas.xmlsoap.org/soap/encoding/" /></keha>"""
+        |> shouldSerializeMultipartTo 1 """<keha d1p1:type="d1p2:XRoadBinaryTestDto" xmlns:d1p2="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><Sisu d1p1:type="d2p1:base64Binary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p1="http://www.w3.org/2001/XMLSchema" /></keha>"""
 
     [<Test>]
     let ``can serialize hex binary value`` () =
         use stream = new MemoryStream()
         XRoadHexTestDto(Sisu = stream)
-        |> shouldSerializeMultipartTo 1 """<keha d1p1:type="d1p2:XRoadHexTestDto" xmlns:d1p2="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><Sisu d1p1:type="d2p1:hexBinary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p1="http://schemas.xmlsoap.org/soap/encoding/" /></keha>"""
+        |> shouldSerializeMultipartTo 1 """<keha d1p1:type="d1p2:XRoadHexTestDto" xmlns:d1p2="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><Sisu d1p1:type="d2p1:hexBinary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p1="http://www.w3.org/2001/XMLSchema" /></keha>"""
 
     [<Test>]
     let ``can serialize date type with custom name`` () =

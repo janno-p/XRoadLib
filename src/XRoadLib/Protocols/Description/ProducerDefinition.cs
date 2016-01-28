@@ -12,6 +12,7 @@ using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
+using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Protocols.Description
 {
@@ -198,32 +199,31 @@ namespace XRoadLib.Protocols.Description
             schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
         }
 
-        private void SetSchemaElementType(XmlSchemaElement schemaElement, Type type, PropertyDefinition definition, string targetNamespace)
+        private void SetSchemaElementType(XmlSchemaElement schemaElement, Type type, bool useXop, ITypeMap typeMap, string targetNamespace)
         {
-            if (typeof(Stream).IsAssignableFrom(type) && definition.UseXop)
+            if (typeof(Stream).IsAssignableFrom(type) && useXop)
                 AddBinaryAttribute(schemaElement);
 
-            if (!definition.TypeMap.IsAnonymous)
+            if (!typeMap.IsAnonymous)
             {
-                schemaElement.SchemaTypeName = new XmlQualifiedName(definition.TypeMap.QualifiedName.LocalName, definition.TypeMap.QualifiedName.NamespaceName);
+                schemaElement.SchemaTypeName = new XmlQualifiedName(typeMap.QualifiedName.LocalName, typeMap.QualifiedName.NamespaceName);
                 return;
             }
 
             XmlSchemaType schemaType;
-            if (definition.RuntimeInfo.PropertyType.IsEnum)
+            if (type.IsEnum)
             {
                 schemaType = new XmlSchemaSimpleType();
-                AddEnumTypeContent(definition.RuntimeInfo.PropertyType, (XmlSchemaSimpleType)schemaType, targetNamespace);
+                AddEnumTypeContent(type, (XmlSchemaSimpleType)schemaType, targetNamespace);
             }
             else
             {
                 schemaType = new XmlSchemaComplexType();
                 //AddComplexTypeContent((XmlSchemaComplexType)schemaType, definition.TypeDefinition, targetNamespace);
             }
-            schemaType.Annotation = CreateSchemaAnnotation(definition.RuntimeInfo.PropertyType);
+            schemaType.Annotation = CreateSchemaAnnotation(type);
 
             schemaElement.SchemaType = schemaType;
-
         }
 
         private void AddEnumTypeContent(Type type, XmlSchemaSimpleType schemaType, string targetNamespace)
@@ -242,46 +242,54 @@ namespace XRoadLib.Protocols.Description
 
         private XmlSchemaElement CreatePropertyElement(PropertyDefinition propertyDefinition, string targetNamespace)
         {
-            var definition = propertyDefinition.Name == null ? propertyDefinition.ItemDefinition : propertyDefinition;
-
             var schemaElement = new XmlSchemaElement
             {
-                Name = definition.Name.LocalName,
+                Name = propertyDefinition.Name?.LocalName,
                 Annotation = CreateSchemaAnnotation(propertyDefinition.RuntimeInfo)
             };
 
-            if (definition.IsOptional)
-                schemaElement.MinOccurs = 0;
-
-            if (definition.IsNullable)
-                schemaElement.IsNillable = true;
-
-            if (definition == propertyDefinition.ItemDefinition)
+            if (propertyDefinition.Name == null)
             {
+                schemaElement.Name = propertyDefinition.ArrayItemDefinition.Name.LocalName;
+
+                if (propertyDefinition.ArrayItemDefinition.IsOptional)
+                    schemaElement.MinOccurs = 0;
+
+                if (propertyDefinition.ArrayItemDefinition.IsNullable)
+                    schemaElement.IsNillable = true;
+
                 schemaElement.MaxOccursString = "unbounded";
-                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), definition, targetNamespace);
+
+                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap, targetNamespace);
+
                 return schemaElement;
             }
 
-            if (propertyDefinition.ItemDefinition == null)
+            if (propertyDefinition.IsOptional)
+                schemaElement.MinOccurs = 0;
+
+            if (propertyDefinition.IsNullable)
+                schemaElement.IsNillable = true;
+
+            if (propertyDefinition.ArrayItemDefinition == null)
             {
-                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType, propertyDefinition, targetNamespace);
+                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType, propertyDefinition.UseXop, propertyDefinition.TypeMap, targetNamespace);
                 return schemaElement;
             }
 
             var itemElement = new XmlSchemaElement
             {
-                Name = propertyDefinition.ItemDefinition.Name.LocalName,
+                Name = propertyDefinition.ArrayItemDefinition.Name.LocalName,
                 MaxOccursString = "unbounded"
             };
 
-            if (propertyDefinition.ItemDefinition.IsOptional)
+            if (propertyDefinition.ArrayItemDefinition.IsOptional)
                 itemElement.MinOccurs = 0;
 
-            if (propertyDefinition.ItemDefinition.IsNullable)
+            if (propertyDefinition.ArrayItemDefinition.IsNullable)
                 itemElement.IsNillable = true;
 
-            SetSchemaElementType(itemElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ItemDefinition, targetNamespace);
+            SetSchemaElementType(itemElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap, targetNamespace);
 
             protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, requiredImports);
 
