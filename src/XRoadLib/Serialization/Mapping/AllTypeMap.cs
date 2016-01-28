@@ -42,7 +42,7 @@ namespace XRoadLib.Serialization.Mapping
 
                 var propertyMap = GetPropertyMap(reader);
 
-                var childValidatorNode = templateNode[reader.LocalName, DtoVersion];
+                var childValidatorNode = templateNode[reader.LocalName, context.DtoVersion];
                 if (childValidatorNode == null)
                 {
                     reader.ReadToEndElement();
@@ -71,13 +71,13 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyMap in serializationPropertyMaps)
             {
-                var childTemplateNode = templateNode?[propertyMap.PropertyName, DtoVersion];
+                var childTemplateNode = templateNode?[propertyMap.PropertyName, context.DtoVersion];
                 if (templateNode == null || childTemplateNode != null)
                     propertyMap.Serialize(writer, childTemplateNode, value, context);
             }
         }
 
-        public override void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, IEnumerable<PropertyDefinition> propertyDefinitions)
+        public override void InitializeProperties(IEnumerable<PropertyDefinition> propertyDefinitions)
         {
             if (deserializationPropertyMaps.Count > 0)
                 return;

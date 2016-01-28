@@ -10,7 +10,6 @@ namespace XRoadLib.Serialization.Mapping
     {
         private readonly ISerializerCache serializerCache;
         private readonly ITypeMap defaultTypeMap;
-        private readonly bool isRequired;
         private readonly ParameterDefinition parameterDefinition;
 
         public string Name => parameterDefinition.Name.LocalName;
@@ -31,7 +30,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (reader.LocalName != Name)
             {
-                if (!isRequired)
+                if (parameterDefinition.IsOptional)
                     return false;
                 throw XRoadException.InvalidQuery($"Oodati elementi `{Name}`, aga leiti `{reader.LocalName}`.");
             }
@@ -49,7 +48,7 @@ namespace XRoadLib.Serialization.Mapping
                 return null;
             }
 
-            var typeMap = serializerCache.GetTypeMapFromXsiType(reader, context.DtoVersion) ?? defaultTypeMap;
+            var typeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? defaultTypeMap;
 
             return typeMap.Deserialize(reader, parameterNode, context);
         }
@@ -71,7 +70,7 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteNilAttribute();
             else
             {
-                var typeMap = defaultTypeMap.IsSimpleType ? defaultTypeMap : serializerCache.GetTypeMap(value.GetType(), context.DtoVersion);
+                var typeMap = defaultTypeMap.IsSimpleType ? defaultTypeMap : serializerCache.GetTypeMap(value.GetType());
                 typeMap.Serialize(writer, parameterNode, value, defaultTypeMap.RuntimeType, context);
             }
         }

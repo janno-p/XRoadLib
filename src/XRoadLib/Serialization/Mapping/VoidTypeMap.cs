@@ -8,10 +8,9 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class VoidTypeMap : ITypeMap
     {
-        public uint DtoVersion { get; set; }
         public Type RuntimeType => typeof(void);
         public bool IsSimpleType => true;
-        public bool IsAnonymous { get; set; }
+        public bool IsAnonymous => false;
 
         public object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
@@ -23,7 +22,7 @@ namespace XRoadLib.Serialization.Mapping
             throw new NotImplementedException();
         }
 
-        public void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, IEnumerable<PropertyDefinition> propertyDefinitions)
+        public void InitializeProperties(IEnumerable<PropertyDefinition> propertyDefinitions)
         {
             throw new NotImplementedException();
         }

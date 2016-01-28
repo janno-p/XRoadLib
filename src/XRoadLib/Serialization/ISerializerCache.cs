@@ -8,19 +8,15 @@ namespace XRoadLib.Serialization
 {
     public interface ISerializerCache
     {
-        string ProducerNamespace { get; }
+        IServiceMap GetServiceMap(string operationName);
 
-        IServiceMap GetServiceMap(string operationName, uint dtoVersion);
+        IServiceMap GetServiceMap(XName qualifiedName);
 
-        IServiceMap GetServiceMap(XName qualifiedName, uint dtoVersion);
+        ITypeMap GetTypeMapFromXsiType(XmlReader reader);
 
-        ITypeMap GetTypeMapFromXsiType(XmlReader reader, uint dtoVersion);
+        ITypeMap GetTypeMap(XName qualifiedName, bool isArray);
 
-        ITypeMap GetTypeMap(XName qualifiedName, bool isArray, uint dtoVersion);
-
-        ITypeMap GetTypeMap(Type runtimeType, uint dtoVersion, IDictionary<Type, ITypeMap> partialTypeMaps = null);
-
-        Tuple<ITypeMap, ITypeMap> GetTypeMaps(XName qualifiedName, uint dtoVersion);
+        ITypeMap GetTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps = null);
 
         XName GetXmlTypeName(Type type);
     }

@@ -7,6 +7,8 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class StringTypeMap : TypeMap<string>
     {
+        public static ITypeMap Instance { get; } = new StringTypeMap();
+
         private readonly XName qualifiedName;
 
         public StringTypeMap(XName qualifiedName = null)

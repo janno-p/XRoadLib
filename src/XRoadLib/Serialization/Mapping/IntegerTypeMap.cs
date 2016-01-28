@@ -9,10 +9,12 @@ namespace XRoadLib.Serialization.Mapping
     {
         public static ITypeMap Instance { get; } = new IntegerTypeMap();
 
-        private readonly XName qualifiedName = XName.Get("int", NamespaceConstants.XSD);
+        private readonly XName qualifiedName;
 
-        private IntegerTypeMap()
-        { }
+        public IntegerTypeMap(XName qualifiedName = null)
+        {
+            this.qualifiedName = qualifiedName ?? XName.Get("int", NamespaceConstants.XSD);
+        }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {

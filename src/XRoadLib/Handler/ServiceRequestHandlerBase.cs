@@ -79,7 +79,7 @@ namespace XRoadLib.Handler
             var operationName = requestMessage.Header?.Service?.ServiceCode ?? requestMessage.RootElementName?.LocalName;
             var serviceObject = GetServiceObject(operationName);
 
-            serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName, (requestMessage.Header?.Service?.Version).GetValueOrDefault(1u));
+            serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName);
 
             var parameters = DeserializeMethodParameters(serviceMap);
 
@@ -109,7 +109,7 @@ namespace XRoadLib.Handler
             if (metaServiceName == MetaServiceName.None)
                 return null;
 
-            var serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName, 1u);
+            var serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName);
 
             result = InvokeMetaService(metaServiceName);
 

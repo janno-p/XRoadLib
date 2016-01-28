@@ -40,7 +40,7 @@ namespace XRoadLib.Extensions
         public static object DeserializeMessageContent(this XRoadMessage message, string operationName, uint version, ISerializerCache serializerCache)
         {
             var context = new SerializationContext(message, version);
-            var serviceMap = serializerCache.GetServiceMap(operationName, context.DtoVersion);
+            var serviceMap = serializerCache.GetServiceMap(operationName);
 
             message.ContentStream.Position = 0;
             var doc = new XPathDocument(XmlReader.Create(message.ContentStream));

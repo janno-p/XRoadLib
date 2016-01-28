@@ -34,7 +34,7 @@ namespace XRoadLib.Schema
             };
         }
 
-        public static PropertyDefinition ConvertProperty(PropertyInfo propertyInfo, TypeDefinition ownerDefinition, IProtocol protocol, uint dtoVersion, IDictionary<Type, ITypeMap> partialTypeMaps)
+        public static PropertyDefinition ConvertProperty(PropertyInfo propertyInfo, TypeDefinition ownerDefinition, IProtocol protocol, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
             var elementAttribute = propertyInfo.GetSingleAttribute<XmlElementAttribute>();
             var arrayAttribute = propertyInfo.GetSingleAttribute<XmlArrayAttribute>();
@@ -87,20 +87,20 @@ namespace XRoadLib.Schema
                     RuntimeInfo = propertyInfo,
                     IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
                     IsOptional = true,
-                    State = propertyInfo.ExistsInVersion(dtoVersion) ? DefinitionState.Default : DefinitionState.Ignored,
-                    TypeMap = GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), false, dtoVersion, partialTypeMaps, protocol)
+                    State = DefinitionState.Default,
+                    TypeMap = GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), false, partialTypeMaps, protocol)
                 },
                 Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault()),
-                State = propertyInfo.ExistsInVersion(dtoVersion) ? DefinitionState.Default : DefinitionState.Ignored,
-                TypeMap = GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), propertyInfo.PropertyType.IsArray, dtoVersion, partialTypeMaps, protocol)
+                State = DefinitionState.Default,
+                TypeMap = GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), propertyInfo.PropertyType.IsArray, partialTypeMaps, protocol)
             };
         }
 
-        private static ITypeMap GetPropertyTypeMap(string customTypeName, Type runtimeType, bool isArray, uint dtoVersion, IDictionary<Type, ITypeMap> partialTypeMaps, IProtocol protocol)
+        private static ITypeMap GetPropertyTypeMap(string customTypeName, Type runtimeType, bool isArray, IDictionary<Type, ITypeMap> partialTypeMaps, IProtocol protocol)
         {
             return string.IsNullOrWhiteSpace(customTypeName)
-                ? protocol.SerializerCache.GetTypeMap(runtimeType, dtoVersion, partialTypeMaps)
-                : protocol.SerializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray, dtoVersion);
+                ? protocol.SerializerCache.GetTypeMap(runtimeType, partialTypeMaps)
+                : protocol.SerializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray);
         }
 
         public static OperationDefinition ConvertOperation(MethodInfo methodInfo, XName qualifiedName)

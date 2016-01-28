@@ -8,8 +8,6 @@ namespace XRoadLib.Serialization.Mapping
 {
     public interface ITypeMap
     {
-        uint DtoVersion { get; set; }
-
         Type RuntimeType { get; }
 
         bool IsSimpleType { get; }
@@ -20,6 +18,6 @@ namespace XRoadLib.Serialization.Mapping
 
         void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context);
 
-        void InitializeProperties(IDictionary<Type, ITypeMap> partialTypeMaps, IEnumerable<PropertyDefinition> propertyDefinitions);
+        void InitializeProperties(IEnumerable<PropertyDefinition> propertyDefinitions);
     }
 }

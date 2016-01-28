@@ -110,6 +110,15 @@ namespace XRoadLib.Extensions
                              .ToList();
         }
 
+        public static IEnumerable<string> GetServices(this MethodInfo methodInfo, bool includeHidden = false)
+        {
+            return methodInfo.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
+                             .OfType<XRoadServiceAttribute>()
+                             .Where(x => includeHidden || !x.IsHidden)
+                             .Select(x => x.Name)
+                             .ToList();
+        }
+
         internal static bool IsVersionInRange(uint version, uint? versionAdded, uint? versionRemoved)
         {
             return version >= versionAdded.GetValueOrDefault() && version < versionRemoved.GetValueOrDefault(uint.MaxValue);

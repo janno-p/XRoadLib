@@ -16,10 +16,10 @@ namespace XRoadLib.Serialization.Mapping
 
         public override bool IsSimpleType => false;
 
-        public ArrayTypeMap(ISerializerCache serializerCache)
+        public ArrayTypeMap(ISerializerCache serializerCache, XName elementQualifiedName = null)
         {
             this.serializerCache = serializerCache;
-            elementQualifiedName = serializerCache.GetXmlTypeName(typeof(T));
+            this.elementQualifiedName = elementQualifiedName ?? serializerCache.GetXmlTypeName(typeof(T));
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -35,7 +35,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.NodeType != XmlNodeType.Element || reader.IsNilElement())
                     continue;
 
-                var typeMap = serializerCache.GetTypeMapFromXsiType(reader, DtoVersion) ?? serializerCache.GetTypeMap(elementType, DtoVersion);
+                var typeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? serializerCache.GetTypeMap(elementType);
 
                 var value = typeMap.Deserialize(reader, templateNode, context);
                 if (value != null)
@@ -57,7 +57,7 @@ namespace XRoadLib.Serialization.Mapping
 
                 if (element != null)
                 {
-                    var typeMap = serializerCache.GetTypeMap(element.GetType(), DtoVersion);
+                    var typeMap = serializerCache.GetTypeMap(element.GetType());
                     typeMap.Serialize(writer, templateNode, element, elementType, context);
                 }
                 else writer.WriteNilAttribute();

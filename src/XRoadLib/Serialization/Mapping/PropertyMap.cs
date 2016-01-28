@@ -39,7 +39,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = propertyDefinition.TypeMap.IsAnonymous || propertyDefinition.TypeMap.IsSimpleType
                 ? propertyDefinition.TypeMap
-                : (serializerCache.GetTypeMapFromXsiType(reader, propertyDefinition.TypeMap.DtoVersion) ?? propertyDefinition.TypeMap);
+                : (serializerCache.GetTypeMapFromXsiType(reader) ?? propertyDefinition.TypeMap);
 
             var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, context);
             if (propertyValue == null)
@@ -67,7 +67,7 @@ namespace XRoadLib.Serialization.Mapping
             {
                 var concreteTypeMap = propertyDefinition.TypeMap.IsAnonymous || propertyDefinition.TypeMap.IsSimpleType
                     ? propertyDefinition.TypeMap
-                    : serializerCache.GetTypeMap(propertyValue.GetType(), propertyDefinition.TypeMap.DtoVersion);
+                    : serializerCache.GetTypeMap(propertyValue.GetType());
 
                 concreteTypeMap.Serialize(writer, templateNode, propertyValue, propertyDefinition.TypeMap.RuntimeType, context);
             }
