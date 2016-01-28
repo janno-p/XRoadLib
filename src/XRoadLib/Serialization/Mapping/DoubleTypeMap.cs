@@ -9,7 +9,7 @@ namespace XRoadLib.Serialization.Mapping
     {
         public static ITypeMap Instance { get; } = new DoubleTypeMap();
 
-        private readonly XName qualifiedName = XName.Get("double", NamespaceConstants.XSD);
+        public override XName QualifiedName { get; } = XName.Get("double", NamespaceConstants.XSD);
 
         private DoubleTypeMap()
         { }
@@ -26,7 +26,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
 
             writer.WriteValue(value);
         }

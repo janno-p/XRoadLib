@@ -6,6 +6,9 @@ namespace XRoadLib.Protocols
 {
     public class XRoad40Protocol : Protocol<XRoadHeader40>
     {
+        protected override string XRoadPrefix => PrefixConstants.XROAD;
+        protected override string XRoadNamespace => NamespaceConstants.XROAD_V4;
+
         public override string Name => "4.0";
 
         public XRoad40Protocol(string producerNamespace)
@@ -27,6 +30,8 @@ namespace XRoadLib.Protocols
 
         public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {
+            base.ExportServiceDescription(serviceDescription);
+
             var servicePort = serviceDescription.Services[0].Ports[0];
 
             var soapAddressBinding = (SoapAddressBinding)servicePort.Extensions[0];

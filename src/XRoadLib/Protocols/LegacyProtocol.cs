@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Services.Description;
-using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 
@@ -15,12 +14,10 @@ namespace XRoadLib.Protocols
 
     public abstract class LegacyProtocol<THeader> : Protocol<THeader>, ILegacyProtocol where THeader : IXRoadHeader, new()
     {
-        protected abstract string XRoadPrefix { get; }
-
-        public abstract string XRoadNamespace { get; }
-
         public string ProducerName { get; }
         public IDictionary<string, string> Titles { get; } = new Dictionary<string, string>();
+
+        string ILegacyProtocol.XRoadNamespace => XRoadNamespace;
 
         protected LegacyProtocol(string producerName, string producerNamespace, Style style)
             : base(producerNamespace, style)
@@ -32,7 +29,7 @@ namespace XRoadLib.Protocols
 
         public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {
-            var document = new XmlDocument();
+            base.ExportServiceDescription(serviceDescription);
 
             var address = document.CreateElement(XRoadPrefix, "address", XRoadNamespace);
             address.SetAttribute("producer", ProducerName);

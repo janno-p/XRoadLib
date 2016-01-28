@@ -10,7 +10,7 @@ namespace XRoadLib.Serialization.Mapping
     {
         public static ITypeMap Instance { get; } = new DateTimeTypeMap();
 
-        private readonly XName qualifiedName = XName.Get("dateTime", NamespaceConstants.XSD);
+        public override XName QualifiedName { get; } = XName.Get("dateTime", NamespaceConstants.XSD);
 
         private DateTimeTypeMap()
         { }
@@ -41,7 +41,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
 
             writer.WriteValue(value);
         }

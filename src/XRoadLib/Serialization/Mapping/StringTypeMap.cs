@@ -9,11 +9,11 @@ namespace XRoadLib.Serialization.Mapping
     {
         public static ITypeMap Instance { get; } = new StringTypeMap();
 
-        private readonly XName qualifiedName;
+        public override XName QualifiedName { get; }
 
         public StringTypeMap(XName qualifiedName = null)
         {
-            this.qualifiedName = qualifiedName ?? XName.Get("string", NamespaceConstants.XSD);
+            QualifiedName = qualifiedName ?? XName.Get("string", NamespaceConstants.XSD);
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -28,7 +28,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
 
             var valueString = value.ToString();
 

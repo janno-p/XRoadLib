@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
@@ -14,6 +15,8 @@ namespace XRoadLib.Serialization.Mapping
         public Type RuntimeType => runtimeType;
         public virtual bool IsSimpleType => true;
         public virtual bool IsAnonymous => false;
+
+        public abstract XName QualifiedName { get; }
 
         public abstract object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);
 

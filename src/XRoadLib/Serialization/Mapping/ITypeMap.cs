@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
@@ -13,6 +14,8 @@ namespace XRoadLib.Serialization.Mapping
         bool IsSimpleType { get; }
 
         bool IsAnonymous { get; }
+
+        XName QualifiedName { get; }
 
         object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);
 

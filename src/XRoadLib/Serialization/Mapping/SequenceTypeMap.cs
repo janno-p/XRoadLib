@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -16,6 +17,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override bool IsAnonymous { get; }
         public override bool IsSimpleType => false;
+        public override XName QualifiedName => typeDefinition.Name;
 
         public SequenceTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
         {

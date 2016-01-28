@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
@@ -14,6 +16,8 @@ namespace XRoadLib.Protocols
     public interface IProtocol
     {
         string Name { get; }
+
+        ISet<XName> MandatoryHeaders { get; }
 
         string RequestPartNameInRequest { get; }
 
@@ -44,6 +48,10 @@ namespace XRoadLib.Protocols
         IXRoadHeader CreateHeader();
 
         void WriteServiceDescription(Assembly contractAssembly, Stream outputStream);
+
+        XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition);
+
+        XmlElement CreateTitleElement(string languageCode, string value);
     }
 
     public interface IProtocol<THeader> : IProtocol where THeader : IXRoadHeader

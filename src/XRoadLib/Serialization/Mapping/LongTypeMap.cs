@@ -9,7 +9,7 @@ namespace XRoadLib.Serialization.Mapping
     {
         public static ITypeMap Instance { get; } = new LongTypeMap();
 
-        private readonly XName qualifiedName = XName.Get("long", NamespaceConstants.XSD);
+        public override XName QualifiedName { get; } = XName.Get("long", NamespaceConstants.XSD);
 
         private LongTypeMap()
         { }
@@ -26,7 +26,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, qualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
 
             writer.WriteValue(value);
         }

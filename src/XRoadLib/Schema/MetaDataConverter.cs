@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -51,6 +53,9 @@ namespace XRoadLib.Schema
 
             if (propertyInfo.PropertyType.IsArray)
             {
+                if (propertyInfo.PropertyType.IsArray && propertyInfo.PropertyType.GetArrayRank() > 1)
+                    throw new Exception($"Property `{propertyInfo.Name}` of type `{propertyInfo.DeclaringType?.FullName}` declares multi-dimensional array, which is not supported.");
+
                 var containerName = XName.Get((arrayAttribute?.ElementName).GetValueOrDefault(propertyName), arrayAttribute?.Namespace ?? "");
 
                 if (elementAttribute != null)
@@ -88,11 +93,13 @@ namespace XRoadLib.Schema
                     IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
                     IsOptional = true,
                     State = DefinitionState.Default,
-                    TypeMap = GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), false, partialTypeMaps, protocol)
+                    TypeMap = partialTypeMaps != null ? GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), false, partialTypeMaps, protocol) : null,
+                    UseXop = typeof(Stream).IsAssignableFrom(propertyInfo.PropertyType.GetElementType())
                 },
                 Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault()),
                 State = DefinitionState.Default,
-                TypeMap = GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), propertyInfo.PropertyType.IsArray, partialTypeMaps, protocol)
+                TypeMap = partialTypeMaps != null ? GetPropertyTypeMap(customTypeName, propertyInfo.PropertyType.GetElementType(), propertyInfo.PropertyType.IsArray, partialTypeMaps, protocol) : null,
+                UseXop = typeof(Stream).IsAssignableFrom(propertyInfo.PropertyType)
             };
         }
 
@@ -113,7 +120,16 @@ namespace XRoadLib.Schema
                 HasStrictContentOrder = true,
                 RuntimeInfo = methodInfo,
                 RequestBinaryMode = (multipartAttribute?.HasMultipartRequest).GetValueOrDefault() ? BinaryMode.SoapAttachment : BinaryMode.Inline,
-                ResponseBinaryMode = (multipartAttribute?.HasMultipartResponse).GetValueOrDefault() ? BinaryMode.SoapAttachment : BinaryMode.Inline
+                ResponseBinaryMode = (multipartAttribute?.HasMultipartResponse).GetValueOrDefault() ? BinaryMode.SoapAttachment : BinaryMode.Inline,
+                State = DefinitionState.Default,
+                Version = 1u,
+                ContentComparer = ParameterComparer.Instance,
+                RequestTypeName = "",
+                ResponseTypeName = "",
+                HideXRoadFaultDefinition = false,
+                ProhibitRequestPartInResponse = false,
+                RequestMessageName = qualifiedName.LocalName,
+                ResponseMessageName = $"{qualifiedName.LocalName}Response"
             };
         }
 
@@ -124,6 +140,39 @@ namespace XRoadLib.Schema
                 Name = parameterInfo.GetElementName() ?? XName.Get(parameterInfo.Name.GetValueOrDefault("response")),
                 RuntimeInfo = parameterInfo
             };
+        }
+
+        public static IEnumerable<PropertyDefinition> GetDescriptionProperties(IProtocol protocol, TypeDefinition typeDefinition)
+        {
+            return typeDefinition.RuntimeInfo
+                                 .GetPropertiesSorted(typeDefinition.ContentComparer, p => CreateProperty(protocol, typeDefinition, p, null))
+                                 .Where(d => d.State == DefinitionState.Default);
+        }
+
+        public static IEnumerable<PropertyDefinition> GetRuntimeProperties(IProtocol protocol, TypeDefinition typeDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
+        {
+            return typeDefinition.RuntimeInfo
+                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, p => CreateProperty(protocol, typeDefinition, p, partialTypeMaps))
+                                 .Where(d => d.State != DefinitionState.Ignored);
+        }
+
+        private static PropertyDefinition CreateProperty(IProtocol protocol, TypeDefinition typeDefinition, PropertyInfo propertyInfo, IDictionary<Type, ITypeMap> partialTypeMaps)
+        {
+            var propertyDefinition = ConvertProperty(propertyInfo, typeDefinition, protocol, partialTypeMaps);
+            protocol.ExportProperty(propertyDefinition);
+
+            return propertyDefinition;
+        }
+
+        private static string GetOperationNameFromMethodInfo(MethodInfo methodInfo)
+        {
+            if (methodInfo.DeclaringType == null)
+                throw new ArgumentException("Declaring type is missing.", nameof(methodInfo));
+
+            if (methodInfo.DeclaringType.Name.StartsWith("I", StringComparison.InvariantCulture) && methodInfo.DeclaringType.Name.Length > 1 && char.IsUpper(methodInfo.DeclaringType.Name[1]))
+                return methodInfo.DeclaringType.Name.Substring(1);
+
+            return methodInfo.DeclaringType.Name;
         }
     }
 }

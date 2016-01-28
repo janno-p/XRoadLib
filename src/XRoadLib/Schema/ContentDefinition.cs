@@ -8,6 +8,8 @@ namespace XRoadLib.Schema
 
         public bool IsOptional { get; set; }
 
+        public bool UseXop { get; set; }
+
         public PropertyDefinition ItemDefinition { get; set; }
 
         public int Order { get; set; }

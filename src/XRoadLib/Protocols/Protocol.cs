@@ -17,9 +17,12 @@ namespace XRoadLib.Protocols
 {
     public abstract class Protocol<THeader> : IProtocol<THeader> where THeader : IXRoadHeader, new()
     {
-        public const string STANDARD_HEADER_NAME = "RequiredHeaders";
+        protected readonly XmlDocument document = new XmlDocument();
 
         public abstract string Name { get; }
+
+        protected abstract string XRoadPrefix { get; }
+        protected abstract string XRoadNamespace { get; }
 
         public virtual string RequestPartNameInRequest => "request";
         public virtual string RequestPartNameInResponse => "request";
@@ -50,13 +53,18 @@ namespace XRoadLib.Protocols
         { }
 
         public virtual void ExportType(TypeDefinition type)
-        { }
+        {
+            if (type.RuntimeInfo.IsArray)
+                type.Name = null;
+        }
 
         public virtual void ExportOperation(OperationDefinition operation)
         { }
 
         public virtual void ExportServiceDescription(ServiceDescription serviceDescription)
-        { }
+        {
+            serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
+        }
 
         public void AddMandatoryHeaderElement<T>(Expression<Func<THeader, T>> expression)
         {
@@ -86,6 +94,33 @@ namespace XRoadLib.Protocols
         public void WriteServiceDescription(Assembly contractAssembly, Stream outputStream)
         {
             throw new NotImplementedException();
+        }
+
+        public virtual XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition)
+        {
+            if (operationDefinition.Version == 0)
+                return null;
+
+            var document = new XmlDocument();
+
+            var addressElement = document.CreateElement(XRoadPrefix, "version", XRoadNamespace);
+            addressElement.InnerText = $"v{operationDefinition.Version}";
+            return addressElement;
+        }
+
+        public virtual XmlElement CreateTitleElement(string languageCode, string value)
+        {
+            var titleElement = document.CreateElement(XRoadPrefix, "title", XRoadNamespace);
+            titleElement.InnerText = value;
+
+            if (string.IsNullOrWhiteSpace(languageCode))
+                return titleElement;
+
+            var attribute = document.CreateAttribute("xml", "lang", null);
+            attribute.Value = languageCode;
+            titleElement.Attributes.Append(attribute);
+
+            return titleElement;
         }
     }
 }

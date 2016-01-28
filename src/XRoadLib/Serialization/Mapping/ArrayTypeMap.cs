@@ -16,6 +16,8 @@ namespace XRoadLib.Serialization.Mapping
 
         public override bool IsSimpleType => false;
 
+        public override XName QualifiedName { get { throw new NotImplementedException(); } }
+
         public ArrayTypeMap(ISerializerCache serializerCache, XName elementQualifiedName = null)
         {
             this.serializerCache = serializerCache;

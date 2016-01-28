@@ -1,14 +1,16 @@
-﻿using System.Xml;
+﻿using System.Web.Services.Description;
+using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
     public class XRoad20Protocol : LegacyProtocol<XRoadHeader20>
     {
         protected override string XRoadPrefix => PrefixConstants.XTEE;
+        protected override string XRoadNamespace => NamespaceConstants.XTEE;
 
-        public override string XRoadNamespace => NamespaceConstants.XTEE;
         public override string Name => "2.0";
         public override string RequestPartNameInRequest => "keha";
         public override string RequestPartNameInResponse => "paring";
@@ -42,6 +44,16 @@ namespace XRoadLib.Protocols
             var attributeValue = reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV);
 
             return NamespaceConstants.SOAP_ENC.Equals(attributeValue);
+        }
+
+        public override void ExportType(TypeDefinition type)
+        { }
+
+        public override void ExportServiceDescription(ServiceDescription serviceDescription)
+        {
+            base.ExportServiceDescription(serviceDescription);
+
+            serviceDescription.Namespaces.Add(PrefixConstants.SOAP_ENC, NamespaceConstants.SOAP_ENC);
         }
     }
 }
