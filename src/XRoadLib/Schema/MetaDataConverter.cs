@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Protocols;
+using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Schema
@@ -38,7 +39,7 @@ namespace XRoadLib.Schema
             };
         }
 
-        private static void AddContentDefinition<T>(ContentDefinition<T> contentDefinition, IProtocol protocol, IDictionary<Type, ITypeMap> partialTypeMaps)
+        private static void AddContentDefinition<T>(ContentDefinition<T> contentDefinition, ISerializerCache serializerCache, IDictionary<Type, ITypeMap> partialTypeMaps)
             where T : ICustomAttributeProvider
         {
             var sourceInfo = contentDefinition.RuntimeInfo;
@@ -94,7 +95,7 @@ namespace XRoadLib.Schema
                                                                                                  : contentDefinition.RuntimeType,
                                                            contentDefinition.RuntimeType.IsArray,
                                                            partialTypeMaps,
-                                                           protocol);
+                                                           serializerCache);
 
             contentDefinition.UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType);
 
@@ -103,25 +104,27 @@ namespace XRoadLib.Schema
                 Name = itemQualifiedName,
                 IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
                 IsOptional = false,
-                TypeMap = GetPropertyTypeMap(customTypeName, contentDefinition.RuntimeType.GetElementType(), false, partialTypeMaps, protocol),
+                TypeMap = GetPropertyTypeMap(customTypeName, contentDefinition.RuntimeType.GetElementType(), false, partialTypeMaps, serializerCache),
                 UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType.GetElementType())
             };
         }
 
-        private static PropertyDefinition ConvertProperty(PropertyInfo propertyInfo, TypeDefinition ownerDefinition, IProtocol protocol, IDictionary<Type, ITypeMap> partialTypeMaps)
+        private static PropertyDefinition ConvertProperty(PropertyInfo propertyInfo, TypeDefinition ownerDefinition, ISerializerCache serializerCache, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
             var propertyDefinition = new PropertyDefinition(ownerDefinition) { RuntimeInfo = propertyInfo };
 
-            AddContentDefinition(propertyDefinition, protocol, partialTypeMaps);
+            AddContentDefinition(propertyDefinition, serializerCache, partialTypeMaps);
+
+            serializerCache.Protocol.ExportProperty(propertyDefinition);
 
             return propertyDefinition;
         }
 
-        private static ITypeMap GetPropertyTypeMap(string customTypeName, Type runtimeType, bool isArray, IDictionary<Type, ITypeMap> partialTypeMaps, IProtocol protocol)
+        private static ITypeMap GetPropertyTypeMap(string customTypeName, Type runtimeType, bool isArray, IDictionary<Type, ITypeMap> partialTypeMaps, ISerializerCache serializerCache)
         {
             return string.IsNullOrWhiteSpace(customTypeName)
-                ? protocol.SerializerCache.GetTypeMap(runtimeType, partialTypeMaps)
-                : protocol.SerializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray);
+                ? serializerCache.GetTypeMap(runtimeType, partialTypeMaps)
+                : serializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray);
         }
 
         public static OperationDefinition ConvertOperation(MethodInfo methodInfo, XName qualifiedName)
@@ -147,38 +150,32 @@ namespace XRoadLib.Schema
             };
         }
 
-        public static ParameterDefinition ConvertParameter(ParameterInfo parameterInfo, OperationDefinition ownerDefinition, IProtocol protocol)
+        public static ParameterDefinition ConvertParameter(ParameterInfo parameterInfo, OperationDefinition ownerDefinition, ISerializerCache serializerCache)
         {
             var parameterDefinition = new ParameterDefinition(ownerDefinition) { RuntimeInfo = parameterInfo };
 
-            AddContentDefinition(parameterDefinition, protocol, null);
+            AddContentDefinition(parameterDefinition, serializerCache, null);
 
             if (parameterDefinition.Name == null)
                 parameterDefinition.Name = XName.Get("response");
 
+            serializerCache.Protocol.ExportParameter(parameterDefinition);
+
             return parameterDefinition;
         }
 
-        public static IEnumerable<PropertyDefinition> GetDescriptionProperties(IProtocol protocol, TypeDefinition typeDefinition)
+        public static IEnumerable<PropertyDefinition> GetDescriptionProperties(ISerializerCache serializerCache, TypeDefinition typeDefinition)
         {
             return typeDefinition.RuntimeInfo
-                                 .GetPropertiesSorted(typeDefinition.ContentComparer, p => CreateProperty(protocol, typeDefinition, p, null))
+                                 .GetPropertiesSorted(typeDefinition.ContentComparer, serializerCache.Version, p => ConvertProperty(p, typeDefinition, serializerCache, null))
                                  .Where(d => d.State == DefinitionState.Default);
         }
 
-        public static IEnumerable<PropertyDefinition> GetRuntimeProperties(IProtocol protocol, TypeDefinition typeDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
+        public static IEnumerable<PropertyDefinition> GetRuntimeProperties(ISerializerCache serializerCache, TypeDefinition typeDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
             return typeDefinition.RuntimeInfo
-                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, p => CreateProperty(protocol, typeDefinition, p, partialTypeMaps))
+                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, serializerCache.Version, p => ConvertProperty(p, typeDefinition, serializerCache, partialTypeMaps))
                                  .Where(d => d.State != DefinitionState.Ignored);
-        }
-
-        private static PropertyDefinition CreateProperty(IProtocol protocol, TypeDefinition typeDefinition, PropertyInfo propertyInfo, IDictionary<Type, ITypeMap> partialTypeMaps)
-        {
-            var propertyDefinition = ConvertProperty(propertyInfo, typeDefinition, protocol, partialTypeMaps);
-            protocol.ExportProperty(propertyDefinition);
-
-            return propertyDefinition;
         }
 
         private static string GetOperationNameFromMethodInfo(MethodInfo methodInfo)

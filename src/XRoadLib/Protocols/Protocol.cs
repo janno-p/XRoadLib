@@ -19,6 +19,8 @@ namespace XRoadLib.Protocols
     {
         protected readonly XmlDocument document = new XmlDocument();
 
+        protected readonly IDictionary<uint, ISerializerCache> serializerCaches = new Dictionary<uint, ISerializerCache>();
+
         public abstract string Name { get; }
 
         protected abstract string XRoadPrefix { get; }
@@ -30,7 +32,6 @@ namespace XRoadLib.Protocols
 
         public Style Style { get; }
         public string ProducerNamespace { get; }
-        public ISerializerCache SerializerCache { get; private set; }
         public ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>();
 
         protected Protocol(string producerNamespace, Style style)
@@ -123,9 +124,18 @@ namespace XRoadLib.Protocols
             return titleElement;
         }
 
-        public void SetContractAssembly(Assembly assembly)
+        public void SetContractAssembly(Assembly assembly, params uint[] supportedVersions)
         {
-            SerializerCache = new SerializerCache(assembly, this);
+            if (supportedVersions == null || supportedVersions.Length == 0)
+                serializerCaches.Add(0u, new SerializerCache(this, assembly));
+
+            foreach (var dtoVersion in supportedVersions)
+                serializerCaches.Add(dtoVersion, new SerializerCache(this, assembly, dtoVersion));
+        }
+
+        public ISerializerCache GetSerializerCache(uint? version = null)
+        {
+            return serializerCaches[version.GetValueOrDefault()];
         }
     }
 }

@@ -9,11 +9,13 @@ namespace XRoadLib.Serialization.Mapping
     {
         public static ITypeMap Instance { get; } = new StringTypeMap();
 
-        public override XName QualifiedName { get; }
+        private readonly XName qualifiedName;
+
+        public override XName QualifiedName => qualifiedName;
 
         public StringTypeMap(XName qualifiedName = null)
         {
-            QualifiedName = qualifiedName ?? XName.Get("string", NamespaceConstants.XSD);
+            this.qualifiedName = qualifiedName ?? XName.Get("string", NamespaceConstants.XSD);
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)

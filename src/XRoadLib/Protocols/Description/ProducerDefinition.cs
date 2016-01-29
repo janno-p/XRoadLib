@@ -22,6 +22,7 @@ namespace XRoadLib.Protocols.Description
 
         private readonly Assembly contractAssembly;
         private readonly IProtocol protocol;
+        private readonly ISerializerCache serializerCache;
 
         private readonly Binding binding;
         private readonly PortType portType;
@@ -37,7 +38,7 @@ namespace XRoadLib.Protocols.Description
         private readonly IList<Message> messages = new List<Message>();
         private readonly ISet<string> requiredImports = new SortedSet<string>();
 
-        public ProducerDefinition(Assembly contractAssembly, IProtocol protocol)
+        public ProducerDefinition(IProtocol protocol, Assembly contractAssembly, uint? version = null)
         {
             if (contractAssembly == null)
                 throw new ArgumentNullException(nameof(contractAssembly));
@@ -46,6 +47,8 @@ namespace XRoadLib.Protocols.Description
             if (protocol == null)
                 throw new ArgumentNullException(nameof(protocol));
             this.protocol = protocol;
+
+            serializerCache = protocol.GetSerializerCache(version);
 
             portType = new PortType { Name = "PortTypeName" };
 
@@ -149,7 +152,7 @@ namespace XRoadLib.Protocols.Description
         {
             var contentParticle = new XmlSchemaSequence();
 
-            foreach (var propertyDefinition in MetaDataConverter.GetDescriptionProperties(protocol, typeDefinition))
+            foreach (var propertyDefinition in MetaDataConverter.GetDescriptionProperties(serializerCache, typeDefinition))
                 contentParticle.Items.Add(CreatePropertyElement(propertyDefinition, targetNamespace));
 
             if (typeDefinition.RuntimeInfo.BaseType != typeof(XRoadSerializable))
@@ -255,8 +258,7 @@ namespace XRoadLib.Protocols.Description
                 if (propertyDefinition.ArrayItemDefinition.IsOptional)
                     schemaElement.MinOccurs = 0;
 
-                if (propertyDefinition.ArrayItemDefinition.IsNullable)
-                    schemaElement.IsNillable = true;
+                schemaElement.IsNillable = propertyDefinition.ArrayItemDefinition.IsNullable;
 
                 schemaElement.MaxOccursString = "unbounded";
 
@@ -268,8 +270,7 @@ namespace XRoadLib.Protocols.Description
             if (propertyDefinition.IsOptional)
                 schemaElement.MinOccurs = 0;
 
-            if (propertyDefinition.IsNullable)
-                schemaElement.IsNillable = true;
+            schemaElement.IsNillable = propertyDefinition.IsNullable;
 
             if (propertyDefinition.ArrayItemDefinition == null)
             {
@@ -286,8 +287,7 @@ namespace XRoadLib.Protocols.Description
             if (propertyDefinition.ArrayItemDefinition.IsOptional)
                 itemElement.MinOccurs = 0;
 
-            if (propertyDefinition.ArrayItemDefinition.IsNullable)
-                itemElement.IsNillable = true;
+            itemElement.IsNillable = propertyDefinition.ArrayItemDefinition.IsNullable;
 
             SetSchemaElementType(itemElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap, targetNamespace);
 

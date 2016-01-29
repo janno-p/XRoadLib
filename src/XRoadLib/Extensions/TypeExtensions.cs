@@ -35,26 +35,27 @@ namespace XRoadLib.Extensions
             return false;
         }
 
-        public static IEnumerable<PropertyDefinition> GetPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, Func<PropertyInfo, PropertyDefinition> createDefinition)
+        public static IEnumerable<PropertyDefinition> GetPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition)
         {
             if (comparer == null)
                 throw new ArgumentNullException(nameof(comparer));
 
             var properties = type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                                  .Where(prop => !prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null)
+                                 .Where(prop => !version.HasValue || prop.ExistsInVersion(version.Value))
                                  .Select(createDefinition);
 
             return new SortedSet<PropertyDefinition>(properties, comparer);
         }
 
-        public static IEnumerable<PropertyDefinition> GetAllPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, Func<PropertyInfo, PropertyDefinition> createDefinition)
+        public static IEnumerable<PropertyDefinition> GetAllPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition)
         {
             var properties = new List<PropertyDefinition>();
 
             if (type.BaseType != typeof(XRoadSerializable))
-                properties.AddRange(type.BaseType.GetAllPropertiesSorted(comparer, createDefinition));
+                properties.AddRange(type.BaseType.GetAllPropertiesSorted(comparer, version, createDefinition));
 
-            properties.AddRange(type.GetPropertiesSorted(comparer, createDefinition));
+            properties.AddRange(type.GetPropertiesSorted(comparer, version, createDefinition));
 
             return properties;
         }
@@ -204,11 +205,6 @@ namespace XRoadLib.Extensions
         internal static XName GetQualifiedElementDataType(this ICustomAttributeProvider provider)
         {
             return GetQualifiedDataType(provider.GetSingleAttribute<XmlElementAttribute>()?.DataType);
-        }
-
-        internal static bool IsRequiredElement(this ICustomAttributeProvider provider)
-        {
-            return provider.GetSingleAttribute<XRoadRequiredAttribute>() != null;
         }
     }
 }

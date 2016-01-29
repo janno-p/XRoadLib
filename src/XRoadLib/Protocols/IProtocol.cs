@@ -29,8 +29,6 @@ namespace XRoadLib.Protocols
 
         Style Style { get; }
 
-        ISerializerCache SerializerCache { get; }
-
         bool IsHeaderNamespace(string ns);
 
         bool IsDefinedByEnvelope(XmlReader reader);
@@ -53,7 +51,9 @@ namespace XRoadLib.Protocols
 
         XmlElement CreateTitleElement(string languageCode, string value);
 
-        void SetContractAssembly(Assembly assembly);
+        void SetContractAssembly(Assembly assembly, params uint[] supportedVersions);
+
+        ISerializerCache GetSerializerCache(uint? version = null);
     }
 
     public interface IProtocol<THeader> : IProtocol where THeader : IXRoadHeader

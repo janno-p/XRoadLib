@@ -4,11 +4,9 @@ open FsUnit
 open NUnit.Framework
 open System
 open System.IO
-open System.Reflection
 open System.Text
 open System.Xml
 open XRoadLib
-open XRoadLib.Extensions
 open XRoadLib.Schema
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
@@ -33,7 +31,7 @@ module XRoadSerializerTest =
         writer.WriteStartElement(elementName)
 
         let context = SerializationContext(message, dtoVersion)
-        let typeMap = Globals.XRoadProtocol20.SerializerCache.GetTypeMap(typeof<'T>)
+        let typeMap = Globals.XRoadProtocol20.GetSerializerCache(Nullable(dtoVersion)).GetTypeMap(typeof<'T>)
         typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, typeof<'T>, context)
 
         writer.WriteEndElement()

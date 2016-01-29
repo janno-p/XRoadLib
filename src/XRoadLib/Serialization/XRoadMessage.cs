@@ -133,5 +133,11 @@ namespace XRoadLib.Serialization
             var dtoVersion = (Header?.Service?.Version).GetValueOrDefault(1u);
             return new SerializationContext(this, dtoVersion);
         }
+
+        public ISerializerCache GetSerializerCache()
+        {
+            var dtoVersion = (Header?.Service?.Version).GetValueOrDefault(1u);
+            return Protocol?.GetSerializerCache(dtoVersion);
+        }
     }
 }

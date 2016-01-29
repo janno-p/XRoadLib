@@ -63,7 +63,7 @@ namespace XRoadLib.Handler
             OnRequestLoaded();
 
             IServiceMap serviceMap;
-            var result = InvokeServiceMethod(requestMessage.Protocol.SerializerCache, out serviceMap);
+            var result = InvokeServiceMethod(requestMessage.GetSerializerCache(), out serviceMap);
 
             responseMessage.BinaryContentMode = serviceMap.OperationDefinition.ResponseBinaryMode;
 

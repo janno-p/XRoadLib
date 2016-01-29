@@ -3,11 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Protocols;
 
 namespace XRoadLib.Serialization
 {
     public interface ISerializerCache
     {
+        uint? Version { get; }
+
+        IProtocol Protocol { get; }
+
         IServiceMap GetServiceMap(string operationName);
 
         IServiceMap GetServiceMap(XName qualifiedName);

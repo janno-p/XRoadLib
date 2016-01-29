@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Attributes\XRoadAddContractAttribute.cs" />
     <Compile Include="Attributes\XRoadAttachmentAttribute.cs" />
-    <Compile Include="Attributes\XRoadRequiredAttribute.cs" />
     <Compile Include="Schema\ArrayItemDefinition.cs" />
     <Compile Include="Schema\ContentComparer.cs" />
     <Compile Include="Schema\Definition.cs" />

@@ -15,7 +15,7 @@ namespace XRoadLib.Serialization.Mapping
         private readonly IList<IPropertyMap> propertyMaps = new List<IPropertyMap>();
         private readonly TypeDefinition typeDefinition;
 
-        public override bool IsAnonymous { get; }
+        public override bool IsAnonymous => typeDefinition.IsAnonymous;
         public override bool IsSimpleType => false;
         public override XName QualifiedName => typeDefinition.Name;
 
@@ -23,8 +23,6 @@ namespace XRoadLib.Serialization.Mapping
         {
             this.serializerCache = serializerCache;
             this.typeDefinition = typeDefinition;
-
-            IsAnonymous = typeDefinition.IsAnonymous;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)

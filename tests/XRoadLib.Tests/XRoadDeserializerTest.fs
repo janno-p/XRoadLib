@@ -4,8 +4,6 @@ open FsUnit
 open NUnit.Framework
 open System
 open System.IO
-open System.Linq
-open System.Reflection
 open System.Text
 open System.Xml
 open XRoadLib
@@ -18,7 +16,7 @@ open XRoadLib.Tests.Contract
 [<TestFixture>]
 module XRoadDeserializerTest =
     let [<Literal>] dtoVersion = 3u
-    let serializerCache = SerializerCache(typeof<Class1>.Assembly, Globals.XRoadProtocol20)
+    let serializerCache = SerializerCache(Globals.XRoadProtocol20, typeof<Class1>.Assembly, Nullable(3u))
 
     let serviceMap = serializerCache.GetServiceMap("Service1")
 

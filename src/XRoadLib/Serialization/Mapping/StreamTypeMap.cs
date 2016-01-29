@@ -9,11 +9,13 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class StreamTypeMap : TypeMap<XRoadAttachment>
     {
-        public override XName QualifiedName { get; }
+        private readonly XName qualifiedName;
+
+        public override XName QualifiedName => qualifiedName;
 
         public StreamTypeMap(XName qualifiedName)
         {
-            QualifiedName = qualifiedName;
+            this.qualifiedName = qualifiedName;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
