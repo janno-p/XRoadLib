@@ -66,8 +66,6 @@
     <Compile Include="Globals.fs" />
     <Compile Include="Mapping\DateTest.fs" />
     <Compile Include="Mapping\DateTimeTest.fs" />
-    <Compile Include="AssemblyExtensionsTest.fs" />
-    <Compile Include="NamespaceHelperTest.fs" />
     <Compile Include="ProducerDefinitionTest.fs" />
     <Compile Include="SchemaBuilderTest.fs" />
     <Compile Include="SoapFaultCodesTest.fs" />

@@ -19,6 +19,21 @@ namespace XRoadLib.Schema
         {
             XName qualifiedName = null;
 
+            if (type.IsArray)
+            {
+                var collectionDefinition = new CollectionDefinition
+                {
+                    ItemDefinition = ConvertType(type.GetElementType(), protocol),
+                    RuntimeInfo = type,
+                    IsAnonymous = true,
+                    CanHoldNullValues = true
+                };
+
+                protocol.ExportType(collectionDefinition);
+
+                return collectionDefinition;
+            }
+
             var typeAttribute = type.GetSingleAttribute<XmlTypeAttribute>();
             var isAnonymous = typeAttribute != null && typeAttribute.AnonymousType;
 
@@ -28,15 +43,20 @@ namespace XRoadLib.Schema
                 qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(normalizedType.Name),
                                           typeAttribute?.Namespace ?? protocol.ProducerNamespace);
 
-            return new TypeDefinition
+            var typeDefinition = new TypeDefinition
             {
                 ContentComparer = PropertyComparer.Instance,
                 HasStrictContentOrder = true,
                 IsAnonymous = isAnonymous,
                 Name = qualifiedName,
                 RuntimeInfo = normalizedType,
-                State = DefinitionState.Default
+                State = DefinitionState.Default,
+                CanHoldNullValues = type.IsClass || normalizedType != type
             };
+
+            protocol.ExportType(typeDefinition);
+
+            return typeDefinition;
         }
 
         private static void AddContentDefinition<T>(ContentDefinition<T> contentDefinition, ISerializerCache serializerCache, IDictionary<Type, ITypeMap> partialTypeMaps)
@@ -91,13 +111,15 @@ namespace XRoadLib.Schema
             contentDefinition.Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault());
 
             contentDefinition.TypeMap = GetPropertyTypeMap(customTypeName,
-                                                           contentDefinition.RuntimeType.IsArray ? contentDefinition.RuntimeType.GetElementType()
-                                                                                                 : contentDefinition.RuntimeType,
+                                                           contentDefinition.RuntimeType,
                                                            contentDefinition.RuntimeType.IsArray,
                                                            partialTypeMaps,
                                                            serializerCache);
 
             contentDefinition.UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType);
+
+            if (!contentDefinition.RuntimeType.IsArray)
+                return;
 
             contentDefinition.ArrayItemDefinition = new ArrayItemDefinition
             {
@@ -127,11 +149,11 @@ namespace XRoadLib.Schema
                 : serializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray);
         }
 
-        public static OperationDefinition ConvertOperation(MethodInfo methodInfo, XName qualifiedName)
+        public static OperationDefinition ConvertOperation(MethodInfo methodInfo, XName qualifiedName, IProtocol protocol)
         {
-            var multipartAttribute = methodInfo.GetSingleAttribute<XRoadAttachmentAttribute>();
+            var multipartAttribute = methodInfo?.GetSingleAttribute<XRoadAttachmentAttribute>();
 
-            return new OperationDefinition
+            var operationDefinition = new OperationDefinition
             {
                 Name = qualifiedName,
                 HasStrictContentOrder = true,
@@ -148,6 +170,10 @@ namespace XRoadLib.Schema
                 RequestMessageName = qualifiedName.LocalName,
                 ResponseMessageName = $"{qualifiedName.LocalName}Response"
             };
+
+            protocol.ExportOperation(operationDefinition);
+
+            return operationDefinition;
         }
 
         public static ParameterDefinition ConvertParameter(ParameterInfo parameterInfo, OperationDefinition ownerDefinition, ISerializerCache serializerCache)

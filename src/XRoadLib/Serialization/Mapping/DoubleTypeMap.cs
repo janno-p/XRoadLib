@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Xml;
-using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public class DoubleTypeMap : TypeMap<double>
     {
-        public static ITypeMap Instance { get; } = new DoubleTypeMap();
-
-        public override XName QualifiedName { get; } = XName.Get("double", NamespaceConstants.XSD);
-
-        private DoubleTypeMap()
+        public DoubleTypeMap(TypeDefinition typeDefinition)
+            : base(typeDefinition)
         { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -26,7 +23,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
 
             writer.WriteValue(value);
         }

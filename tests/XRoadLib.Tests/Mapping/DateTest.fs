@@ -30,7 +30,8 @@ module MappingTestHelpers =
 
 [<TestFixture>]
 module DateTest =
-    let deserializeValue x = DateTypeMap.Instance |> deserializeValue x
+    let dateTypeMap = DateTypeMap(XRoadLib.Schema.TypeDefinition.SimpleTypeDefinition<DateTime>("date"))
+    let deserializeValue x = dateTypeMap |> deserializeValue x
 
     [<Test>]
     let ``can deserialize plain date`` () =

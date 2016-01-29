@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Xml;
-using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class FloatTypeMap : TypeMap<float>
+    public class Int64TypeMap : TypeMap<long>
     {
-        public static ITypeMap Instance { get; } = new FloatTypeMap();
-
-        public override XName QualifiedName { get; } = XName.Get("float", NamespaceConstants.XSD);
-
-        private FloatTypeMap()
+        public Int64TypeMap(TypeDefinition typeDefinition)
+            : base(typeDefinition)
         { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -21,12 +18,12 @@ namespace XRoadLib.Serialization.Mapping
 
             var value = reader.ReadString();
 
-            return string.IsNullOrEmpty(value) ? defaultValue : XmlConvert.ToDouble(value);
+            return string.IsNullOrEmpty(value) ? defaultValue : XmlConvert.ToInt64(value);
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
 
             writer.WriteValue(value);
         }

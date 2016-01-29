@@ -6,12 +6,12 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {
-    public class CustomXRoad31Protocol : XRoad31Protocol
+    public class CustomXRoad20Protocol : XRoad20Protocol
     {
-        public static IProtocol Instance { get; } = new CustomXRoad31Protocol();
+        public static IProtocol Instance { get; } = new CustomXRoad20Protocol();
 
-        private CustomXRoad31Protocol()
-            : base("test-producer", "http://test-producer.x-road.ee/producer/")
+        private CustomXRoad20Protocol()
+            : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer")
         {
             Titles.Add("", "Ilma keeleta palun");
             Titles.Add("en", "XRoadLib test producer");

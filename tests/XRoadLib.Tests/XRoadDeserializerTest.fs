@@ -16,7 +16,7 @@ open XRoadLib.Tests.Contract
 [<TestFixture>]
 module XRoadDeserializerTest =
     let [<Literal>] dtoVersion = 3u
-    let serializerCache = SerializerCache(Globals.XRoadProtocol20, typeof<Class1>.Assembly, Nullable(3u))
+    let serializerCache = Globals.XRoadProtocol31.GetSerializerCache(Nullable(dtoVersion))
 
     let serviceMap = serializerCache.GetServiceMap("Service1")
 
@@ -231,7 +231,7 @@ module XRoadDeserializerTest =
                                 </param3>
                              </keha>"""
 
-        let contentXml = """<keha xmlns:tns="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        let contentXml = """<keha xmlns:tns="http://test-producer.x-road.ee/producer/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                                 <param1>
                                     <Property1>123</Property1>
                                     <Property3>some value</Property3>
@@ -292,7 +292,7 @@ module XRoadDeserializerTest =
                             </keha>"""
 
         TestDelegate(fun _ -> deserializeRequest templateXml contentXml |> ignore)
-        |> should (throwWithMessage "The type 'Subject' is abstract, type attribute is required to specify target type.") typeof<XRoadException>
+        |> should (throwWithMessage "The type '{http://test-producer.x-road.ee/producer/}Subject' is abstract, type attribute is required to specify target type.") typeof<XRoadException>
 
     [<Test>]
     let ``can deserialize abstract type when null`` () =
@@ -332,7 +332,7 @@ module XRoadDeserializerTest =
                                 <param3 />
                              </keha>"""
 
-        let contentXml = """<keha xmlns:tns="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        let contentXml = """<keha xmlns:tns="http://test-producer.x-road.ee/producer/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                                 <param1 xsi:type="tns:InheritsParamType1">
                                     <Property1>467</Property1>
                                     <Property3>hello</Property3>

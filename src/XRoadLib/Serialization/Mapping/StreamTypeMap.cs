@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
@@ -9,14 +8,9 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class StreamTypeMap : TypeMap<XRoadAttachment>
     {
-        private readonly XName qualifiedName;
-
-        public override XName QualifiedName => qualifiedName;
-
-        public StreamTypeMap(XName qualifiedName)
-        {
-            this.qualifiedName = qualifiedName;
-        }
+        public StreamTypeMap(TypeDefinition typeDefinition)
+            : base(typeDefinition)
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
@@ -59,7 +53,7 @@ namespace XRoadLib.Serialization.Mapping
             var attachment = new XRoadAttachment((Stream)value);
             context.AttachmentManager.AllAttachments.Add(attachment);
 
-            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
 
             if (context.BinaryMode == BinaryMode.Inline)
             {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Extensions;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
@@ -11,17 +11,13 @@ namespace XRoadLib.Serialization.Mapping
     {
         private readonly ISerializerCache serializerCache;
 
-        private readonly XName elementQualifiedName;
-        private readonly Type elementType = typeof(T);
+        private readonly ITypeMap elementTypeMap;
 
-        public override bool IsSimpleType => false;
-
-        public override XName QualifiedName { get { throw new NotImplementedException(); } }
-
-        public ArrayTypeMap(ISerializerCache serializerCache, XName elementQualifiedName = null)
+        public ArrayTypeMap(ISerializerCache serializerCache, CollectionDefinition collectionDefinition)
+            : base(collectionDefinition)
         {
             this.serializerCache = serializerCache;
-            this.elementQualifiedName = elementQualifiedName ?? serializerCache.GetXmlTypeName(typeof(T));
+            elementTypeMap = collectionDefinition.ItemDefinition.TypeMap;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -37,7 +33,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.NodeType != XmlNodeType.Element || reader.IsNilElement())
                     continue;
 
-                var typeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? serializerCache.GetTypeMap(elementType);
+                var typeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? elementTypeMap;
 
                 var value = typeMap.Deserialize(reader, templateNode, context);
                 if (value != null)
@@ -51,7 +47,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             var valueArray = (Array)value;
 
-            context.Protocol.Style.WriteExplicitArrayType(writer, elementQualifiedName, valueArray.Length);
+            context.Protocol.Style.WriteExplicitArrayType(writer, elementTypeMap.TypeDefinition.Name, valueArray.Length);
 
             foreach (var element in valueArray)
             {
@@ -60,7 +56,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (element != null)
                 {
                     var typeMap = serializerCache.GetTypeMap(element.GetType());
-                    typeMap.Serialize(writer, templateNode, element, elementType, context);
+                    typeMap.Serialize(writer, templateNode, element, elementTypeMap.TypeDefinition.RuntimeInfo, context);
                 }
                 else writer.WriteNilAttribute();
 

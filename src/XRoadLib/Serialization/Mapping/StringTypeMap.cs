@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Xml;
-using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public class StringTypeMap : TypeMap<string>
     {
-        public static ITypeMap Instance { get; } = new StringTypeMap();
-
-        private readonly XName qualifiedName;
-
-        public override XName QualifiedName => qualifiedName;
-
-        public StringTypeMap(XName qualifiedName = null)
-        {
-            this.qualifiedName = qualifiedName ?? XName.Get("string", NamespaceConstants.XSD);
-        }
+        public StringTypeMap(TypeDefinition typeDefinition)
+            : base(typeDefinition)
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
@@ -30,7 +23,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
 
             var valueString = value.ToString();
 

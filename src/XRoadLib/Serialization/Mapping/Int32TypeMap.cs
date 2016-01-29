@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Xml;
-using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class LongTypeMap : TypeMap<long>
+    public class Int32TypeMap : TypeMap<int>
     {
-        public static ITypeMap Instance { get; } = new LongTypeMap();
-
-        public override XName QualifiedName { get; } = XName.Get("long", NamespaceConstants.XSD);
-
-        private LongTypeMap()
+        public Int32TypeMap(TypeDefinition typeDefinition)
+            : base(typeDefinition)
         { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -21,12 +18,12 @@ namespace XRoadLib.Serialization.Mapping
 
             var value = reader.ReadString();
 
-            return string.IsNullOrEmpty(value) ? defaultValue : XmlConvert.ToInt64(value);
+            return string.IsNullOrEmpty(value) ? defaultValue : XmlConvert.ToInt32(value);
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
 
             writer.WriteValue(value);
         }

@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Data.SqlTypes;
 using System.Xml;
-using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public class DateTimeTypeMap : TypeMap<DateTime>
     {
-        public static ITypeMap Instance { get; } = new DateTimeTypeMap();
-
-        public override XName QualifiedName { get; } = XName.Get("dateTime", NamespaceConstants.XSD);
-
-        private DateTimeTypeMap()
+        public DateTimeTypeMap(TypeDefinition typeDefinition)
+            : base(typeDefinition)
         { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -41,7 +38,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
 
             writer.WriteValue(value);
         }

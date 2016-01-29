@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +47,7 @@
     <Compile Include="Attributes\XRoadAddContractAttribute.cs" />
     <Compile Include="Attributes\XRoadAttachmentAttribute.cs" />
     <Compile Include="Schema\ArrayItemDefinition.cs" />
+    <Compile Include="Schema\CollectionDefinition.cs" />
     <Compile Include="Schema\ContentComparer.cs" />
     <Compile Include="Schema\Definition.cs" />
     <Compile Include="Schema\DefinitionState.cs" />
@@ -73,7 +75,8 @@
     <Compile Include="Schema\ParameterDefinition.cs" />
     <Compile Include="Schema\PropertyDefinition.cs" />
     <Compile Include="Schema\TypeDefinition.cs" />
-    <Compile Include="Serialization\Mapping\VoidTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\Int16TypeMap.cs" />
+    <Compile Include="Serialization\Mapping\IntegerTypeMap.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />
     <Compile Include="Soap\ISoapFault.cs" />
@@ -133,11 +136,11 @@
     <Compile Include="Serialization\Mapping\DecimalTypeMap.cs" />
     <Compile Include="Serialization\SerializerCache.cs" />
     <Compile Include="Serialization\Mapping\DoubleTypeMap.cs" />
-    <Compile Include="Serialization\Mapping\FloatTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\SingleTypeMap.cs" />
     <Compile Include="Serialization\Mapping\IAbstractTypeMap.cs" />
-    <Compile Include="Serialization\Mapping\IntegerTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\Int32TypeMap.cs" />
     <Compile Include="Serialization\Mapping\ITypeMap.cs" />
-    <Compile Include="Serialization\Mapping\LongTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\Int64TypeMap.cs" />
     <Compile Include="Serialization\Mapping\StringTypeMap.cs" />
     <Compile Include="Serialization\Mapping\TypeMap.cs" />
     <Compile Include="Serialization\Template\IXmlTemplate.cs" />

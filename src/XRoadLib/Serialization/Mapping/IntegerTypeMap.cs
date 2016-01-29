@@ -1,22 +1,16 @@
 ﻿using System;
+using System.Numerics;
 using System.Xml;
-using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class IntegerTypeMap : TypeMap<int>
+    public class IntegerTypeMap : TypeMap<BigInteger>
     {
-        public static ITypeMap Instance { get; } = new IntegerTypeMap();
-
-        private readonly XName qualifiedName;
-
-        public override XName QualifiedName => qualifiedName;
-
-        public IntegerTypeMap(XName qualifiedName = null)
-        {
-            this.qualifiedName = qualifiedName ?? XName.Get("int", NamespaceConstants.XSD);
-        }
+        public IntegerTypeMap(TypeDefinition typeDefinition)
+            : base(typeDefinition)
+        { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
@@ -25,14 +19,14 @@ namespace XRoadLib.Serialization.Mapping
 
             var value = reader.ReadString();
 
-            return string.IsNullOrEmpty(value) ? defaultValue : XmlConvert.ToInt32(value);
+            return string.IsNullOrEmpty(value) ? defaultValue : new BigInteger(XmlConvert.ToDecimal(value));
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
 
-            writer.WriteValue(value);
+            writer.WriteValue(value.ToString());
         }
     }
 }

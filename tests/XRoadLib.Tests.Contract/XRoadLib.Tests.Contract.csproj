@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Configuration\CustomXRoad20Protocol.cs" />
     <Compile Include="Configuration\CustomXRoad31Protocol.cs" />
     <Compile Include="DateTestDto.cs" />
     <Compile Include="InheritsParamType1.cs" />

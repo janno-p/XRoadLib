@@ -11,7 +11,8 @@ open XRoadLib.Serialization.Mapping
 
 [<TestFixture>]
 module DateTimeTest =
-    let deserializeValue x = DateTimeTypeMap.Instance |> deserializeValue x
+    let dateTimeTypeMap = DateTimeTypeMap(XRoadLib.Schema.TypeDefinition.SimpleTypeDefinition<DateTime>("dateTime"))
+    let deserializeValue x = dateTimeTypeMap |> deserializeValue x
 
     [<Test>]
     let ``can deserialize date part only`` () =

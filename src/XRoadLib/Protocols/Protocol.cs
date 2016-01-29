@@ -19,7 +19,8 @@ namespace XRoadLib.Protocols
     {
         protected readonly XmlDocument document = new XmlDocument();
 
-        protected readonly IDictionary<uint, ISerializerCache> serializerCaches = new Dictionary<uint, ISerializerCache>();
+        private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
+        private ISerializerCache serializerCache;
 
         public abstract string Name { get; }
 
@@ -102,8 +103,6 @@ namespace XRoadLib.Protocols
             if (operationDefinition.Version == 0)
                 return null;
 
-            var document = new XmlDocument();
-
             var addressElement = document.CreateElement(XRoadPrefix, "version", XRoadNamespace);
             addressElement.InnerText = $"v{operationDefinition.Version}";
             return addressElement;
@@ -126,16 +125,37 @@ namespace XRoadLib.Protocols
 
         public void SetContractAssembly(Assembly assembly, params uint[] supportedVersions)
         {
-            if (supportedVersions == null || supportedVersions.Length == 0)
-                serializerCaches.Add(0u, new SerializerCache(this, assembly));
+            if (serializerCache != null || versioningSerializerCaches != null)
+                throw new Exception($"This protocol instance (message protocol version `{Name}`) already has contract configured.");
 
+            if (supportedVersions == null || supportedVersions.Length == 0)
+            {
+                serializerCache = new SerializerCache(this, assembly);
+                return;
+            }
+
+            versioningSerializerCaches = new Dictionary<uint, ISerializerCache>();
             foreach (var dtoVersion in supportedVersions)
-                serializerCaches.Add(dtoVersion, new SerializerCache(this, assembly, dtoVersion));
+                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, assembly, dtoVersion));
         }
 
         public ISerializerCache GetSerializerCache(uint? version = null)
         {
-            return serializerCaches[version.GetValueOrDefault()];
+            if (!version.HasValue)
+            {
+                if (serializerCache != null)
+                    return serializerCache;
+                throw new ArgumentNullException(nameof(version), $"This protocol instance (message protocol version `{Name}`) supports multiple versions.");
+            }
+
+            if (versioningSerializerCaches == null)
+                throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) doest not support multiple versions.", nameof(version));
+
+            ISerializerCache versioningSerializerCache;
+            if (versioningSerializerCaches.TryGetValue(version.Value, out versioningSerializerCache))
+                return versioningSerializerCache;
+
+            throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
         }
     }
 }

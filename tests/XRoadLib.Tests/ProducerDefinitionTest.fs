@@ -79,13 +79,13 @@ module ProducerDefinitionTest =
         address |> should not' (be Null)
         address.IsEmpty |> should equal true
         address.Attributes().Count() |> should equal 1
-        address.Attribute(xn "producer") |> attributeValueShouldEqual "test"
+        address.Attribute(xn "producer") |> attributeValueShouldEqual "test-producer"
 
         port.Elements(soap "address").Single().Attribute(xn "location") |> attributeValueShouldEqual "http://TURVASERVER/cgi-bin/consumer_proxy"
 
     [<Test>]
     let ``should define service location if given`` () =
-        let url = "http://securityserveruri"
+        let url = "http://TURVASERVER/cgi-bin/consumer_proxy"
         let definition = ProducerDefinition(Globals.XRoadProtocol31, contractAssembly, Nullable(1u))
         let doc = definition |> getDocument
         let port = shouldMatchInCommonParts doc xrd

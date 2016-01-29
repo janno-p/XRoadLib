@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
@@ -10,13 +9,14 @@ namespace XRoadLib.Serialization.Mapping
     public abstract class TypeMap<T> : ITypeMap
     {
         protected readonly T defaultValue = default(T);
-        protected readonly Type runtimeType = typeof(T);
 
-        public Type RuntimeType => runtimeType;
-        public virtual bool IsSimpleType => true;
-        public virtual bool IsAnonymous => false;
+        public TypeDefinition TypeDefinition { get; }
 
-        public abstract XName QualifiedName { get; }
+        protected TypeMap(TypeDefinition typeDefinition)
+        {
+            TypeDefinition = typeDefinition;
+            TypeDefinition.TypeMap = this;
+        }
 
         public abstract object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);
 

@@ -34,10 +34,10 @@ namespace XRoadLib.Serialization.Mapping
             }
 
             string typeAttribute;
-            if (propertyDefinition.TypeMap.IsAnonymous && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
+            if (propertyDefinition.TypeMap.TypeDefinition.IsAnonymous && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
                 throw XRoadException.InvalidQuery("Expected anonymous type, but `{0}` was given.", typeAttribute);
 
-            var concreteTypeMap = propertyDefinition.TypeMap.IsAnonymous || propertyDefinition.TypeMap.IsSimpleType
+            var concreteTypeMap = propertyDefinition.TypeMap.TypeDefinition.IsAnonymous || propertyDefinition.TypeMap.TypeDefinition.IsSimpleType
                 ? propertyDefinition.TypeMap
                 : (serializerCache.GetTypeMapFromXsiType(reader) ?? propertyDefinition.TypeMap);
 
@@ -65,11 +65,11 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteNilAttribute();
             else
             {
-                var concreteTypeMap = propertyDefinition.TypeMap.IsAnonymous || propertyDefinition.TypeMap.IsSimpleType
+                var concreteTypeMap = propertyDefinition.TypeMap.TypeDefinition.IsAnonymous || propertyDefinition.TypeMap.TypeDefinition.IsSimpleType
                     ? propertyDefinition.TypeMap
                     : serializerCache.GetTypeMap(propertyValue.GetType());
 
-                concreteTypeMap.Serialize(writer, templateNode, propertyValue, propertyDefinition.TypeMap.RuntimeType, context);
+                concreteTypeMap.Serialize(writer, templateNode, propertyValue, propertyDefinition.TypeMap.TypeDefinition.RuntimeInfo, context);
             }
 
             writer.WriteEndElement();

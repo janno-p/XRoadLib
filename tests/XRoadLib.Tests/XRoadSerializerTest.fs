@@ -109,7 +109,7 @@ module XRoadSerializerTest =
     [<Test>]
     let ``can serialize short value`` () =
         445s
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:int" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">445</keha>"""
+        |> shouldSerializeTo """<keha d1p1:type="d1p2:short" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">445</keha>"""
 
     [<Test>]
     let ``can serialize long value`` () =

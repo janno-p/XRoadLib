@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Xml;
-using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public class BooleanTypeMap : TypeMap<bool>
     {
-        public static ITypeMap Instance { get; } = new BooleanTypeMap();
-
-        public override XName QualifiedName { get; } = XName.Get("boolean", NamespaceConstants.XSD);
-
-        private BooleanTypeMap()
+        public BooleanTypeMap(TypeDefinition typeDefinition)
+            : base(typeDefinition)
         { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -26,7 +23,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, QualifiedName);
+            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
 
             writer.WriteValue(value);
         }

@@ -100,8 +100,6 @@ namespace XRoadLib.Protocols.Description
         {
             foreach (var typeDefinition in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable()).Select(type => MetaDataConverter.ConvertType(type, protocol)))
             {
-                protocol.ExportType(typeDefinition);
-
                 if (typeDefinition.IsAnonymous || typeDefinition.Name == null || typeDefinition.State != DefinitionState.Default)
                     continue;
 
@@ -115,10 +113,8 @@ namespace XRoadLib.Protocols.Description
 
         private void CollectOperations()
         {
-            foreach (var operationDefinition in serviceContracts.SelectMany(x => x.Value.Select(o => MetaDataConverter.ConvertOperation(x.Key, XName.Get(o.Key, protocol.ProducerNamespace)))))
+            foreach (var operationDefinition in serviceContracts.SelectMany(x => x.Value.Select(o => MetaDataConverter.ConvertOperation(x.Key, XName.Get(o.Key, protocol.ProducerNamespace), protocol))))
             {
-                protocol.ExportOperation(operationDefinition);
-
                 if (operationDefinition.State != DefinitionState.Default)
                     continue;
             }
@@ -202,14 +198,14 @@ namespace XRoadLib.Protocols.Description
             schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
         }
 
-        private void SetSchemaElementType(XmlSchemaElement schemaElement, Type type, bool useXop, ITypeMap typeMap, string targetNamespace)
+        private void SetSchemaElementType(XmlSchemaElement schemaElement, Type type, bool useXop, TypeDefinition typeDefinition, string targetNamespace)
         {
             if (typeof(Stream).IsAssignableFrom(type) && useXop)
                 AddBinaryAttribute(schemaElement);
 
-            if (!typeMap.IsAnonymous)
+            if (!typeDefinition.IsAnonymous)
             {
-                schemaElement.SchemaTypeName = new XmlQualifiedName(typeMap.QualifiedName.LocalName, typeMap.QualifiedName.NamespaceName);
+                schemaElement.SchemaTypeName = new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
                 return;
             }
 
@@ -222,7 +218,7 @@ namespace XRoadLib.Protocols.Description
             else
             {
                 schemaType = new XmlSchemaComplexType();
-                //AddComplexTypeContent((XmlSchemaComplexType)schemaType, definition.TypeDefinition, targetNamespace);
+                AddComplexTypeContent((XmlSchemaComplexType)schemaType, typeDefinition, targetNamespace);
             }
             schemaType.Annotation = CreateSchemaAnnotation(type);
 
@@ -262,7 +258,7 @@ namespace XRoadLib.Protocols.Description
 
                 schemaElement.MaxOccursString = "unbounded";
 
-                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap, targetNamespace);
+                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap.TypeDefinition, targetNamespace);
 
                 return schemaElement;
             }
@@ -274,7 +270,7 @@ namespace XRoadLib.Protocols.Description
 
             if (propertyDefinition.ArrayItemDefinition == null)
             {
-                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType, propertyDefinition.UseXop, propertyDefinition.TypeMap, targetNamespace);
+                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType, propertyDefinition.UseXop, propertyDefinition.TypeMap.TypeDefinition, targetNamespace);
                 return schemaElement;
             }
 
@@ -289,7 +285,7 @@ namespace XRoadLib.Protocols.Description
 
             itemElement.IsNillable = propertyDefinition.ArrayItemDefinition.IsNullable;
 
-            SetSchemaElementType(itemElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap, targetNamespace);
+            SetSchemaElementType(itemElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap.TypeDefinition, targetNamespace);
 
             protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, requiredImports);
 

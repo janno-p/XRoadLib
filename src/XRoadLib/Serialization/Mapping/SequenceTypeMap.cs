@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -13,16 +12,11 @@ namespace XRoadLib.Serialization.Mapping
     {
         private readonly ISerializerCache serializerCache;
         private readonly IList<IPropertyMap> propertyMaps = new List<IPropertyMap>();
-        private readonly TypeDefinition typeDefinition;
-
-        public override bool IsAnonymous => typeDefinition.IsAnonymous;
-        public override bool IsSimpleType => false;
-        public override XName QualifiedName => typeDefinition.Name;
 
         public SequenceTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
+            : base(typeDefinition)
         {
             this.serializerCache = serializerCache;
-            this.typeDefinition = typeDefinition;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -63,12 +57,12 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.LocalName == properties.Current.PropertyName)
                     return;
 
-            throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", typeDefinition.Name, reader.LocalName);
+            throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", TypeDefinition.Name, reader.LocalName);
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteType(writer, typeDefinition, expectedType);
+            context.Protocol.Style.WriteType(writer, TypeDefinition, expectedType);
 
             foreach (var propertyMap in propertyMaps)
             {
