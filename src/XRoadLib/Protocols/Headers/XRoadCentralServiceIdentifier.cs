@@ -8,13 +8,13 @@ namespace XRoadLib.Protocols.Headers
     [XmlType("XRoadCentralServiceIdentifierType", Namespace = NamespaceConstants.XROAD_V4_ID)]
     public class XRoadCentralServiceIdentifier : IXRoadIdentifier
     {
-        public string XRoadInstance { get; internal set; }
+        public string XRoadInstance { get; set; }
         string IXRoadIdentifier.MemberClass { get { throw new NotImplementedException(); } }
         string IXRoadIdentifier.MemberCode { get { throw new NotImplementedException(); } }
         string IXRoadIdentifier.SubsystemCode { get { throw new NotImplementedException(); } }
-        public string ServiceCode { get; internal set; }
+        public string ServiceCode { get; set; }
         string IXRoadIdentifier.ServiceVersion { get { throw new NotImplementedException(); } }
-        public XRoadObjectType ObjectType { get; internal set; }
+        public XRoadObjectType ObjectType { get; set; }
 
         public override string ToString()
         {

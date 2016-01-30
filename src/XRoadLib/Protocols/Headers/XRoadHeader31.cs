@@ -8,16 +8,16 @@ namespace XRoadLib.Protocols.Headers
         public string Producer => Service.SubsystemCode;
         string IXRoadHeader31.Service => Service.ToFullName();
 
-        public string Unit { get; private set; }
-        public string Position { get; private set; }
-        public string UserName { get; private set; }
-        public bool Async { get; private set; }
-        public string Authenticator { get; private set; }
-        public string Paid { get; private set; }
-        public string Encrypt { get; private set; }
-        public string EncryptCert { get; private set; }
-        public string Encrypted { get; private set; }
-        public string EncryptedCert { get; private set; }
+        public string Unit { get; set; }
+        public string Position { get; set; }
+        public string UserName { get; set; }
+        public bool Async { get; set; }
+        public string Authenticator { get; set; }
+        public string Paid { get; set; }
+        public string Encrypt { get; set; }
+        public string EncryptCert { get; set; }
+        public string Encrypted { get; set; }
+        public string EncryptedCert { get; set; }
 
         public override void SetHeaderValue(XmlReader reader)
         {

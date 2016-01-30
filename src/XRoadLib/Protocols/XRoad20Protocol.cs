@@ -30,6 +30,30 @@ namespace XRoadLib.Protocols
             AddMandatoryHeaderElement(x => x.AmetnikNimi);
         }
 
+        protected override void WriteSoapHeader(XmlWriter writer, XRoadHeader20 header)
+        {
+            if (writer.LookupPrefix(NamespaceConstants.XTEE) == null)
+                writer.WriteAttributeString("xmlns", PrefixConstants.XTEE, NamespaceConstants.XMLNS, NamespaceConstants.XTEE);
+
+            WriteHeaderElement(writer, "asutus", header.Asutus);
+            WriteHeaderElement(writer, "andmekogu", header.Andmekogu);
+            WriteHeaderElement(writer, "isikukood", header.Isikukood);
+            WriteHeaderElement(writer, "toimik", header.Toimik);
+            WriteHeaderElement(writer, "nimi", header.Nimi);
+            WriteHeaderElement(writer, "ametnik", header.Ametnik);
+            WriteHeaderElement(writer, "id", header.Id);
+            WriteHeaderElement(writer, "allasutus", header.Allasutus);
+            WriteHeaderElement(writer, "amet", header.Amet);
+            WriteHeaderElement(writer, "ametniknimi", header.AmetnikNimi);
+            WriteHeaderElement(writer, "asynkroonne", header.Asünkroonne.ToString());
+            WriteHeaderElement(writer, "autentija", header.Autentija);
+            WriteHeaderElement(writer, "makstud", header.Makstud);
+            WriteHeaderElement(writer, "salastada", header.Salastada);
+            WriteHeaderElement(writer, "salastada_sertifikaadiga", header.SalastadaSertifikaadiga);
+            WriteHeaderElement(writer, "salastatud", header.Salastatud);
+            WriteHeaderElement(writer, "salastatud_sertifikaadiga", header.SalastatudSertifikaadiga);
+        }
+
         public override bool IsHeaderNamespace(string ns)
         {
             return NamespaceConstants.XTEE.Equals(ns);

@@ -79,6 +79,21 @@ namespace XRoadLib.Protocols
             return new THeader();
         }
 
+        public void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null)
+        {
+            writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
+
+            if (header is THeader)
+                WriteSoapHeader(writer, (THeader)header);
+
+            foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
+                additionalHeader.WriteTo(writer);
+
+            writer.WriteEndElement();
+        }
+
+        protected abstract void WriteSoapHeader(XmlWriter writer, THeader header);
+
         public abstract bool IsHeaderNamespace(string ns);
 
         public virtual bool IsDefinedByEnvelope(XmlReader reader)
@@ -151,6 +166,16 @@ namespace XRoadLib.Protocols
                 return versioningSerializerCache;
 
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
+        }
+
+        protected void WriteHeaderElement(XmlWriter writer, string name, string value)
+        {
+            if (!MandatoryHeaders.Contains(name) && string.IsNullOrWhiteSpace(value))
+                return;
+
+            writer.WriteStartElement(name, XRoadNamespace);
+            writer.WriteValue(value.GetValueOrDefault(""));
+            writer.WriteEndElement();
         }
     }
 }

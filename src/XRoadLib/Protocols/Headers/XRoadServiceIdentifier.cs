@@ -11,11 +11,11 @@ namespace XRoadLib.Protocols.Headers
     {
         private string serviceVersion;
 
-        public string XRoadInstance { get; internal set; }
-        public string MemberClass { get; internal set; }
-        public string MemberCode { get; internal set; }
-        public string SubsystemCode { get; internal set; } // Optional
-        public string ServiceCode { get; internal set; }
+        public string XRoadInstance { get; set; }
+        public string MemberClass { get; set; }
+        public string MemberCode { get; set; }
+        public string SubsystemCode { get; set; } // Optional
+        public string ServiceCode { get; set; }
 
         // Optional
         public string ServiceVersion
@@ -28,7 +28,7 @@ namespace XRoadLib.Protocols.Headers
             }
         }
 
-        public XRoadObjectType ObjectType { get; internal set; }
+        public XRoadObjectType ObjectType { get; set; }
 
         public uint? Version { get; private set; }
 

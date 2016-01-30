@@ -39,6 +39,8 @@ namespace XRoadLib.Protocols
 
         IXRoadHeader CreateHeader();
 
+        void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null);
+
         void WriteServiceDescription(Stream outputStream, uint? version = null);
 
         XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition);

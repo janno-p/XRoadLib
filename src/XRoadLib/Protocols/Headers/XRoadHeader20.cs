@@ -10,17 +10,17 @@ namespace XRoadLib.Protocols.Headers
         public string Toimik => Issue;
         public string Nimi => Service?.ToFullName();
 
-        public string Ametnik { get; private set; }
-        public string Allasutus { get; private set; }
-        public string Amet { get; private set; }
-        public string AmetnikNimi { get; private set; }
-        public bool Asünkroonne { get; private set; }
-        public string Autentija { get; private set; }
-        public string Makstud { get; private set; }
-        public string Salastada { get; private set; }
-        public string SalastadaSertifikaadiga { get; private set; }
-        public string Salastatud { get; private set; }
-        public string SalastatudSertifikaadiga { get; private set; }
+        public string Ametnik { get; set; }
+        public string Allasutus { get; set; }
+        public string Amet { get; set; }
+        public string AmetnikNimi { get; set; }
+        public bool Asünkroonne { get; set; }
+        public string Autentija { get; set; }
+        public string Makstud { get; set; }
+        public string Salastada { get; set; }
+        public string SalastadaSertifikaadiga { get; set; }
+        public string Salastatud { get; set; }
+        public string SalastatudSertifikaadiga { get; set; }
 
         public override void SetHeaderValue(XmlReader reader)
         {

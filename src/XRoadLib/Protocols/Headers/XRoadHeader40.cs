@@ -5,8 +5,8 @@ namespace XRoadLib.Protocols.Headers
 {
     public class XRoadHeader40 : XRoadHeaderBase, IXRoadHeader40
     {
-        public XRoadCentralServiceIdentifier CentralService { get; private set; }
-        public XRoadRepresentedParty RepresentedParty { get; private set; }
+        public XRoadCentralServiceIdentifier CentralService { get; set; }
+        public XRoadRepresentedParty RepresentedParty { get; set; }
 
         public override void Validate()
         {

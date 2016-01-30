@@ -1,4 +1,7 @@
-﻿using XRoadLib.Protocols.Headers;
+﻿using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Linq;
+using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
 
@@ -23,6 +26,29 @@ namespace XRoadLib.Protocols
             AddMandatoryHeaderElement(x => x.UserId);
             AddMandatoryHeaderElement(x => x.Id);
             AddMandatoryHeaderElement(x => x.UserName);
+        }
+
+        protected override void WriteSoapHeader(XmlWriter writer, XRoadHeader31 header)
+        {
+            if (writer.LookupPrefix(NamespaceConstants.XROAD) == null)
+                writer.WriteAttributeString("xmlns", PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD);
+
+            WriteHeaderElement(writer, "consumer", header.Consumer);
+            WriteHeaderElement(writer, "producer", header.Producer);
+            WriteHeaderElement(writer, "userId", header.UserId);
+            WriteHeaderElement(writer, "issue", header.Issue);
+            WriteHeaderElement(writer, "service", ((IXRoadHeader31)header).Service);
+            WriteHeaderElement(writer, "id", header.Id);
+            WriteHeaderElement(writer, "unit", header.Unit);
+            WriteHeaderElement(writer, "position", header.Position);
+            WriteHeaderElement(writer, "userName", header.UserName);
+            WriteHeaderElement(writer, "async", header.Async.ToString());
+            WriteHeaderElement(writer, "authenticator", header.Authenticator);
+            WriteHeaderElement(writer, "paid", header.Paid);
+            WriteHeaderElement(writer, "encrypt", header.Encrypt);
+            WriteHeaderElement(writer, "encryptCert", header.EncryptCert);
+            WriteHeaderElement(writer, "encrypted", header.Encrypted);
+            WriteHeaderElement(writer, "encryptedCert", header.EncryptedCert);
         }
 
         public override bool IsHeaderNamespace(string ns)
