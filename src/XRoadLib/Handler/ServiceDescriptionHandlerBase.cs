@@ -1,23 +1,16 @@
-﻿using System.Reflection;
-using System.Web;
+﻿using System.Web;
 using XRoadLib.Protocols;
 
 namespace XRoadLib.Handler
 {
     public class ServiceDescriptionHandlerBase : ServiceHandlerBase
     {
-        private readonly Assembly contractAssembly;
-
         protected virtual IProtocol Protocol => null;
-
-        protected ServiceDescriptionHandlerBase(Assembly contractAssembly)
-        {
-            this.contractAssembly = contractAssembly;
-        }
+        protected virtual uint? Version => null;
 
         protected override void HandleRequest(HttpContext httpContext)
         {
-            Protocol.WriteServiceDescription(contractAssembly, httpContext.Response.OutputStream);
+            Protocol.WriteServiceDescription(httpContext.Response.OutputStream, Version);
         }
     }
 }

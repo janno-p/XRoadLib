@@ -45,7 +45,7 @@ namespace XRoadLib.Protocols
 
         IXRoadHeader CreateHeader();
 
-        void WriteServiceDescription(Assembly contractAssembly, Stream outputStream);
+        void WriteServiceDescription(Stream outputStream, uint? version = null);
 
         XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition);
 
@@ -54,6 +54,10 @@ namespace XRoadLib.Protocols
         void SetContractAssembly(Assembly assembly, params uint[] supportedVersions);
 
         ISerializerCache GetSerializerCache(uint? version = null);
+
+        Assembly ContractAssembly { get; }
+
+        IEnumerable<uint> SupportedVersions { get; }
     }
 
     public interface IProtocol<THeader> : IProtocol where THeader : IXRoadHeader

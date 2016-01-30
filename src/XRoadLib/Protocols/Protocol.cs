@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Web.Services.Description;
@@ -22,7 +23,11 @@ namespace XRoadLib.Protocols
         private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
         private ISerializerCache serializerCache;
 
+        public IEnumerable<uint> SupportedVersions => versioningSerializerCaches?.Keys ?? Enumerable.Empty<uint>();
+
         public abstract string Name { get; }
+
+        public Assembly ContractAssembly { get; private set; }
 
         protected abstract string XRoadPrefix { get; }
         protected abstract string XRoadNamespace { get; }
@@ -93,7 +98,7 @@ namespace XRoadLib.Protocols
             return false;
         }
 
-        public void WriteServiceDescription(Assembly contractAssembly, Stream outputStream)
+        public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
             throw new NotImplementedException();
         }
@@ -125,8 +130,10 @@ namespace XRoadLib.Protocols
 
         public void SetContractAssembly(Assembly assembly, params uint[] supportedVersions)
         {
-            if (serializerCache != null || versioningSerializerCaches != null)
+            if (ContractAssembly != null)
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) already has contract configured.");
+
+            ContractAssembly = assembly;
 
             if (supportedVersions == null || supportedVersions.Length == 0)
             {
