@@ -85,7 +85,7 @@ namespace XRoadLib.Handler
 
             try
             {
-                result = InvokeDataMethod(serviceObject, serviceMap.OperationDefinition.RuntimeInfo, parameters);
+                result = InvokeDataMethod(serviceObject, serviceMap.OperationDefinition.MethodInfo, parameters);
             }
             catch (Exception exception)
             {

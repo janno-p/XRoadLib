@@ -7,15 +7,33 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Schema
 {
-    public static class MetaDataConverter
+    public class SchemaExporter : ISchemaExporter
     {
-        public static TypeDefinition ConvertType(Type type, IProtocol protocol)
+        public string ProducerNamespace { get; }
+
+        public SchemaExporter(string producerNamespace)
+        {
+            ProducerNamespace = producerNamespace;
+        }
+
+        public virtual void ExportOperationDefinition(OperationDefinition operationDefinition)
+        { }
+
+        public virtual void ExportParameterDefinition(ParameterDefinition parameterDefinition)
+        { }
+
+        public virtual void ExportPropertyDefinition(PropertyDefinition propertyDefinition)
+        { }
+
+        public virtual void ExportTypeDefinition(TypeDefinition typeDefinition)
+        { }
+
+        public TypeDefinition GetTypeDefinition(Type type)
         {
             XName qualifiedName = null;
 
@@ -23,13 +41,13 @@ namespace XRoadLib.Schema
             {
                 var collectionDefinition = new CollectionDefinition
                 {
-                    ItemDefinition = ConvertType(type.GetElementType(), protocol),
-                    RuntimeInfo = type,
+                    ItemDefinition = GetTypeDefinition(type.GetElementType()),
+                    Type = type,
                     IsAnonymous = true,
                     CanHoldNullValues = true
                 };
 
-                protocol.ExportType(collectionDefinition);
+                ExportTypeDefinition(collectionDefinition);
 
                 return collectionDefinition;
             }
@@ -41,7 +59,7 @@ namespace XRoadLib.Schema
 
             if (!isAnonymous)
                 qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(normalizedType.Name),
-                                          typeAttribute?.Namespace ?? protocol.ProducerNamespace);
+                                          typeAttribute?.Namespace ?? ProducerNamespace);
 
             var typeDefinition = new TypeDefinition
             {
@@ -49,21 +67,18 @@ namespace XRoadLib.Schema
                 HasStrictContentOrder = true,
                 IsAnonymous = isAnonymous,
                 Name = qualifiedName,
-                RuntimeInfo = normalizedType,
+                Type = normalizedType,
                 State = DefinitionState.Default,
                 CanHoldNullValues = type.IsClass || normalizedType != type
             };
 
-            protocol.ExportType(typeDefinition);
+            ExportTypeDefinition(typeDefinition);
 
             return typeDefinition;
         }
 
-        private static void AddContentDefinition<T>(ContentDefinition<T> contentDefinition, ISerializerCache serializerCache, IDictionary<Type, ITypeMap> partialTypeMaps)
-            where T : ICustomAttributeProvider
+        private void AddContentDefinition(ContentDefinition contentDefinition, ICustomAttributeProvider sourceInfo)
         {
-            var sourceInfo = contentDefinition.RuntimeInfo;
-
             var elementAttribute = sourceInfo.GetSingleAttribute<XmlElementAttribute>();
             var arrayAttribute = sourceInfo.GetSingleAttribute<XmlArrayAttribute>();
             var arrayItemAttribute = sourceInfo.GetSingleAttribute<XmlArrayItemAttribute>();
@@ -109,14 +124,8 @@ namespace XRoadLib.Schema
             contentDefinition.Name = qualifiedName;
             contentDefinition.IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault() || (arrayAttribute?.IsNullable).GetValueOrDefault();
             contentDefinition.Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault());
-
-            contentDefinition.TypeMap = GetPropertyTypeMap(customTypeName,
-                                                           contentDefinition.RuntimeType,
-                                                           contentDefinition.RuntimeType.IsArray,
-                                                           partialTypeMaps,
-                                                           serializerCache);
-
             contentDefinition.UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType);
+            contentDefinition.TypeName = customTypeName != null ? XName.Get(customTypeName, NamespaceConstants.XSD) : null;
 
             if (!contentDefinition.RuntimeType.IsArray)
                 return;
@@ -126,18 +135,22 @@ namespace XRoadLib.Schema
                 Name = itemQualifiedName,
                 IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
                 IsOptional = false,
-                TypeMap = GetPropertyTypeMap(customTypeName, contentDefinition.RuntimeType.GetElementType(), false, partialTypeMaps, serializerCache),
-                UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType.GetElementType())
+                UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType.GetElementType()),
+                RuntimeType = contentDefinition.RuntimeType.GetElementType()
             };
         }
 
-        private static PropertyDefinition ConvertProperty(PropertyInfo propertyInfo, TypeDefinition ownerDefinition, ISerializerCache serializerCache, IDictionary<Type, ITypeMap> partialTypeMaps)
+        public PropertyDefinition GetPropertyDefinition(PropertyInfo propertyInfo, TypeDefinition typeDefinition)
         {
-            var propertyDefinition = new PropertyDefinition(ownerDefinition) { RuntimeInfo = propertyInfo };
+            var propertyDefinition = new PropertyDefinition(typeDefinition)
+            {
+                PropertyInfo = propertyInfo,
+                RuntimeType = propertyInfo.PropertyType
+            };
 
-            AddContentDefinition(propertyDefinition, serializerCache, partialTypeMaps);
+            AddContentDefinition(propertyDefinition, propertyInfo);
 
-            serializerCache.Protocol.ExportProperty(propertyDefinition);
+            ExportPropertyDefinition(propertyDefinition);
 
             return propertyDefinition;
         }
@@ -149,7 +162,7 @@ namespace XRoadLib.Schema
                 : serializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray);
         }
 
-        public static OperationDefinition ConvertOperation(MethodInfo methodInfo, XName qualifiedName, IProtocol protocol)
+        public OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XName qualifiedName)
         {
             var multipartAttribute = methodInfo?.GetSingleAttribute<XRoadAttachmentAttribute>();
 
@@ -157,7 +170,7 @@ namespace XRoadLib.Schema
             {
                 Name = qualifiedName,
                 HasStrictContentOrder = true,
-                RuntimeInfo = methodInfo,
+                MethodInfo = methodInfo,
                 RequestBinaryMode = (multipartAttribute?.HasMultipartRequest).GetValueOrDefault() ? BinaryMode.SoapAttachment : BinaryMode.Inline,
                 ResponseBinaryMode = (multipartAttribute?.HasMultipartResponse).GetValueOrDefault() ? BinaryMode.SoapAttachment : BinaryMode.Inline,
                 State = DefinitionState.Default,
@@ -171,48 +184,27 @@ namespace XRoadLib.Schema
                 ResponseMessageName = $"{qualifiedName.LocalName}Response"
             };
 
-            protocol.ExportOperation(operationDefinition);
+            ExportOperationDefinition(operationDefinition);
 
             return operationDefinition;
         }
 
-        public static ParameterDefinition ConvertParameter(ParameterInfo parameterInfo, OperationDefinition ownerDefinition, ISerializerCache serializerCache)
+        public ParameterDefinition GetParameterDefinition(ParameterInfo parameterInfo, OperationDefinition operationDefinition)
         {
-            var parameterDefinition = new ParameterDefinition(ownerDefinition) { RuntimeInfo = parameterInfo };
+            var parameterDefinition = new ParameterDefinition(operationDefinition)
+            {
+                ParameterInfo = parameterInfo,
+                RuntimeType = parameterInfo.ParameterType
+            };
 
-            AddContentDefinition(parameterDefinition, serializerCache, null);
+            AddContentDefinition(parameterDefinition, parameterInfo);
 
             if (parameterDefinition.Name == null)
                 parameterDefinition.Name = XName.Get("response");
 
-            serializerCache.Protocol.ExportParameter(parameterDefinition);
+            ExportParameterDefinition(parameterDefinition);
 
             return parameterDefinition;
-        }
-
-        public static IEnumerable<PropertyDefinition> GetDescriptionProperties(ISerializerCache serializerCache, TypeDefinition typeDefinition)
-        {
-            return typeDefinition.RuntimeInfo
-                                 .GetPropertiesSorted(typeDefinition.ContentComparer, serializerCache.Version, p => ConvertProperty(p, typeDefinition, serializerCache, null))
-                                 .Where(d => d.State == DefinitionState.Default);
-        }
-
-        public static IEnumerable<PropertyDefinition> GetRuntimeProperties(ISerializerCache serializerCache, TypeDefinition typeDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
-        {
-            return typeDefinition.RuntimeInfo
-                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, serializerCache.Version, p => ConvertProperty(p, typeDefinition, serializerCache, partialTypeMaps))
-                                 .Where(d => d.State != DefinitionState.Ignored);
-        }
-
-        private static string GetOperationNameFromMethodInfo(MethodInfo methodInfo)
-        {
-            if (methodInfo.DeclaringType == null)
-                throw new ArgumentException("Declaring type is missing.", nameof(methodInfo));
-
-            if (methodInfo.DeclaringType.Name.StartsWith("I", StringComparison.InvariantCulture) && methodInfo.DeclaringType.Name.Length > 1 && char.IsUpper(methodInfo.DeclaringType.Name[1]))
-                return methodInfo.DeclaringType.Name.Substring(1);
-
-            return methodInfo.DeclaringType.Name;
         }
     }
 }

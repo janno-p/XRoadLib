@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace XRoadLib.Schema
 {
-    public class OperationDefinition : ContainerDefinition<MethodInfo, ParameterDefinition>
+    public class OperationDefinition : ContainerDefinition<ParameterDefinition>
     {
         public XName RequestTypeName { get; set; }
 
@@ -22,5 +22,7 @@ namespace XRoadLib.Schema
         public bool ProhibitRequestPartInResponse { get; set; }
 
         public uint Version { get; set; }
+
+        public MethodInfo MethodInfo { get; set; }
     }
 }

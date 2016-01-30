@@ -72,12 +72,12 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override void InitializeProperties(IEnumerable<PropertyDefinition> propertyDefinitions)
+        public override void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions)
         {
             if (propertyMaps.Count > 0)
                 return;
 
-            foreach (var propertyMap in propertyDefinitions.Select(p => new PropertyMap(serializerCache, p)))
+            foreach (var propertyMap in propertyDefinitions.Select(x => new PropertyMap(serializerCache, x.Item1, x.Item2)))
                 propertyMaps.Add(propertyMap);
         }
     }

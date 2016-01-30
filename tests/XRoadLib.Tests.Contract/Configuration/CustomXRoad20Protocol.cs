@@ -1,17 +1,18 @@
 ﻿using System.Web.Services.Description;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Protocols;
-using XRoadLib.Schema;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {
     public class CustomXRoad20Protocol : XRoad20Protocol
     {
+        private const string producerName = "test-producer";
+        private const string producerNamespace = "http://producers.test-producer.xtee.riik.ee/producer/test-producer";
+
         public static IProtocol Instance { get; } = new CustomXRoad20Protocol();
 
         private CustomXRoad20Protocol()
-            : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer")
+            : base(producerName, producerNamespace, null, new CustomSchemaExporter(producerNamespace))
         {
             Titles.Add("", "Ilma keeleta palun");
             Titles.Add("en", "XRoadLib test producer");
@@ -38,35 +39,6 @@ namespace XRoadLib.Tests.Contract.Configuration
 
             // Customize service name:
             serviceDescription.Services[0].Name = "TestService";
-        }
-
-        public override void ExportOperation(OperationDefinition operation)
-        {
-            base.ExportOperation(operation);
-
-            // Customize root type name for operations (when applicable):
-            operation.RequestTypeName = XName.Get($"{operation.Name.LocalName}Request", operation.RequestTypeName.NamespaceName);
-            operation.ResponseTypeName = XName.Get($"{operation.Name.LocalName}Response", operation.RequestTypeName.NamespaceName);
-
-            // Customize operation message names:
-            operation.RequestMessageName = operation.Name.LocalName;
-            operation.ResponseMessageName = $"{operation.Name.LocalName}Response";
-        }
-
-        public override void ExportType(TypeDefinition type)
-        {
-            base.ExportType(type);
-
-            // Customize type content model:
-            if (type.RuntimeInfo == typeof(ParamType1))
-                type.HasStrictContentOrder = false;
-        }
-
-        public override void ExportParameter(ParameterDefinition parameter)
-        {
-            base.ExportParameter(parameter);
-
-            parameter.IsOptional = true;
         }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Reflection;
-using XRoadLib.Serialization.Mapping;
+using System.Xml.Linq;
 
 namespace XRoadLib.Schema
 {
-    public abstract class ContentDefinition<TRuntimeInfo> : Definition<TRuntimeInfo> where TRuntimeInfo : ICustomAttributeProvider
+    public abstract class ContentDefinition : Definition, IContentDefinition
     {
         public bool IsNullable { get; set; }
 
@@ -16,12 +15,12 @@ namespace XRoadLib.Schema
 
         public int Order { get; set; }
 
-        public ITypeMap TypeMap { get; set; }
+        public XName TypeName { get; set; }
+
+        public Type RuntimeType { get; set; }
 
         public abstract string ContainerName { get; }
 
         public abstract string RuntimeName { get; }
-
-        public abstract Type RuntimeType { get; }
     }
 }

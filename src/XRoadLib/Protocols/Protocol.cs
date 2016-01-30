@@ -39,8 +39,9 @@ namespace XRoadLib.Protocols
         public Style Style { get; }
         public string ProducerNamespace { get; }
         public ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>();
+        public ISchemaExporter SchemaExporter { get; }
 
-        protected Protocol(string producerNamespace, Style style)
+        protected Protocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
         {
             if (string.IsNullOrWhiteSpace(producerNamespace))
                 throw new ArgumentNullException(nameof(producerNamespace));
@@ -49,24 +50,11 @@ namespace XRoadLib.Protocols
             if (style == null)
                 throw new ArgumentNullException(nameof(style));
             Style = style;
+
+            SchemaExporter = schemaExporter ?? new SchemaExporter(producerNamespace);
         }
 
         protected abstract void DefineMandatoryHeaderElements();
-
-        public virtual void ExportParameter(ParameterDefinition parameter)
-        { }
-
-        public virtual void ExportProperty(PropertyDefinition parameter)
-        { }
-
-        public virtual void ExportType(TypeDefinition type)
-        {
-            if (type.RuntimeInfo.IsArray)
-                type.Name = null;
-        }
-
-        public virtual void ExportOperation(OperationDefinition operation)
-        { }
 
         public virtual void ExportServiceDescription(ServiceDescription serviceDescription)
         {

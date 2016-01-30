@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace XRoadLib.Schema
 {
-    public abstract class ContentComparer<T, TDefinition> : IComparer<TDefinition>
-        where TDefinition : ContentDefinition<T>
-        where T : ICustomAttributeProvider
+    public abstract class ContentComparer<TDefinition> : IComparer<TDefinition>
+        where TDefinition : ContentDefinition
     {
         public int Compare(TDefinition x, TDefinition y)
         {

@@ -1,26 +1,26 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace XRoadLib.Schema
 {
-    public class PropertyDefinition : ContentDefinition<PropertyInfo>
+    public class PropertyDefinition : ContentDefinition
     {
         public TypeDefinition Owner { get; }
+
+        public PropertyInfo PropertyInfo { get; set; }
 
         public PropertyDefinition(TypeDefinition owner)
         {
             Owner = owner;
         }
 
-        public override string ContainerName => $"{RuntimeInfo.DeclaringType?.FullName}";
-        public override Type RuntimeType => RuntimeInfo.PropertyType;
+        public override string ContainerName => $"{PropertyInfo.DeclaringType?.FullName}";
 
         public override string RuntimeName
         {
             get
             {
-                var startIndex = RuntimeInfo.Name.LastIndexOf('.');
-                return startIndex >= 0 ? RuntimeInfo.Name.Substring(startIndex + 1) : RuntimeInfo.Name;
+                var startIndex = PropertyInfo.Name.LastIndexOf('.');
+                return startIndex >= 0 ? PropertyInfo.Name.Substring(startIndex + 1) : PropertyInfo.Name;
             }
         }
     }

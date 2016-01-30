@@ -9,17 +9,17 @@ namespace XRoadLib.Serialization.Mapping
     public class ParameterMap : IParameterMap
     {
         private readonly ISerializerCache serializerCache;
-        private readonly ITypeMap defaultTypeMap;
         private readonly ParameterDefinition parameterDefinition;
+        private readonly ITypeMap typeMap;
 
         public string Name => parameterDefinition.Name.LocalName;
-        public ParameterInfo ParameterInfo => parameterDefinition.RuntimeInfo;
+        public ParameterInfo ParameterInfo => parameterDefinition.ParameterInfo;
 
-        public ParameterMap(ISerializerCache serializerCache, ParameterDefinition parameterDefinition, ITypeMap defaultTypeMap)
+        public ParameterMap(ISerializerCache serializerCache, ParameterDefinition parameterDefinition, ITypeMap typeMap)
         {
             this.parameterDefinition = parameterDefinition;
             this.serializerCache = serializerCache;
-            this.defaultTypeMap = defaultTypeMap;
+            this.typeMap = typeMap;
         }
 
         public bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context, out object value)
@@ -48,9 +48,9 @@ namespace XRoadLib.Serialization.Mapping
                 return null;
             }
 
-            var typeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? defaultTypeMap;
+            var currentTypeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? typeMap;
 
-            return typeMap.Deserialize(reader, parameterNode, context);
+            return currentTypeMap.Deserialize(reader, parameterNode, context);
         }
 
         public void Serialize(XmlWriter writer, IXmlTemplateNode parameterNode, object value, SerializationContext context)
@@ -70,8 +70,8 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteNilAttribute();
             else
             {
-                var typeMap = defaultTypeMap.TypeDefinition.IsSimpleType ? defaultTypeMap : serializerCache.GetTypeMap(value.GetType());
-                typeMap.Serialize(writer, parameterNode, value, defaultTypeMap.TypeDefinition.RuntimeInfo, context);
+                var currentTypeMap = typeMap.TypeDefinition.IsSimpleType ? typeMap : serializerCache.GetTypeMap(value.GetType());
+                currentTypeMap.Serialize(writer, parameterNode, value, typeMap.TypeDefinition.Type, context);
             }
         }
     }

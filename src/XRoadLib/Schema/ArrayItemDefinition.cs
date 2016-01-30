@@ -1,11 +1,13 @@
-﻿using System.Xml.Linq;
-using XRoadLib.Serialization.Mapping;
+﻿using System;
+using System.Xml.Linq;
 
 namespace XRoadLib.Schema
 {
-    public class ArrayItemDefinition
+    public class ArrayItemDefinition : IContentDefinition
     {
         public XName Name { get; set; }
+
+        public XName TypeName { get; set; }
 
         public bool IsNullable { get; set; }
 
@@ -13,6 +15,8 @@ namespace XRoadLib.Schema
 
         public bool UseXop { get; set; }
 
-        public ITypeMap TypeMap { get; set; }
+        public Type TypeMapType { get; set; }
+
+        public Type RuntimeType { get; set; }
     }
 }

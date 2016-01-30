@@ -12,17 +12,19 @@ namespace XRoadLib.Serialization.Mapping
         private readonly GetValueMethod getValueMethod;
         private readonly SetValueMethod setValueMethod;
         private readonly PropertyDefinition propertyDefinition;
+        private readonly ITypeMap typeMap;
 
         public string PropertyName => propertyDefinition.Name.LocalName;
 
-        public PropertyMap(ISerializerCache serializerCache, PropertyDefinition propertyDefinition)
+        public PropertyMap(ISerializerCache serializerCache, PropertyDefinition propertyDefinition, ITypeMap typeMap)
         {
             this.propertyDefinition = propertyDefinition;
             this.serializerCache = serializerCache;
+            this.typeMap = typeMap;
 
-            getValueMethod = propertyDefinition.RuntimeInfo.CreateGetValueMethod();
-            setValueMethod = propertyDefinition.RuntimeInfo.CreateSetValueMethod();
-            isFilterable = propertyDefinition.Owner.RuntimeInfo.IsFilterableField(PropertyName);
+            getValueMethod = propertyDefinition.PropertyInfo.CreateGetValueMethod();
+            setValueMethod = propertyDefinition.PropertyInfo.CreateSetValueMethod();
+            isFilterable = propertyDefinition.Owner.Type.IsFilterableField(PropertyName);
         }
 
         public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, SerializationContext context)
@@ -34,12 +36,10 @@ namespace XRoadLib.Serialization.Mapping
             }
 
             string typeAttribute;
-            if (propertyDefinition.TypeMap.TypeDefinition.IsAnonymous && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
+            if (typeMap.TypeDefinition.IsAnonymous && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
                 throw XRoadException.InvalidQuery("Expected anonymous type, but `{0}` was given.", typeAttribute);
 
-            var concreteTypeMap = propertyDefinition.TypeMap.TypeDefinition.IsAnonymous || propertyDefinition.TypeMap.TypeDefinition.IsSimpleType
-                ? propertyDefinition.TypeMap
-                : (serializerCache.GetTypeMapFromXsiType(reader) ?? propertyDefinition.TypeMap);
+            var concreteTypeMap = (typeMap.TypeDefinition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 
             var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, context);
             if (propertyValue == null)
@@ -65,11 +65,9 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteNilAttribute();
             else
             {
-                var concreteTypeMap = propertyDefinition.TypeMap.TypeDefinition.IsAnonymous || propertyDefinition.TypeMap.TypeDefinition.IsSimpleType
-                    ? propertyDefinition.TypeMap
-                    : serializerCache.GetTypeMap(propertyValue.GetType());
+                var concreteTypeMap = typeMap.TypeDefinition.IsInheritable ? serializerCache.GetTypeMap(propertyValue.GetType()) : typeMap;
 
-                concreteTypeMap.Serialize(writer, templateNode, propertyValue, propertyDefinition.TypeMap.TypeDefinition.RuntimeInfo, context);
+                concreteTypeMap.Serialize(writer, templateNode, propertyValue, typeMap.TypeDefinition.Type, context);
             }
 
             writer.WriteEndElement();
