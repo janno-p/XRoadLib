@@ -1,19 +1,19 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace XRoadLib.Schema
 {
-    public class ParameterDefinition : ContentDefinition<ParameterInfo>
+    public class ParameterDefinition : ContentDefinition
     {
         public OperationDefinition Owner { get; }
+
+        public ParameterInfo ParameterInfo { get; set; }
 
         public ParameterDefinition(OperationDefinition owner)
         {
             Owner = owner;
         }
 
-        public override string ContainerName => $"{RuntimeInfo.Member.DeclaringType?.FullName}.{RuntimeInfo.Member.Name}";
-        public override string RuntimeName => RuntimeInfo.Name;
-        public override Type RuntimeType => RuntimeInfo.ParameterType;
+        public override string ContainerName => $"{ParameterInfo.Member.DeclaringType?.FullName}.{ParameterInfo.Member.Name}";
+        public override string RuntimeName => ParameterInfo.Name;
     }
 }

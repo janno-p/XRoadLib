@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Services.Description;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
@@ -19,8 +20,8 @@ namespace XRoadLib.Protocols
 
         string ILegacyProtocol.XRoadNamespace => XRoadNamespace;
 
-        protected LegacyProtocol(string producerName, string producerNamespace, Style style)
-            : base(producerNamespace, style)
+        protected LegacyProtocol(string producerName, string producerNamespace, Style style, ISchemaExporter schemaExporter)
+            : base(producerNamespace, style, schemaExporter)
         {
             if (string.IsNullOrWhiteSpace(producerName))
                 throw new ArgumentNullException(nameof(producerName));

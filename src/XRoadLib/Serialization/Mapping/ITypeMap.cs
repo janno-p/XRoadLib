@@ -14,6 +14,6 @@ namespace XRoadLib.Serialization.Mapping
 
         void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context);
 
-        void InitializeProperties(IEnumerable<PropertyDefinition> propertyDefinitions);
+        void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions);
     }
 }

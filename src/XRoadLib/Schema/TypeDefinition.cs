@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Xml.Linq;
-using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Schema
 {
-    public class TypeDefinition : ContainerDefinition<Type, PropertyDefinition>
+    public class TypeDefinition : ContainerDefinition<PropertyDefinition>
     {
+        public Type Type { get; set; }
+
         public bool CanHoldNullValues { get; set; }
 
         public bool IsAbstract { get; set; }
@@ -14,7 +15,9 @@ namespace XRoadLib.Schema
 
         public bool IsSimpleType { get; set; }
 
-        public ITypeMap TypeMap { get; set; }
+        public Type TypeMapType { get; set; }
+
+        public bool IsInheritable { get { return !IsAnonymous && !IsSimpleType; } }
 
         public CollectionDefinition CreateCollectionDefinition()
         {
@@ -22,7 +25,7 @@ namespace XRoadLib.Schema
             {
                 ItemDefinition = this,
                 CanHoldNullValues = true,
-                RuntimeInfo = RuntimeInfo.MakeArrayType(),
+                Type = Type.MakeArrayType(),
                 IsAnonymous = true
             };
         }
@@ -32,7 +35,7 @@ namespace XRoadLib.Schema
             return new TypeDefinition
             {
                 Name = XName.Get(typeName, NamespaceConstants.XSD),
-                RuntimeInfo = typeof(T),
+                Type = typeof(T),
                 IsSimpleType = true
             };
         }

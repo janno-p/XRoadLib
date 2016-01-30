@@ -24,7 +24,7 @@ namespace XRoadLib.Protocols.Styles
             if (typeDefinition.IsAnonymous)
                 return;
 
-            if (typeDefinition.RuntimeInfo != expectedType)
+            if (typeDefinition.Type != expectedType)
             {
                 writer.WriteTypeAttribute(typeDefinition.Name);
                 return;

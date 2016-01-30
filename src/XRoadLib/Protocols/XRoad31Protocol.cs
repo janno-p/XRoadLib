@@ -1,5 +1,6 @@
 ﻿using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
@@ -10,12 +11,8 @@ namespace XRoadLib.Protocols
 
         public override string Name => "3.1";
 
-        public XRoad31Protocol(string producerName, string producerNamespace)
-            : this(producerName, producerNamespace, new DocLiteralStyle())
-        { }
-
-        public XRoad31Protocol(string producerName, string producerNamespace, Style style)
-            : base(producerName, producerNamespace, style)
+        public XRoad31Protocol(string producerName, string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
+            : base(producerName, producerNamespace, style ?? new DocLiteralStyle(), schemaExporter)
         { }
 
         protected override void DefineMandatoryHeaderElements()

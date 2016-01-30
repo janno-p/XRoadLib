@@ -1,8 +1,6 @@
-﻿using System.Reflection;
-
-namespace XRoadLib.Schema
+﻿namespace XRoadLib.Schema
 {
-    public class ParameterComparer : ContentComparer<ParameterInfo, ParameterDefinition>
+    public class ParameterComparer : ContentComparer<ParameterDefinition>
     {
         public static ParameterComparer Instance { get; } = new ParameterComparer();
 

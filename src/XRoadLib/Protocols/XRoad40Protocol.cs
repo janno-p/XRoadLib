@@ -1,6 +1,7 @@
 ﻿using System.Web.Services.Description;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
@@ -11,12 +12,8 @@ namespace XRoadLib.Protocols
 
         public override string Name => "4.0";
 
-        public XRoad40Protocol(string producerNamespace)
-            : this(producerNamespace, new DocLiteralStyle())
-        { }
-
-        public XRoad40Protocol(string producerName, Style style)
-            : base(producerName, style)
+        public XRoad40Protocol(string producerName, Style style = null, ISchemaExporter schemaExporter = null)
+            : base(producerName, style ?? new DocLiteralStyle(), schemaExporter)
         { }
 
         protected override void DefineMandatoryHeaderElements()

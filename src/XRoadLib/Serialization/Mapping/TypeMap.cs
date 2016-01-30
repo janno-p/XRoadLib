@@ -15,14 +15,13 @@ namespace XRoadLib.Serialization.Mapping
         protected TypeMap(TypeDefinition typeDefinition)
         {
             TypeDefinition = typeDefinition;
-            TypeDefinition.TypeMap = this;
         }
 
         public abstract object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);
 
         public abstract void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context);
 
-        public virtual void InitializeProperties(IEnumerable<PropertyDefinition> propertyDefinitions)
+        public virtual void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions)
         { }
     }
 }

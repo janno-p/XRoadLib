@@ -29,17 +29,11 @@ namespace XRoadLib.Protocols
 
         Style Style { get; }
 
+        ISchemaExporter SchemaExporter { get; }
+
         bool IsHeaderNamespace(string ns);
 
         bool IsDefinedByEnvelope(XmlReader reader);
-
-        void ExportParameter(ParameterDefinition parameter);
-
-        void ExportProperty(PropertyDefinition parameter);
-
-        void ExportType(TypeDefinition type);
-
-        void ExportOperation(OperationDefinition operation);
 
         void ExportServiceDescription(ServiceDescription serviceDescription);
 

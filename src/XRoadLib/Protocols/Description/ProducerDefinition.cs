@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
@@ -12,7 +13,6 @@ using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
-using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Protocols.Description
 {
@@ -22,7 +22,9 @@ namespace XRoadLib.Protocols.Description
 
         private readonly Assembly contractAssembly;
         private readonly IProtocol protocol;
+        private readonly ISchemaExporter schemaExporter;
         private readonly ISerializerCache serializerCache;
+        private readonly uint? version;
 
         private readonly Binding binding;
         private readonly PortType portType;
@@ -48,6 +50,9 @@ namespace XRoadLib.Protocols.Description
                 throw new ArgumentNullException(nameof(protocol));
             this.protocol = protocol;
 
+            this.version = version;
+
+            schemaExporter = protocol.SchemaExporter;
             serializerCache = protocol.GetSerializerCache(version);
 
             portType = new PortType { Name = "PortTypeName" };
@@ -98,7 +103,28 @@ namespace XRoadLib.Protocols.Description
 
         private void CollectTypes()
         {
-            foreach (var typeDefinition in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable()).Select(type => MetaDataConverter.ConvertType(type, protocol)))
+            AddSystemType<DateTime>("dateTime");
+            AddSystemType<DateTime>("date");
+
+            AddSystemType<bool>("boolean");
+
+            AddSystemType<float>("float");
+            AddSystemType<double>("double");
+            AddSystemType<decimal>("decimal");
+
+            AddSystemType<long>("long");
+            AddSystemType<int>("int");
+            AddSystemType<short>("short");
+            AddSystemType<BigInteger>("integer");
+
+            AddSystemType<string>("string");
+            AddSystemType<string>("anyURI");
+
+            AddSystemType<Stream>("base64Binary");
+            AddSystemType<Stream>("hexBinary");
+            AddSystemType<Stream>("base64");
+
+            foreach (var typeDefinition in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable()).Select(type => protocol.SchemaExporter.GetTypeDefinition(type)))
             {
                 if (typeDefinition.IsAnonymous || typeDefinition.Name == null || typeDefinition.State != DefinitionState.Default)
                     continue;
@@ -107,13 +133,13 @@ namespace XRoadLib.Protocols.Description
                     throw new Exception($"Multiple type definitions for same name `{typeDefinition.Name}`.");
 
                 schemaTypeDefinitions.Add(typeDefinition.Name, typeDefinition);
-                runtimeTypeDefinitions.Add(typeDefinition.RuntimeInfo, typeDefinition);
+                runtimeTypeDefinitions.Add(typeDefinition.Type, typeDefinition);
             }
         }
 
         private void CollectOperations()
         {
-            foreach (var operationDefinition in serviceContracts.SelectMany(x => x.Value.Select(o => MetaDataConverter.ConvertOperation(x.Key, XName.Get(o.Key, protocol.ProducerNamespace), protocol))))
+            foreach (var operationDefinition in serviceContracts.SelectMany(x => x.Value.Select(o => protocol.SchemaExporter.GetOperationDefinition(x.Key, XName.Get(o.Key, protocol.ProducerNamespace)))))
             {
                 if (operationDefinition.State != DefinitionState.Default)
                     continue;
@@ -132,8 +158,8 @@ namespace XRoadLib.Protocols.Description
                 var schemaType = new XmlSchemaComplexType
                 {
                     Name = typeDefinition.Name.LocalName,
-                    IsAbstract = typeDefinition.RuntimeInfo.IsAbstract,
-                    Annotation = CreateSchemaAnnotation(typeDefinition.RuntimeInfo)
+                    IsAbstract = typeDefinition.Type.IsAbstract,
+                    Annotation = CreateSchemaAnnotation(typeDefinition.Type)
                 };
 
                 AddComplexTypeContent(schemaType, typeDefinition, targetNamespace);
@@ -148,14 +174,14 @@ namespace XRoadLib.Protocols.Description
         {
             var contentParticle = new XmlSchemaSequence();
 
-            foreach (var propertyDefinition in MetaDataConverter.GetDescriptionProperties(serializerCache, typeDefinition))
+            foreach (var propertyDefinition in GetDescriptionProperties(typeDefinition))
                 contentParticle.Items.Add(CreatePropertyElement(propertyDefinition, targetNamespace));
 
-            if (typeDefinition.RuntimeInfo.BaseType != typeof(XRoadSerializable))
+            if (typeDefinition.Type.BaseType != typeof(XRoadSerializable))
             {
                 var extension = new XmlSchemaComplexContentExtension
                 {
-                    BaseTypeName = GetSchemaTypeName(typeDefinition.RuntimeInfo.BaseType, targetNamespace),
+                    BaseTypeName = GetSchemaTypeName(typeDefinition.Type.BaseType, targetNamespace),
                     Particle = contentParticle
                 };
 
@@ -198,11 +224,23 @@ namespace XRoadLib.Protocols.Description
             schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
         }
 
-        private void SetSchemaElementType(XmlSchemaElement schemaElement, Type type, bool useXop, TypeDefinition typeDefinition, string targetNamespace)
+        private TypeDefinition GetContentTypeDefinition(IContentDefinition contentDefinition)
         {
-            if (typeof(Stream).IsAssignableFrom(type) && useXop)
+            if (contentDefinition.TypeName != null)
+                return schemaTypeDefinitions[contentDefinition.TypeName];
+
+            if (runtimeTypeDefinitions.ContainsKey(contentDefinition.RuntimeType))
+                return runtimeTypeDefinitions[contentDefinition.RuntimeType];
+
+            return schemaExporter.GetTypeDefinition(contentDefinition.RuntimeType);
+        }
+
+        private void SetSchemaElementType(XmlSchemaElement schemaElement, IContentDefinition contentDefinition, string targetNamespace)
+        {
+            if (typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
                 AddBinaryAttribute(schemaElement);
 
+            var typeDefinition = GetContentTypeDefinition(contentDefinition);
             if (!typeDefinition.IsAnonymous)
             {
                 schemaElement.SchemaTypeName = new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
@@ -210,17 +248,17 @@ namespace XRoadLib.Protocols.Description
             }
 
             XmlSchemaType schemaType;
-            if (type.IsEnum)
+            if (contentDefinition.RuntimeType.IsEnum)
             {
                 schemaType = new XmlSchemaSimpleType();
-                AddEnumTypeContent(type, (XmlSchemaSimpleType)schemaType, targetNamespace);
+                AddEnumTypeContent(contentDefinition.RuntimeType, (XmlSchemaSimpleType)schemaType, targetNamespace);
             }
             else
             {
                 schemaType = new XmlSchemaComplexType();
                 AddComplexTypeContent((XmlSchemaComplexType)schemaType, typeDefinition, targetNamespace);
             }
-            schemaType.Annotation = CreateSchemaAnnotation(type);
+            schemaType.Annotation = CreateSchemaAnnotation(contentDefinition.RuntimeType);
 
             schemaElement.SchemaType = schemaType;
         }
@@ -244,7 +282,7 @@ namespace XRoadLib.Protocols.Description
             var schemaElement = new XmlSchemaElement
             {
                 Name = propertyDefinition.Name?.LocalName,
-                Annotation = CreateSchemaAnnotation(propertyDefinition.RuntimeInfo)
+                Annotation = CreateSchemaAnnotation(propertyDefinition.PropertyInfo)
             };
 
             if (propertyDefinition.Name == null)
@@ -258,7 +296,7 @@ namespace XRoadLib.Protocols.Description
 
                 schemaElement.MaxOccursString = "unbounded";
 
-                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap.TypeDefinition, targetNamespace);
+                SetSchemaElementType(schemaElement, propertyDefinition.ArrayItemDefinition, targetNamespace);
 
                 return schemaElement;
             }
@@ -270,7 +308,7 @@ namespace XRoadLib.Protocols.Description
 
             if (propertyDefinition.ArrayItemDefinition == null)
             {
-                SetSchemaElementType(schemaElement, propertyDefinition.RuntimeInfo.PropertyType, propertyDefinition.UseXop, propertyDefinition.TypeMap.TypeDefinition, targetNamespace);
+                SetSchemaElementType(schemaElement, propertyDefinition, targetNamespace);
                 return schemaElement;
             }
 
@@ -285,7 +323,7 @@ namespace XRoadLib.Protocols.Description
 
             itemElement.IsNillable = propertyDefinition.ArrayItemDefinition.IsNullable;
 
-            SetSchemaElementType(itemElement, propertyDefinition.RuntimeInfo.PropertyType.GetElementType(), propertyDefinition.ArrayItemDefinition.UseXop, propertyDefinition.ArrayItemDefinition.TypeMap.TypeDefinition, targetNamespace);
+            SetSchemaElementType(itemElement, propertyDefinition.ArrayItemDefinition, targetNamespace);
 
             protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, requiredImports);
 
@@ -344,6 +382,34 @@ namespace XRoadLib.Protocols.Description
             serviceDescription.Namespaces.Add(PrefixConstants.XMIME, NamespaceConstants.XMIME);
             serviceDescription.Namespaces.Add(PrefixConstants.XSD, NamespaceConstants.XSD);
             serviceDescription.Namespaces.Add("", protocol.ProducerNamespace);
+        }
+
+        private IEnumerable<PropertyDefinition> GetDescriptionProperties(TypeDefinition typeDefinition)
+        {
+            return typeDefinition.Type
+                                 .GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaExporter.GetPropertyDefinition(p, typeDefinition))
+                                 .Where(d => d.State == DefinitionState.Default);
+        }
+
+        private void AddSystemType<T>(string typeName)
+        {
+            var typeDefinition = TypeDefinition.SimpleTypeDefinition<T>(typeName);
+            schemaExporter.ExportTypeDefinition(typeDefinition);
+
+            if (typeDefinition.Type != null && !runtimeTypeDefinitions.ContainsKey(typeDefinition.Type))
+                runtimeTypeDefinitions.Add(typeDefinition.Type, typeDefinition);
+
+            if (typeDefinition.Name != null && !schemaTypeDefinitions.ContainsKey(typeDefinition.Name))
+                schemaTypeDefinitions.Add(typeDefinition.Name, typeDefinition);
+
+            //var arrayDefinition = typeDefinition.CreateCollectionDefinition();
+            //schemaExporter.ExportTypeDefinition(arrayDefinition);
+
+            //if (arrayDefinition.Type != null && !runtimeTypeDefinitions.ContainsKey(arrayDefinition.Type))
+            //    runtimeTypeDefinitions.Add(arrayDefinition.Type, arrayDefinition);
+
+            //if (arrayDefinition.Name != null && !schemaTypeDefinitions.ContainsKey(arrayDefinition.Name))
+            //    schemaTypeDefinitions.Add(arrayDefinition.Name, arrayDefinition);
         }
 
         /*

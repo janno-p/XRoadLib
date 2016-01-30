@@ -3,7 +3,6 @@ using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
-using XRoadLib.Serialization;
 
 namespace XRoadLib.Protocols
 {
@@ -17,12 +16,8 @@ namespace XRoadLib.Protocols
         public override string RequestPartNameInResponse => "paring";
         public override string ResponsePartNameInResponse => "keha";
 
-        public XRoad20Protocol(string producerName, string producerNamespace)
-            : this(producerName, producerNamespace, new RpcEncodedStyle())
-        { }
-
-        public XRoad20Protocol(string producerName, string producerNamespace, Style style)
-            : base(producerName, producerNamespace, style)
+        public XRoad20Protocol(string producerName, string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
+            : base(producerName, producerNamespace, style ?? new RpcEncodedStyle(), schemaExporter)
         { }
 
         protected override void DefineMandatoryHeaderElements()
@@ -46,9 +41,6 @@ namespace XRoadLib.Protocols
 
             return NamespaceConstants.SOAP_ENC.Equals(attributeValue);
         }
-
-        public override void ExportType(TypeDefinition type)
-        { }
 
         public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {

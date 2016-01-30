@@ -13,11 +13,11 @@ namespace XRoadLib.Serialization.Mapping
 
         private readonly ITypeMap elementTypeMap;
 
-        public ArrayTypeMap(ISerializerCache serializerCache, CollectionDefinition collectionDefinition)
+        public ArrayTypeMap(ISerializerCache serializerCache, CollectionDefinition collectionDefinition, ITypeMap elementTypeMap)
             : base(collectionDefinition)
         {
             this.serializerCache = serializerCache;
-            elementTypeMap = collectionDefinition.ItemDefinition.TypeMap;
+            this.elementTypeMap = elementTypeMap;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
@@ -56,7 +56,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (element != null)
                 {
                     var typeMap = serializerCache.GetTypeMap(element.GetType());
-                    typeMap.Serialize(writer, templateNode, element, elementTypeMap.TypeDefinition.RuntimeInfo, context);
+                    typeMap.Serialize(writer, templateNode, element, elementTypeMap.TypeDefinition.Type, context);
                 }
                 else writer.WriteNilAttribute();
 
