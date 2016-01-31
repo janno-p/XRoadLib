@@ -7,6 +7,7 @@ open System.IO
 open System.Xml
 open XRoadLib
 open XRoadLib.Protocols
+open XRoadLib.Protocols.Headers
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
 
@@ -23,7 +24,7 @@ module MappingTestHelpers =
         use reader = XmlReader.Create(stream)
         while reader.Read() && (reader.NodeType <> XmlNodeType.Element) do ()
 
-        use message = new XRoadMessage(Globals.XRoadProtocol20)
+        use message = new XRoadMessage(Globals.XRoadProtocol20, XRoadHeader20())
 
         typeMap.Deserialize(reader, null, message)
 

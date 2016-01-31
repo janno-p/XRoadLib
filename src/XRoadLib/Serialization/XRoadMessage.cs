@@ -33,28 +33,23 @@ namespace XRoadLib.Serialization
 
         public IList<XRoadAttachment> AllAttachments => attachments;
         public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }
-        public uint Version { get { return Header == null || Header.Service == null || !Header.Service.Version.HasValue ? 1u : Header.Service.Version.Value; } }
+        public uint Version => Header == null || Header.Service == null || !Header.Service.Version.HasValue ? 1u : Header.Service.Version.Value;
 
         public XRoadMessage()
         {
             ContentEncoding = Encoding.UTF8;
         }
 
-        public XRoadMessage(IProtocol protocol)
+        public XRoadMessage(IProtocol protocol, IXRoadHeader header)
             : this()
         {
             Protocol = protocol;
+            Header = header;
         }
 
         public XRoadMessage(Stream contentStream)
         {
             ContentStream = contentStream;
-        }
-
-        public XRoadMessage(Stream contentStream, IProtocol protocol)
-            : this(contentStream)
-        {
-            Protocol = protocol;
         }
 
         public XRoadAttachment GetAttachment(string contentID)

@@ -7,6 +7,7 @@ open System.IO
 open System.Text
 open System.Xml
 open XRoadLib
+open XRoadLib.Protocols.Headers
 open XRoadLib.Schema
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
@@ -16,7 +17,7 @@ open XRoadLib.Tests.Contract
 [<TestFixture>]
 module XRoadSerializerTest =
     let serializeWithContext<'T> elementName (value: 'T) dtoVersion addEnvelope isMultipart f =
-        use message = new XRoadMessage(Globals.XRoadProtocol20, BinaryContentMode = BinaryMode.SoapAttachment)
+        use message = new XRoadMessage(Globals.XRoadProtocol20, XRoadHeader20(), BinaryContentMode = BinaryMode.SoapAttachment)
 
         use stream = new MemoryStream()
         use writer = new XmlTextWriter(stream, Encoding.UTF8)
