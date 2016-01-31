@@ -57,12 +57,12 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.LocalName == properties.Current.PropertyName)
                     return;
 
-            throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", TypeDefinition.Name, reader.LocalName);
+            throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", Definition.Name, reader.LocalName);
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteType(writer, TypeDefinition, expectedType);
+            context.Protocol.Style.WriteType(writer, Definition, expectedType);
 
             foreach (var propertyMap in propertyMaps)
             {

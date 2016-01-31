@@ -10,11 +10,11 @@ namespace XRoadLib.Serialization.Mapping
     {
         protected readonly T defaultValue = default(T);
 
-        public TypeDefinition TypeDefinition { get; }
+        public TypeDefinition Definition { get; }
 
         protected TypeMap(TypeDefinition typeDefinition)
         {
-            TypeDefinition = typeDefinition;
+            Definition = typeDefinition;
         }
 
         public abstract object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);

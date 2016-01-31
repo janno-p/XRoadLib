@@ -13,7 +13,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
         {
-            throw XRoadException.TypeAttributeRequired(TypeDefinition.Name.ToString());
+            throw XRoadException.TypeAttributeRequired(Definition.Name.ToString());
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)

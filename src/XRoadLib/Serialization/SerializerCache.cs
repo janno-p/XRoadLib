@@ -107,7 +107,7 @@ namespace XRoadLib.Serialization
             var parameterDefinition = Protocol.SchemaExporter.GetParameterDefinition(parameterInfo, operationDefinition);
 
             var typeMap = GetContentDefinitionTypeMap(parameterDefinition, null);
-            parameterDefinition.TypeName = typeMap.TypeDefinition.Name;
+            parameterDefinition.TypeName = typeMap.Definition.Name;
 
             return new ParameterMap(this, parameterDefinition, typeMap);
         }
@@ -154,9 +154,9 @@ namespace XRoadLib.Serialization
             if (collectionDefinition != null)
             {
                 var itemTypeMap = GetTypeMap(typeDefinition.Type.GetElementType(), partialTypeMaps);
-                collectionDefinition.ItemDefinition = itemTypeMap.TypeDefinition;
+                collectionDefinition.ItemDefinition = itemTypeMap.Definition;
 
-                var typeMapType = typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.TypeDefinition.Type);
+                var typeMapType = typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.Definition.Type);
                 typeMap = (ITypeMap)Activator.CreateInstance(typeMapType, this, collectionDefinition, itemTypeMap);
                 return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
             }
@@ -205,8 +205,8 @@ namespace XRoadLib.Serialization
 
             var partialTypeMaps = new Dictionary<Type, ITypeMap>
             {
-                { typeMap.TypeDefinition.Type, typeMap },
-                { arrayTypeMap.TypeDefinition.Type, arrayTypeMap }
+                { typeMap.Definition.Type, typeMap },
+                { arrayTypeMap.Definition.Type, arrayTypeMap }
             };
 
             typeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps));
@@ -275,7 +275,7 @@ namespace XRoadLib.Serialization
             Protocol.SchemaExporter.ExportParameterDefinition(resultParameter);
 
             var typeMap = GetContentDefinitionTypeMap(resultParameter, null);
-            resultParameter.TypeName = typeMap.TypeDefinition.Name;
+            resultParameter.TypeName = typeMap.Definition.Name;
 
             var resultParameterMap = new ParameterMap(this, resultParameter, typeMap);
             var serviceMap = new ServiceMap(operationDefinition, null, resultParameterMap);
@@ -292,7 +292,7 @@ namespace XRoadLib.Serialization
             Protocol.SchemaExporter.ExportParameterDefinition(resultParameter);
 
             var typeMap = GetContentDefinitionTypeMap(resultParameter, null);
-            resultParameter.TypeName = typeMap.TypeDefinition.Name;
+            resultParameter.TypeName = typeMap.Definition.Name;
 
             var resultParameterMap = new ParameterMap(this, resultParameter, typeMap);
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, resultParameterMap));
@@ -328,7 +328,7 @@ namespace XRoadLib.Serialization
                                  .Select(p =>
                                  {
                                      var typeMap = GetContentDefinitionTypeMap(p, partialTypeMaps);
-                                     p.TypeName = typeMap.TypeDefinition.Name;
+                                     p.TypeName = typeMap.Definition.Name;
                                      return Tuple.Create(p, typeMap);
                                  });
         }

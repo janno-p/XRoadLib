@@ -53,7 +53,7 @@ namespace XRoadLib.Serialization.Mapping
             var attachment = new XRoadAttachment((Stream)value);
             context.AttachmentManager.AllAttachments.Add(attachment);
 
-            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
+            context.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             if (context.BinaryMode == BinaryMode.Inline)
             {

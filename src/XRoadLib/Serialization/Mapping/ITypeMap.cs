@@ -8,7 +8,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public interface ITypeMap
     {
-        TypeDefinition TypeDefinition { get; }
+        TypeDefinition Definition { get; }
 
         object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);
 

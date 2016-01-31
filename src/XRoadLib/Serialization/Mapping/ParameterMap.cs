@@ -68,8 +68,8 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteNilAttribute();
             else
             {
-                var currentTypeMap = typeMap.TypeDefinition.IsSimpleType ? typeMap : serializerCache.GetTypeMap(value.GetType());
-                currentTypeMap.Serialize(writer, parameterNode, value, typeMap.TypeDefinition.Type, context);
+                var currentTypeMap = typeMap.Definition.IsSimpleType ? typeMap : serializerCache.GetTypeMap(value.GetType());
+                currentTypeMap.Serialize(writer, parameterNode, value, typeMap.Definition.Type, context);
             }
         }
     }

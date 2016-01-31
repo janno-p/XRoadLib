@@ -56,12 +56,12 @@ namespace XRoadLib.Serialization.Mapping
             if (deserializationPropertyMaps.TryGetValue(reader.LocalName, out propertyMap))
                 return propertyMap;
 
-            throw XRoadException.UnknownProperty(reader.LocalName, TypeDefinition.Name);
+            throw XRoadException.UnknownProperty(reader.LocalName, Definition.Name);
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteType(writer, TypeDefinition, expectedType);
+            context.Protocol.Style.WriteType(writer, Definition, expectedType);
 
             foreach (var propertyMap in serializationPropertyMaps)
             {

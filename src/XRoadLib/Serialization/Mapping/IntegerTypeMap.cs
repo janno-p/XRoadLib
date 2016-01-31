@@ -24,7 +24,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
         {
-            context.Protocol.Style.WriteExplicitType(writer, TypeDefinition.Name);
+            context.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteValue(value.ToString());
         }

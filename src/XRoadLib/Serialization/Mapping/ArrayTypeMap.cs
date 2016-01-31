@@ -47,7 +47,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             var valueArray = (Array)value;
 
-            context.Protocol.Style.WriteExplicitArrayType(writer, elementTypeMap.TypeDefinition.Name, valueArray.Length);
+            context.Protocol.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
 
             foreach (var element in valueArray)
             {
@@ -56,7 +56,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (element != null)
                 {
                     var typeMap = serializerCache.GetTypeMap(element.GetType());
-                    typeMap.Serialize(writer, templateNode, element, elementTypeMap.TypeDefinition.Type, context);
+                    typeMap.Serialize(writer, templateNode, element, elementTypeMap.Definition.Type, context);
                 }
                 else writer.WriteNilAttribute();
 
