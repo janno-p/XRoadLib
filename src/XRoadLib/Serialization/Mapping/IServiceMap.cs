@@ -8,12 +8,12 @@ namespace XRoadLib.Serialization.Mapping
     {
         OperationDefinition OperationDefinition { get; }
 
-        IDictionary<string, object> DeserializeRequest(XmlReader reader, SerializationContext context);
+        IDictionary<string, object> DeserializeRequest(XmlReader reader, XRoadMessage message);
 
-        object DeserializeResponse(XmlReader reader, SerializationContext context);
+        object DeserializeResponse(XmlReader reader, XRoadMessage message);
 
-        void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, SerializationContext context);
+        void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, XRoadMessage message);
 
-        void SerializeResponse(XmlWriter writer, object value, SerializationContext context, XmlReader requestReader, ICustomSerialization customSerialization = null);
+        void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null);
     }
 }

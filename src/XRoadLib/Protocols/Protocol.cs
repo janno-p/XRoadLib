@@ -151,15 +151,11 @@ namespace XRoadLib.Protocols
 
         public ISerializerCache GetSerializerCache(uint? version = null)
         {
-            if (!version.HasValue)
-            {
-                if (serializerCache != null)
-                    return serializerCache;
-                throw new ArgumentNullException(nameof(version), $"This protocol instance (message protocol version `{Name}`) supports multiple versions.");
-            }
+            if (serializerCache == null && versioningSerializerCaches == null)
+                throw new Exception($"This protocol instance (message protocol version `{Name}`) is not configured with contract assembly.");
 
-            if (versioningSerializerCaches == null)
-                throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) doest not support multiple versions.", nameof(version));
+            if (serializerCache != null)
+                return serializerCache;
 
             ISerializerCache versioningSerializerCache;
             if (versioningSerializerCaches.TryGetValue(version.Value, out versioningSerializerCache))

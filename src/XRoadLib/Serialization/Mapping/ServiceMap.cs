@@ -26,23 +26,23 @@ namespace XRoadLib.Serialization.Mapping
             OperationDefinition = operationDefinition;
         }
 
-        public IDictionary<string, object> DeserializeRequest(XmlReader reader, SerializationContext context)
+        public IDictionary<string, object> DeserializeRequest(XmlReader reader, XRoadMessage message)
         {
-            var requestName = context.Protocol.RequestPartNameInRequest;
+            var requestName = message.Protocol.RequestPartNameInRequest;
 
             if (!reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
-            return OperationDefinition.HasStrictContentOrder ? DeserializeParametersStrict(reader, context) : DeserializeParametersNonStrict(reader, context);
+            return OperationDefinition.HasStrictContentOrder ? DeserializeParametersStrict(reader, message) : DeserializeParametersNonStrict(reader, message);
         }
 
-        private IDictionary<string, object> DeserializeParametersStrict(XmlReader reader, SerializationContext context)
+        private IDictionary<string, object> DeserializeParametersStrict(XmlReader reader, XRoadMessage message)
         {
             var parameterValues = new List<Tuple<string, object>>();
-            var parameterNodes = context.XmlTemplate?.ParameterNodes.ToList();
+            var parameterNodes = message.XmlTemplate?.ParameterNodes.ToList();
 
             var parameterEnumerator = parameters.GetEnumerator();
-            var templateNodeEnumerator = context.XmlTemplate?.ParameterNodes.GetEnumerator();
+            var templateNodeEnumerator = message.XmlTemplate?.ParameterNodes.GetEnumerator();
 
             while (parameterEnumerator.MoveNext() && (templateNodeEnumerator == null || templateNodeEnumerator.MoveNext()))
             {
@@ -52,8 +52,8 @@ namespace XRoadLib.Serialization.Mapping
 
                 object value;
                 if (parameters.Count < 2)
-                    parameterValues.Add(Tuple.Create(parameterInfo.Name, parameterMap.DeserializeRoot(reader, parameterNode, context)));
-                else if (parameterMap.TryDeserialize(reader, parameterNode, context, out value))
+                    parameterValues.Add(Tuple.Create(parameterInfo.Name, parameterMap.DeserializeRoot(reader, parameterNode, message)));
+                else if (parameterMap.TryDeserialize(reader, parameterNode, message, out value))
                     parameterValues.Add(Tuple.Create(parameterInfo.Name, value));
                 else
                 {
@@ -72,7 +72,7 @@ namespace XRoadLib.Serialization.Mapping
             return parameterValues.ToDictionary(p => p.Item1, p => p.Item2);
         }
 
-        private IDictionary<string, object> DeserializeParametersNonStrict(XmlReader reader, SerializationContext context)
+        private IDictionary<string, object> DeserializeParametersNonStrict(XmlReader reader, XRoadMessage message)
         {
             var parameterValues = new Dictionary<string, object>();
 
@@ -83,22 +83,22 @@ namespace XRoadLib.Serialization.Mapping
                     throw XRoadException.InvalidQuery("Unexpected parameter `{0}` in operation `{1}` request.", reader.LocalName, OperationDefinition.Name.LocalName);
 
                 var parameterInfo = parameter.Definition.ParameterInfo;
-                var parameterNode = context.GetTemplateNode(parameterInfo.Name);
+                var parameterNode = message.GetTemplateNode(parameterInfo.Name);
 
-                parameterValues.Add(parameterInfo.Name, parameter.DeserializeRoot(reader, parameterNode, context));
+                parameterValues.Add(parameterInfo.Name, parameter.DeserializeRoot(reader, parameterNode, message));
             }
 
-            if (context.XmlTemplate != null)
-                foreach (var parameterNode in context.XmlTemplate.ParameterNodes.Where(n => n.IsRequired && (!parameterValues.ContainsKey(n.Name) || parameterValues[n.Name] == null)))
+            if (message.XmlTemplate != null)
+                foreach (var parameterNode in message.XmlTemplate.ParameterNodes.Where(n => n.IsRequired && (!parameterValues.ContainsKey(n.Name) || parameterValues[n.Name] == null)))
                     throw XRoadException.TeenuseKohustuslikParameeterPuudub(parameterNode.Name);
 
             return parameterValues;
         }
 
-        public object DeserializeResponse(XmlReader reader, SerializationContext context)
+        public object DeserializeResponse(XmlReader reader, XRoadMessage message)
         {
-            var responseName = context.Protocol.ResponsePartNameInResponse;
-            var parameterNode = context.XmlTemplate != null ? context.XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
+            var responseName = message.Protocol.ResponsePartNameInResponse;
+            var parameterNode = message.XmlTemplate != null ? message.XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
 
             if (!reader.MoveToElement(2))
                 throw XRoadException.InvalidQuery("No payload element in SOAP message.");
@@ -109,13 +109,13 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, responseName))
                 throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` was not found in SOAP message.");
 
-            return result.DeserializeRoot(reader, parameterNode, context);
+            return result.DeserializeRoot(reader, parameterNode, message);
         }
 
-        public void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, SerializationContext context)
+        public void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, XRoadMessage message)
         {
             writer.WriteStartElement(OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
-            writer.WriteStartElement(context.Protocol.RequestPartNameInRequest);
+            writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
 
             foreach (var parameterMap in parameters)
             {
@@ -127,14 +127,14 @@ namespace XRoadLib.Serialization.Mapping
                 if (parameterMap.Definition.IsOptional && !hasValue)
                     continue;
 
-                parameterMap.Serialize(writer, context.GetTemplateNode(parameterName), parameterValue, context);
+                parameterMap.Serialize(writer, message.GetTemplateNode(parameterName), parameterValue, message);
             }
 
             writer.WriteEndElement();
             writer.WriteEndElement();
         }
 
-        public void SerializeResponse(XmlWriter writer, object value, SerializationContext context, XmlReader requestReader, ICustomSerialization customSerialization)
+        public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization)
         {
             var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
 
@@ -144,21 +144,21 @@ namespace XRoadLib.Serialization.Mapping
 
             var namespaceInContext = requestReader.NamespaceURI;
             if (containsRequest)
-                CopyRequestToResponse(writer, requestReader, context, out namespaceInContext);
+                CopyRequestToResponse(writer, requestReader, message, out namespaceInContext);
 
             if (result != null)
             {
                 if (Equals(namespaceInContext, ""))
-                    writer.WriteStartElement(context.Protocol.ResponsePartNameInResponse);
-                else writer.WriteStartElement(context.Protocol.ResponsePartNameInResponse, "");
+                    writer.WriteStartElement(message.Protocol.ResponsePartNameInResponse);
+                else writer.WriteStartElement(message.Protocol.ResponsePartNameInResponse, "");
 
                 var fault = value as IXRoadFault;
                 if (fault == null)
                 {
-                    var responseNode = context.XmlTemplate != null ? context.XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
-                    result.Serialize(writer, responseNode, value, context);
+                    var responseNode = message.XmlTemplate != null ? message.XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
+                    result.Serialize(writer, responseNode, value, message);
                 }
-                else SerializeFault(writer, fault, context.Protocol);
+                else SerializeFault(writer, fault, message.Protocol);
 
                 writer.WriteEndElement();
             }
@@ -181,18 +181,18 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
-        private static void CopyRequestToResponse(XmlWriter writer, XmlReader reader, SerializationContext context, out string namespaceInContext)
+        private static void CopyRequestToResponse(XmlWriter writer, XmlReader reader, XRoadMessage message, out string namespaceInContext)
         {
             namespaceInContext = reader.NamespaceURI;
 
             writer.WriteAttributes(reader, true);
 
-            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, context.Protocol.RequestPartNameInRequest))
+            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, message.Protocol.RequestPartNameInRequest))
                 return;
 
-            if (context.Protocol.RequestPartNameInRequest != context.Protocol.RequestPartNameInResponse)
+            if (message.Protocol.RequestPartNameInRequest != message.Protocol.RequestPartNameInResponse)
             {
-                writer.WriteStartElement(context.Protocol.RequestPartNameInResponse);
+                writer.WriteStartElement(message.Protocol.RequestPartNameInResponse);
                 writer.WriteAttributes(reader, true);
 
                 while (reader.MoveToElement(4))

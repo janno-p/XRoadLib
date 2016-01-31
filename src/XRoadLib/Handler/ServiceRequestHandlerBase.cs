@@ -43,7 +43,7 @@ namespace XRoadLib.Handler
         protected virtual void OnAfterDeserialization()
         { }
 
-        protected virtual void OnBeforeSerialization(object result, SerializationContext context)
+        protected virtual void OnBeforeSerialization(object result)
         { }
 
         protected virtual void OnAfterSerialization(object result)
@@ -118,9 +118,7 @@ namespace XRoadLib.Handler
 
         private IDictionary<string, object> DeserializeMethodParameters(IServiceMap serviceMap)
         {
-            var context = requestMessage.CreateContext();
-
-            var beforeDeserializationEventArgs = new BeforeDeserializationEventArgs(context, serviceMap);
+            var beforeDeserializationEventArgs = new BeforeDeserializationEventArgs(serviceMap);
             OnBeforeDeserialization(beforeDeserializationEventArgs);
 
             requestMessage.ContentStream.Position = 0;
@@ -128,7 +126,7 @@ namespace XRoadLib.Handler
 
             reader.MoveToPayload(requestMessage.RootElementName);
 
-            var parameters = serviceMap.DeserializeRequest(reader, context);
+            var parameters = serviceMap.DeserializeRequest(reader, requestMessage);
 
             OnAfterDeserialization();
 
@@ -148,8 +146,7 @@ namespace XRoadLib.Handler
 
         private void SerializeXRoadResponse(HttpContext httpContext, object result, IServiceMap serviceMap)
         {
-            var context = responseMessage.CreateContext();
-            OnBeforeSerialization(result, context);
+            OnBeforeSerialization(result);
 
             requestMessage.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(requestMessage.ContentStream, new XmlReaderSettings { CloseInput = false }))
@@ -176,7 +173,7 @@ namespace XRoadLib.Handler
                 if (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
                     writer.WriteAttributes(reader, true);
 
-                serviceMap.SerializeResponse(writer, result, context, reader, CustomSerialization);
+                serviceMap.SerializeResponse(writer, result, responseMessage, reader, CustomSerialization);
 
                 writer.WriteEndDocument();
                 writer.Flush();

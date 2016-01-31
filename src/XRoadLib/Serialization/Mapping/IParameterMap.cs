@@ -8,12 +8,12 @@ namespace XRoadLib.Serialization.Mapping
     {
         ParameterDefinition Definition { get; }
 
-        bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context, out object value);
+        bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, XRoadMessage message, out object value);
 
-        object DeserializeRoot(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context);
+        object DeserializeRoot(XmlReader reader, IXmlTemplateNode parameterNode, XRoadMessage message);
 
-        void Serialize(XmlWriter writer, IXmlTemplateNode parameterNode, object value, SerializationContext context);
+        void Serialize(XmlWriter writer, IXmlTemplateNode parameterNode, object value, XRoadMessage message);
 
-        void SerializeRoot(XmlWriter writer, IXmlTemplateNode parameterNode, object value, SerializationContext context);
+        void SerializeRoot(XmlWriter writer, IXmlTemplateNode parameterNode, object value, XRoadMessage message);
     }
 }

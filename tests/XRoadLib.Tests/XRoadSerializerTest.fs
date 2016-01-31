@@ -30,9 +30,8 @@ module XRoadSerializerTest =
 
         writer.WriteStartElement(elementName)
 
-        let context = SerializationContext(message, dtoVersion)
         let typeMap = Globals.XRoadProtocol20.GetSerializerCache(Nullable(dtoVersion)).GetTypeMap(typeof<'T>)
-        typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, typeof<'T>, context)
+        typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, typeof<'T>, message)
 
         writer.WriteEndElement()
 

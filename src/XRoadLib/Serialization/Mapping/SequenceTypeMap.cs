@@ -19,7 +19,7 @@ namespace XRoadLib.Serialization.Mapping
             this.serializerCache = serializerCache;
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message)
         {
             var entity = new T();
             entity.SetTemplateMembers(templateNode.ChildNames);
@@ -37,14 +37,14 @@ namespace XRoadLib.Serialization.Mapping
 
                 MoveToProperty(reader, properties);
 
-                var childValidatorNode = templateNode[properties.Current.PropertyName, context.DtoVersion];
+                var childValidatorNode = templateNode[properties.Current.PropertyName, message.Version];
                 if (childValidatorNode == null)
                 {
                     reader.ReadToEndElement();
                     continue;
                 }
 
-                if (reader.IsNilElement() || properties.Current.Deserialize(reader, entity, childValidatorNode, context))
+                if (reader.IsNilElement() || properties.Current.Deserialize(reader, entity, childValidatorNode, message))
                     entity.OnMemberDeserialized(properties.Current.PropertyName);
             }
 
@@ -60,15 +60,15 @@ namespace XRoadLib.Serialization.Mapping
             throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", Definition.Name, reader.LocalName);
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, XRoadMessage message)
         {
-            context.Protocol.Style.WriteType(writer, Definition, expectedType);
+            message.Protocol.Style.WriteType(writer, Definition, expectedType);
 
             foreach (var propertyMap in propertyMaps)
             {
-                var childTemplateNode = templateNode?[propertyMap.PropertyName, context.DtoVersion];
+                var childTemplateNode = templateNode?[propertyMap.PropertyName, message.Version];
                 if (templateNode == null || childTemplateNode != null)
-                    propertyMap.Serialize(writer, childTemplateNode, value, context);
+                    propertyMap.Serialize(writer, childTemplateNode, value, message);
             }
         }
 

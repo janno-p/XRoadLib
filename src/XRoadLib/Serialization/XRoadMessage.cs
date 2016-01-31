@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using XRoadLib.Protocols;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
-using XRoadLib.Serialization.Mapping;
+using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization
 {
@@ -20,17 +20,20 @@ namespace XRoadLib.Serialization
 
         private readonly List<XRoadAttachment> attachments = new List<XRoadAttachment>();
 
-        public string MultipartContentType { get; internal set; }
-        public Encoding ContentEncoding { get; internal set; }
-        public Stream ContentStream { get; internal set; }
-        public IProtocol Protocol { get; internal set; }
-        public IXRoadHeader Header { get; internal set; }
+        public bool EnableFiltering { get; set; }
+        public IXmlTemplate XmlTemplate { get; set; }
+        public string MultipartContentType { get; set; }
+        public Encoding ContentEncoding { get; set; }
+        public Stream ContentStream { get; set; }
+        public IProtocol Protocol { get; set; }
+        public IXRoadHeader Header { get; set; }
         public IList<XElement> UnresolvedHeaders { get; set; }
-        public XName RootElementName { get; internal set; }
+        public XName RootElementName { get; set; }
         public BinaryMode BinaryContentMode { get; set; }
 
         public IList<XRoadAttachment> AllAttachments => attachments;
         public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }
+        public uint Version { get { return Header == null || Header.Service == null || !Header.Service.Version.HasValue ? 1u : Header.Service.Version.Value; } }
 
         public XRoadMessage()
         {
@@ -128,16 +131,14 @@ namespace XRoadLib.Serialization
             Header = message.Header;
         }
 
-        public SerializationContext CreateContext()
-        {
-            var dtoVersion = (Header?.Service?.Version).GetValueOrDefault(1u);
-            return new SerializationContext(this, dtoVersion);
-        }
-
         public ISerializerCache GetSerializerCache()
         {
-            var dtoVersion = (Header?.Service?.Version).GetValueOrDefault(1u);
-            return Protocol?.GetSerializerCache(dtoVersion);
+            return Protocol?.GetSerializerCache(Version);
+        }
+
+        public IXmlTemplateNode GetTemplateNode(string nodeName)
+        {
+            return XmlTemplate != null ? XmlTemplate.GetParameterNode(nodeName) : XRoadXmlTemplate.EmptyNode;
         }
     }
 }

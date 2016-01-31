@@ -126,7 +126,6 @@
     <Compile Include="Serialization\Mapping\ParameterMap.cs" />
     <Compile Include="Serialization\Mapping\PropertyMap.cs" />
     <Compile Include="Serialization\Mapping\SequenceTypeMap.cs" />
-    <Compile Include="Serialization\Mapping\SerializationContext.cs" />
     <Compile Include="Serialization\Mapping\ServiceMap.cs" />
     <Compile Include="Serialization\Mapping\StreamTypeMap.cs" />
     <Compile Include="Serialization\MetaServiceEnum.cs" />

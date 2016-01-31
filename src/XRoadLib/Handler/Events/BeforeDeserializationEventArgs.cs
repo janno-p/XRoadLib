@@ -7,12 +7,10 @@ namespace XRoadLib.Handler.Events
     public class BeforeDeserializationEventArgs : EventArgs
     {
         public IServiceMap ServiceMap { get; }
-        public SerializationContext Context { get; }
         public XmlReaderSettings XmlReaderSettings { get; set; }
 
-        public BeforeDeserializationEventArgs(SerializationContext context, IServiceMap serviceMap)
+        public BeforeDeserializationEventArgs(IServiceMap serviceMap)
         {
-            Context = context;
             ServiceMap = serviceMap;
         }
     }

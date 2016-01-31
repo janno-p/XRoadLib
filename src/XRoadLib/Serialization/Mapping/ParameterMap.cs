@@ -20,7 +20,7 @@ namespace XRoadLib.Serialization.Mapping
             Definition = parameterDefinition;
         }
 
-        public bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context, out object value)
+        public bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, XRoadMessage message, out object value)
         {
             value = null;
             if (!reader.MoveToElement(4))
@@ -33,12 +33,12 @@ namespace XRoadLib.Serialization.Mapping
                 throw XRoadException.InvalidQuery($"Oodati elementi `{Definition.Name.LocalName}`, aga leiti `{reader.LocalName}`.");
             }
 
-            value = DeserializeRoot(reader, parameterNode, context);
+            value = DeserializeRoot(reader, parameterNode, message);
 
             return true;
         }
 
-        public object DeserializeRoot(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context)
+        public object DeserializeRoot(XmlReader reader, IXmlTemplateNode parameterNode, XRoadMessage message)
         {
             if (parameterNode == null || reader.IsNilElement())
             {
@@ -48,28 +48,28 @@ namespace XRoadLib.Serialization.Mapping
 
             var currentTypeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? typeMap;
 
-            return currentTypeMap.Deserialize(reader, parameterNode, context);
+            return currentTypeMap.Deserialize(reader, parameterNode, message);
         }
 
-        public void Serialize(XmlWriter writer, IXmlTemplateNode parameterNode, object value, SerializationContext context)
+        public void Serialize(XmlWriter writer, IXmlTemplateNode parameterNode, object value, XRoadMessage message)
         {
             if (!string.IsNullOrWhiteSpace(Definition.Name.LocalName))
                 writer.WriteStartElement(Definition.Name.LocalName);
 
-            SerializeRoot(writer, parameterNode, value, context);
+            SerializeRoot(writer, parameterNode, value, message);
 
             if (!string.IsNullOrWhiteSpace(Definition.Name.LocalName))
                 writer.WriteEndElement();
         }
 
-        public void SerializeRoot(XmlWriter writer, IXmlTemplateNode parameterNode, object value, SerializationContext context)
+        public void SerializeRoot(XmlWriter writer, IXmlTemplateNode parameterNode, object value, XRoadMessage message)
         {
             if (value == null)
                 writer.WriteNilAttribute();
             else
             {
                 var currentTypeMap = typeMap.Definition.IsSimpleType ? typeMap : serializerCache.GetTypeMap(value.GetType());
-                currentTypeMap.Serialize(writer, parameterNode, value, typeMap.Definition.Type, context);
+                currentTypeMap.Serialize(writer, parameterNode, value, typeMap.Definition.Type, message);
             }
         }
     }

@@ -24,9 +24,8 @@ module MappingTestHelpers =
         while reader.Read() && (reader.NodeType <> XmlNodeType.Element) do ()
 
         use message = new XRoadMessage(Globals.XRoadProtocol20)
-        let context = SerializationContext(message, 1u)
 
-        typeMap.Deserialize(reader, null, context)
+        typeMap.Deserialize(reader, null, message)
 
 [<TestFixture>]
 module DateTest =

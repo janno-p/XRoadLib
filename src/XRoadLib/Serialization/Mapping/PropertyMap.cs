@@ -27,9 +27,9 @@ namespace XRoadLib.Serialization.Mapping
             isFilterable = propertyDefinition.Owner.Type.IsFilterableField(PropertyName);
         }
 
-        public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, SerializationContext context)
+        public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
         {
-            if (context.FilteringEnabled && !isFilterable)
+            if (message.EnableFiltering && !isFilterable)
             {
                 reader.ReadToEndElement();
                 return false;
@@ -41,7 +41,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 
-            var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, context);
+            var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, message);
             if (propertyValue == null)
                 return true;
 
@@ -50,14 +50,12 @@ namespace XRoadLib.Serialization.Mapping
             return true;
         }
 
-        public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, SerializationContext context)
+        public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message)
         {
-            if (context.FilteringEnabled && !isFilterable)
+            if (message.EnableFiltering && !isFilterable)
                 return;
 
             var propertyValue = getValueMethod(value);
-            if (context.ExcludeNullElement && propertyValue == null)
-                return;
 
             writer.WriteStartElement(PropertyName);
 
@@ -67,7 +65,7 @@ namespace XRoadLib.Serialization.Mapping
             {
                 var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(propertyValue.GetType()) : typeMap;
 
-                concreteTypeMap.Serialize(writer, templateNode, propertyValue, typeMap.Definition.Type, context);
+                concreteTypeMap.Serialize(writer, templateNode, propertyValue, typeMap.Definition.Type, message);
             }
 
             writer.WriteEndElement();

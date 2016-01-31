@@ -12,7 +12,7 @@ namespace XRoadLib.Serialization.Mapping
             : base(typeDefinition)
         { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
                 return null;
@@ -34,9 +34,9 @@ namespace XRoadLib.Serialization.Mapping
             return date;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, XRoadMessage message)
         {
-            context.Protocol.Style.WriteExplicitType(writer, Definition.Name);
+            message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteValue(XmlConvert.ToString((DateTime)value, "yyyy-MM-dd"));
         }

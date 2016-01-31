@@ -1,7 +1,6 @@
 ﻿using System.Xml;
 using System.Xml.XPath;
 using XRoadLib.Serialization;
-using XRoadLib.Serialization.Mapping;
 using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions
@@ -37,9 +36,9 @@ namespace XRoadLib.Extensions
             }
         }
 
-        public static object DeserializeMessageContent(this XRoadMessage message, string operationName, uint version, ISerializerCache serializerCache)
+        public static object DeserializeMessageContent(this XRoadMessage message, string operationName)
         {
-            var context = new SerializationContext(message, version);
+            var serializerCache = message.GetSerializerCache();
             var serviceMap = serializerCache.GetServiceMap(operationName);
 
             message.ContentStream.Position = 0;
@@ -54,7 +53,7 @@ namespace XRoadLib.Extensions
             {
                 reader.MoveToBody();
 
-                var result = serviceMap.DeserializeResponse(reader, context);
+                var result = serviceMap.DeserializeResponse(reader, message);
 
                 var soapFault = result as ISoapFault;
                 if (soapFault != null)

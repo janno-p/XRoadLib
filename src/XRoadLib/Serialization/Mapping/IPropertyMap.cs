@@ -7,8 +7,8 @@ namespace XRoadLib.Serialization.Mapping
     {
         string PropertyName { get; }
 
-        bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, SerializationContext context);
+        bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message);
 
-        void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, SerializationContext context);
+        void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message);
     }
 }

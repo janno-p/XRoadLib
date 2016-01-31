@@ -36,11 +36,10 @@ module XRoadDeserializerTest =
         stream.Position <- 0L
         use reader = XmlReader.Create(stream)
         use messageReader = new XRoadMessageReader(stream, null, Encoding.UTF8, null, [Globals.XRoadProtocol20])
-        use message = new XRoadMessage(Globals.XRoadProtocol20)
+        use message = new XRoadMessage(Globals.XRoadProtocol20, XmlTemplate=template)
         messageReader.Read(message, false)
-        let context = SerializationContext(message, dtoVersion, XmlTemplate = template)
         reader.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol20.ProducerNamespace))
-        serviceMap.DeserializeRequest(reader, context)
+        serviceMap.DeserializeRequest(reader, message)
 
     [<Test>]
     let ``can handle optional parameters`` () =
@@ -412,7 +411,7 @@ module XRoadDeserializerTest =
         reader.MoveToElement(0) |> ignore
         let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>)
         use message = new XRoadMessage()
-        let entity = typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, SerializationContext(message, 1u))
+        let entity = typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, message)
         entity |> should not' (be Null)
         entity |> should be instanceOfType<Wsdl.ContainerType>
         let container = unbox<Wsdl.ContainerType> entity
@@ -440,5 +439,5 @@ module XRoadDeserializerTest =
         reader.MoveToElement(0) |> ignore
         let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>)
         use message = new XRoadMessage()
-        TestDelegate(fun _ -> typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, SerializationContext(message, 1u)) |> ignore)
+        TestDelegate(fun _ -> typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, message) |> ignore)
         |> should (throwWithMessage "Expected anonymous type, but `Test` was given.") typeof<XRoadException>

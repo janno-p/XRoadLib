@@ -10,9 +10,9 @@ namespace XRoadLib.Serialization.Mapping
     {
         TypeDefinition Definition { get; }
 
-        object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, SerializationContext context);
+        object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message);
 
-        void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, SerializationContext context);
+        void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, XRoadMessage message);
 
         void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions);
     }
