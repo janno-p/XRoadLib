@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Linq;
+﻿using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
@@ -22,7 +20,7 @@ namespace XRoadLib.Protocols
         {
             AddMandatoryHeaderElement(x => x.Consumer);
             AddMandatoryHeaderElement(x => x.Producer);
-            AddMandatoryHeaderElement(x => x.Service);
+            AddMandatoryHeaderElement(x => ((IXRoadHeader31)x).Service);
             AddMandatoryHeaderElement(x => x.UserId);
             AddMandatoryHeaderElement(x => x.Id);
             AddMandatoryHeaderElement(x => x.UserName);

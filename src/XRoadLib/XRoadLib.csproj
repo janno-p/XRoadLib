@@ -93,7 +93,6 @@
     <Compile Include="Protocols\Headers\IXRoadHeader.cs" />
     <Compile Include="Protocols\Headers\XRoadHeader31.cs" />
     <Compile Include="Protocols\Headers\XRoadHeader40.cs" />
-    <Compile Include="Protocols\Headers\XRoadHeaderBase.cs" />
     <Compile Include="Protocols\Description\ProducerDefinition.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
@@ -160,6 +159,7 @@
     <Compile Include="Soap\FaultCode.cs" />
     <Compile Include="Soap\ServerFaultCode.cs" />
     <Compile Include="XRoadException.cs" />
+    <Compile Include="XRoadRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

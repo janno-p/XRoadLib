@@ -11,6 +11,7 @@
         public const string TARGET = "tns";
         public const string WSDL = "wsdl";
         public const string XMIME = "xmime";
+        public const string XMLNS = "xmlns";
         public const string XOP = "xop";
         public const string XROAD = "xrd";
         public const string XSD = "xsd";

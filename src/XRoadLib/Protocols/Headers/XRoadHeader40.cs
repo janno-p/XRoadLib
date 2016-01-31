@@ -3,12 +3,19 @@ using XRoadLib.Extensions;
 
 namespace XRoadLib.Protocols.Headers
 {
-    public class XRoadHeader40 : XRoadHeaderBase, IXRoadHeader40
+    public class XRoadHeader40 : IXRoadHeader, IXRoadHeader40
     {
+        public XRoadClientIdentifier Client { get; set; }
+        public XRoadServiceIdentifier Service { get; set; }
+        public string UserId { get; set; }
+        public string Issue { get; set; }
+        public string Id { get; set; }
+        public string ProtocolVersion { get; set; }
+
         public XRoadCentralServiceIdentifier CentralService { get; set; }
         public XRoadRepresentedParty RepresentedParty { get; set; }
 
-        public override void Validate()
+        public void Validate()
         {
             if (Client == null)
                 throw XRoadException.InvalidQuery("X-Road header `client` element is mandatory.");
@@ -20,7 +27,7 @@ namespace XRoadLib.Protocols.Headers
                 throw XRoadException.InvalidQuery("X-Road header `protocolVersion` element is mandatory.");
         }
 
-        public override void SetHeaderValue(XmlReader reader)
+        public void SetHeaderValue(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.XROAD_V4_REPR && reader.LocalName == "representedParty")
             {

@@ -2,11 +2,18 @@
 
 namespace XRoadLib.Protocols.Headers
 {
-    public class XRoadHeader31 : XRoadHeaderBase, IXRoadHeader31
+    public class XRoadHeader31 : IXRoadHeader, IXRoadHeader31
     {
+        public XRoadClientIdentifier Client { get; set; }
+        public XRoadServiceIdentifier Service { get; set; }
+        public string UserId { get; set; }
+        public string Issue { get; set; }
+        string IXRoadHeader.ProtocolVersion => "";
+
         public string Consumer => Client.MemberCode;
         public string Producer => Service.SubsystemCode;
         string IXRoadHeader31.Service => Service.ToFullName();
+        public string Id { get; set; }
 
         public string Unit { get; set; }
         public string Position { get; set; }
@@ -19,7 +26,7 @@ namespace XRoadLib.Protocols.Headers
         public string Encrypted { get; set; }
         public string EncryptedCert { get; set; }
 
-        public override void SetHeaderValue(XmlReader reader)
+        public void SetHeaderValue(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.XROAD)
             {
@@ -102,5 +109,8 @@ namespace XRoadLib.Protocols.Headers
 
             throw XRoadException.InvalidQuery("Unexpected X-Road header element `{0}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI));
         }
+
+        public void Validate()
+        { }
     }
 }

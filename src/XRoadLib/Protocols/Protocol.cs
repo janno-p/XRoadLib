@@ -38,8 +38,10 @@ namespace XRoadLib.Protocols
 
         public Style Style { get; }
         public string ProducerNamespace { get; }
-        public ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>();
+        public ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>(new XNameComparer());
         public ISchemaExporter SchemaExporter { get; }
+
+        protected abstract void DefineMandatoryHeaderElements();
 
         protected Protocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
         {
@@ -54,8 +56,6 @@ namespace XRoadLib.Protocols
             SchemaExporter = schemaExporter ?? new SchemaExporter(producerNamespace);
         }
 
-        protected abstract void DefineMandatoryHeaderElements();
-
         public virtual void ExportServiceDescription(ServiceDescription serviceDescription)
         {
             serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
@@ -67,16 +67,57 @@ namespace XRoadLib.Protocols
             if (memberExpression == null)
                 throw new ArgumentException($"Only MemberExpression is allowed to use for SOAP header definition, but was {expression.Body.GetType().Name} ({GetType().Name}).", nameof(expression));
 
-            var attribute = memberExpression.Member.GetSingleAttribute<XmlElementAttribute>();
+            var attribute = memberExpression.Member.GetSingleAttribute<XmlElementAttribute>() ?? GetElementAttributeFromInterface(memberExpression.Member.DeclaringType, memberExpression.Member as PropertyInfo);
             if (string.IsNullOrWhiteSpace(attribute?.ElementName))
                 throw new ArgumentException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.", nameof(expression));
 
             MandatoryHeaders.Add(XName.Get(attribute.ElementName, attribute.Namespace));
         }
 
+        private static XmlElementAttribute GetElementAttributeFromInterface(Type declaringType, PropertyInfo propertyInfo)
+        {
+            if (propertyInfo == null)
+                return null;
+
+            var getMethod = propertyInfo.GetGetMethod();
+
+            foreach (var iface in declaringType.GetInterfaces())
+            {
+                var map = declaringType.GetInterfaceMap(iface);
+
+                var index = -1;
+                for (var i = 0; i < map.TargetMethods.Length; i++)
+                    if (map.TargetMethods[i] == getMethod)
+                    {
+                        index = i;
+                        break;
+                    }
+
+                if (index < 0)
+                    continue;
+
+                var ifaceProperty = iface.GetProperties().SingleOrDefault(p => p.GetGetMethod() == map.InterfaceMethods[index]);
+
+                var attribute = ifaceProperty.GetSingleAttribute<XmlElementAttribute>();
+                if (attribute != null)
+                    return attribute;
+            }
+
+            return null;
+        }
+
         public virtual IXRoadHeader CreateHeader()
         {
             return new THeader();
+        }
+
+        public virtual void WriteSoapEnvelope(XmlWriter writer)
+        {
+            writer.WriteStartElement(PrefixConstants.SOAP_ENV, "Envelope", NamespaceConstants.SOAP_ENV);
+            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
+            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
+            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
+            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, ProducerNamespace);
         }
 
         public void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null)
@@ -137,6 +178,7 @@ namespace XRoadLib.Protocols
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) already has contract configured.");
 
             ContractAssembly = assembly;
+            DefineMandatoryHeaderElements();
 
             if (supportedVersions == null || supportedVersions.Length == 0)
             {
@@ -172,6 +214,15 @@ namespace XRoadLib.Protocols
             writer.WriteStartElement(name, XRoadNamespace);
             writer.WriteValue(value.GetValueOrDefault(""));
             writer.WriteEndElement();
+        }
+
+        private class XNameComparer : IComparer<XName>
+        {
+            public int Compare(XName x, XName y)
+            {
+                var ns = string.Compare(x.NamespaceName, y.NamespaceName, StringComparison.InvariantCulture);
+                return ns != 0 ? ns : string.Compare(x.LocalName, y.LocalName, StringComparison.InvariantCulture);
+            }
         }
     }
 }

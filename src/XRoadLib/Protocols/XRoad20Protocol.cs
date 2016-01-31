@@ -72,5 +72,13 @@ namespace XRoadLib.Protocols
 
             serviceDescription.Namespaces.Add(PrefixConstants.SOAP_ENC, NamespaceConstants.SOAP_ENC);
         }
+
+        public override void WriteSoapEnvelope(XmlWriter writer)
+        {
+            base.WriteSoapEnvelope(writer);
+
+            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC);
+            writer.WriteAttributeString("encodingStyle", NamespaceConstants.SOAP_ENV, NamespaceConstants.SOAP_ENC);
+        }
     }
 }

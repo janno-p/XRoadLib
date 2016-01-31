@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web;
 using System.Xml.Linq;
@@ -41,7 +42,7 @@ namespace XRoadLib.Serialization
         }
 
         public XRoadMessage(IProtocol protocol, IXRoadHeader header)
-            : this()
+            : this(new MemoryStream())
         {
             Protocol = protocol;
             Header = header;
@@ -78,6 +79,14 @@ namespace XRoadLib.Serialization
         {
             using (var writer = new XRoadMessageWriter(httpContext.Response.Output, httpContext.Response.OutputStream))
                 writer.Write(this, contentType => httpContext.Response.ContentType = contentType, httpContext.Response.AppendHeader);
+        }
+
+        public void SaveTo(WebRequest webRequest)
+        {
+            using (var outputStream = webRequest.GetRequestStream())
+            using (var textWriter = new StreamWriter(outputStream))
+            using (var writer = new XRoadMessageWriter(textWriter, outputStream))
+                writer.Write(this, contentType => webRequest.ContentType = contentType, webRequest.Headers.Add);
         }
 
         public void SaveTo(TextWriter textWriter, Stream outputStream, Action<string> setContentType, Action<string, string> appendHeader)

@@ -2,13 +2,20 @@
 
 namespace XRoadLib.Protocols.Headers
 {
-    public class XRoadHeader20 : XRoadHeaderBase, IXRoadHeader20
+    public class XRoadHeader20 : IXRoadHeader, IXRoadHeader20
     {
+        public XRoadClientIdentifier Client { get; set; }
+        public XRoadServiceIdentifier Service { get; set; }
+        public string UserId { get; set; }
+        public string Issue { get; set; }
+        string IXRoadHeader.ProtocolVersion => "";
+
         public string Asutus => Client.MemberCode;
         public string Andmekogu => Service?.SubsystemCode;
         public string Isikukood => UserId;
         public string Toimik => Issue;
         public string Nimi => Service?.ToFullName();
+        public string Id { get; set; }
 
         public string Ametnik { get; set; }
         public string Allasutus { get; set; }
@@ -22,7 +29,7 @@ namespace XRoadLib.Protocols.Headers
         public string Salastatud { get; set; }
         public string SalastatudSertifikaadiga { get; set; }
 
-        public override void SetHeaderValue(XmlReader reader)
+        public void SetHeaderValue(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.XTEE)
             {
@@ -109,5 +116,8 @@ namespace XRoadLib.Protocols.Headers
 
             throw XRoadException.InvalidQuery("Unexpected X-Road header element `{0}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI));
         }
+
+        public void Validate()
+        { }
     }
 }
