@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Xml;
+﻿using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -9,17 +8,16 @@ namespace XRoadLib.Serialization.Mapping
     public class ParameterMap : IParameterMap
     {
         private readonly ISerializerCache serializerCache;
-        private readonly ParameterDefinition parameterDefinition;
         private readonly ITypeMap typeMap;
 
-        public string Name => parameterDefinition.Name.LocalName;
-        public ParameterInfo ParameterInfo => parameterDefinition.ParameterInfo;
+        public ParameterDefinition Definition { get; }
 
         public ParameterMap(ISerializerCache serializerCache, ParameterDefinition parameterDefinition, ITypeMap typeMap)
         {
-            this.parameterDefinition = parameterDefinition;
             this.serializerCache = serializerCache;
             this.typeMap = typeMap;
+
+            Definition = parameterDefinition;
         }
 
         public bool TryDeserialize(XmlReader reader, IXmlTemplateNode parameterNode, SerializationContext context, out object value)
@@ -28,11 +26,11 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(4))
                 return false;
 
-            if (reader.LocalName != Name)
+            if (reader.LocalName != Definition.Name.LocalName)
             {
-                if (parameterDefinition.IsOptional)
+                if (Definition.IsOptional)
                     return false;
-                throw XRoadException.InvalidQuery($"Oodati elementi `{Name}`, aga leiti `{reader.LocalName}`.");
+                throw XRoadException.InvalidQuery($"Oodati elementi `{Definition.Name.LocalName}`, aga leiti `{reader.LocalName}`.");
             }
 
             value = DeserializeRoot(reader, parameterNode, context);
@@ -55,12 +53,12 @@ namespace XRoadLib.Serialization.Mapping
 
         public void Serialize(XmlWriter writer, IXmlTemplateNode parameterNode, object value, SerializationContext context)
         {
-            if (!string.IsNullOrWhiteSpace(Name))
-                writer.WriteStartElement(Name);
+            if (!string.IsNullOrWhiteSpace(Definition.Name.LocalName))
+                writer.WriteStartElement(Definition.Name.LocalName);
 
             SerializeRoot(writer, parameterNode, value, context);
 
-            if (!string.IsNullOrWhiteSpace(Name))
+            if (!string.IsNullOrWhiteSpace(Definition.Name.LocalName))
                 writer.WriteEndElement();
         }
 

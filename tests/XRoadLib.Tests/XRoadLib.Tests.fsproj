@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>afe5fb96-ef23-4c38-80c2-6e07e4b34bd9</ProjectGuid>
+    <ProjectGuid>{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>XRoadLib.Tests</RootNamespace>
     <AssemblyName>XRoadLib.Tests</AssemblyName>
@@ -24,10 +24,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <StartAction>Project</StartAction>
-    <StartProgram>
-    </StartProgram>
-    <StartArguments>
-    </StartArguments>
+    <StartProgram></StartProgram>
+    <StartArguments></StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

@@ -25,5 +25,10 @@ namespace XRoadLib.Serialization.Mapping
                 throw new ArgumentOutOfRangeException(nameof(dtoVersion));
             DtoVersion = dtoVersion;
         }
+
+        public IXmlTemplateNode GetTemplateNode(string nodeName)
+        {
+            return XmlTemplate != null ? XmlTemplate.GetParameterNode(nodeName) : XRoadXmlTemplate.EmptyNode;
+        }
     }
 }

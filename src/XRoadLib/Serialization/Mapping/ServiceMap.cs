@@ -47,16 +47,17 @@ namespace XRoadLib.Serialization.Mapping
             while (parameterEnumerator.MoveNext() && (templateNodeEnumerator == null || templateNodeEnumerator.MoveNext()))
             {
                 var parameterMap = parameterEnumerator.Current;
+                var parameterInfo = parameterMap.Definition.ParameterInfo;
                 var parameterNode = templateNodeEnumerator != null ? templateNodeEnumerator.Current : XRoadXmlTemplate.EmptyNode;
 
                 object value;
                 if (parameters.Count < 2)
-                    parameterValues.Add(Tuple.Create(parameterMap.ParameterInfo.Name, parameterMap.DeserializeRoot(reader, parameterNode, context)));
+                    parameterValues.Add(Tuple.Create(parameterInfo.Name, parameterMap.DeserializeRoot(reader, parameterNode, context)));
                 else if (parameterMap.TryDeserialize(reader, parameterNode, context, out value))
-                    parameterValues.Add(Tuple.Create(parameterMap.ParameterInfo.Name, value));
+                    parameterValues.Add(Tuple.Create(parameterInfo.Name, value));
                 else
                 {
-                    parameterValues.Add(Tuple.Create(parameterMap.ParameterInfo.Name, (object)null));
+                    parameterValues.Add(Tuple.Create(parameterInfo.Name, (object)null));
                     continue;
                 }
 
@@ -77,12 +78,14 @@ namespace XRoadLib.Serialization.Mapping
 
             while (reader.Read() && reader.MoveToElement(4))
             {
-                var parameter = parameters.SingleOrDefault(x => x.Name == reader.LocalName);
+                var parameter = parameters.SingleOrDefault(x => x.Definition.Name.LocalName == reader.LocalName);
                 if (parameter == null)
                     throw XRoadException.InvalidQuery("Unexpected parameter `{0}` in operation `{1}` request.", reader.LocalName, OperationDefinition.Name.LocalName);
 
-                var parameterNode = context.XmlTemplate != null ? context.XmlTemplate.GetParameterNode(parameter.ParameterInfo.Name) : XRoadXmlTemplate.EmptyNode;
-                parameterValues.Add(parameter.ParameterInfo.Name, parameter.DeserializeRoot(reader, parameterNode, context));
+                var parameterInfo = parameter.Definition.ParameterInfo;
+                var parameterNode = context.GetTemplateNode(parameterInfo.Name);
+
+                parameterValues.Add(parameterInfo.Name, parameter.DeserializeRoot(reader, parameterNode, context));
             }
 
             if (context.XmlTemplate != null)
@@ -114,11 +117,17 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteStartElement(OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
             writer.WriteStartElement(context.Protocol.RequestPartNameInRequest);
 
-            foreach (var value in values)
+            foreach (var parameterMap in parameters)
             {
-                var parameterMap = parameters.Single(x => x.Name == value.Key);
-                var parameterNode = context.XmlTemplate != null ? context.XmlTemplate.GetParameterNode(parameterMap.Name) : XRoadXmlTemplate.EmptyNode;
-                parameterMap.Serialize(writer, parameterNode, value.Value, context);
+                var parameterName = parameterMap.Definition.Name.LocalName;
+
+                object parameterValue = null;
+                var hasValue = values.TryGetValue(parameterName, out parameterValue);
+
+                if (parameterMap.Definition.IsOptional && !hasValue)
+                    continue;
+
+                parameterMap.Serialize(writer, context.GetTemplateNode(parameterName), parameterValue, context);
             }
 
             writer.WriteEndElement();

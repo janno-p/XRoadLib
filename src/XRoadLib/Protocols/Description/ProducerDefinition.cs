@@ -23,7 +23,6 @@ namespace XRoadLib.Protocols.Description
         private readonly Assembly contractAssembly;
         private readonly IProtocol protocol;
         private readonly ISchemaExporter schemaExporter;
-        private readonly ISerializerCache serializerCache;
         private readonly uint? version;
 
         private readonly Binding binding;
@@ -35,8 +34,6 @@ namespace XRoadLib.Protocols.Description
 
         private readonly IDictionary<XName, TypeDefinition> schemaTypeDefinitions = new Dictionary<XName, TypeDefinition>();
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
-        private readonly IDictionary<string, XmlSchemaElement> schemaElements = new SortedDictionary<string, XmlSchemaElement>();
-        private readonly IDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType, XmlQualifiedName>> operationTypes = new SortedDictionary<string, Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType, XmlQualifiedName>>();
         private readonly IList<Message> messages = new List<Message>();
         private readonly ISet<string> requiredImports = new SortedSet<string>();
 
@@ -53,7 +50,6 @@ namespace XRoadLib.Protocols.Description
             this.version = version;
 
             schemaExporter = protocol.SchemaExporter;
-            serializerCache = protocol.GetSerializerCache(version);
 
             portType = new PortType { Name = "PortTypeName" };
 
