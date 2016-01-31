@@ -65,7 +65,7 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyMap in serializationPropertyMaps)
             {
-                var childTemplateNode = templateNode?[propertyMap.PropertyName, message.Version];
+                var childTemplateNode = templateNode?[propertyMap.Definition.Name.LocalName, message.Version];
                 if (templateNode == null || childTemplateNode != null)
                     propertyMap.Serialize(writer, childTemplateNode, value, message);
             }
@@ -78,7 +78,7 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyMap in propertyDefinitions.Select(x => new PropertyMap(serializerCache, x.Item1, x.Item2)))
             {
-                deserializationPropertyMaps.Add(propertyMap.PropertyName, propertyMap);
+                deserializationPropertyMaps.Add(propertyMap.Definition.Name.LocalName, propertyMap);
                 serializationPropertyMaps.Add(propertyMap);
             }
         }

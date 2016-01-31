@@ -1,11 +1,12 @@
 ﻿using System.Xml;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
     public interface IPropertyMap
     {
-        string PropertyName { get; }
+        PropertyDefinition Definition { get; }
 
         bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message);
 

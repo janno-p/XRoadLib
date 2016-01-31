@@ -37,7 +37,7 @@ namespace XRoadLib.Serialization.Mapping
 
                 MoveToProperty(reader, properties);
 
-                var childValidatorNode = templateNode[properties.Current.PropertyName, message.Version];
+                var childValidatorNode = templateNode[properties.Current.Definition.Name.LocalName, message.Version];
                 if (childValidatorNode == null)
                 {
                     reader.ReadToEndElement();
@@ -45,7 +45,7 @@ namespace XRoadLib.Serialization.Mapping
                 }
 
                 if (reader.IsNilElement() || properties.Current.Deserialize(reader, entity, childValidatorNode, message))
-                    entity.OnMemberDeserialized(properties.Current.PropertyName);
+                    entity.OnMemberDeserialized(properties.Current.Definition.Name.LocalName);
             }
 
             return entity;
@@ -54,7 +54,7 @@ namespace XRoadLib.Serialization.Mapping
         private void MoveToProperty(XmlReader reader, IEnumerator<IPropertyMap> properties)
         {
             while (properties.MoveNext())
-                if (reader.LocalName == properties.Current.PropertyName)
+                if (reader.LocalName == properties.Current.Definition.Name.LocalName)
                     return;
 
             throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", Definition.Name, reader.LocalName);
@@ -66,7 +66,7 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyMap in propertyMaps)
             {
-                var childTemplateNode = templateNode?[propertyMap.PropertyName, message.Version];
+                var childTemplateNode = templateNode?[propertyMap.Definition.Name.LocalName, message.Version];
                 if (templateNode == null || childTemplateNode != null)
                     propertyMap.Serialize(writer, childTemplateNode, value, message);
             }

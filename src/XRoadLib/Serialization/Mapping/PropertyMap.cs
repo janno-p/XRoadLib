@@ -9,22 +9,22 @@ namespace XRoadLib.Serialization.Mapping
     {
         private readonly bool isFilterable;
         private readonly ISerializerCache serializerCache;
+        private readonly ITypeMap typeMap;
         private readonly GetValueMethod getValueMethod;
         private readonly SetValueMethod setValueMethod;
-        private readonly PropertyDefinition propertyDefinition;
-        private readonly ITypeMap typeMap;
 
-        public string PropertyName => propertyDefinition.Name.LocalName;
+        public PropertyDefinition Definition { get; }
 
         public PropertyMap(ISerializerCache serializerCache, PropertyDefinition propertyDefinition, ITypeMap typeMap)
         {
-            this.propertyDefinition = propertyDefinition;
             this.serializerCache = serializerCache;
             this.typeMap = typeMap;
 
-            getValueMethod = propertyDefinition.PropertyInfo.CreateGetValueMethod();
-            setValueMethod = propertyDefinition.PropertyInfo.CreateSetValueMethod();
-            isFilterable = propertyDefinition.Owner.Type.IsFilterableField(PropertyName);
+            Definition = propertyDefinition;
+
+            getValueMethod = Definition.PropertyInfo.CreateGetValueMethod();
+            setValueMethod = Definition.PropertyInfo.CreateSetValueMethod();
+            isFilterable = Definition.Owner.Type.IsFilterableField(Definition.Name.LocalName);
         }
 
         public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
@@ -57,7 +57,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var propertyValue = getValueMethod(value);
 
-            writer.WriteStartElement(PropertyName);
+            writer.WriteStartElement(Definition.Name.LocalName);
 
             if (propertyValue == null)
                 writer.WriteNilAttribute();

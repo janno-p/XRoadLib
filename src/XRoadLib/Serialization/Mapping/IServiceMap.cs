@@ -6,7 +6,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public interface IServiceMap
     {
-        OperationDefinition OperationDefinition { get; }
+        OperationDefinition Definition { get; }
 
         IDictionary<string, object> DeserializeRequest(XmlReader reader, XRoadMessage message);
 

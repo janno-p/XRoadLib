@@ -16,14 +16,14 @@ namespace XRoadLib.Serialization.Mapping
         private readonly IList<IParameterMap> parameters;
         private readonly IParameterMap result;
 
-        public OperationDefinition OperationDefinition { get; }
+        public OperationDefinition Definition { get; }
 
         public ServiceMap(OperationDefinition operationDefinition, IList<IParameterMap> parameters, IParameterMap result)
         {
             this.parameters = parameters;
             this.result = result;
 
-            OperationDefinition = operationDefinition;
+            Definition = operationDefinition;
         }
 
         public IDictionary<string, object> DeserializeRequest(XmlReader reader, XRoadMessage message)
@@ -33,7 +33,7 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
-            return OperationDefinition.HasStrictContentOrder ? DeserializeParametersStrict(reader, message) : DeserializeParametersNonStrict(reader, message);
+            return Definition.HasStrictContentOrder ? DeserializeParametersStrict(reader, message) : DeserializeParametersNonStrict(reader, message);
         }
 
         private IDictionary<string, object> DeserializeParametersStrict(XmlReader reader, XRoadMessage message)
@@ -80,7 +80,7 @@ namespace XRoadLib.Serialization.Mapping
             {
                 var parameter = parameters.SingleOrDefault(x => x.Definition.Name.LocalName == reader.LocalName);
                 if (parameter == null)
-                    throw XRoadException.InvalidQuery("Unexpected parameter `{0}` in operation `{1}` request.", reader.LocalName, OperationDefinition.Name.LocalName);
+                    throw XRoadException.InvalidQuery("Unexpected parameter `{0}` in operation `{1}` request.", reader.LocalName, Definition.Name.LocalName);
 
                 var parameterInfo = parameter.Definition.ParameterInfo;
                 var parameterNode = message.GetTemplateNode(parameterInfo.Name);
@@ -114,7 +114,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, XRoadMessage message)
         {
-            writer.WriteStartElement(OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
+            writer.WriteStartElement(Definition.Name.LocalName, Definition.Name.NamespaceName);
             writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
 
             foreach (var parameterMap in parameters)
@@ -136,11 +136,11 @@ namespace XRoadLib.Serialization.Mapping
 
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization)
         {
-            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
+            var containsRequest = requestReader.MoveToElement(2, Definition.Name.LocalName, Definition.Name.NamespaceName);
 
             if (containsRequest)
-                writer.WriteStartElement(requestReader.Prefix, $"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
-            else writer.WriteStartElement($"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
+                writer.WriteStartElement(requestReader.Prefix, $"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
+            else writer.WriteStartElement($"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
 
             var namespaceInContext = requestReader.NamespaceURI;
             if (containsRequest)
