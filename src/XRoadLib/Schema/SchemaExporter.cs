@@ -116,7 +116,7 @@ namespace XRoadLib.Schema
                 if (arrayAttribute != null || arrayItemAttribute != null)
                     throw new Exception($"Property `{contentDefinition.ContainerName}.{contentDefinition.RuntimeName}` should not define XmlArray(Item) attribute, because it's not array type.");
                 var name = (elementAttribute?.ElementName).GetValueOrDefault(propertyName);
-                qualifiedName = name != null ? XName.Get(name, elementAttribute?.Namespace ?? "") : null;
+                qualifiedName = string.IsNullOrWhiteSpace(name) ? null : XName.Get(name, elementAttribute?.Namespace ?? "");
             }
 
             var customTypeName = (elementAttribute?.DataType).GetValueOrDefault(arrayItemAttribute?.DataType);
