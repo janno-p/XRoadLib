@@ -53,12 +53,12 @@ namespace XRoadLib.Serialization.Mapping
 
         public void Serialize(XmlWriter writer, IXmlTemplateNode parameterNode, object value, XRoadMessage message)
         {
-            if (!string.IsNullOrWhiteSpace(Definition.Name.LocalName))
+            if (Definition.Name != null)
                 writer.WriteStartElement(Definition.Name.LocalName);
 
             SerializeRoot(writer, parameterNode, value, message);
 
-            if (!string.IsNullOrWhiteSpace(Definition.Name.LocalName))
+            if (Definition.Name != null)
                 writer.WriteEndElement();
         }
 

@@ -200,6 +200,9 @@ namespace XRoadLib.Schema
 
             AddContentDefinition(parameterDefinition, parameterInfo);
 
+            if (parameterDefinition.IsResult && parameterDefinition.Name == null)
+                parameterDefinition.Name = XName.Get("value");
+
             ExportParameterDefinition(parameterDefinition);
 
             return parameterDefinition;
