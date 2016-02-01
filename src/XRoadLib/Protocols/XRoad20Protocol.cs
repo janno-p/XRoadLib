@@ -45,7 +45,7 @@ namespace XRoadLib.Protocols
             WriteHeaderElement(writer, "allasutus", header.Allasutus);
             WriteHeaderElement(writer, "amet", header.Amet);
             WriteHeaderElement(writer, "ametniknimi", header.AmetnikNimi);
-            WriteHeaderElement(writer, "asynkroonne", header.Asünkroonne.ToString());
+            WriteHeaderElement(writer, "asynkroonne", header.Asünkroonne);
             WriteHeaderElement(writer, "autentija", header.Autentija);
             WriteHeaderElement(writer, "makstud", header.Makstud);
             WriteHeaderElement(writer, "salastada", header.Salastada);

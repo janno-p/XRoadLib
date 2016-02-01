@@ -206,13 +206,13 @@ namespace XRoadLib.Protocols
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
         }
 
-        protected void WriteHeaderElement(XmlWriter writer, string name, string value)
+        protected void WriteHeaderElement(XmlWriter writer, string name, object value)
         {
-            if (!MandatoryHeaders.Contains(name) && string.IsNullOrWhiteSpace(value))
+            if (!MandatoryHeaders.Contains(name) && value == null)
                 return;
 
             writer.WriteStartElement(name, XRoadNamespace);
-            writer.WriteValue(value.GetValueOrDefault(""));
+            writer.WriteValue(value);
             writer.WriteEndElement();
         }
 

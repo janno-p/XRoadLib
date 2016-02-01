@@ -18,7 +18,7 @@ namespace XRoadLib.Protocols.Headers
         public string Unit { get; set; }
         public string Position { get; set; }
         public string UserName { get; set; }
-        public bool Async { get; set; }
+        public bool? Async { get; set; }
         public string Authenticator { get; set; }
         public string Paid { get; set; }
         public string Encrypt { get; set; }

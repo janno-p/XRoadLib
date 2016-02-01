@@ -40,7 +40,7 @@ namespace XRoadLib.Protocols
             WriteHeaderElement(writer, "unit", header.Unit);
             WriteHeaderElement(writer, "position", header.Position);
             WriteHeaderElement(writer, "userName", header.UserName);
-            WriteHeaderElement(writer, "async", header.Async.ToString());
+            WriteHeaderElement(writer, "async", header.Async);
             WriteHeaderElement(writer, "authenticator", header.Authenticator);
             WriteHeaderElement(writer, "paid", header.Paid);
             WriteHeaderElement(writer, "encrypt", header.Encrypt);

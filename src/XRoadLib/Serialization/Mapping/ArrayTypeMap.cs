@@ -7,7 +7,9 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class ArrayTypeMap<T> : TypeMap<T[]>
+    public interface IArrayTypeMap { }
+
+    public class ArrayTypeMap<T> : TypeMap<T[]>, IArrayTypeMap
     {
         private readonly ISerializerCache serializerCache;
 

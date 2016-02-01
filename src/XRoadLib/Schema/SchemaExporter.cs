@@ -94,7 +94,8 @@ namespace XRoadLib.Schema
                 if (contentDefinition.RuntimeType.GetArrayRank() > 1)
                     throw new Exception($"Property `{contentDefinition.RuntimeName}` of type `{contentDefinition.ContainerName}` declares multi-dimensional array, which is not supported.");
 
-                var containerName = XName.Get((arrayAttribute?.ElementName).GetValueOrDefault(propertyName), arrayAttribute?.Namespace ?? "");
+                var localName = (arrayAttribute?.ElementName).GetValueOrDefault(propertyName);
+                var containerName = string.IsNullOrWhiteSpace(localName) ? null : XName.Get(localName, arrayAttribute?.Namespace ?? "");
 
                 if (elementAttribute != null)
                     itemQualifiedName = XName.Get(elementAttribute.ElementName.GetValueOrDefault(propertyName), elementAttribute.Namespace ?? "");

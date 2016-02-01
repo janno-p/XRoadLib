@@ -21,7 +21,7 @@ namespace XRoadLib.Protocols.Headers
         public string Allasutus { get; set; }
         public string Amet { get; set; }
         public string AmetnikNimi { get; set; }
-        public bool Asünkroonne { get; set; }
+        public bool? Asünkroonne { get; set; }
         public string Autentija { get; set; }
         public string Makstud { get; set; }
         public string Salastada { get; set; }

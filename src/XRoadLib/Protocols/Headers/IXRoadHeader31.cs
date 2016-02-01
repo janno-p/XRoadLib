@@ -63,7 +63,7 @@ namespace XRoadLib.Protocols.Headers
         /// Teenuse kasutamise asünkroonsus. Kui väärtus on "true", siis sooritab turvaserver päringu asünkroonselt.
         /// </summary>
         [XmlElement("async", Namespace = NamespaceConstants.XROAD)]
-        bool Async { get; }
+        bool? Async { get; }
 
         /// <summary>
         /// Teenuse kasutaja autentimise viis. Võimalikud variandid on:
