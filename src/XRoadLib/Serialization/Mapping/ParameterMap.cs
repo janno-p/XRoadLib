@@ -15,7 +15,9 @@ namespace XRoadLib.Serialization.Mapping
         public ParameterMap(ISerializerCache serializerCache, ParameterDefinition parameterDefinition, ITypeMap typeMap)
         {
             this.serializerCache = serializerCache;
-            this.typeMap = typeMap;
+
+            var contentTypeMap = typeMap as IContentTypeMap;
+            this.typeMap = contentTypeMap != null && parameterDefinition.UseXop ? contentTypeMap.GetOptimizedContentTypeMap() : typeMap;
 
             Definition = parameterDefinition;
         }

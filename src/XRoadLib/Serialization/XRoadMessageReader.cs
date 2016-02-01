@@ -56,7 +56,7 @@ namespace XRoadLib.Serialization
             target.ContentEncoding = contentEncoding;
             target.ContentStream = new MemoryStream();
 
-            var isMultipart = ReadMessageParts(target);
+            target.IsMultipartContainer = ReadMessageParts(target);
 
             target.ContentStream.Position = 0;
 
@@ -75,11 +75,11 @@ namespace XRoadLib.Serialization
             if (xrh4 != null && xrh4.ProtocolVersion?.Trim() != "4.0")
                 throw XRoadException.InvalidQuery("Unsupported X-Road v6 protocol version value `{0}`.", xrh4.ProtocolVersion ?? string.Empty);
 
-            if (isMultipart)
-                target.BinaryContentMode = BinaryMode.SoapAttachment;
+            if (target.IsMultipartContainer)
+                target.BinaryMode = BinaryMode.Attachment;
 
             if (XRoadMessage.MULTIPART_CONTENT_TYPE_XOP.Equals(target.MultipartContentType))
-                target.BinaryContentMode = BinaryMode.Xop;
+                target.BinaryMode = BinaryMode.Xml;
 
             if (isResponse)
                 return;

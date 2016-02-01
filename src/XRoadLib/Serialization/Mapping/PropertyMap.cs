@@ -18,7 +18,9 @@ namespace XRoadLib.Serialization.Mapping
         public PropertyMap(ISerializerCache serializerCache, PropertyDefinition propertyDefinition, ITypeMap typeMap)
         {
             this.serializerCache = serializerCache;
-            this.typeMap = typeMap;
+
+            var contentTypeMap = typeMap as IContentTypeMap;
+            this.typeMap = contentTypeMap != null && propertyDefinition.UseXop ? contentTypeMap.GetOptimizedContentTypeMap() : typeMap;
 
             Definition = propertyDefinition;
 

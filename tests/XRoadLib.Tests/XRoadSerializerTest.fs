@@ -17,7 +17,7 @@ open XRoadLib.Tests.Contract
 [<TestFixture>]
 module XRoadSerializerTest =
     let serializeWithContext<'T> elementName (value: 'T) dtoVersion addEnvelope isMultipart f =
-        use message = new XRoadMessage(Globals.XRoadProtocol20, XRoadHeader20(), BinaryContentMode = BinaryMode.SoapAttachment)
+        use message = new XRoadMessage(Globals.XRoadProtocol20, XRoadHeader20(), IsMultipartContainer=true, BinaryMode=BinaryMode.Attachment)
 
         use stream = new MemoryStream()
         use writer = new XmlTextWriter(stream, Encoding.UTF8)

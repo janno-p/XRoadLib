@@ -6,22 +6,28 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class StreamTypeMap : TypeMap<XRoadAttachment>
+    public class ContentTypeMap : TypeMap<XRoadAttachment>, IContentTypeMap
     {
-        public StreamTypeMap(TypeDefinition typeDefinition)
+        private readonly ITypeMap optimizedContentTypeMap;
+
+        public ContentTypeMap(TypeDefinition typeDefinition)
             : base(typeDefinition)
-        { }
+        {
+            optimizedContentTypeMap = new OptimizedContentTypeMap(this);
+        }
+
+        public ITypeMap GetOptimizedContentTypeMap()
+        {
+            return optimizedContentTypeMap;
+        }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message)
         {
-            if (message.BinaryContentMode == BinaryMode.Xop && !reader.ReadToDescendant("Include", NamespaceConstants.XOP))
-                throw XRoadException.InvalidQuery("Missing `xop:Include` reference to multipart content.");
-
             var contentID = reader.GetAttribute("href");
 
             if (string.IsNullOrWhiteSpace(contentID))
             {
-                if (message.BinaryContentMode != BinaryMode.Inline)
+                if (message.IsMultipartContainer)
                     throw XRoadException.InvalidQuery("Missing `href` attribute to multipart content.");
 
                 var tempAttachment = new XRoadAttachment(new MemoryStream()) { IsMultipartContent = false };
@@ -55,23 +61,14 @@ namespace XRoadLib.Serialization.Mapping
 
             message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
-            if (message.BinaryContentMode == BinaryMode.Inline)
+            if (message.BinaryMode == BinaryMode.Attachment)
             {
-                attachment.IsMultipartContent = false;
-                attachment.WriteAsBase64(writer);
+                writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
                 return;
             }
 
-            if (message.BinaryContentMode == BinaryMode.Xop)
-            {
-                writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);
-                writer.WriteAttributeString(PrefixConstants.XMIME, "contentType", NamespaceConstants.XMIME, "application/octet-stream");
-            }
-
-            writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
-
-            if (message.BinaryContentMode == BinaryMode.Xop)
-                writer.WriteEndElement();
+            attachment.IsMultipartContent = false;
+            attachment.WriteAsBase64(writer);
         }
     }
 }

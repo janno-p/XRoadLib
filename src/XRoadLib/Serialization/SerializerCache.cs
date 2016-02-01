@@ -50,9 +50,9 @@ namespace XRoadLib.Serialization
             AddSystemType<string>("string", x => new StringTypeMap(x));
             AddSystemType<string>("anyURI", x => new StringTypeMap(x));
 
-            AddSystemType<Stream>("base64Binary", x => new StreamTypeMap(x));
-            AddSystemType<Stream>("hexBinary", x => new StreamTypeMap(x));
-            AddSystemType<Stream>("base64", x => new StreamTypeMap(x));
+            AddSystemType<Stream>("base64Binary", x => new ContentTypeMap(x));
+            AddSystemType<Stream>("hexBinary", x => new ContentTypeMap(x));
+            AddSystemType<Stream>("base64", x => new ContentTypeMap(x));
 
             var legacyProtocol = protocol as ILegacyProtocol;
             if (legacyProtocol == null)
@@ -268,7 +268,7 @@ namespace XRoadLib.Serialization
 
         private void CreateTestSystem(ILegacyProtocol legacyProtocol)
         {
-            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(null, XName.Get("testSystem", legacyProtocol.XRoadNamespace));
+            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(new Action(() => {}).Method, XName.Get("testSystem", legacyProtocol.XRoadNamespace));
             operationDefinition.State = DefinitionState.Hidden;
 
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, null));
@@ -276,7 +276,7 @@ namespace XRoadLib.Serialization
 
         private void CreateGetState(ILegacyProtocol legacyProtocol)
         {
-            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(null, XName.Get("getState", legacyProtocol.XRoadNamespace));
+            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(new Func<int>(() => 0).Method, XName.Get("getState", legacyProtocol.XRoadNamespace));
             operationDefinition.State = DefinitionState.Hidden;
 
             var resultParameter = new ParameterDefinition(operationDefinition) { RuntimeType = typeof(int), IsResult = true };
@@ -293,7 +293,7 @@ namespace XRoadLib.Serialization
 
         private void CreateListMethods(ILegacyProtocol legacyProtocol)
         {
-            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(null, XName.Get("listMethods", legacyProtocol.XRoadNamespace));
+            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(new Func<string[]>(() => new string[0]).Method, XName.Get("listMethods", legacyProtocol.XRoadNamespace));
             operationDefinition.State = DefinitionState.Hidden;
 
             var resultParameter = new ParameterDefinition(operationDefinition) { RuntimeType = typeof(string[]), IsResult = true };

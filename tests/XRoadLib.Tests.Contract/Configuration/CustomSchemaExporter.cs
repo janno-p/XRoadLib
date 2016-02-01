@@ -31,5 +31,10 @@ namespace XRoadLib.Tests.Contract.Configuration
         {
             parameterDefinition.IsOptional = true;
         }
+
+        public override void ExportPropertyDefinition(PropertyDefinition propertyDefinition)
+        {
+            propertyDefinition.UseXop = false;
+        }
     }
 }

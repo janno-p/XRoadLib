@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
@@ -164,15 +162,13 @@ namespace XRoadLib.Schema
 
         public OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XName qualifiedName)
         {
-            var multipartAttribute = methodInfo?.GetSingleAttribute<XRoadAttachmentAttribute>();
-
             var operationDefinition = new OperationDefinition
             {
                 Name = qualifiedName,
                 HasStrictContentOrder = true,
                 MethodInfo = methodInfo,
-                RequestBinaryMode = (multipartAttribute?.HasMultipartRequest).GetValueOrDefault() ? BinaryMode.SoapAttachment : BinaryMode.Inline,
-                ResponseBinaryMode = (multipartAttribute?.HasMultipartResponse).GetValueOrDefault() ? BinaryMode.SoapAttachment : BinaryMode.Inline,
+                RequestBinaryMode = BinaryMode.Xml,
+                ResponseBinaryMode = BinaryMode.Xml,
                 State = DefinitionState.Default,
                 Version = 1u,
                 ContentComparer = ParameterComparer.Instance,

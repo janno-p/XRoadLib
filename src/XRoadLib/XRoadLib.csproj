@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\XRoadAddContractAttribute.cs" />
-    <Compile Include="Attributes\XRoadAttachmentAttribute.cs" />
     <Compile Include="Extensions\MethodInfoExtensions.cs" />
     <Compile Include="Schema\ArrayItemDefinition.cs" />
     <Compile Include="Schema\CollectionDefinition.cs" />
@@ -78,8 +77,10 @@
     <Compile Include="Schema\PropertyDefinition.cs" />
     <Compile Include="Schema\SchemaExporter.cs" />
     <Compile Include="Schema\TypeDefinition.cs" />
+    <Compile Include="Serialization\Mapping\IContentTypeMap.cs" />
     <Compile Include="Serialization\Mapping\Int16TypeMap.cs" />
     <Compile Include="Serialization\Mapping\IntegerTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\OptimizedContentTypeMap.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />
     <Compile Include="Soap\ISoapFault.cs" />
@@ -126,7 +127,7 @@
     <Compile Include="Serialization\Mapping\PropertyMap.cs" />
     <Compile Include="Serialization\Mapping\SequenceTypeMap.cs" />
     <Compile Include="Serialization\Mapping\ServiceMap.cs" />
-    <Compile Include="Serialization\Mapping\StreamTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\ContentTypeMap.cs" />
     <Compile Include="Serialization\MetaServiceEnum.cs" />
     <Compile Include="Serialization\Template\IXmlTemplateNode.cs" />
     <Compile Include="Serialization\Mapping\AbstractTypeMap.cs" />

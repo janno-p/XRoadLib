@@ -2,8 +2,7 @@
 {
     public enum BinaryMode
     {
-        Inline,
-        SoapAttachment,
-        Xop
+        Xml,
+        Attachment
     }
 }

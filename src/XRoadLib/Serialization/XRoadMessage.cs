@@ -30,7 +30,8 @@ namespace XRoadLib.Serialization
         public IXRoadHeader Header { get; set; }
         public IList<XElement> UnresolvedHeaders { get; set; }
         public XName RootElementName { get; set; }
-        public BinaryMode BinaryContentMode { get; set; }
+        public BinaryMode BinaryMode { get; set; }
+        public bool IsMultipartContainer { get; set; }
 
         public IList<XRoadAttachment> AllAttachments => attachments;
         public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }

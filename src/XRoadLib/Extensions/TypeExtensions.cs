@@ -87,20 +87,6 @@ namespace XRoadLib.Extensions
             return IsVersionInRange(version, attribute.addedInVersion, attribute.removedInVersion);
         }
 
-        public static bool HasMultipartRequest(this MethodInfo methodInfo)
-        {
-            return methodInfo.GetCustomAttributes(typeof(XRoadAttachmentAttribute), false)
-                             .OfType<XRoadAttachmentAttribute>()
-                             .Select(x => x.HasMultipartRequest).SingleOrDefault();
-        }
-
-        public static bool HasMultipartResponse(this MethodInfo methodInfo)
-        {
-            return methodInfo.GetCustomAttributes(typeof(XRoadAttachmentAttribute), false)
-                             .OfType<XRoadAttachmentAttribute>()
-                             .Select(x => x.HasMultipartResponse).SingleOrDefault();
-        }
-
         public static IEnumerable<string> GetServicesInVersion(this MethodInfo methodInfo, uint version, bool includeHidden = false)
         {
             return methodInfo.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
