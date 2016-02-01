@@ -38,9 +38,6 @@ namespace XRoadLib.Extensions
 
         public static object DeserializeMessageContent(this XRoadMessage message, string operationName)
         {
-            var serializerCache = message.GetSerializerCache();
-            var serviceMap = serializerCache.GetServiceMap(operationName);
-
             message.ContentStream.Position = 0;
             var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
             var navigator = doc.CreateNavigator();
@@ -53,13 +50,16 @@ namespace XRoadLib.Extensions
             {
                 reader.MoveToBody();
 
-                var result = serviceMap.DeserializeResponse(reader, message);
+                if (!reader.MoveToElement(2))
+                    throw XRoadException.InvalidQuery("No payload element in SOAP message.");
 
-                var soapFault = result as ISoapFault;
-                if (soapFault != null)
-                    throw new SoapFaultException(soapFault);
+                if (reader.NamespaceURI == NamespaceConstants.SOAP_ENV && reader.LocalName == "Fault")
+                    throw new SoapFaultException(SoapMessageHelper.DeserializeSoapFault(reader));
 
-                return result;
+                var serializerCache = message.GetSerializerCache();
+                var serviceMap = serializerCache.GetServiceMap(operationName);
+
+                return serviceMap.DeserializeResponse(reader, message);
             }
         }
     }
