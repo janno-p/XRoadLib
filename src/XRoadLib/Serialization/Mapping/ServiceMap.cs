@@ -98,16 +98,11 @@ namespace XRoadLib.Serialization.Mapping
         public object DeserializeResponse(XmlReader reader, XRoadMessage message)
         {
             var responseName = message.Protocol.ResponsePartNameInResponse;
-            var parameterNode = message.XmlTemplate != null ? message.XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
-
-            if (!reader.MoveToElement(2))
-                throw XRoadException.InvalidQuery("No payload element in SOAP message.");
-
-            if (reader.NamespaceURI == NamespaceConstants.SOAP_ENV && reader.LocalName == "Fault")
-                return SoapMessageHelper.DeserializeSoapFault(reader);
 
             if (!reader.MoveToElement(3, responseName))
                 throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` was not found in SOAP message.");
+
+            var parameterNode = message.XmlTemplate != null ? message.XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
 
             return result.DeserializeRoot(reader, parameterNode, message);
         }
