@@ -194,13 +194,11 @@ namespace XRoadLib.Schema
             var parameterDefinition = new ParameterDefinition(operationDefinition)
             {
                 ParameterInfo = parameterInfo,
-                RuntimeType = parameterInfo.ParameterType
+                RuntimeType = parameterInfo.ParameterType,
+                IsResult = parameterInfo.Position < 0
             };
 
             AddContentDefinition(parameterDefinition, parameterInfo);
-
-            if (parameterDefinition.Name == null)
-                parameterDefinition.Name = XName.Get("response");
 
             ExportParameterDefinition(parameterDefinition);
 

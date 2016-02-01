@@ -88,7 +88,13 @@ namespace XRoadLib.Serialization
 
             var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(methodInfo, qualifiedName);
 
-            var parameterMaps = methodInfo.GetParameters().Select(x => CreateParameterMap(operationDefinition, x)).ToList();
+            var parameterMaps = operationDefinition.MethodInfo
+                                                   .GetParameters()
+                                                   .Where(p => !Version.HasValue || p.ExistsInVersion(Version.Value))
+                                                   .Select(p => CreateParameterMap(operationDefinition, p))
+                                                   .Where(p => p != null)
+                                                   .ToList();
+
             var resultMap = CreateParameterMap(operationDefinition, methodInfo.ReturnParameter);
 
             return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(operationDefinition, parameterMaps, resultMap));
@@ -105,6 +111,8 @@ namespace XRoadLib.Serialization
         private IParameterMap CreateParameterMap(OperationDefinition operationDefinition, ParameterInfo parameterInfo)
         {
             var parameterDefinition = Protocol.SchemaExporter.GetParameterDefinition(parameterInfo, operationDefinition);
+            if (parameterDefinition.State == DefinitionState.Ignored)
+                return null;
 
             var typeMap = GetContentDefinitionTypeMap(parameterDefinition, null);
             parameterDefinition.TypeName = typeMap.Definition.Name;
@@ -271,7 +279,7 @@ namespace XRoadLib.Serialization
             var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(null, XName.Get("getState", legacyProtocol.XRoadNamespace));
             operationDefinition.State = DefinitionState.Hidden;
 
-            var resultParameter = new ParameterDefinition(operationDefinition) { RuntimeType = typeof(int) };
+            var resultParameter = new ParameterDefinition(operationDefinition) { RuntimeType = typeof(int), IsResult = true };
             Protocol.SchemaExporter.ExportParameterDefinition(resultParameter);
 
             var typeMap = GetContentDefinitionTypeMap(resultParameter, null);
@@ -288,7 +296,7 @@ namespace XRoadLib.Serialization
             var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(null, XName.Get("listMethods", legacyProtocol.XRoadNamespace));
             operationDefinition.State = DefinitionState.Hidden;
 
-            var resultParameter = new ParameterDefinition(operationDefinition) { RuntimeType = typeof(string[]) };
+            var resultParameter = new ParameterDefinition(operationDefinition) { RuntimeType = typeof(string[]), IsResult = true };
             Protocol.SchemaExporter.ExportParameterDefinition(resultParameter);
 
             var typeMap = GetContentDefinitionTypeMap(resultParameter, null);

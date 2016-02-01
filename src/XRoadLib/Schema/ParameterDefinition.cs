@@ -8,6 +8,8 @@ namespace XRoadLib.Schema
 
         public ParameterInfo ParameterInfo { get; set; }
 
+        public bool IsResult { get; set; }
+
         public ParameterDefinition(OperationDefinition owner)
         {
             Owner = owner;
