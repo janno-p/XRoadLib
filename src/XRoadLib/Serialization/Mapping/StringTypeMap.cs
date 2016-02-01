@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
@@ -25,11 +26,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
-            var valueString = value.ToString();
-
-            if (valueString.Contains("&") || valueString.Contains("<") || valueString.Contains(">"))
-                writer.WriteCData(valueString);
-            else writer.WriteValue(valueString);
+            writer.WriteCDataEscape(value.ToString());
         }
     }
 }

@@ -41,5 +41,12 @@ namespace XRoadLib.Extensions
         {
             writer.WriteAttributeString("nil", NamespaceConstants.XSI, "1");
         }
+
+        public static void WriteCDataEscape(this XmlWriter writer, string value)
+        {
+            if (value.Contains("&") || value.Contains("<") || value.Contains(">"))
+                writer.WriteCData(value);
+            else writer.WriteValue(value);
+        }
     }
 }

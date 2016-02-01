@@ -212,7 +212,12 @@ namespace XRoadLib.Protocols
                 return;
 
             writer.WriteStartElement(name, XRoadNamespace);
-            writer.WriteValue(value);
+
+            var stringValue = value as string;
+            if (stringValue != null)
+                writer.WriteCDataEscape(stringValue);
+            else writer.WriteValue(value);
+
             writer.WriteEndElement();
         }
 
