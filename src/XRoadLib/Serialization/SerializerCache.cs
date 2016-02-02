@@ -19,6 +19,7 @@ namespace XRoadLib.Serialization
         private readonly Assembly contractAssembly;
         private readonly SchemaDefinitionReader schemaDefinitionReader;
 
+        private readonly ConcurrentDictionary<MethodInfo, OperationTypeDefinition> methodDefinitions = new ConcurrentDictionary<MethodInfo, OperationTypeDefinition>();
         private readonly ConcurrentDictionary<Type, ITypeMap> customTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
         private readonly ConcurrentDictionary<XName, IServiceMap> serviceMaps = new ConcurrentDictionary<XName, IServiceMap>();
         private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
@@ -82,22 +83,40 @@ namespace XRoadLib.Serialization
             return serviceMap;
         }
 
+        private OperationTypeDefinition GetMethodDefinition(MethodInfo methodInfo)
+        {
+            OperationTypeDefinition operationTypeDefinition;
+            if (methodDefinitions.TryGetValue(methodInfo, out operationTypeDefinition))
+                return operationTypeDefinition;
+
+            var createdOperationTypeDefinition = schemaDefinitionReader.GetOperationTypeDefinition(methodInfo);
+
+            operationTypeDefinition = methodDefinitions.GetOrAdd(methodInfo, createdOperationTypeDefinition);
+            if (operationTypeDefinition == createdOperationTypeDefinition)
+                schemaDefinitionReader.SchemaExporter?.ExportOperationTypeDefinition(operationTypeDefinition);
+
+            return operationTypeDefinition;
+        }
+
         private IServiceMap AddServiceMap(XName qualifiedName)
         {
             var methodInfo = GetServiceInterface(contractAssembly, qualifiedName);
             if (methodInfo == null)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
-            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, qualifiedName);
+            var operationTypeDefinition = GetMethodDefinition(methodInfo);
 
-            var parameterMaps = operationDefinition.MethodInfo
+            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(qualifiedName, Version, operationTypeDefinition);
+
+            var parameterMaps = operationDefinition.OperationTypeDefinition
+                                                   .MethodInfo
                                                    .GetParameters()
                                                    .Where(p => !Version.HasValue || p.ExistsInVersion(Version.Value))
-                                                   .Select(p => CreateParameterMap(operationDefinition, p))
+                                                   .Select(p => CreateParameterMap(p, operationTypeDefinition))
                                                    .Where(p => p != null)
                                                    .ToList();
 
-            var resultMap = CreateParameterMap(operationDefinition, methodInfo.ReturnParameter);
+            var resultMap = CreateParameterMap(methodInfo.ReturnParameter, operationTypeDefinition);
 
             return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(operationDefinition, parameterMaps, resultMap));
         }
@@ -107,14 +126,14 @@ namespace XRoadLib.Serialization
             return typeAssembly?.GetTypes()
                                 .Where(t => t.IsInterface)
                                 .SelectMany(t => t.GetMethods())
-                                .SingleOrDefault(x => x.GetServices(true)
+                                .SingleOrDefault(x => x.GetServices()
                                                        .Any(m => m.Name == qualifiedName.LocalName
                                                                  && (!Version.HasValue || m.ExistsInVersion(Version.Value))));
         }
 
-        private IParameterMap CreateParameterMap(OperationDefinition operationDefinition, ParameterInfo parameterInfo)
+        private IParameterMap CreateParameterMap(ParameterInfo parameterInfo, OperationTypeDefinition operationTypeDefinition)
         {
-            var parameterDefinition = schemaDefinitionReader.GetParameterDefinition(parameterInfo, operationDefinition);
+            var parameterDefinition = schemaDefinitionReader.GetParameterDefinition(parameterInfo, operationTypeDefinition);
             if (parameterDefinition.State == DefinitionState.Ignored)
                 return null;
 
@@ -276,7 +295,9 @@ namespace XRoadLib.Serialization
 
         private void CreateTestSystem(ILegacyProtocol legacyProtocol)
         {
-            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(new Action(() => {}).Method, XName.Get("testSystem", legacyProtocol.XRoadNamespace));
+            var operationTypeDefinition = GetMethodDefinition(typeof(MockMethods).GetMethod("TestSystem"));
+
+            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(XName.Get("testSystem", legacyProtocol.XRoadNamespace), 1u, operationTypeDefinition);
             operationDefinition.State = DefinitionState.Hidden;
 
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, null));
@@ -284,11 +305,12 @@ namespace XRoadLib.Serialization
 
         private void CreateGetState(ILegacyProtocol legacyProtocol)
         {
-            var methodInfo = new Func<int>(() => 0).Method;
-            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("getState", legacyProtocol.XRoadNamespace));
+            var operationTypeDefinition = GetMethodDefinition(typeof(MockMethods).GetMethod("GetState"));
+
+            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(XName.Get("getState", legacyProtocol.XRoadNamespace), 1u, operationTypeDefinition);
             operationDefinition.State = DefinitionState.Hidden;
 
-            var resultParameter = schemaDefinitionReader.GetParameterDefinition(methodInfo.ReturnParameter, operationDefinition);
+            var resultParameter = schemaDefinitionReader.GetParameterDefinition(operationTypeDefinition.MethodInfo.ReturnParameter, operationTypeDefinition);
             var typeMap = GetContentDefinitionTypeMap(resultParameter, null);
             resultParameter.TypeName = typeMap.Definition.Name;
 
@@ -300,11 +322,12 @@ namespace XRoadLib.Serialization
 
         private void CreateListMethods(ILegacyProtocol legacyProtocol)
         {
-            var methodInfo = new Func<string[]>(() => new string[0]).Method;
-            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("listMethods", legacyProtocol.XRoadNamespace));
+            var operationTypeDefinition = GetMethodDefinition(typeof(MockMethods).GetMethod("ListMethods"));
+
+            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(XName.Get("listMethods", legacyProtocol.XRoadNamespace), 1u, operationTypeDefinition);
             operationDefinition.State = DefinitionState.Hidden;
 
-            var resultParameter = schemaDefinitionReader.GetParameterDefinition(methodInfo.ReturnParameter, operationDefinition);
+            var resultParameter = schemaDefinitionReader.GetParameterDefinition(operationTypeDefinition.MethodInfo.ReturnParameter, operationTypeDefinition);
             var typeMap = GetContentDefinitionTypeMap(resultParameter, null);
             resultParameter.TypeName = typeMap.Definition.Name;
 

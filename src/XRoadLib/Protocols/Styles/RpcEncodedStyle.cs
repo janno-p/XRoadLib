@@ -4,6 +4,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using XRoadLib.Extensions;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols.Styles
 {
@@ -66,6 +67,46 @@ namespace XRoadLib.Protocols.Styles
                 Style = SoapBindingStyle.Rpc,
                 Transport = NamespaceConstants.HTTP
             };
+        }
+
+        public override void AddInputMessageParts(IProtocol protocol, OperationDefinition operationDefinition, Message message)
+        {
+            var xname = operationDefinition.OperationTypeDefinition.InputName;
+            var qualifiedName = new XmlQualifiedName(xname.LocalName, xname.NamespaceName);
+            message.Parts.Add(new MessagePart { Name = protocol.RequestPartNameInRequest, Type = qualifiedName });
+        }
+
+        public override void AddOutputMessageParts(IProtocol protocol, OperationDefinition operationDefinition, Message message)
+        {
+            var inputName = operationDefinition.OperationTypeDefinition.InputName;
+            var inputQualifiedName = new XmlQualifiedName(inputName.LocalName, inputName.NamespaceName);
+            message.Parts.Add(new MessagePart { Name = protocol.RequestPartNameInResponse, Type = inputQualifiedName });
+
+            var outputName = operationDefinition.OperationTypeDefinition.OutputName;
+            var outputQualifiedName = new XmlQualifiedName(outputName.LocalName, outputName.NamespaceName);
+            message.Parts.Add(new MessagePart { Name = protocol.ResponsePartNameInResponse, Type = outputQualifiedName });
+        }
+
+        public override SoapBodyBinding CreateSoapBodyBinding(string targetNamespace)
+        {
+            return new SoapBodyBinding { Use = SoapBindingUse.Encoded, Namespace = targetNamespace, Encoding = NamespaceConstants.SOAP_ENC };
+        }
+
+        public override SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace)
+        {
+            return new SoapHeaderBinding
+            {
+                Message = new XmlQualifiedName(messageName, targetNamespace),
+                Part = headerName.LocalName,
+                Use = SoapBindingUse.Encoded,
+                Namespace = headerName.NamespaceName,
+                Encoding = NamespaceConstants.SOAP_ENC
+            };
+        }
+
+        public override SoapOperationBinding CreateSoapOperationBinding()
+        {
+            return new SoapOperationBinding { SoapAction = "", Style = SoapBindingStyle.Rpc };
         }
     }
 }

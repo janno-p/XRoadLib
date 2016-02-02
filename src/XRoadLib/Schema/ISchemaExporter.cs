@@ -2,9 +2,11 @@
 {
     public interface ISchemaExporter
     {
-        void ExportOperationDefinition(OperationDefinition operation);
+        void ExportOperationTypeDefinition(OperationTypeDefinition operationTypeDefinition);
 
-        void ExportParameterDefinition(ParameterDefinition parameter);
+        void ExportOperationDefinition(OperationDefinition operationDefinition);
+
+        void ExportParameterDefinition(ParameterDefinition parameterDefinition);
 
         void ExportPropertyDefinition(PropertyDefinition propertyDefinition);
 

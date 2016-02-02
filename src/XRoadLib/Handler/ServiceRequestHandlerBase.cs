@@ -66,7 +66,7 @@ namespace XRoadLib.Handler
             IServiceMap serviceMap;
             var result = InvokeServiceMethod(requestMessage.GetSerializerCache(), out serviceMap);
 
-            responseMessage.BinaryMode = serviceMap.Definition.ResponseBinaryMode;
+            responseMessage.BinaryMode = serviceMap.Definition.OutputBinaryMode;
 
             SerializeXRoadResponse(httpContext, result, serviceMap);
         }
@@ -82,14 +82,14 @@ namespace XRoadLib.Handler
 
             serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName);
 
-            if (requestMessage.IsMultipartContainer && requestMessage.BinaryMode == BinaryMode.Attachment && serviceMap.Definition.RequestBinaryMode != BinaryMode.Attachment)
+            if (requestMessage.IsMultipartContainer && requestMessage.BinaryMode == BinaryMode.Attachment && serviceMap.Definition.InputBinaryMode != BinaryMode.Attachment)
                 throw XRoadException.InvalidQuery("Teenuse `{0}` multipart päringu sisuks oodati `application/xop+xml`, kuid edastati `{1}`.", serviceMap.Definition.Name.LocalName, requestMessage.MultipartContentType);
 
             var parameters = DeserializeMethodParameters(serviceMap);
 
             try
             {
-                result = InvokeDataMethod(serviceObject, serviceMap.Definition.MethodInfo, parameters);
+                result = InvokeDataMethod(serviceObject, serviceMap.Definition.OperationTypeDefinition.MethodInfo, parameters);
             }
             catch (Exception exception)
             {

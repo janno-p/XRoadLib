@@ -11,7 +11,7 @@ namespace XRoadLib.Protocols.Styles
 {
     public abstract class Style
     {
-        protected XmlDocument document = new XmlDocument();
+        protected readonly XmlDocument document = new XmlDocument();
 
         public virtual void WriteExplicitType(XmlWriter writer, XName qualifiedName)
         { }
@@ -33,6 +33,12 @@ namespace XRoadLib.Protocols.Styles
             WriteExplicitType(writer, typeDefinition.Name);
         }
 
+        public abstract SoapOperationBinding CreateSoapOperationBinding();
+
+        public abstract SoapBodyBinding CreateSoapBodyBinding(string targetNamespace);
+
+        public abstract SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace);
+
         public abstract XmlElement CreateSoapHeader(SoapHeaderBinding binding);
 
         public virtual XmlAttribute CreateExpectedContentType(string contentType)
@@ -50,5 +56,9 @@ namespace XRoadLib.Protocols.Styles
         public abstract void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, ISet<string> requiredImports);
 
         public abstract SoapBinding CreateSoapBinding();
+
+        public abstract void AddInputMessageParts(IProtocol protocol, OperationDefinition operationDefinition, Message message);
+
+        public abstract void AddOutputMessageParts(IProtocol protocol, OperationDefinition operationDefinition, Message message);
     }
 }

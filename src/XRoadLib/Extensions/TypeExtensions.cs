@@ -97,11 +97,10 @@ namespace XRoadLib.Extensions
                              .ToList();
         }
 
-        public static IEnumerable<XRoadServiceAttribute> GetServices(this MethodInfo methodInfo, bool includeHidden = false)
+        public static IEnumerable<XRoadServiceAttribute> GetServices(this MethodInfo methodInfo)
         {
             return methodInfo.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
                              .OfType<XRoadServiceAttribute>()
-                             .Where(x => includeHidden || !x.IsHidden)
                              .ToList();
         }
 

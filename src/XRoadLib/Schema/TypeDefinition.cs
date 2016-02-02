@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace XRoadLib.Schema
 {
-    public class TypeDefinition : ContainerDefinition<PropertyDefinition>
+    public class TypeDefinition : Definition
     {
-        public Type Type { get; set; }
+        public Type Type { get; }
 
         public bool CanHoldNullValues { get; set; }
 
@@ -16,6 +17,15 @@ namespace XRoadLib.Schema
 
         public Type TypeMapType { get; set; }
 
+        public bool HasStrictContentOrder { get; set; }
+
+        public IComparer<PropertyDefinition> ContentComparer { get; set; }
+
         public bool IsInheritable => !IsAnonymous && !IsSimpleType;
+
+        public TypeDefinition(Type type)
+        {
+            Type = type;
+        }
     }
 }

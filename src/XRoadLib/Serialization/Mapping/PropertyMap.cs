@@ -26,7 +26,7 @@ namespace XRoadLib.Serialization.Mapping
 
             getValueMethod = Definition.PropertyInfo.CreateGetValueMethod();
             setValueMethod = Definition.PropertyInfo.CreateSetValueMethod();
-            isFilterable = Definition.Owner.Type.IsFilterableField(Definition.Name.LocalName);
+            isFilterable = Definition.DeclaringTypeDefinition.Type.IsFilterableField(Definition.Name.LocalName);
         }
 
         public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)

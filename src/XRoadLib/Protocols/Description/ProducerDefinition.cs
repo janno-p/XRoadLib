@@ -16,7 +16,7 @@ using XRoadLib.Serialization;
 
 namespace XRoadLib.Protocols.Description
 {
-    public sealed class ProducerDefinition : IComparer<XmlSchemaType>
+    public sealed class ProducerDefinition
     {
         private const string STANDARD_HEADER_NAME = "RequiredHeaders";
 
@@ -30,9 +30,9 @@ namespace XRoadLib.Protocols.Description
         private readonly Port servicePort;
         private readonly Service service;
 
+        private readonly IDictionary<MethodInfo, OperationTypeDefinition> methodDefinitions = new Dictionary<MethodInfo, OperationTypeDefinition>();
         private readonly IDictionary<XName, TypeDefinition> schemaTypeDefinitions = new Dictionary<XName, TypeDefinition>();
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
-        private readonly IList<Message> messages = new List<Message>();
         private readonly ISet<string> requiredImports = new SortedSet<string>();
 
         public ProducerDefinition(IProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
@@ -69,7 +69,6 @@ namespace XRoadLib.Protocols.Description
             };
 
             CollectTypes();
-            CollectOperations();
         }
 
         public void SaveTo(Stream stream)
@@ -133,26 +132,25 @@ namespace XRoadLib.Protocols.Description
 
         private OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XRoadServiceAttribute serviceAttribute)
         {
-            return schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get(serviceAttribute.Name, protocol.ProducerNamespace));
+            OperationTypeDefinition operationTypeDefinition;
+            if (!methodDefinitions.TryGetValue(methodInfo, out operationTypeDefinition))
+            {
+                methodDefinitions.Add(methodInfo, operationTypeDefinition = schemaDefinitionReader.GetOperationTypeDefinition(methodInfo));
+                schemaDefinitionReader.SchemaExporter.ExportOperationTypeDefinition(operationTypeDefinition);
+            }
+
+            return schemaDefinitionReader.GetOperationDefinition(XName.Get(serviceAttribute.Name, protocol.ProducerNamespace), version, operationTypeDefinition);
         }
 
-        private void CollectOperations()
+        private XmlSchema BuildSchema(string targetNamespace, MessageCollection messages)
         {
-            var operationDefinitions = contractAssembly.GetServiceContracts()
-                                                       .SelectMany(x => x.Value
-                                                                         .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
-                                                                         .Select(op => GetOperationDefinition(x.Key, op)))
-                                                       .Where(def => def.State == DefinitionState.Default);
+            var schema = new XmlSchema { TargetNamespace = targetNamespace };
 
-            foreach (var operationDefinition in operationDefinitions)
-            { }
-        }
+            var typeDefinitions = schemaTypeDefinitions.Where(x => x.Key.NamespaceName == targetNamespace)
+                                                       .OrderBy(x => x.Key.LocalName)
+                                                       .Select(x => x.Value);
 
-        private IEnumerable<XmlSchemaType> BuildTypes(string targetNamespace)
-        {
-            var types = new SortedSet<XmlSchemaType>(this);
-
-            foreach (var typeDefinition in schemaTypeDefinitions.Values)
+            foreach (var typeDefinition in typeDefinitions)
             {
                 if (typeDefinition.Name.NamespaceName != targetNamespace)
                     continue;
@@ -166,10 +164,117 @@ namespace XRoadLib.Protocols.Description
 
                 AddComplexTypeContent(schemaType, typeDefinition, targetNamespace);
 
-                types.Add(schemaType);
+                schema.Items.Add(schemaType);
             }
 
-            return types;
+            var definedNames = new HashSet<string>(schemaTypeDefinitions.Keys.Where(x => x.NamespaceName == targetNamespace).Select(x => x.LocalName));
+            var operationDefinitions = contractAssembly.GetServiceContracts()
+                                                       .SelectMany(x => x.Value
+                                                                         .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
+                                                                         .Select(op => GetOperationDefinition(x.Key, op)))
+                                                       .Where(def => def.State == DefinitionState.Default)
+                                                       .OrderBy(def => def.Name.LocalName)
+                                                       .ToList();
+
+            foreach (var operationTypeDefinition in methodDefinitions.Select(x => x.Value).OrderBy(x => x.InputName.LocalName))
+            {
+                if (operationTypeDefinition.InputName.NamespaceName == targetNamespace)
+                {
+                    if (!definedNames.Add(operationTypeDefinition.InputName.LocalName))
+                        throw new Exception($"Multiple type definitions for same name `{operationTypeDefinition.InputName}`.");
+
+                    var schemaType = new XmlSchemaComplexType { Name = operationTypeDefinition.InputName.LocalName };
+
+                    schema.Items.Add(schemaType);
+                }
+
+                if (operationTypeDefinition.OutputName.NamespaceName == targetNamespace)
+                {
+                    if (!definedNames.Add(operationTypeDefinition.OutputName.LocalName))
+                        throw new Exception($"Multiple type definitions for same name `{operationTypeDefinition.OutputName}`.");
+
+                    var schemaType = new XmlSchemaComplexType { Name = operationTypeDefinition.OutputName.LocalName };
+
+                    schema.Items.Add(schemaType);
+                }
+            }
+
+            foreach (var operationDefinition in operationDefinitions)
+            {
+                var inputTypeName = new XmlQualifiedName(operationDefinition.OperationTypeDefinition.InputName.LocalName, operationDefinition.OperationTypeDefinition.InputName.NamespaceName);
+                schema.Items.Add(new XmlSchemaElement { Name = operationDefinition.Name.LocalName, SchemaTypeName = inputTypeName });
+
+                var outputTypeName = new XmlQualifiedName(operationDefinition.OperationTypeDefinition.OutputName.LocalName, operationDefinition.OperationTypeDefinition.OutputName.NamespaceName);
+                schema.Items.Add(new XmlSchemaElement { Name = $"{operationDefinition.Name.LocalName}Response", SchemaTypeName = outputTypeName });
+
+                if (operationDefinition.IsAbstract)
+                    continue;
+
+                var inputMessage = new Message { Name = operationDefinition.InputMessageName };
+                protocol.Style.AddInputMessageParts(protocol, operationDefinition, inputMessage);
+
+                if (operationDefinition.InputBinaryMode == BinaryMode.Attachment)
+                    inputMessage.Parts.Add(new MessagePart { Name = "file", Type = GetSchemaTypeName(typeof(Stream), targetNamespace) });
+
+                messages.Add(inputMessage);
+
+                var outputMessage = new Message { Name = operationDefinition.OutputMessageName };
+                protocol.Style.AddOutputMessageParts(protocol, operationDefinition, outputMessage);
+
+                if (operationDefinition.OutputBinaryMode == BinaryMode.Attachment)
+                    outputMessage.Parts.Add(new MessagePart { Name = "file", Type = GetSchemaTypeName(typeof(Stream), targetNamespace) });
+
+                messages.Add(outputMessage);
+
+                var operation = new Operation
+                {
+                    Name = operationDefinition.Name.LocalName,
+                    Messages =
+                    {
+                        new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) },
+                        new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) }
+                    }
+                };
+
+                portType.Operations.Add(operation);
+
+                var inputBinding = new InputBinding();
+                if (operationDefinition.InputBinaryMode == BinaryMode.Attachment)
+                {
+                    
+                }
+                else
+                {
+                    inputBinding.Extensions.Add(protocol.Style.CreateSoapBodyBinding(protocol.ProducerNamespace));
+                    foreach (var headerBinding in protocol.MandatoryHeaders.Select(name => protocol.Style.CreateSoapHeaderBinding(name, STANDARD_HEADER_NAME, protocol.ProducerNamespace)))
+                        inputBinding.Extensions.Add(headerBinding);
+                }
+
+                var outputBinding = new OutputBinding();
+                if (operationDefinition.OutputBinaryMode == BinaryMode.Attachment)
+                {
+
+                }
+                else
+                {
+                    outputBinding.Extensions.Add(protocol.Style.CreateSoapBodyBinding(protocol.ProducerNamespace));
+                    foreach (var headerBinding in protocol.MandatoryHeaders.Select(name => protocol.Style.CreateSoapHeaderBinding(name, STANDARD_HEADER_NAME, protocol.ProducerNamespace)))
+                        outputBinding.Extensions.Add(headerBinding);
+                }
+
+                binding.Operations.Add(new OperationBinding
+                {
+                    Name = operationDefinition.Name.LocalName,
+                    Extensions = { protocol.CreateOperationVersionElement(operationDefinition), protocol.Style.CreateSoapOperationBinding() },
+                    Input = inputBinding,
+                    Output = outputBinding
+                });
+            }
+
+            foreach (var requiredImport in requiredImports)
+                schema.Includes.Add(new XmlSchemaImport { Namespace = requiredImport, SchemaLocation = requiredImport });
+
+            return schema;
         }
 
         private void AddComplexTypeContent(XmlSchemaComplexType schemaType, TypeDefinition typeDefinition, string targetNamespace)
@@ -334,28 +439,8 @@ namespace XRoadLib.Protocols.Description
 
         private void WriteServiceDescription(XmlWriter writer)
         {
-            var schemaTypes = BuildTypes(protocol.ProducerNamespace);
-            //AddOperations();
-
             var serviceDescription = new ServiceDescription { TargetNamespace = protocol.ProducerNamespace };
             AddServiceDescriptionNamespaces(serviceDescription);
-
-            var schema = new XmlSchema { TargetNamespace = protocol.ProducerNamespace };
-            foreach (var requiredImport in requiredImports)
-                schema.Includes.Add(new XmlSchemaImport { Namespace = requiredImport, SchemaLocation = requiredImport });
-
-            foreach (var schemaType in schemaTypes)
-                schema.Items.Add(schemaType);
-
-            //AddOperationTypes(schema);
-            //AddSchemaElements(schema);
-
-            serviceDescription.Types.Schemas.Add(schema);
-
-            serviceDescription.PortTypes.Add(portType);
-
-            binding.Extensions.Add(protocol.Style.CreateSoapBinding());
-            serviceDescription.Bindings.Add(binding);
 
             var standardHeader = new Message { Name = STANDARD_HEADER_NAME };
 
@@ -364,8 +449,11 @@ namespace XRoadLib.Protocols.Description
 
             serviceDescription.Messages.Add(standardHeader);
 
-            foreach (var message in messages)
-                serviceDescription.Messages.Add(message);
+            serviceDescription.Types.Schemas.Add(BuildSchema(protocol.ProducerNamespace, serviceDescription.Messages));
+            serviceDescription.PortTypes.Add(portType);
+
+            binding.Extensions.Add(protocol.Style.CreateSoapBinding());
+            serviceDescription.Bindings.Add(binding);
 
             servicePort.Extensions.Add(new SoapAddressBinding { Location = "" });
 
@@ -403,436 +491,6 @@ namespace XRoadLib.Protocols.Description
 
             if (typeDefinition.Name != null && !schemaTypeDefinitions.ContainsKey(typeDefinition.Name))
                 schemaTypeDefinitions.Add(typeDefinition.Name, typeDefinition);
-
-            //var arrayDefinition = typeDefinition.CreateCollectionDefinition();
-            //schemaExporter.ExportTypeDefinition(arrayDefinition);
-
-            //if (arrayDefinition.Type != null && !runtimeTypeDefinitions.ContainsKey(arrayDefinition.Type))
-            //    runtimeTypeDefinitions.Add(arrayDefinition.Type, arrayDefinition);
-
-            //if (arrayDefinition.Name != null && !schemaTypeDefinitions.ContainsKey(arrayDefinition.Name))
-            //    schemaTypeDefinitions.Add(arrayDefinition.Name, arrayDefinition);
-        }
-
-        /*
-        private void AddMessageTypes(IDictionary<MethodInfo, List<string>> contractMessages)
-        {
-            Func<KeyValuePair<MethodInfo, List<string>>, IEnumerable<Tuple<string, MethodInfo>>> selector =
-                m => protocol == XRoadProtocol.Version20
-                    ? m.Value.Select(n => Tuple.Create(n, m.Key))
-                    : Enumerable.Repeat(Tuple.Create(GetOperationNameFromMethodInfo(m.Key), m.Key), 1);
-
-            foreach (var operation in contractMessages.SelectMany(selector))
-                AddMessageType(operation.Item1, operation.Item2);
-        }
-
-        private void AddOperation(string operationName, XRoadServiceAttribute operationContract, MethodInfo methodInfo)
-        {
-            if (operationContract.IsHidden || (version.HasValue && !operationContract.ExistsInVersion(version.Value)))
-                return;
-
-            BuildOperationElements(operationName, methodInfo, operationContract.IsAbstract);
-
-            if (operationContract.IsAbstract)
-                return;
-
-            var serviceVersion = version.GetValueOrDefault(operationContract.AddedInVersion);
-
-            var operationBinding = new OperationBinding
-            {
-                Name = operationName,
-                Extensions = { xRoadSchema.CreateXRoadVersionBinding(serviceVersion) },
-                Input = new InputBinding(),
-                Output = new OutputBinding()
-            };
-
-            BuildOperationBinding(operationBinding, methodInfo);
-
-            binding.Operations.Add(operationBinding);
-        }
-
-        private void AddOperations()
-        {
-            foreach (var op in serviceContracts.SelectMany(x => x.Value.Select(y => Tuple.Create(y.Key, y.Value, x.Key))).OrderBy(x => x.Item1))
-                AddOperation(op.Item1, op.Item2, op.Item3);
-        }
-
-        private void BuildOperationElements(string name, MethodInfo methodContract, bool isExported)
-        {
-            var importAttribute = methodContract.GetImportAttribute(protocol);
-            if (importAttribute != null)
-            {
-                BuildImportedOperationElements(name, methodContract, importAttribute);
-                return;
-            }
-
-            var operationTypeName = GetOperationTypeName(name, methodContract);
-
-            var requestElement = new XmlSchemaElement
-            {
-                Name = name,
-                SchemaTypeName = operationTypeName.Item1
-            };
-
-            var responseElement = new XmlSchemaElement
-            {
-                Name = $"{name}Response",
-                SchemaTypeName = operationTypeName.Item2
-            };
-
-            schemaElements.Add(requestElement.Name, requestElement);
-            schemaElements.Add(responseElement.Name, responseElement);
-
-            var inputMessage = CreateOperationMessage(requestElement, methodContract);
-            var outputMessage = CreateOperationMessage(responseElement, methodContract, inputMessage);
-
-            if (!isExported)
-            {
-                var operation = new Operation { Name = name, DocumentationElement = xRoadSchema.CreateDocumentationFor(methodContract) };
-
-                operation.Messages.Add(new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) });
-                operation.Messages.Add(new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) });
-
-                portType.Operations.Add(operation);
-            }
-
-            messages.Add(inputMessage);
-            messages.Add(outputMessage);
-        }
-
-        private void AddMessageType(string operationName, MethodInfo method)
-        {
-            var requestName = string.Format(requestTypeNameFormat, operationName);
-            var responseName = string.Format(responseTypeNameFormat, operationName);
-
-            if (IsExistingType(requestName) || IsExistingType(responseName))
-                throw new Exception($"Operation type `{requestName}` already exists with the same name.");
-
-            var requestType = CreateOperationRequestType(requestName, method);
-            var responseType = CreateResponseType(responseName, method, (XmlSchemaGroupBase)requestType.Item2?.Particle, operationName);
-
-            operationTypes.Add(requestName, Tuple.Create(method, requestType.Item2, responseType, requestType.Item1));
-        }
-
-        private bool IsExistingType(string typeName)
-        {
-            return schemaBuilder[typeName] || operationTypes.ContainsKey(typeName);
-        }
-
-        private void BuildImportedOperationElements(string name, MethodInfo methodContract, XRoadImportAttribute importAttribute)
-        {
-            var importNamespace = ((ISchemaImportProvider)Activator.CreateInstance(importAttribute.SchemaImportProvider)).SchemaNamespace;
-
-            var operationTypeName = Tuple.Create(new XmlQualifiedName(importAttribute.RequestPart, importNamespace),
-                                                 new XmlQualifiedName(importAttribute.ResponsePart, importNamespace));
-
-            var extraParts = methodContract.GetExtraMessageParts().ToList();
-
-            var inputMessage = new Message
-            {
-                Name = string.Format(requestMessageNameFormat, name)
-            };
-
-            inputMessage.Parts.Add(
-                protocol == XRoadProtocol.Version20
-                    ? new MessagePart { Name = "keha", Type = operationTypeName.Item1 }
-                    : new MessagePart { Name = "body", Element = operationTypeName.Item1 });
-
-            var outputMessage = new Message
-            {
-                Name = string.Format(responseMessageNameFormat, name)
-            };
-
-            if (protocol == XRoadProtocol.Version20)
-                outputMessage.Parts.Add(new MessagePart { Name = "paring", Type = operationTypeName.Item1 });
-
-            outputMessage.Parts.Add(
-                protocol == XRoadProtocol.Version20
-                    ? new MessagePart { Name = "keha", Type = operationTypeName.Item2 }
-                    : new MessagePart { Name = "body", Element = operationTypeName.Item2 });
-
-            if (protocol == XRoadProtocol.Version20)
-                foreach (var part in extraParts)
-                {
-                    var message = part.Direction == MessagePartDirection.Input ? inputMessage : outputMessage;
-                    message.Parts.Add(new MessagePart { Name = part.PartName, Type = new XmlQualifiedName(part.TypeName, importNamespace) });
-                }
-
-            var operation = new Operation { Name = name, DocumentationElement = xRoadSchema.CreateDocumentationFor(methodContract) };
-
-            operation.Messages.Add(new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) });
-            operation.Messages.Add(new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) });
-
-            portType.Operations.Add(operation);
-
-            messages.Add(inputMessage);
-            messages.Add(outputMessage);
-        }
-
-        private void AddSoapOperationBinding(DocumentableItem operationBinding)
-        {
-            operationBinding.Extensions.Add(new SoapOperationBinding
-            {
-                Style = protocol == XRoadProtocol.Version20 ? SoapBindingStyle.Rpc : SoapBindingStyle.Document,
-                SoapAction = ""
-            });
-        }
-
-        private SoapBodyBinding CreateSoapBodyBinding()
-        {
-            return protocol == XRoadProtocol.Version20
-                ? new SoapBodyBinding { Use = SoapBindingUse.Encoded, Namespace = targetNamespace, Encoding = NamespaceConstants.SOAP_ENC }
-                : new SoapBodyBinding { Use = SoapBindingUse.Literal };
-        }
-
-        private SoapHeaderBinding CreateSoapHeaderBinding(string headerName)
-        {
-            return new SoapHeaderBinding
-            {
-                Message = new XmlQualifiedName(standardHeaderName, targetNamespace),
-                Part = headerName,
-                Use = protocol == XRoadProtocol.Version20 ? SoapBindingUse.Encoded : SoapBindingUse.Literal,
-                Namespace = protocol == XRoadProtocol.Version20 ? xroadNamespace : null,
-                Encoding = protocol == XRoadProtocol.Version20 ? NamespaceConstants.SOAP_ENC : null
-            };
-        }
-
-        private MimePart BuildMultipartOperationBinding()
-        {
-            var messagePart = new MimePart { Extensions = { CreateSoapBodyBinding() } };
-
-            foreach (var headerBinding in requiredHeaders.Select(CreateSoapHeaderBinding))
-                messagePart.Extensions.Add(xRoadSchema.CreateSoapHeader(headerBinding));
-
-            return messagePart;
-        }
-
-        private void BuildOperationBinding(OperationBinding operationBinding, MethodInfo methodContract)
-        {
-            AddSoapOperationBinding(operationBinding);
-
-            if (protocol == XRoadProtocol.Version20 && methodContract.HasMultipartRequest())
-            {
-                operationBinding.Input.Extensions.Add(
-                    new MimeMultipartRelatedBinding
-                    {
-                        Parts =
-                        {
-                            BuildMultipartOperationBinding(),
-                            new MimePart { Extensions = { new MimeContentBinding { Part = "p1", Type = "application/binary" } } }
-                        }
-                    });
-            }
-            else
-            {
-                operationBinding.Input.Extensions.Add(CreateSoapBodyBinding());
-                foreach (var headerBinding in requiredHeaders.Select(CreateSoapHeaderBinding))
-                    operationBinding.Input.Extensions.Add(headerBinding);
-            }
-
-            if (protocol == XRoadProtocol.Version20 && methodContract.HasMultipartResponse())
-            {
-                operationBinding.Output.Extensions.Add(
-                    new MimeMultipartRelatedBinding
-                    {
-                        Parts =
-                        {
-                            BuildMultipartOperationBinding(),
-                            new MimePart { Extensions = { new MimeContentBinding { Part = "p2", Type = "application/binary" } } }
-                        }
-                    });
-            }
-            else
-            {
-                operationBinding.Output.Extensions.Add(CreateSoapBodyBinding());
-                foreach (var headerBinding in requiredHeaders.Select(CreateSoapHeaderBinding))
-                    operationBinding.Output.Extensions.Add(headerBinding);
-            }
-        }
-
-        private Tuple<XmlQualifiedName, XmlQualifiedName> GetOperationTypeName(string operationName, MethodInfo methodContract)
-        {
-            var name = protocol == XRoadProtocol.Version20 ? operationName : GetOperationNameFromMethodInfo(methodContract);
-
-            var requestTypeName = string.Format(requestTypeNameFormat, name);
-            var responseTypeName = string.Format(responseTypeNameFormat, name);
-
-            Tuple<MethodInfo, XmlSchemaComplexType, XmlSchemaComplexType, XmlQualifiedName> value;
-            if (!operationTypes.TryGetValue(requestTypeName, out value) || methodContract != value.Item1)
-                throw new Exception($"Unrecognized type `{requestTypeName}`");
-
-            return Tuple.Create(new XmlQualifiedName(requestTypeName, targetNamespace),
-                                new XmlQualifiedName(responseTypeName, targetNamespace));
-        }
-
-        private Tuple<XmlQualifiedName, XmlSchemaComplexType> CreateOperationRequestType(string requestName, MethodInfo method)
-        {
-            var parameters = method.GetParameters().Where(p => !version.HasValue || p.ExistsInVersion(version.Value)).ToList();
-            var complexType = new XmlSchemaComplexType { Name = requestName, Annotation = schemaBuilder.CreateSchemaAnnotation(method) };
-            var requestElement = new XmlSchemaElement { Name = "request" };
-
-            if (parameters.Count == 0)
-            {
-                if (protocol != XRoadProtocol.Version20)
-                    requestElement.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() };
-
-                complexType.Particle = protocol != XRoadProtocol.Version20 ? new XmlSchemaSequence { Items = { requestElement } } : new XmlSchemaSequence();
-
-                return Tuple.Create((XmlQualifiedName)null, complexType);
-            }
-
-            if (parameters.Count == 1)
-            {
-                var parameter = parameters.Single();
-                var parameterElement = schemaBuilder.CreateSchemaElement(parameter, true);
-                if (string.IsNullOrWhiteSpace(parameterElement.Name))
-                {
-                    if (protocol == XRoadProtocol.Version20)
-                        return parameterElement.SchemaType != null
-                            ? Tuple.Create((XmlQualifiedName)null, (XmlSchemaComplexType)parameterElement.SchemaType)
-                            : Tuple.Create(parameterElement.SchemaTypeName, (XmlSchemaComplexType)null);
-
-                    parameterElement.Name = "request";
-                    complexType.Particle = new XmlSchemaSequence { Items = { parameterElement } };
-
-                    return Tuple.Create((XmlQualifiedName)null, complexType);
-                }
-            }
-
-            var schemaParticle = operationConfiguration?.GetParameterLayout(method) == XRoadContentLayoutMode.Flexible
-                ? (XmlSchemaGroupBase)new XmlSchemaAll()
-                : new XmlSchemaSequence();
-
-            foreach (var parameter in parameters)
-                schemaParticle.Items.Add(schemaBuilder.CreateSchemaElement(parameter));
-
-            if (protocol == XRoadProtocol.Version20)
-                complexType.Particle = schemaParticle;
-            else
-            {
-                requestElement.SchemaType = new XmlSchemaComplexType { Particle = schemaParticle };
-                complexType.Particle = new XmlSchemaSequence { Items = { requestElement } };
-            }
-
-            return Tuple.Create((XmlQualifiedName)null, complexType);
-        }
-
-        private XmlSchemaComplexType CreateResponseType(string responseName, MethodInfo method, XmlSchemaGroupBase requestSequence, string operationName)
-        {
-            var complexType = new XmlSchemaComplexType { Name = responseName, Annotation = schemaBuilder.CreateSchemaAnnotation(method) };
-
-            var faultSequence = schemaBuilder.CreateFaultSequence(method);
-            if (faultSequence != null && method.ReturnType == typeof(void))
-                faultSequence.MinOccurs = 0;
-
-            if (protocol == XRoadProtocol.Version20)
-            {
-                if (method.ReturnType == typeof(void))
-                {
-                    complexType.Particle = faultSequence != null ? new XmlSchemaSequence { Items = { faultSequence } } : new XmlSchemaSequence();
-                    return complexType;
-                }
-
-                var resultElement = schemaBuilder.CreateSchemaElement(method.ReturnParameter);
-                if (string.IsNullOrWhiteSpace(resultElement.Name))
-                {
-                    if (faultSequence != null)
-                        throw new Exception($"Method `{operationName}` return parameter element name cannot be empty.");
-
-                    if (!method.ReturnType.IsArray)
-                        return null;
-
-                    complexType.ContentModel = (XmlSchemaComplexContent)((XmlSchemaComplexType)resultElement.SchemaType).ContentModel;
-                }
-                else
-                {
-                    complexType.Particle = faultSequence != null ? new XmlSchemaSequence { Items = { new XmlSchemaChoice { Items = { faultSequence, resultElement } } } }
-                                                                 : new XmlSchemaSequence { Items = { resultElement } };
-                }
-
-                return complexType;
-            }
-
-            var responseSequence = new XmlSchemaSequence();
-            var responseElement = new XmlSchemaElement { Name = "response", SchemaType = new XmlSchemaComplexType { Particle = responseSequence } };
-
-            if (method.ReturnType != typeof(void))
-            {
-                var resultElement = schemaBuilder.CreateSchemaElement(method.ReturnParameter);
-                if (string.IsNullOrWhiteSpace(resultElement.Name))
-                {
-                    if (faultSequence != null)
-                        throw new Exception($"Method `{operationName}` return parameter element name cannot be empty.");
-
-                    resultElement.Name = "response";
-                    responseElement = resultElement;
-                }
-                else
-                {
-                    if (faultSequence != null)
-                        responseSequence.Items.Add(new XmlSchemaChoice { Items = { faultSequence, resultElement } });
-                    else responseSequence.Items.Add(resultElement);
-                }
-            }
-            else if (faultSequence != null)
-                responseSequence.Items.Add(faultSequence);
-
-            return new XmlSchemaComplexType
-            {
-                Name = responseName,
-                Particle = new XmlSchemaSequence { Items = { requestSequence.Items[0], responseElement } },
-                Annotation = schemaBuilder.CreateSchemaAnnotation(method)
-            };
-        }
-
-        private void AddOperationTypes(XmlSchema schema)
-        {
-            foreach (var operationType in operationTypes.Values.Select(x => x.Item2).Concat(operationTypes.Values.Select(x => x.Item3)).Where(x => x != null).OrderBy(x => x.Name))
-                schema.Items.Add(operationType);
-        }
-
-        private void AddSchemaElements(XmlSchema schema)
-        {
-            if (protocol == XRoadProtocol.Version20)
-                return;
-
-            foreach (var schemaElement in schemaElements)
-                schema.Items.Add(schemaElement.Value);
-        }
-
-        private Message CreateOperationMessage(XmlSchemaElement element, MethodInfo methodContract, Message inputMessage = null)
-        {
-            if (protocol != XRoadProtocol.Version20)
-                return new Message
-                {
-                    Name = element.Name,
-                    Parts = { new MessagePart { Name = "body", Element = new XmlQualifiedName(element.Name, targetNamespace) } }
-                };
-
-            var message = new Message { Name = element.SchemaTypeName.Name };
-
-            if (inputMessage != null)
-                message.Parts.Add(new MessagePart { Name = "paring", Type = inputMessage.Parts[0].Type });
-
-            if (inputMessage != null && !methodContract.ReturnType.IsArray)
-                message.Parts.Add(new MessagePart { Name = "keha", Type = schemaBuilder.GetSchemaTypeName(methodContract.ReturnType) });
-            else message.Parts.Add(new MessagePart { Name = "keha", Type = element.SchemaTypeName });
-
-            if (inputMessage == null && methodContract.HasMultipartRequest())
-                message.Parts.Add(new MessagePart { Name = "file", Type = schemaBuilder.GetSchemaTypeName(typeof(Stream)) });
-
-            if (inputMessage != null && methodContract.HasMultipartResponse())
-                message.Parts.Add(new MessagePart { Name = "file", Type = schemaBuilder.GetSchemaTypeName(typeof(Stream)) });
-
-            return message;
-        }
-
-        
-        */
-
-        public int Compare(XmlSchemaType x, XmlSchemaType y)
-        {
-            return string.Compare(x.Name, y.Name, StringComparison.InvariantCulture);
         }
     }
 }

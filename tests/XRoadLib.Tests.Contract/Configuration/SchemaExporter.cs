@@ -5,15 +5,20 @@ namespace XRoadLib.Tests.Contract.Configuration
 {
     public class SchemaExporter : ISchemaExporter
     {
+        public void ExportOperationTypeDefinition(OperationTypeDefinition operationTypeDefinition)
+        {
+            var name = operationTypeDefinition.InputName;
+
+            // Customize root type name for operations (when applicable):
+            operationTypeDefinition.InputName = XName.Get($"{name.LocalName}Request", name.NamespaceName);
+            operationTypeDefinition.OutputName = XName.Get($"{name.LocalName}Response", name.NamespaceName);
+        }
+
         public void ExportOperationDefinition(OperationDefinition operationDefinition)
         {
-            // Customize root type name for operations (when applicable):
-            operationDefinition.RequestTypeName = XName.Get($"{operationDefinition.Name.LocalName}Request", operationDefinition.RequestTypeName.NamespaceName);
-            operationDefinition.ResponseTypeName = XName.Get($"{operationDefinition.Name.LocalName}Response", operationDefinition.RequestTypeName.NamespaceName);
-
             // Customize operation message names:
-            operationDefinition.RequestMessageName = operationDefinition.Name.LocalName;
-            operationDefinition.ResponseMessageName = $"{operationDefinition.Name.LocalName}Response";
+            operationDefinition.InputMessageName = operationDefinition.Name.LocalName;
+            operationDefinition.OutputMessageName = $"{operationDefinition.Name.LocalName}Response";
         }
 
         public void ExportTypeDefinition(TypeDefinition typeDefinition)

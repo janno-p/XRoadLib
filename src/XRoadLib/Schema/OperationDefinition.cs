@@ -1,28 +1,23 @@
-﻿using System.Reflection;
-using System.Xml.Linq;
-
-namespace XRoadLib.Schema
+﻿namespace XRoadLib.Schema
 {
-    public class OperationDefinition : ContainerDefinition<ParameterDefinition>
+    public class OperationDefinition : Definition
     {
-        public XName RequestTypeName { get; set; }
-
-        public XName ResponseTypeName { get; set; }
-
-        public string RequestMessageName { get; set; }
-
-        public string ResponseMessageName { get; set; }
-
-        public BinaryMode RequestBinaryMode { get; set; }
-
-        public BinaryMode ResponseBinaryMode { get; set; }
-
-        public bool HideXRoadFaultDefinition { get; set; }
-
-        public bool ProhibitRequestPartInResponse { get; set; }
+        public OperationTypeDefinition OperationTypeDefinition { get; }
 
         public uint Version { get; set; }
+        public bool IsAbstract { get; set; }
 
-        public MethodInfo MethodInfo { get; set; }
+        public string InputMessageName { get; set; }
+        public BinaryMode InputBinaryMode { get; set; }
+        public bool ProhibitRequestPartInResponse { get; set; }
+
+        public string OutputMessageName { get; set; }
+        public BinaryMode OutputBinaryMode { get; set; }
+        public bool HideXRoadFaultDefinition { get; set; }
+
+        public OperationDefinition(OperationTypeDefinition operationTypeDefinition)
+        {
+            OperationTypeDefinition = operationTypeDefinition;
+        }
     }
 }

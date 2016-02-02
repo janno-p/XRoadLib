@@ -7,7 +7,6 @@ using XRoadLib.Extensions;
 using XRoadLib.Protocols;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -33,7 +32,9 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
-            return Definition.HasStrictContentOrder ? DeserializeParametersStrict(reader, message) : DeserializeParametersNonStrict(reader, message);
+            return Definition.OperationTypeDefinition.HasStrictContentOrder
+                ? DeserializeParametersStrict(reader, message)
+                : DeserializeParametersNonStrict(reader, message);
         }
 
         private IDictionary<string, object> DeserializeParametersStrict(XmlReader reader, XRoadMessage message)
@@ -116,7 +117,7 @@ namespace XRoadLib.Serialization.Mapping
             {
                 var parameterName = parameterMap.Definition.Name.LocalName;
 
-                object parameterValue = null;
+                object parameterValue;
                 var hasValue = values.TryGetValue(parameterName, out parameterValue);
 
                 if (parameterMap.Definition.IsOptional && !hasValue)
