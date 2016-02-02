@@ -6,13 +6,10 @@ namespace XRoadLib.Tests.Contract.Configuration
 {
     public class CustomXRoad20Protocol : XRoad20Protocol
     {
-        private const string producerName = "test-producer";
-        private const string producerNamespace = "http://producers.test-producer.xtee.riik.ee/producer/test-producer";
-
         public static IProtocol Instance { get; } = new CustomXRoad20Protocol();
 
         private CustomXRoad20Protocol()
-            : base(producerName, producerNamespace, null, new CustomSchemaExporter(producerNamespace))
+            : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer", null, new SchemaExporter())
         {
             Titles.Add("", "Ilma keeleta palun");
             Titles.Add("en", "XRoadLib test producer");

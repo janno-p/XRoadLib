@@ -6,12 +6,14 @@ open System
 open System.IO
 open System.Xml
 open XRoadLib
+open XRoadLib.Schema
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
 
 [<TestFixture>]
 module DateTimeTest =
-    let dateTimeTypeMap = DateTimeTypeMap(XRoadLib.Schema.TypeDefinition.SimpleTypeDefinition<DateTime>("dateTime"))
+    let schemaDefinitionReader = SchemaDefinitionReader("")
+    let dateTimeTypeMap = DateTimeTypeMap(schemaDefinitionReader.GetSimpleTypeDefinition<DateTime>("dateTime"))
     let deserializeValue x = dateTimeTypeMap |> deserializeValue x
 
     [<Test>]

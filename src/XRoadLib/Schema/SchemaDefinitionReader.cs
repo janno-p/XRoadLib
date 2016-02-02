@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
@@ -10,26 +11,47 @@ using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Schema
 {
-    public class SchemaExporter : ISchemaExporter
+    public class SchemaDefinitionReader
     {
+        private readonly ISchemaExporter schemaExporter;
+
         public string ProducerNamespace { get; }
 
-        public SchemaExporter(string producerNamespace)
+        public SchemaDefinitionReader(string producerNamespace, ISchemaExporter schemaExporter = null)
         {
+            this.schemaExporter = schemaExporter;
+
             ProducerNamespace = producerNamespace;
         }
 
-        public virtual void ExportOperationDefinition(OperationDefinition operationDefinition)
-        { }
+        public TypeDefinition GetSimpleTypeDefinition<T>(string typeName)
+        {
+            var typeDefinition = new TypeDefinition
+            {
+                Name = XName.Get(typeName, NamespaceConstants.XSD),
+                Type = typeof(T),
+                IsSimpleType = true
+            };
 
-        public virtual void ExportParameterDefinition(ParameterDefinition parameterDefinition)
-        { }
+            schemaExporter?.ExportTypeDefinition(typeDefinition);
 
-        public virtual void ExportPropertyDefinition(PropertyDefinition propertyDefinition)
-        { }
+            return typeDefinition;
+        }
 
-        public virtual void ExportTypeDefinition(TypeDefinition typeDefinition)
-        { }
+        public CollectionDefinition GetCollectionDefinition(TypeDefinition typeDefinition)
+        {
+            var collectionDefinition = new CollectionDefinition
+            {
+                ItemDefinition = typeDefinition,
+                CanHoldNullValues = true,
+                Type = typeDefinition.Type.MakeArrayType(),
+                IsAnonymous = true
+            };
+
+            schemaExporter?.ExportTypeDefinition(collectionDefinition);
+
+            return collectionDefinition;
+        }
 
         public TypeDefinition GetTypeDefinition(Type type)
         {
@@ -45,7 +67,7 @@ namespace XRoadLib.Schema
                     CanHoldNullValues = true
                 };
 
-                ExportTypeDefinition(collectionDefinition);
+                schemaExporter?.ExportTypeDefinition(collectionDefinition);
 
                 return collectionDefinition;
             }
@@ -53,7 +75,7 @@ namespace XRoadLib.Schema
             var typeAttribute = type.GetSingleAttribute<XmlTypeAttribute>();
             var isAnonymous = typeAttribute != null && typeAttribute.AnonymousType;
 
-            var normalizedType = Nullable.GetUnderlyingType(type) ?? type;
+            var normalizedType = NormalizeType(type);
 
             if (!isAnonymous)
                 qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(normalizedType.Name),
@@ -70,7 +92,7 @@ namespace XRoadLib.Schema
                 CanHoldNullValues = type.IsClass || normalizedType != type
             };
 
-            ExportTypeDefinition(typeDefinition);
+            schemaExporter?.ExportTypeDefinition(typeDefinition);
 
             return typeDefinition;
         }
@@ -125,6 +147,7 @@ namespace XRoadLib.Schema
             contentDefinition.Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault());
             contentDefinition.UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType);
             contentDefinition.TypeName = customTypeName != null ? XName.Get(customTypeName, NamespaceConstants.XSD) : null;
+            contentDefinition.IsOptional = sourceInfo.GetSingleAttribute<OptionalAttribute>() != null;
 
             if (!contentDefinition.RuntimeType.IsArray)
                 return;
@@ -144,12 +167,12 @@ namespace XRoadLib.Schema
             var propertyDefinition = new PropertyDefinition(typeDefinition)
             {
                 PropertyInfo = propertyInfo,
-                RuntimeType = propertyInfo.PropertyType
+                RuntimeType = NormalizeType(propertyInfo.PropertyType)
             };
 
             AddContentDefinition(propertyDefinition, propertyInfo);
 
-            ExportPropertyDefinition(propertyDefinition);
+            schemaExporter?.ExportPropertyDefinition(propertyDefinition);
 
             return propertyDefinition;
         }
@@ -181,7 +204,7 @@ namespace XRoadLib.Schema
                 ResponseMessageName = $"{qualifiedName.LocalName}Response"
             };
 
-            ExportOperationDefinition(operationDefinition);
+            schemaExporter?.ExportOperationDefinition(operationDefinition);
 
             return operationDefinition;
         }
@@ -191,7 +214,7 @@ namespace XRoadLib.Schema
             var parameterDefinition = new ParameterDefinition(operationDefinition)
             {
                 ParameterInfo = parameterInfo,
-                RuntimeType = parameterInfo.ParameterType,
+                RuntimeType = NormalizeType(parameterInfo.ParameterType),
                 IsResult = parameterInfo.Position < 0
             };
 
@@ -200,9 +223,14 @@ namespace XRoadLib.Schema
             if (parameterDefinition.IsResult && parameterDefinition.Name == null)
                 parameterDefinition.Name = XName.Get("value");
 
-            ExportParameterDefinition(parameterDefinition);
+            schemaExporter?.ExportParameterDefinition(parameterDefinition);
 
             return parameterDefinition;
+        }
+
+        private static Type NormalizeType(Type type)
+        {
+            return Nullable.GetUnderlyingType(type) ?? type;
         }
     }
 }

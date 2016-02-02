@@ -8,6 +8,7 @@ open System.Xml
 open XRoadLib
 open XRoadLib.Protocols
 open XRoadLib.Protocols.Headers
+open XRoadLib.Schema
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
 
@@ -30,7 +31,10 @@ module MappingTestHelpers =
 
 [<TestFixture>]
 module DateTest =
-    let dateTypeMap = DateTypeMap(XRoadLib.Schema.TypeDefinition.SimpleTypeDefinition<DateTime>("date"))
+    open XRoadLib.Schema
+
+    let schemaDefinitionReader = SchemaDefinitionReader("")
+    let dateTypeMap = DateTypeMap(schemaDefinitionReader.GetSimpleTypeDefinition<DateTime>("date"))
     let deserializeValue x = dateTypeMap |> deserializeValue x
 
     [<Test>]

@@ -17,6 +17,7 @@ namespace XRoadLib.Serialization
     public sealed class SerializerCache : ISerializerCache
     {
         private readonly Assembly contractAssembly;
+        private readonly SchemaDefinitionReader schemaDefinitionReader;
 
         private readonly ConcurrentDictionary<Type, ITypeMap> customTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
         private readonly ConcurrentDictionary<XName, IServiceMap> serviceMaps = new ConcurrentDictionary<XName, IServiceMap>();
@@ -26,8 +27,9 @@ namespace XRoadLib.Serialization
         public IProtocol Protocol { get; }
         public uint? Version { get; }
 
-        public SerializerCache(IProtocol protocol, Assembly contractAssembly, uint? version = null)
+        public SerializerCache(IProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
         {
+            this.schemaDefinitionReader = schemaDefinitionReader;
             this.contractAssembly = contractAssembly;
 
             Protocol = protocol;
@@ -86,7 +88,7 @@ namespace XRoadLib.Serialization
             if (methodInfo == null)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
-            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(methodInfo, qualifiedName);
+            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, qualifiedName);
 
             var parameterMaps = operationDefinition.MethodInfo
                                                    .GetParameters()
@@ -100,17 +102,19 @@ namespace XRoadLib.Serialization
             return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(operationDefinition, parameterMaps, resultMap));
         }
 
-        private static MethodInfo GetServiceInterface(Assembly typeAssembly, XName qualifiedName)
+        private MethodInfo GetServiceInterface(Assembly typeAssembly, XName qualifiedName)
         {
             return typeAssembly?.GetTypes()
                                 .Where(t => t.IsInterface)
                                 .SelectMany(t => t.GetMethods())
-                                .SingleOrDefault(x => x.GetServices(true).Any(m => m == qualifiedName.LocalName));
+                                .SingleOrDefault(x => x.GetServices(true)
+                                                       .Any(m => m.Name == qualifiedName.LocalName
+                                                                 && (!Version.HasValue || m.ExistsInVersion(Version.Value))));
         }
 
         private IParameterMap CreateParameterMap(OperationDefinition operationDefinition, ParameterInfo parameterInfo)
         {
-            var parameterDefinition = Protocol.SchemaExporter.GetParameterDefinition(parameterInfo, operationDefinition);
+            var parameterDefinition = schemaDefinitionReader.GetParameterDefinition(parameterInfo, operationDefinition);
             if (parameterDefinition.State == DefinitionState.Ignored)
                 return null;
 
@@ -154,7 +158,10 @@ namespace XRoadLib.Serialization
 
         private ITypeMap AddTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
-            var typeDefinition = Protocol.SchemaExporter.GetTypeDefinition(runtimeType);
+            if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.ExistsInVersion(Version.Value))
+                throw XRoadException.UnknownType(runtimeType.ToString());
+
+            var typeDefinition = schemaDefinitionReader.GetTypeDefinition(runtimeType);
 
             ITypeMap typeMap;
 
@@ -196,7 +203,7 @@ namespace XRoadLib.Serialization
             if (runtimeType == null)
                 return null;
 
-            var typeDefinition = Protocol.SchemaExporter.GetTypeDefinition(runtimeType);
+            var typeDefinition = schemaDefinitionReader.GetTypeDefinition(runtimeType);
 
             if (!typeDefinition.Type.IsAbstract && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
                 throw XRoadException.NoDefaultConstructorForType(typeDefinition.Name);
@@ -209,7 +216,7 @@ namespace XRoadLib.Serialization
             else
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
 
-            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition.CreateCollectionDefinition(), typeMap);
+            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.Type), this, schemaDefinitionReader.GetCollectionDefinition(typeDefinition), typeMap);
 
             var partialTypeMaps = new Dictionary<Type, ITypeMap>
             {
@@ -235,6 +242,7 @@ namespace XRoadLib.Serialization
 
             var runtimeType = contractAssembly.GetTypes()
                                               .Where(type => type.Name.Equals(qualifiedName.LocalName))
+                                              .Where(type => !Version.HasValue || type.ExistsInVersion(Version.Value))
                                               .SingleOrDefault(type => type.IsXRoadSerializable());
             if (runtimeType != null)
                 return runtimeType;
@@ -268,7 +276,7 @@ namespace XRoadLib.Serialization
 
         private void CreateTestSystem(ILegacyProtocol legacyProtocol)
         {
-            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(new Action(() => {}).Method, XName.Get("testSystem", legacyProtocol.XRoadNamespace));
+            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(new Action(() => {}).Method, XName.Get("testSystem", legacyProtocol.XRoadNamespace));
             operationDefinition.State = DefinitionState.Hidden;
 
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, null));
@@ -276,12 +284,11 @@ namespace XRoadLib.Serialization
 
         private void CreateGetState(ILegacyProtocol legacyProtocol)
         {
-            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(new Func<int>(() => 0).Method, XName.Get("getState", legacyProtocol.XRoadNamespace));
+            var methodInfo = new Func<int>(() => 0).Method;
+            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("getState", legacyProtocol.XRoadNamespace));
             operationDefinition.State = DefinitionState.Hidden;
 
-            var resultParameter = new ParameterDefinition(operationDefinition) { RuntimeType = typeof(int), IsResult = true };
-            Protocol.SchemaExporter.ExportParameterDefinition(resultParameter);
-
+            var resultParameter = schemaDefinitionReader.GetParameterDefinition(methodInfo.ReturnParameter, operationDefinition);
             var typeMap = GetContentDefinitionTypeMap(resultParameter, null);
             resultParameter.TypeName = typeMap.Definition.Name;
 
@@ -293,12 +300,11 @@ namespace XRoadLib.Serialization
 
         private void CreateListMethods(ILegacyProtocol legacyProtocol)
         {
-            var operationDefinition = Protocol.SchemaExporter.GetOperationDefinition(new Func<string[]>(() => new string[0]).Method, XName.Get("listMethods", legacyProtocol.XRoadNamespace));
+            var methodInfo = new Func<string[]>(() => new string[0]).Method;
+            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("listMethods", legacyProtocol.XRoadNamespace));
             operationDefinition.State = DefinitionState.Hidden;
 
-            var resultParameter = new ParameterDefinition(operationDefinition) { RuntimeType = typeof(string[]), IsResult = true };
-            Protocol.SchemaExporter.ExportParameterDefinition(resultParameter);
-
+            var resultParameter = schemaDefinitionReader.GetParameterDefinition(methodInfo.ReturnParameter, operationDefinition);
             var typeMap = GetContentDefinitionTypeMap(resultParameter, null);
             resultParameter.TypeName = typeMap.Definition.Name;
 
@@ -308,21 +314,18 @@ namespace XRoadLib.Serialization
 
         private void AddSystemType<T>(string typeName, Func<TypeDefinition, ITypeMap> createTypeMap)
         {
-            var typeDefinition = TypeDefinition.SimpleTypeDefinition<T>(typeName);
-            Protocol.SchemaExporter.ExportTypeDefinition(typeDefinition);
+            var typeDefinition = schemaDefinitionReader.GetSimpleTypeDefinition<T>(typeName);
 
             var typeMap = GetCustomTypeMap(typeDefinition.TypeMapType) ?? createTypeMap(typeDefinition);
 
             if (typeDefinition.Type != null)
                 runtimeTypeMaps.TryAdd(typeDefinition.Type, typeMap);
 
-            var arrayDefinition = typeDefinition.CreateCollectionDefinition();
-            Protocol.SchemaExporter.ExportTypeDefinition(arrayDefinition);
+            var collectionDefinition = schemaDefinitionReader.GetCollectionDefinition(typeDefinition);
+            var arrayTypeMap = GetCustomTypeMap(collectionDefinition.TypeMapType) ?? new ArrayTypeMap<T>(this, collectionDefinition, typeMap);
 
-            var arrayTypeMap = GetCustomTypeMap(arrayDefinition.TypeMapType) ?? new ArrayTypeMap<T>(this, arrayDefinition, typeMap);
-
-            if (arrayDefinition.Type != null)
-                runtimeTypeMaps.TryAdd(arrayDefinition.Type, arrayTypeMap);
+            if (collectionDefinition.Type != null)
+                runtimeTypeMaps.TryAdd(collectionDefinition.Type, arrayTypeMap);
 
             if (typeDefinition.Name != null)
                 xmlTypeMaps.TryAdd(typeDefinition.Name, Tuple.Create(typeMap, arrayTypeMap));
@@ -331,7 +334,7 @@ namespace XRoadLib.Serialization
         private IEnumerable<Tuple<PropertyDefinition, ITypeMap>> GetRuntimeProperties(TypeDefinition typeDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
             return typeDefinition.Type
-                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, Version, p => Protocol.SchemaExporter.GetPropertyDefinition(p, typeDefinition))
+                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, Version, p => schemaDefinitionReader.GetPropertyDefinition(p, typeDefinition))
                                  .Where(d => d.State != DefinitionState.Ignored)
                                  .Select(p =>
                                  {

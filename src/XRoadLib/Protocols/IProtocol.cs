@@ -29,8 +29,6 @@ namespace XRoadLib.Protocols
 
         Style Style { get; }
 
-        ISchemaExporter SchemaExporter { get; }
-
         bool IsHeaderNamespace(string ns);
 
         bool IsDefinedByEnvelope(XmlReader reader);

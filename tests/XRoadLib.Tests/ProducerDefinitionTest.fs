@@ -11,6 +11,8 @@ open XRoadLib.Protocols.Description
 
 [<TestFixture>]
 module ProducerDefinitionTest =
+    open XRoadLib.Protocols
+
     let contractAssembly = typeof<XRoadLib.Tests.Contract.Class1>.Assembly
 
     let xn nm = XName.Get(nm)
@@ -51,15 +53,15 @@ module ProducerDefinitionTest =
 
         port
 
-    let getDocument (definition: ProducerDefinition) =
+    let getDocument version (protocol: IProtocol) =
         use stream = new MemoryStream()
-        definition.SaveTo(stream)
+        protocol.WriteServiceDescription(stream, Nullable(version))
         stream.Position <- 0L
         XDocument.Load(stream)
 
     [<Test>]
     let ``empty service description`` () =
-        let doc = ProducerDefinition(Globals.XRoadProtocol31, contractAssembly, Nullable(1u)) |> getDocument
+        let doc = Globals.XRoadProtocol31 |> getDocument 1u
         let port = shouldMatchInCommonParts doc xrd
 
         let address = port.Elements(xrd "address").SingleOrDefault()
@@ -72,7 +74,7 @@ module ProducerDefinitionTest =
 
     [<Test>]
     let ``empty legacy format service description`` () =
-        let doc = ProducerDefinition(Globals.XRoadProtocol20, contractAssembly, Nullable(1u)) |> getDocument
+        let doc = Globals.XRoadProtocol20 |> getDocument 1u
         let port = shouldMatchInCommonParts doc xtee
 
         let address = port.Elements(xtee "address").SingleOrDefault()
@@ -86,16 +88,13 @@ module ProducerDefinitionTest =
     [<Test>]
     let ``should define service location if given`` () =
         let url = "http://TURVASERVER/cgi-bin/consumer_proxy"
-        let definition = ProducerDefinition(Globals.XRoadProtocol31, contractAssembly, Nullable(1u))
-        let doc = definition |> getDocument
+        let doc = Globals.XRoadProtocol31 |> getDocument 1u
         let port = shouldMatchInCommonParts doc xrd
         port.Elements(soap "address").Single().Attribute(xn "location") |> attributeValueShouldEqual url
 
     [<Test>]
     let ``should define service title`` () =
-        let definition = ProducerDefinition(Globals.XRoadProtocol31, contractAssembly, Nullable(1u))
-
-        let doc = definition |> getDocument
+        let doc = Globals.XRoadProtocol31 |> getDocument 1u
         let port = shouldMatchInCommonParts doc xrd
 
         let titleElements = port.Elements(xrd "title") |> List.ofSeq
@@ -121,9 +120,7 @@ module ProducerDefinitionTest =
 
     [<Test>]
     let ``can define service title for legacy service`` () =
-        let definition = ProducerDefinition(Globals.XRoadProtocol20, contractAssembly, Nullable(1u))
-
-        let doc = definition |> getDocument
+        let doc = Globals.XRoadProtocol20 |> getDocument 1u
         let port = shouldMatchInCommonParts doc xtee
 
         let titleElements = port.Elements(xtee "title") |> List.ofSeq
@@ -148,7 +145,7 @@ module ProducerDefinitionTest =
         noCode.Head.Value |> should equal "Ilma keeleta palun"
 
     let [<Test>] ``Anonymous type should be nested under container type`` () =
-        let doc = ProducerDefinition(Globals.XRoadProtocol31, contractAssembly, Nullable(1u)) |> getDocument
+        let doc = Globals.XRoadProtocol31 |> getDocument 1u
         let definitions = doc.Elements(wsdl "definitions") |> Seq.exactlyOne
         let types = definitions.Elements(wsdl "types") |> Seq.exactlyOne
         let schema = types.Elements(xsd "schema") |> Seq.exactlyOne

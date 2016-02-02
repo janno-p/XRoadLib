@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
+using XRoadLib.Protocols.Description;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
@@ -22,6 +23,8 @@ namespace XRoadLib.Protocols
 
         private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
         private ISerializerCache serializerCache;
+
+        private readonly SchemaDefinitionReader schemaDefinitionReader;
 
         public IEnumerable<uint> SupportedVersions => versioningSerializerCaches?.Keys ?? Enumerable.Empty<uint>();
 
@@ -39,7 +42,6 @@ namespace XRoadLib.Protocols
         public Style Style { get; }
         public string ProducerNamespace { get; }
         public ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>(new XNameComparer());
-        public ISchemaExporter SchemaExporter { get; }
 
         protected abstract void DefineMandatoryHeaderElements();
 
@@ -53,7 +55,7 @@ namespace XRoadLib.Protocols
                 throw new ArgumentNullException(nameof(style));
             Style = style;
 
-            SchemaExporter = schemaExporter ?? new SchemaExporter(producerNamespace);
+            schemaDefinitionReader = new SchemaDefinitionReader(producerNamespace, schemaExporter);
         }
 
         public virtual void ExportServiceDescription(ServiceDescription serviceDescription)
@@ -144,7 +146,7 @@ namespace XRoadLib.Protocols
 
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
-            throw new NotImplementedException();
+            new ProducerDefinition(this, schemaDefinitionReader, ContractAssembly, version).SaveTo(outputStream);
         }
 
         public virtual XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition)
@@ -182,13 +184,13 @@ namespace XRoadLib.Protocols
 
             if (supportedVersions == null || supportedVersions.Length == 0)
             {
-                serializerCache = new SerializerCache(this, assembly);
+                serializerCache = new SerializerCache(this, schemaDefinitionReader, assembly);
                 return;
             }
 
             versioningSerializerCaches = new Dictionary<uint, ISerializerCache>();
             foreach (var dtoVersion in supportedVersions)
-                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, assembly, dtoVersion));
+                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionReader, assembly, dtoVersion));
         }
 
         public ISerializerCache GetSerializerCache(uint? version = null)
@@ -198,6 +200,9 @@ namespace XRoadLib.Protocols
 
             if (serializerCache != null)
                 return serializerCache;
+
+            if (!version.HasValue)
+                throw new Exception($"This protocol instance (message protocol version `{Name}`) requires specific version value.");
 
             ISerializerCache versioningSerializerCache;
             if (versioningSerializerCaches.TryGetValue(version.Value, out versioningSerializerCache))

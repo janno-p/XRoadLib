@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Linq;
 
 namespace XRoadLib.Schema
 {
@@ -17,27 +16,6 @@ namespace XRoadLib.Schema
 
         public Type TypeMapType { get; set; }
 
-        public bool IsInheritable { get { return !IsAnonymous && !IsSimpleType; } }
-
-        public CollectionDefinition CreateCollectionDefinition()
-        {
-            return new CollectionDefinition
-            {
-                ItemDefinition = this,
-                CanHoldNullValues = true,
-                Type = Type.MakeArrayType(),
-                IsAnonymous = true
-            };
-        }
-
-        public static TypeDefinition SimpleTypeDefinition<T>(string typeName)
-        {
-            return new TypeDefinition
-            {
-                Name = XName.Get(typeName, NamespaceConstants.XSD),
-                Type = typeof(T),
-                IsSimpleType = true
-            };
-        }
+        public bool IsInheritable => !IsAnonymous && !IsSimpleType;
     }
 }

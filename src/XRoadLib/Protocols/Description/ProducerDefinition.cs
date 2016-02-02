@@ -22,7 +22,7 @@ namespace XRoadLib.Protocols.Description
 
         private readonly Assembly contractAssembly;
         private readonly IProtocol protocol;
-        private readonly ISchemaExporter schemaExporter;
+        private readonly SchemaDefinitionReader schemaDefinitionReader;
         private readonly uint? version;
 
         private readonly Binding binding;
@@ -30,14 +30,12 @@ namespace XRoadLib.Protocols.Description
         private readonly Port servicePort;
         private readonly Service service;
 
-        private readonly IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts;
-
         private readonly IDictionary<XName, TypeDefinition> schemaTypeDefinitions = new Dictionary<XName, TypeDefinition>();
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
         private readonly IList<Message> messages = new List<Message>();
         private readonly ISet<string> requiredImports = new SortedSet<string>();
 
-        public ProducerDefinition(IProtocol protocol, Assembly contractAssembly, uint? version = null)
+        public ProducerDefinition(IProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
         {
             if (contractAssembly == null)
                 throw new ArgumentNullException(nameof(contractAssembly));
@@ -47,9 +45,8 @@ namespace XRoadLib.Protocols.Description
                 throw new ArgumentNullException(nameof(protocol));
             this.protocol = protocol;
 
+            this.schemaDefinitionReader = schemaDefinitionReader;
             this.version = version;
-
-            schemaExporter = protocol.SchemaExporter;
 
             portType = new PortType { Name = "PortTypeName" };
 
@@ -70,8 +67,6 @@ namespace XRoadLib.Protocols.Description
                 Name = "ServiceName",
                 Ports = { servicePort }
             };
-
-            serviceContracts = contractAssembly.GetServiceContracts();
 
             CollectTypes();
             CollectOperations();
@@ -120,11 +115,14 @@ namespace XRoadLib.Protocols.Description
             AddSystemType<Stream>("hexBinary");
             AddSystemType<Stream>("base64");
 
-            foreach (var typeDefinition in contractAssembly.GetTypes().Where(type => type.IsXRoadSerializable()).Select(type => protocol.SchemaExporter.GetTypeDefinition(type)))
-            {
-                if (typeDefinition.IsAnonymous || typeDefinition.Name == null || typeDefinition.State != DefinitionState.Default)
-                    continue;
+            var typeDefinitions = contractAssembly.GetTypes()
+                                                  .Where(type => type.IsXRoadSerializable())
+                                                  .Where(type => !version.HasValue || type.ExistsInVersion(version.Value))
+                                                  .Select(type => schemaDefinitionReader.GetTypeDefinition(type))
+                                                  .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default);
 
+            foreach (var typeDefinition in typeDefinitions)
+            {
                 if (schemaTypeDefinitions.ContainsKey(typeDefinition.Name))
                     throw new Exception($"Multiple type definitions for same name `{typeDefinition.Name}`.");
 
@@ -133,13 +131,21 @@ namespace XRoadLib.Protocols.Description
             }
         }
 
+        private OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XRoadServiceAttribute serviceAttribute)
+        {
+            return schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get(serviceAttribute.Name, protocol.ProducerNamespace));
+        }
+
         private void CollectOperations()
         {
-            foreach (var operationDefinition in serviceContracts.SelectMany(x => x.Value.Select(o => protocol.SchemaExporter.GetOperationDefinition(x.Key, XName.Get(o.Key, protocol.ProducerNamespace)))))
-            {
-                if (operationDefinition.State != DefinitionState.Default)
-                    continue;
-            }
+            var operationDefinitions = contractAssembly.GetServiceContracts()
+                                                       .SelectMany(x => x.Value
+                                                                         .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
+                                                                         .Select(op => GetOperationDefinition(x.Key, op)))
+                                                       .Where(def => def.State == DefinitionState.Default);
+
+            foreach (var operationDefinition in operationDefinitions)
+            { }
         }
 
         private IEnumerable<XmlSchemaType> BuildTypes(string targetNamespace)
@@ -228,7 +234,7 @@ namespace XRoadLib.Protocols.Description
             if (runtimeTypeDefinitions.ContainsKey(contentDefinition.RuntimeType))
                 return runtimeTypeDefinitions[contentDefinition.RuntimeType];
 
-            return schemaExporter.GetTypeDefinition(contentDefinition.RuntimeType);
+            return schemaDefinitionReader.GetTypeDefinition(contentDefinition.RuntimeType);
         }
 
         private void SetSchemaElementType(XmlSchemaElement schemaElement, IContentDefinition contentDefinition, string targetNamespace)
@@ -328,6 +334,7 @@ namespace XRoadLib.Protocols.Description
 
         private void WriteServiceDescription(XmlWriter writer)
         {
+            var schemaTypes = BuildTypes(protocol.ProducerNamespace);
             //AddOperations();
 
             var serviceDescription = new ServiceDescription { TargetNamespace = protocol.ProducerNamespace };
@@ -337,7 +344,7 @@ namespace XRoadLib.Protocols.Description
             foreach (var requiredImport in requiredImports)
                 schema.Includes.Add(new XmlSchemaImport { Namespace = requiredImport, SchemaLocation = requiredImport });
 
-            foreach (var schemaType in BuildTypes(protocol.ProducerNamespace))
+            foreach (var schemaType in schemaTypes)
                 schema.Items.Add(schemaType);
 
             //AddOperationTypes(schema);
@@ -383,14 +390,13 @@ namespace XRoadLib.Protocols.Description
         private IEnumerable<PropertyDefinition> GetDescriptionProperties(TypeDefinition typeDefinition)
         {
             return typeDefinition.Type
-                                 .GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaExporter.GetPropertyDefinition(p, typeDefinition))
+                                 .GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaDefinitionReader.GetPropertyDefinition(p, typeDefinition))
                                  .Where(d => d.State == DefinitionState.Default);
         }
 
         private void AddSystemType<T>(string typeName)
         {
-            var typeDefinition = TypeDefinition.SimpleTypeDefinition<T>(typeName);
-            schemaExporter.ExportTypeDefinition(typeDefinition);
+            var typeDefinition = schemaDefinitionReader.GetSimpleTypeDefinition<T>(typeName);
 
             if (typeDefinition.Type != null && !runtimeTypeDefinitions.ContainsKey(typeDefinition.Type))
                 runtimeTypeDefinitions.Add(typeDefinition.Type, typeDefinition);

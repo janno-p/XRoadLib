@@ -3,13 +3,9 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {
-    public class CustomSchemaExporter : SchemaExporter
+    public class SchemaExporter : ISchemaExporter
     {
-        public CustomSchemaExporter(string producerNamespace)
-            : base(producerNamespace)
-        { }
-
-        public override void ExportOperationDefinition(OperationDefinition operationDefinition)
+        public void ExportOperationDefinition(OperationDefinition operationDefinition)
         {
             // Customize root type name for operations (when applicable):
             operationDefinition.RequestTypeName = XName.Get($"{operationDefinition.Name.LocalName}Request", operationDefinition.RequestTypeName.NamespaceName);
@@ -20,19 +16,19 @@ namespace XRoadLib.Tests.Contract.Configuration
             operationDefinition.ResponseMessageName = $"{operationDefinition.Name.LocalName}Response";
         }
 
-        public override void ExportTypeDefinition(TypeDefinition typeDefinition)
+        public void ExportTypeDefinition(TypeDefinition typeDefinition)
         {
             // Customize type content model:
             if (typeDefinition.Type == typeof(ParamType1))
                 typeDefinition.HasStrictContentOrder = false;
         }
 
-        public override void ExportParameterDefinition(ParameterDefinition parameterDefinition)
+        public void ExportParameterDefinition(ParameterDefinition parameterDefinition)
         {
             parameterDefinition.IsOptional = true;
         }
 
-        public override void ExportPropertyDefinition(PropertyDefinition propertyDefinition)
+        public void ExportPropertyDefinition(PropertyDefinition propertyDefinition)
         {
             propertyDefinition.UseXop = false;
         }
