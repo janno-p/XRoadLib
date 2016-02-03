@@ -9,15 +9,24 @@ namespace XRoadLib.Serialization.Template
     public class XRoadXmlSchemaTemplate : IXmlTemplate
     {
         private readonly XmlSchema schema;
+        private readonly XmlSchemaElement requestElement;
         private readonly XmlSchemaElement responseElement;
 
         public IDictionary<string, Type> ParameterTypes { get { throw new NotImplementedException(); } }
         public IEnumerable<IXmlTemplateNode> ParameterNodes { get { throw new NotImplementedException(); } }
+        public IXmlTemplateNode RequestNode => new XRoadXmlSchemaTemplateNode(requestElement, schema);
         public IXmlTemplateNode ResponseNode => new XRoadXmlSchemaTemplateNode(responseElement, schema);
 
         public XRoadXmlSchemaTemplate(XmlSchema schema, string elementName)
         {
             this.schema = schema;
+
+            requestElement = schema.Items
+                                    .Cast<XmlSchemaObject>()
+                                    .Where(o => o is XmlSchemaElement)
+                                    .Cast<XmlSchemaElement>()
+                                    .Single(e => e.Name == elementName);
+
             responseElement = schema.Items
                                     .Cast<XmlSchemaObject>()
                                     .Where(o => o is XmlSchemaElement)

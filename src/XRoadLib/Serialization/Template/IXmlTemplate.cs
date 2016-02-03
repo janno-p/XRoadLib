@@ -9,8 +9,8 @@ namespace XRoadLib.Serialization.Template
 
         IEnumerable<IXmlTemplateNode> ParameterNodes { get; }
 
-        IXmlTemplateNode ResponseNode { get; }
+        IXmlTemplateNode RequestNode { get; }
 
-        IXmlTemplateNode GetParameterNode(string parameterName);
+        IXmlTemplateNode ResponseNode { get; }
     }
 }

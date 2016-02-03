@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Xml;
+﻿using System.Xml;
 using XRoadLib.Schema;
 
 namespace XRoadLib.Serialization.Mapping
@@ -8,11 +7,11 @@ namespace XRoadLib.Serialization.Mapping
     {
         OperationDefinition Definition { get; }
 
-        IDictionary<string, object> DeserializeRequest(XmlReader reader, XRoadMessage message);
+        object DeserializeRequest(XmlReader reader, XRoadMessage message);
 
         object DeserializeResponse(XmlReader reader, XRoadMessage message);
 
-        void SerializeRequest(XmlWriter writer, IDictionary<string, object> values, XRoadMessage message);
+        void SerializeRequest(XmlWriter writer, object value, XRoadMessage message);
 
         void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null);
     }

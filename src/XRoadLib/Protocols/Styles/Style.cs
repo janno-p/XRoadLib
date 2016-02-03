@@ -57,8 +57,6 @@ namespace XRoadLib.Protocols.Styles
 
         public abstract SoapBinding CreateSoapBinding();
 
-        public abstract void AddInputMessageParts(IProtocol protocol, OperationDefinition operationDefinition, Message message);
-
-        public abstract void AddOutputMessageParts(IProtocol protocol, OperationDefinition operationDefinition, Message message);
+        public virtual bool UseElementInMessagePart => true;
     }
 }

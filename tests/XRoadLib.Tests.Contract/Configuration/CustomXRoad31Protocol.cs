@@ -6,7 +6,7 @@ namespace XRoadLib.Tests.Contract.Configuration
 {
     public class CustomXRoad31Protocol : XRoad31Protocol
     {
-        public static IProtocol Instance { get; } = new CustomXRoad31Protocol();
+        public static Protocol Instance { get; } = new CustomXRoad31Protocol();
 
         private CustomXRoad31Protocol()
             : base("test-producer", "http://test-producer.x-road.ee/producer/", null, new SchemaExporter())

@@ -49,7 +49,7 @@ namespace XRoadLib.Protocols
             WriteHeaderElement(writer, "encryptedCert", header.EncryptedCert);
         }
 
-        public override bool IsHeaderNamespace(string ns)
+        internal override bool IsHeaderNamespace(string ns)
         {
             return NamespaceConstants.XROAD.Equals(ns);
         }

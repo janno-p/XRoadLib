@@ -34,20 +34,6 @@ namespace XRoadLib.Protocols.Styles
             };
         }
 
-        public override void AddInputMessageParts(IProtocol protocol, OperationDefinition operationDefinition, Message message)
-        {
-            var xname = operationDefinition.Name;
-            var qualifiedName = new XmlQualifiedName(xname.LocalName, xname.NamespaceName);
-            message.Parts.Add(new MessagePart { Name = "body", Element = qualifiedName });
-        }
-
-        public override void AddOutputMessageParts(IProtocol protocol, OperationDefinition operationDefinition, Message message)
-        {
-            var xname = operationDefinition.Name;
-            var qualifiedName = new XmlQualifiedName($"{xname.LocalName}Response", xname.NamespaceName);
-            message.Parts.Add(new MessagePart { Name = "body", Element = qualifiedName });
-        }
-
         public override SoapBodyBinding CreateSoapBodyBinding(string targetNamespace)
         {
             return new SoapBodyBinding { Use = SoapBindingUse.Literal };

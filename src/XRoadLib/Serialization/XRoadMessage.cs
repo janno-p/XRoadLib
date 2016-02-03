@@ -26,7 +26,7 @@ namespace XRoadLib.Serialization
         public string MultipartContentType { get; set; }
         public Encoding ContentEncoding { get; set; }
         public Stream ContentStream { get; set; }
-        public IProtocol Protocol { get; set; }
+        public Protocol Protocol { get; set; }
         public IXRoadHeader Header { get; set; }
         public IList<XElement> UnresolvedHeaders { get; set; }
         public XName RootElementName { get; set; }
@@ -36,13 +36,15 @@ namespace XRoadLib.Serialization
         public IList<XRoadAttachment> AllAttachments => attachments;
         public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }
         public uint Version => Header == null || Header.Service == null || !Header.Service.Version.HasValue ? 1u : Header.Service.Version.Value;
+        public IXmlTemplateNode RequestNode => XmlTemplate != null ? XmlTemplate.RequestNode : XRoadXmlTemplate.EmptyNode;
+        public IXmlTemplateNode ResponseNode => XmlTemplate != null ? XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
 
         public XRoadMessage()
         {
             ContentEncoding = Encoding.UTF8;
         }
 
-        public XRoadMessage(IProtocol protocol, IXRoadHeader header)
+        public XRoadMessage(Protocol protocol, IXRoadHeader header)
             : this(new MemoryStream())
         {
             Protocol = protocol;
@@ -59,18 +61,18 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
-        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<IProtocol> supportedProtocols)
+        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<Protocol> supportedProtocols)
         {
             LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers, httpContext.Request.ContentEncoding, storagePath, supportedProtocols);
         }
 
-        public void LoadRequest(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<IProtocol> supportedProtocols)
+        public void LoadRequest(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<Protocol> supportedProtocols)
         {
             using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
                 reader.Read(this);
         }
 
-        public void LoadResponse(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<IProtocol> supportedProtocols)
+        public void LoadResponse(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<Protocol> supportedProtocols)
         {
             using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
                 reader.Read(this, true);
@@ -139,11 +141,6 @@ namespace XRoadLib.Serialization
         public ISerializerCache GetSerializerCache()
         {
             return Protocol?.GetSerializerCache(Version);
-        }
-
-        public IXmlTemplateNode GetTemplateNode(string nodeName)
-        {
-            return XmlTemplate != null ? XmlTemplate.GetParameterNode(nodeName) : XRoadXmlTemplate.EmptyNode;
         }
     }
 }

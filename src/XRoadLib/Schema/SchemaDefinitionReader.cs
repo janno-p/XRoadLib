@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
@@ -49,19 +49,6 @@ namespace XRoadLib.Schema
             SchemaExporter?.ExportTypeDefinition(collectionDefinition);
 
             return collectionDefinition;
-        }
-
-        public OperationTypeDefinition GetOperationTypeDefinition(MethodInfo methodInfo)
-        {
-            var typeName = methodInfo.GetOperationNameFromMethodInfo();
-
-            return new OperationTypeDefinition(methodInfo)
-            {
-                ContentComparer = ParameterComparer.Instance,
-                HasStrictContentOrder = true,
-                InputName = XName.Get(typeName, ProducerNamespace),
-                OutputName = XName.Get($"{typeName}Response", ProducerNamespace)
-            };
         }
 
         public TypeDefinition GetTypeDefinition(Type type)
@@ -156,7 +143,7 @@ namespace XRoadLib.Schema
             contentDefinition.Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault());
             contentDefinition.UseXop = typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType);
             contentDefinition.TypeName = customTypeName != null ? XName.Get(customTypeName, NamespaceConstants.XSD) : null;
-            contentDefinition.IsOptional = sourceInfo.GetSingleAttribute<OptionalAttribute>() != null;
+            contentDefinition.IsOptional = sourceInfo.GetSingleAttribute<XRoadOptionalAttribute>() != null;
 
             if (!contentDefinition.RuntimeType.IsArray)
                 return;
@@ -192,11 +179,11 @@ namespace XRoadLib.Schema
                 : serializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray);
         }
 
-        public OperationDefinition GetOperationDefinition(XName qualifiedName, uint? version, OperationTypeDefinition operationTypeDefinition)
+        public OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XName qualifiedName, uint? version)
         {
-            var serviceAttribute = operationTypeDefinition.MethodInfo.GetServices().SingleOrDefault(x => x.Name == qualifiedName.LocalName);
+            var serviceAttribute = methodInfo.GetServices().SingleOrDefault(x => x.Name == qualifiedName.LocalName);
 
-            var operationDefinition = new OperationDefinition(operationTypeDefinition)
+            var operationDefinition = new OperationDefinition(methodInfo)
             {
                 Name = qualifiedName,
                 IsAbstract = (serviceAttribute?.IsAbstract).GetValueOrDefault(),
@@ -213,23 +200,6 @@ namespace XRoadLib.Schema
             SchemaExporter?.ExportOperationDefinition(operationDefinition);
 
             return operationDefinition;
-        }
-
-        public ParameterDefinition GetParameterDefinition(ParameterInfo parameterInfo, OperationTypeDefinition operationTypeDefinition)
-        {
-            var parameterDefinition = new ParameterDefinition(parameterInfo, operationTypeDefinition)
-            {
-                RuntimeType = NormalizeType(parameterInfo.ParameterType)
-            };
-
-            AddContentDefinition(parameterDefinition, parameterInfo);
-
-            if (parameterDefinition.IsResult && parameterDefinition.Name == null)
-                parameterDefinition.Name = XName.Get("value");
-
-            SchemaExporter?.ExportParameterDefinition(parameterDefinition);
-
-            return parameterDefinition;
         }
 
         private static Type NormalizeType(Type type)

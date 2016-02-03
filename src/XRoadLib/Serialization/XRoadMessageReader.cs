@@ -26,7 +26,7 @@ namespace XRoadLib.Serialization
 
         private static readonly byte[] newLine = { (byte)'\r', (byte)'\n' };
 
-        private readonly ICollection<IProtocol> supportedProtocols;
+        private readonly ICollection<Protocol> supportedProtocols;
         private readonly NameValueCollection headers;
         private readonly Encoding contentEncoding;
         private readonly string storagePath;
@@ -37,13 +37,13 @@ namespace XRoadLib.Serialization
 
         private long StreamPosition => stream.Position - (peekedByte.HasValue ? 1 : 0);
 
-        public XRoadMessageReader(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<IProtocol> supportedProtocols)
+        public XRoadMessageReader(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<Protocol> supportedProtocols)
         {
             this.contentEncoding = contentEncoding;
             this.headers = headers;
             this.storagePath = storagePath;
             this.stream = stream;
-            this.supportedProtocols = new List<IProtocol>(supportedProtocols);
+            this.supportedProtocols = new List<Protocol>(supportedProtocols);
         }
 
         public void Read(XRoadMessage target, bool isResponse = false)
@@ -391,7 +391,7 @@ namespace XRoadLib.Serialization
             return charset;
         }
 
-        private IProtocol ParseXRoadProtocol(XmlReader reader)
+        private Protocol ParseXRoadProtocol(XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
                 throw XRoadException.InvalidQuery("Päringus puudub SOAP-ENV:Envelope element.");
@@ -399,7 +399,7 @@ namespace XRoadLib.Serialization
             return supportedProtocols.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }
 
-        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IProtocol protocol)
+        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, Protocol protocol)
         {
             if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
                 return;

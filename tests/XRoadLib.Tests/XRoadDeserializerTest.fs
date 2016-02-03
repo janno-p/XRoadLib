@@ -59,13 +59,11 @@ module XRoadDeserializerTest =
                                 </param1>
                             </keha>"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey "param1" |> should be True
-        table.["param1"] |> should be instanceOfType<ParamType1>
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be instanceOfType<ParamType1>
 
-        let param1: ParamType1 = unbox table.["param1"]
+        let param1: ParamType1 = unbox inputObject
         param1.Property1 |> should equal 123
 
     [<Test>]
@@ -92,13 +90,11 @@ module XRoadDeserializerTest =
                                 </param1>
                             </keha>"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey "param1" |> should be True
-        table.["param1"] |> should be instanceOfType<ParamType1>
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be instanceOfType<ParamType1>
 
-        let param1: ParamType1 = unbox table.["param1"]
+        let param1: ParamType1 = unbox inputObject
         param1.Property1 |> should equal 123
         param1.Property2 |> should not' (be Null)
         param1.Property2.Length |> should equal 2
@@ -128,13 +124,11 @@ module XRoadDeserializerTest =
                                 </param1>
                             </keha>"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey "param1" |> should be True
-        table.["param1"] |> should be instanceOfType<ParamType1>
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be instanceOfType<ParamType1>
 
-        let param1: ParamType1 = unbox table.["param1"]
+        let param1: ParamType1 = unbox inputObject
         param1.Property1 |> should equal 123
         param1.Property2 |> should not' (be Null)
         param1.Property2.Length |> should equal 0
@@ -160,13 +154,11 @@ module XRoadDeserializerTest =
                                 </param1>
                             </keha>"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey "param1" |> should be True
-        table.["param1"] |> should be instanceOfType<ParamType1>
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be instanceOfType<ParamType1>
 
-        let param1: ParamType1 = unbox table.["param1"]
+        let param1: ParamType1 = unbox inputObject
         param1.Property1 |> should equal 123
         param1.Property2 |> should be Null
 
@@ -196,13 +188,11 @@ module XRoadDeserializerTest =
                                 </param1>
                             </keha>"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey "param1" |> should be True
-        table.["param1"] |> should be instanceOfType<ParamType1>
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be instanceOfType<ParamType1>
 
-        let param1: ParamType1 = unbox table.["param1"]
+        let param1: ParamType1 = unbox inputObject
         param1.Property1 |> should equal 123
         param1.Property3 |> should equal "some value"
         param1.Property2 |> should not' (be Null)
@@ -247,17 +237,15 @@ module XRoadDeserializerTest =
                                 </param3>
                             </keha>"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey "param1" |> should be True
-        table.["param1"] |> should be instanceOfType<ParamType1>
-        table.ContainsKey "param2" |> should be True
-        table.["param2"] |> should be Null
-        table.ContainsKey "param3" |> should be True
-        table.["param3"] |> should be instanceOfType<ParamType3>
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be instanceOfType<ParamType1>
+        //table.ContainsKey "param2" |> should be True
+        inputObject |> should be Null
+        //table.ContainsKey "param3" |> should be True
+        inputObject |> should be instanceOfType<ParamType3>
 
-        let param1: ParamType1 = unbox table.["param1"]
+        let param1: ParamType1 = unbox inputObject
         param1.Property1 |> should equal 123
         param1.Property3 |> should equal "some value"
         param1.Property2 |> should not' (be Null)
@@ -267,7 +255,7 @@ module XRoadDeserializerTest =
         param1.Property2.[1] |> should not' (be Null)
         param1.Property2.[1].Value1 |> should equal 102716L
 
-        let param3: ParamType3 = unbox table.["param3"]
+        let param3: ParamType3 = unbox inputObject //table.["param3"]
         param3.Subject |> should not' (be Null)
         param3.Subject |> should be instanceOfType<Person>
         param3.Subject.Name |> should equal "Vello"
@@ -311,13 +299,11 @@ module XRoadDeserializerTest =
                                 </param3>
                             </keha>"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey "param3" |> should be True
-        table.["param3"] |> should be instanceOfType<ParamType3>
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be instanceOfType<ParamType3>
 
-        let param3: ParamType3 = unbox table.["param3"]
+        let param3: ParamType3 = unbox inputObject
         param3.Subject |> should be Null
 
     [<Test>]
@@ -339,13 +325,11 @@ module XRoadDeserializerTest =
                                 </param1>
                             </keha>"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey "param1" |> should be True
-        table.["param1"] |> should be instanceOfType<InheritsParamType1>
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be instanceOfType<InheritsParamType1>
 
-        let param1: InheritsParamType1 = unbox table.["param1"]
+        let param1: InheritsParamType1 = unbox inputObject
         param1.Property1 |> should equal 467
         param1.Property3 |> should equal "hello"
 
@@ -360,15 +344,13 @@ module XRoadDeserializerTest =
 
         let contentXml = """<keha />"""
 
-        let table = deserializeRequest templateXml contentXml
-        table |> should not' (be Null)
-        table.Count |> should equal 3
-        table.ContainsKey("param1") |> should be True
-        table.["param1"] |> should be Null
-        table.ContainsKey("param2") |> should be True
-        table.["param2"] |> should be Null
-        table.ContainsKey("param3") |> should be True
-        table.["param3"] |> should be Null
+        let inputObject = deserializeRequest templateXml contentXml
+        inputObject |> should not' (be Null)
+        inputObject |> should be Null
+        //table.ContainsKey("param2") |> should be True
+        inputObject |> should be Null
+        //table.ContainsKey("param3") |> should be True
+        inputObject |> should be Null
 
     [<Test>]
     let ``cannot deserialize message when MIME content is missing`` () =

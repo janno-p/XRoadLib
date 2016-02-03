@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Web;
 using System.Xml;
 using XRoadLib.Extensions;
@@ -16,16 +15,16 @@ namespace XRoadLib.Handler
 {
     public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
-        private readonly ICollection<IProtocol> supportedProtocols;
+        private readonly ICollection<Protocol> supportedProtocols;
 
         public string StoragePath { get; set; }
         public ICustomSerialization CustomSerialization { get; set; }
 
-        protected ServiceRequestHandlerBase(IEnumerable<IProtocol> supportedProtocols)
+        protected ServiceRequestHandlerBase(IEnumerable<Protocol> supportedProtocols)
         {
             if (supportedProtocols == null)
                 throw new ArgumentNullException(nameof(supportedProtocols));
-            this.supportedProtocols = new List<IProtocol>(supportedProtocols);
+            this.supportedProtocols = new List<Protocol>(supportedProtocols);
         }
 
         protected abstract object InvokeMetaService(MetaServiceName metaServiceName);
@@ -85,11 +84,11 @@ namespace XRoadLib.Handler
             if (requestMessage.IsMultipartContainer && requestMessage.BinaryMode == BinaryMode.Attachment && serviceMap.Definition.InputBinaryMode != BinaryMode.Attachment)
                 throw XRoadException.InvalidQuery("Teenuse `{0}` multipart päringu sisuks oodati `application/xop+xml`, kuid edastati `{1}`.", serviceMap.Definition.Name.LocalName, requestMessage.MultipartContentType);
 
-            var parameters = DeserializeMethodParameters(serviceMap);
+            var input = DeserializeMethodInput(serviceMap);
 
             try
             {
-                result = InvokeDataMethod(serviceObject, serviceMap.Definition.OperationTypeDefinition.MethodInfo, parameters);
+                result = serviceMap.Definition.MethodInfo.Invoke(serviceObject, new[] { input });
             }
             catch (Exception exception)
             {
@@ -120,7 +119,7 @@ namespace XRoadLib.Handler
             return serviceMap;
         }
 
-        private IDictionary<string, object> DeserializeMethodParameters(IServiceMap serviceMap)
+        private object DeserializeMethodInput(IServiceMap serviceMap)
         {
             var beforeDeserializationEventArgs = new BeforeDeserializationEventArgs(serviceMap);
             OnBeforeDeserialization(beforeDeserializationEventArgs);
@@ -135,17 +134,6 @@ namespace XRoadLib.Handler
             OnAfterDeserialization();
 
             return parameters;
-        }
-
-        private static object InvokeDataMethod(object targetObject, MethodBase methodInfo, IDictionary<string, object> parameters)
-        {
-            var parameterInfos = methodInfo.GetParameters();
-            var methodParams = new object[parameterInfos.Length];
-
-            for (var i = 0; i < parameterInfos.Length; i++)
-                parameters.TryGetValue(parameterInfos[i].Name, out methodParams[i]);
-
-            return methodInfo.Invoke(targetObject, methodParams);
         }
 
         private void SerializeXRoadResponse(HttpContext httpContext, object result, IServiceMap serviceMap)

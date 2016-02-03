@@ -88,7 +88,7 @@ namespace XRoadLib.Protocols
                 soapAddressBinding.Location = "http://INSERT_CORRECT_SERVICE_URL";
         }
 
-        public override bool IsHeaderNamespace(string ns)
+        internal override bool IsHeaderNamespace(string ns)
         {
             return NamespaceConstants.XROAD_V4.Equals(ns) || NamespaceConstants.XROAD_V4_REPR.Equals(ns);
         }

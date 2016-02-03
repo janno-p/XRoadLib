@@ -12,9 +12,10 @@ namespace XRoadLib.Protocols
         protected override string XRoadNamespace => NamespaceConstants.XTEE;
 
         public override string Name => "2.0";
-        public override string RequestPartNameInRequest => "keha";
-        public override string RequestPartNameInResponse => "paring";
-        public override string ResponsePartNameInResponse => "keha";
+
+        internal override string RequestPartNameInRequest => "keha";
+        internal override string RequestPartNameInResponse => "paring";
+        internal override string ResponsePartNameInResponse => "keha";
 
         public XRoad20Protocol(string producerName, string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
             : base(producerName, producerNamespace, style ?? new RpcEncodedStyle(), schemaExporter)
@@ -54,12 +55,12 @@ namespace XRoadLib.Protocols
             WriteHeaderElement(writer, "salastatud_sertifikaadiga", header.SalastatudSertifikaadiga);
         }
 
-        public override bool IsHeaderNamespace(string ns)
+        internal override bool IsHeaderNamespace(string ns)
         {
             return NamespaceConstants.XTEE.Equals(ns);
         }
 
-        public override bool IsDefinedByEnvelope(XmlReader reader)
+        internal override bool IsDefinedByEnvelope(XmlReader reader)
         {
             var attributeValue = reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV);
 
@@ -73,7 +74,7 @@ namespace XRoadLib.Protocols
             serviceDescription.Namespaces.Add(PrefixConstants.SOAP_ENC, NamespaceConstants.SOAP_ENC);
         }
 
-        public override void WriteSoapEnvelope(XmlWriter writer)
+        internal override void WriteSoapEnvelope(XmlWriter writer)
         {
             base.WriteSoapEnvelope(writer);
 

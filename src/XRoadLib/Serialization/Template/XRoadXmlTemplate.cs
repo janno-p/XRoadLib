@@ -38,6 +38,16 @@ namespace XRoadLib.Serialization.Template
         public XRoadXmlTemplate() : this(null, null)
         { }
 
+        public IXmlTemplateNode RequestNode
+        {
+            get
+            {
+                var elementNode = requestNode?.Elements().SingleOrDefault();
+
+                return elementNode != null ? new XRoadRequestTemplateNode(elementNode.Name.LocalName, elementNode) : EmptyNode;
+            }
+        }
+
         public IXmlTemplateNode ResponseNode
         {
             get

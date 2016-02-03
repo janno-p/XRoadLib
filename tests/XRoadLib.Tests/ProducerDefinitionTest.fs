@@ -53,7 +53,7 @@ module ProducerDefinitionTest =
 
         port
 
-    let getDocument version (protocol: IProtocol) =
+    let getDocument version (protocol: Protocol) =
         use stream = new MemoryStream()
         protocol.WriteServiceDescription(stream, Nullable(version))
         stream.Position <- 0L

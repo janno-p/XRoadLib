@@ -1,8 +1,10 @@
-﻿namespace XRoadLib.Schema
+﻿using System.Reflection;
+
+namespace XRoadLib.Schema
 {
     public class OperationDefinition : Definition
     {
-        public OperationTypeDefinition OperationTypeDefinition { get; }
+        public MethodInfo MethodInfo { get; }
 
         public uint Version { get; set; }
         public bool IsAbstract { get; set; }
@@ -15,9 +17,9 @@
         public BinaryMode OutputBinaryMode { get; set; }
         public bool HideXRoadFaultDefinition { get; set; }
 
-        public OperationDefinition(OperationTypeDefinition operationTypeDefinition)
+        public OperationDefinition(MethodInfo methodInfo)
         {
-            OperationTypeDefinition = operationTypeDefinition;
+            MethodInfo = methodInfo;
         }
     }
 }
