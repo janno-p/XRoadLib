@@ -6,12 +6,12 @@ namespace XRoadLib.Tests.Contract
     public class Service1Request : XRoadSerializable
     {
         [XmlElement(Order = 1)]
-        public ParamType1 param1 { get; set; }
+        public ParamType1 Param1 { get; set; }
 
         [XmlElement(Order = 2)]
-        public ParamType2 param2 { get; set; }
+        public ParamType2 Param2 { get; set; }
 
         [XmlElement(Order = 3)]
-        public ParamType3 param3 { get; set; }
+        public ParamType3 Param3 { get; set; }
     }
 }
