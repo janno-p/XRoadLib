@@ -35,27 +35,37 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.NodeType != XmlNodeType.Element)
                     continue;
 
-                MoveToProperty(reader, properties);
-
-                var childValidatorNode = templateNode[properties.Current.Definition.Name.LocalName, message.Version];
-                if (childValidatorNode == null)
+                var propertyNode = MoveToProperty(reader, properties, templateNode, message);
+                if (propertyNode == null)
                 {
                     reader.ReadToEndElement();
                     continue;
                 }
 
-                if (reader.IsNilElement() || properties.Current.Deserialize(reader, entity, childValidatorNode, message))
+                var isNull = reader.IsNilElement();
+                if (isNull && propertyNode.IsRequired)
+                    throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(properties.Current.Definition.Name.LocalName, 1));
+
+                if (isNull || properties.Current.Deserialize(reader, entity, propertyNode, message))
                     entity.OnMemberDeserialized(properties.Current.Definition.Name.LocalName);
             }
 
             return entity;
         }
 
-        private void MoveToProperty(XmlReader reader, IEnumerator<IPropertyMap> properties)
+        private IXmlTemplateNode MoveToProperty(XmlReader reader, IEnumerator<IPropertyMap> properties, IXmlTemplateNode templateNode, XRoadMessage message)
         {
             while (properties.MoveNext())
-                if (reader.LocalName == properties.Current.Definition.Name.LocalName)
-                    return;
+            {
+                var propertyName = properties.Current.Definition.Name.LocalName;
+                var propertyNode = templateNode[propertyName, message.Version];
+
+                if (reader.LocalName == propertyName)
+                    return propertyNode;
+
+                if (propertyNode.IsRequired)
+                    throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(propertyName, 1));
+            }
 
             throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", Definition.Name, reader.LocalName);
         }

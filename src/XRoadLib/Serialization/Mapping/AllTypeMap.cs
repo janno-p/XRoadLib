@@ -29,6 +29,8 @@ namespace XRoadLib.Serialization.Mapping
                 return dtoObject;
 
             var depth = reader.Depth;
+            var requiredCount = 0;
+
             while (reader.Read() && depth < reader.Depth)
             {
                 if (reader.NodeType != XmlNodeType.Element)
@@ -36,18 +38,37 @@ namespace XRoadLib.Serialization.Mapping
 
                 var propertyMap = GetPropertyMap(reader);
 
-                var childValidatorNode = templateNode[reader.LocalName, message.Version];
-                if (childValidatorNode == null)
+                var propertyNode = templateNode[reader.LocalName, message.Version];
+                if (propertyNode == null)
                 {
                     reader.ReadToEndElement();
                     continue;
                 }
 
-                if (reader.IsNilElement() || propertyMap.Deserialize(reader, dtoObject, childValidatorNode, message))
+                var isNull = reader.IsNilElement();
+                if (isNull && propertyNode.IsRequired)
+                    throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(propertyMap.Definition.Name.LocalName, 1));
+
+                if (propertyNode.IsRequired)
+                    requiredCount++;
+
+                if (isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message))
                     dtoObject.OnMemberDeserialized(reader.LocalName);
             }
 
+            if (requiredCount < templateNode.CountRequiredNodes(message.Version))
+                throw XRoadException.MissingRequiredPropertyValues(GetMissingRequiredPropertyNames(dtoObject, templateNode, message));
+
             return dtoObject;
+        }
+
+        private IEnumerable<string> GetMissingRequiredPropertyNames(IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
+        {
+            return templateNode.ChildNames
+                               .Select(n => templateNode[n, message.Version])
+                               .Where(n => n.IsRequired)
+                               .Where(n => !dtoObject.IsSpecified(n.Name))
+                               .Select(n => n.Name);
         }
 
         private IPropertyMap GetPropertyMap(XmlReader reader)

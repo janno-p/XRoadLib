@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using XRoadLib.Soap;
 
@@ -34,9 +36,9 @@ namespace XRoadLib
             return new XRoadException(ServerFaultCode.InternalError, "Ei tuvastatud Xml nimeruumi süsteemsele andmetüübile '{0}'.", andmetüübiNimi);
         }
 
-        public static XRoadException TeenuseKohustuslikParameeterPuudub(string parameetriNimi)
+        public static XRoadException MissingRequiredPropertyValues(IEnumerable<string> propertyNames)
         {
-            return new XRoadException(new ClientFaultCode("ParameterRequired"), "Teenuse sisendist puudub kohustuslik parameeter '{0}'.", parameetriNimi);
+            return new XRoadException(new ClientFaultCode("ParameterRequired"), "Service input is missing required parameters: {0}.", string.Join(", ", propertyNames.Select(x => $"`{x}`")));
         }
 
         public static XRoadException UnknownParameter(string parameterName)

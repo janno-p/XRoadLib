@@ -137,6 +137,16 @@ namespace XRoadLib.Serialization.Template
             public IEnumerable<string> ChildNames { get { return node?.Elements().Select(childNode => childNode.Name.LocalName) ?? Enumerable.Empty<string>(); } }
 
             public string Namespace => null;
+
+            public int CountRequiredNodes(uint version)
+            {
+                if (node == null)
+                    return 0;
+
+                return node.Elements()
+                           .Where(n => IsInRange(n.Attribute("version"), version))
+                           .Count(n => n.Attributes("required").Any(a => a.Value == "true"));
+            }
         }
 
         #endregion Nested type: XteeXmlValidatorNode

@@ -81,6 +81,11 @@ namespace XRoadLib.Serialization.Template
                 AddChildElements(element);
             }
 
+            public int CountRequiredNodes(uint version)
+            {
+                return 0;
+            }
+
             private void AddChildElements(XmlSchemaElement element)
             {
                 if (element.SchemaTypeName == null || element.SchemaTypeName.Namespace != schema.TargetNamespace)

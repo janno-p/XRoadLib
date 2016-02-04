@@ -13,5 +13,7 @@ namespace XRoadLib.Serialization.Template
         string Namespace { get; }
 
         IEnumerable<string> ChildNames { get; }
+
+        int CountRequiredNodes(uint version);
     }
 }
