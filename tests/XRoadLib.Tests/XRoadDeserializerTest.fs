@@ -91,17 +91,22 @@ module XRoadDeserializerTest =
                             </keha>"""
 
         let inputObject = deserializeRequest templateXml contentXml
-        inputObject |> should not' (be Null)
-        inputObject |> should be instanceOfType<ParamType1>
+        inputObject |> should be instanceOfType<Service1Request>
 
-        let param1: ParamType1 = unbox inputObject
-        param1.Property1 |> should equal 123
-        param1.Property2 |> should not' (be Null)
-        param1.Property2.Length |> should equal 2
-        param1.Property2.[0] |> should not' (be Null)
-        param1.Property2.[0].Value1 |> should equal 102715L
-        param1.Property2.[1] |> should not' (be Null)
-        param1.Property2.[1].Value1 |> should equal 102716L
+        let request: Service1Request = unbox inputObject
+        request.IsSpecified("param1") |> should be True
+        request.IsSpecified("param2") |> should be False
+        request.IsSpecified("param3") |> should be False
+        request.param1 |> should not' (be Null)
+        request.param2 |> should be Null
+        request.param3 |> should be Null
+        request.param1.Property1 |> should equal 123
+        request.param1.Property2 |> should not' (be Null)
+        request.param1.Property2.Length |> should equal 2
+        request.param1.Property2.[0] |> should not' (be Null)
+        request.param1.Property2.[0].Value1 |> should equal 102715L
+        request.param1.Property2.[1] |> should not' (be Null)
+        request.param1.Property2.[1].Value1 |> should equal 102716L
 
     [<Test>]
     let ``can handle empty array`` () =
@@ -125,13 +130,18 @@ module XRoadDeserializerTest =
                             </keha>"""
 
         let inputObject = deserializeRequest templateXml contentXml
-        inputObject |> should not' (be Null)
-        inputObject |> should be instanceOfType<ParamType1>
+        inputObject |> should be instanceOfType<Service1Request>
 
-        let param1: ParamType1 = unbox inputObject
-        param1.Property1 |> should equal 123
-        param1.Property2 |> should not' (be Null)
-        param1.Property2.Length |> should equal 0
+        let request: Service1Request = unbox inputObject
+        request.IsSpecified("param1") |> should be True
+        request.IsSpecified("param2") |> should be False
+        request.IsSpecified("param3") |> should be False
+        request.param1 |> should not' (be Null)
+        request.param2 |> should be Null
+        request.param3 |> should be Null
+        request.param1.Property1 |> should equal 123
+        request.param1.Property2 |> should not' (be Null)
+        request.param1.Property2.Length |> should equal 0
 
     [<Test>]
     let ``can handle array null value`` () =
@@ -155,12 +165,17 @@ module XRoadDeserializerTest =
                             </keha>"""
 
         let inputObject = deserializeRequest templateXml contentXml
-        inputObject |> should not' (be Null)
-        inputObject |> should be instanceOfType<ParamType1>
+        inputObject |> should be instanceOfType<Service1Request>
 
-        let param1: ParamType1 = unbox inputObject
-        param1.Property1 |> should equal 123
-        param1.Property2 |> should be Null
+        let request = unbox<Service1Request> inputObject
+        request.IsSpecified("param1") |> should be True
+        request.IsSpecified("param2") |> should be False
+        request.IsSpecified("param3") |> should be False
+        request.param1 |> should not' (be Null)
+        request.param2 |> should be Null
+        request.param3 |> should be Null
+        request.param1.Property1 |> should equal 123
+        request.param1.Property2 |> should be Null
 
     [<Test>]
     let ``can handle multiple simple properties`` () =
@@ -300,11 +315,16 @@ module XRoadDeserializerTest =
                             </keha>"""
 
         let inputObject = deserializeRequest templateXml contentXml
-        inputObject |> should not' (be Null)
-        inputObject |> should be instanceOfType<ParamType3>
+        inputObject |> should be instanceOfType<Service1Request>
 
-        let param3: ParamType3 = unbox inputObject
-        param3.Subject |> should be Null
+        let request = unbox<Service1Request> inputObject
+        request.IsSpecified("param1") |> should be False
+        request.IsSpecified("param2") |> should be False
+        request.IsSpecified("param3") |> should be True
+        request.param1 |> should be Null
+        request.param2 |> should be Null
+        request.param3 |> should not' (be Null)
+        request.param3.Subject |> should be Null
 
     [<Test>]
     let ``understands parameter type attribute`` () =
@@ -345,12 +365,15 @@ module XRoadDeserializerTest =
         let contentXml = """<keha />"""
 
         let inputObject = deserializeRequest templateXml contentXml
-        inputObject |> should not' (be Null)
-        inputObject |> should be Null
-        //table.ContainsKey("param2") |> should be True
-        inputObject |> should be Null
-        //table.ContainsKey("param3") |> should be True
-        inputObject |> should be Null
+        inputObject |> should be instanceOfType<Service1Request>
+
+        let request: Service1Request = unbox inputObject
+        request.IsSpecified("param1") |> should be False
+        request.IsSpecified("param2") |> should be False
+        request.IsSpecified("param3") |> should be False
+        request.param1 |> should be Null
+        request.param2 |> should be Null
+        request.param3 |> should be Null
 
     [<Test>]
     let ``cannot deserialize message when MIME content is missing`` () =
