@@ -6,7 +6,7 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
-    public class XRoad20Protocol : LegacyProtocol<XRoadHeader20>
+    public class XRoad20Protocol : XRoadLegacyProtocol<XRoadHeader20>
     {
         protected override string XRoadPrefix => PrefixConstants.XTEE;
         protected override string XRoadNamespace => NamespaceConstants.XTEE;

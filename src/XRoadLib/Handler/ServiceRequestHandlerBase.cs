@@ -15,16 +15,16 @@ namespace XRoadLib.Handler
 {
     public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
-        private readonly ICollection<Protocol> supportedProtocols;
+        private readonly ICollection<XRoadProtocol> supportedProtocols;
 
         public string StoragePath { get; set; }
         public ICustomSerialization CustomSerialization { get; set; }
 
-        protected ServiceRequestHandlerBase(IEnumerable<Protocol> supportedProtocols)
+        protected ServiceRequestHandlerBase(IEnumerable<XRoadProtocol> supportedProtocols)
         {
             if (supportedProtocols == null)
                 throw new ArgumentNullException(nameof(supportedProtocols));
-            this.supportedProtocols = new List<Protocol>(supportedProtocols);
+            this.supportedProtocols = new List<XRoadProtocol>(supportedProtocols);
         }
 
         protected abstract object InvokeMetaService(MetaServiceName metaServiceName);

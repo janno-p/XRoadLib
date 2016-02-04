@@ -5,7 +5,7 @@ namespace XRoadLib.Handler
 {
     public class ServiceDescriptionHandlerBase : ServiceHandlerBase
     {
-        protected virtual Protocol Protocol => null;
+        protected virtual XRoadProtocol Protocol => null;
         protected virtual uint? Version => null;
 
         protected override void HandleRequest(HttpContext httpContext)

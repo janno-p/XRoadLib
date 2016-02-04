@@ -20,7 +20,7 @@ namespace XRoadLib.Protocols.Description
         private const string STANDARD_HEADER_NAME = "RequiredHeaders";
 
         private readonly Assembly contractAssembly;
-        private readonly Protocol protocol;
+        private readonly XRoadProtocol protocol;
         private readonly SchemaDefinitionReader schemaDefinitionReader;
         private readonly uint? version;
 
@@ -33,7 +33,7 @@ namespace XRoadLib.Protocols.Description
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
         private readonly ISet<string> requiredImports = new SortedSet<string>();
 
-        public ProducerDefinition(Protocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
+        public ProducerDefinition(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
         {
             if (contractAssembly == null)
                 throw new ArgumentNullException(nameof(contractAssembly));

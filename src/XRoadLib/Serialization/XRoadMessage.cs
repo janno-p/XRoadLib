@@ -26,7 +26,7 @@ namespace XRoadLib.Serialization
         public string MultipartContentType { get; set; }
         public Encoding ContentEncoding { get; set; }
         public Stream ContentStream { get; set; }
-        public Protocol Protocol { get; set; }
+        public XRoadProtocol Protocol { get; set; }
         public IXRoadHeader Header { get; set; }
         public IList<XElement> UnresolvedHeaders { get; set; }
         public XName RootElementName { get; set; }
@@ -44,7 +44,7 @@ namespace XRoadLib.Serialization
             ContentEncoding = Encoding.UTF8;
         }
 
-        public XRoadMessage(Protocol protocol, IXRoadHeader header)
+        public XRoadMessage(XRoadProtocol protocol, IXRoadHeader header)
             : this(new MemoryStream())
         {
             Protocol = protocol;
@@ -61,18 +61,18 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
-        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<Protocol> supportedProtocols)
+        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
             LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers, httpContext.Request.ContentEncoding, storagePath, supportedProtocols);
         }
 
-        public void LoadRequest(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<Protocol> supportedProtocols)
+        public void LoadRequest(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
             using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
                 reader.Read(this);
         }
 
-        public void LoadResponse(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<Protocol> supportedProtocols)
+        public void LoadResponse(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
             using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
                 reader.Read(this, true);
@@ -117,7 +117,7 @@ namespace XRoadLib.Serialization
             if (Header?.Service?.ServiceCode != null)
                 return Header.Service.ServiceCode == "getState" ? MetaServiceName.GetState : MetaServiceName.None;
 
-            var legacyProtocol = Protocol as ILegacyProtocol;
+            var legacyProtocol = Protocol as IXRoadLegacyProtocol;
             if (legacyProtocol == null || RootElementName.Namespace != legacyProtocol.XRoadNamespace)
                 return MetaServiceName.Unsupported;
 

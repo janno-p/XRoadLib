@@ -6,7 +6,7 @@ namespace XRoadLib.Tests.Contract.Configuration
 {
     public class CustomXRoad20Protocol : XRoad20Protocol
     {
-        public static Protocol Instance { get; } = new CustomXRoad20Protocol();
+        public static XRoadProtocol Instance { get; } = new CustomXRoad20Protocol();
 
         private CustomXRoad20Protocol()
             : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer", null, new SchemaExporter())

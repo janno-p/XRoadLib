@@ -85,7 +85,7 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
-        private static void SerializeFault(XmlWriter writer, IXRoadFault fault, Protocol protocol)
+        private static void SerializeFault(XmlWriter writer, IXRoadFault fault, XRoadProtocol protocol)
         {
             writer.WriteStartElement("faultCode");
             protocol.Style.WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));

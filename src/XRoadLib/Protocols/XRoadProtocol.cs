@@ -17,7 +17,7 @@ using XRoadLib.Serialization;
 
 namespace XRoadLib.Protocols
 {
-    public abstract class Protocol
+    public abstract class XRoadProtocol
     {
         private readonly SchemaDefinitionReader schemaDefinitionReader;
 
@@ -28,18 +28,23 @@ namespace XRoadLib.Protocols
         internal abstract string RequestPartNameInRequest { get; }
         internal abstract string RequestPartNameInResponse { get; }
         internal abstract string ResponsePartNameInResponse { get; }
-        internal abstract Style Style { get; }
 
         public abstract string Name { get; }
 
         public IEnumerable<uint> SupportedVersions => versioningSerializerCaches?.Keys ?? Enumerable.Empty<uint>();
+
+        public Style Style { get; }
         public string ProducerNamespace { get; }
         public Assembly ContractAssembly { get; private set; }
 
         protected abstract void DefineMandatoryHeaderElements();
 
-        protected Protocol(string producerNamespace, ISchemaExporter schemaExporter)
+        protected XRoadProtocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
         {
+            if (style == null)
+                throw new ArgumentNullException(nameof(style));
+            Style = style;
+
             if (string.IsNullOrWhiteSpace(producerNamespace))
                 throw new ArgumentNullException(nameof(producerNamespace));
             ProducerNamespace = producerNamespace;
@@ -117,7 +122,7 @@ namespace XRoadLib.Protocols
         }
     }
 
-    public abstract class Protocol<THeader> : Protocol where THeader : IXRoadHeader, new()
+    public abstract class XRoadProtocol<THeader> : XRoadProtocol where THeader : IXRoadHeader, new()
     {
         protected readonly XmlDocument document = new XmlDocument();
 
@@ -128,16 +133,11 @@ namespace XRoadLib.Protocols
         internal override string RequestPartNameInResponse => "request";
         internal override string ResponsePartNameInResponse => "response";
 
-        internal override Style Style { get; }
         internal override ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>(new XNameComparer());
 
-        protected Protocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
-            : base(producerNamespace, schemaExporter)
-        {
-            if (style == null)
-                throw new ArgumentNullException(nameof(style));
-            Style = style;
-        }
+        protected XRoadProtocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
+            : base(producerNamespace, style, schemaExporter)
+        { }
 
         public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {

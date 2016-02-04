@@ -7,7 +7,7 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
-    public class XRoad40Protocol : Protocol<XRoadHeader40>
+    public class XRoad40Protocol : XRoadProtocol<XRoadHeader40>
     {
         protected override string XRoadPrefix => PrefixConstants.XROAD;
         protected override string XRoadNamespace => NamespaceConstants.XROAD_V4;

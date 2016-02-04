@@ -62,8 +62,8 @@
     <Compile Include="Handler\ServiceHandlerBase.cs" />
     <Compile Include="Handler\ServiceRequestHandlerBase.cs" />
     <Compile Include="Protocols\Styles\DocLiteralStyle.cs" />
-    <Compile Include="Protocols\Protocol.cs" />
-    <Compile Include="Protocols\LegacyProtocol.cs" />
+    <Compile Include="Protocols\XRoadProtocol.cs" />
+    <Compile Include="Protocols\XRoadLegacyProtocol.cs" />
     <Compile Include="Protocols\Styles\RpcEncodedStyle.cs" />
     <Compile Include="Protocols\Styles\Style.cs" />
     <Compile Include="Protocols\XRoad20Protocol.cs" />

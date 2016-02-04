@@ -8,19 +8,19 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
-    public interface ILegacyProtocol
+    public interface IXRoadLegacyProtocol
     {
         string XRoadNamespace { get; }
     }
 
-    public abstract class LegacyProtocol<THeader> : Protocol<THeader>, ILegacyProtocol where THeader : IXRoadHeader, new()
+    public abstract class XRoadLegacyProtocol<THeader> : XRoadProtocol<THeader>, IXRoadLegacyProtocol where THeader : IXRoadHeader, new()
     {
         public string ProducerName { get; }
         public IDictionary<string, string> Titles { get; } = new Dictionary<string, string>();
 
-        string ILegacyProtocol.XRoadNamespace => XRoadNamespace;
+        string IXRoadLegacyProtocol.XRoadNamespace => XRoadNamespace;
 
-        protected LegacyProtocol(string producerName, string producerNamespace, Style style, ISchemaExporter schemaExporter)
+        protected XRoadLegacyProtocol(string producerName, string producerNamespace, Style style, ISchemaExporter schemaExporter)
             : base(producerNamespace, style, schemaExporter)
         {
             if (string.IsNullOrWhiteSpace(producerName))

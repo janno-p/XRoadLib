@@ -5,7 +5,7 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
-    public class XRoad31Protocol : LegacyProtocol<XRoadHeader31>
+    public class XRoad31Protocol : XRoadLegacyProtocol<XRoadHeader31>
     {
         protected override string XRoadPrefix => PrefixConstants.XROAD;
         protected override string XRoadNamespace => NamespaceConstants.XROAD;

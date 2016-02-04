@@ -24,10 +24,10 @@ namespace XRoadLib.Serialization
         private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
         private readonly ConcurrentDictionary<Type, ITypeMap> runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
-        public Protocol Protocol { get; }
+        public XRoadProtocol Protocol { get; }
         public uint? Version { get; }
 
-        public SerializerCache(Protocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
+        public SerializerCache(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
         {
             this.schemaDefinitionReader = schemaDefinitionReader;
             this.contractAssembly = contractAssembly;
@@ -56,7 +56,7 @@ namespace XRoadLib.Serialization
             AddSystemType<Stream>("hexBinary", x => new ContentTypeMap(x));
             AddSystemType<Stream>("base64", x => new ContentTypeMap(x));
 
-            var legacyProtocol = protocol as ILegacyProtocol;
+            var legacyProtocol = protocol as IXRoadLegacyProtocol;
             if (legacyProtocol == null)
                 return;
 
@@ -260,7 +260,7 @@ namespace XRoadLib.Serialization
             throw XRoadException.AndmetüübileVastavNimeruumPuudub(type.FullName);
         }
 
-        private void CreateTestSystem(ILegacyProtocol legacyProtocol)
+        private void CreateTestSystem(IXRoadLegacyProtocol legacyProtocol)
         {
             var methodInfo = typeof(MockMethods).GetMethod("TestSystem");
 
@@ -270,7 +270,7 @@ namespace XRoadLib.Serialization
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, null));
         }
 
-        private void CreateGetState(ILegacyProtocol legacyProtocol)
+        private void CreateGetState(IXRoadLegacyProtocol legacyProtocol)
         {
             var methodInfo = typeof(MockMethods).GetMethod("GetState");
 
@@ -283,7 +283,7 @@ namespace XRoadLib.Serialization
             serviceMaps.GetOrAdd(operationDefinition.Name, serviceMap);
         }
 
-        private void CreateListMethods(ILegacyProtocol legacyProtocol)
+        private void CreateListMethods(IXRoadLegacyProtocol legacyProtocol)
         {
             var methodInfo = typeof(MockMethods).GetMethod("ListMethods");
 

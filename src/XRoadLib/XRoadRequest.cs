@@ -15,13 +15,13 @@ namespace XRoadLib
 {
     public class XRoadRequest<THeader> where THeader : IXRoadHeader, new()
     {
-        private readonly Protocol<THeader> protocol;
+        private readonly XRoadProtocol<THeader> protocol;
         private readonly THeader header;
         private readonly XName operationName;
 
         public IDictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
 
-        public XRoadRequest(Protocol<THeader> protocol, THeader header, XName operationName)
+        public XRoadRequest(XRoadProtocol<THeader> protocol, THeader header, XName operationName)
         {
             this.header = header;
             this.operationName = operationName;
