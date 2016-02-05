@@ -174,9 +174,39 @@ namespace XRoadLib.Protocols.Description
                 else inputElement.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() };
 
                 var outputElement = new XmlSchemaElement { Name = $"{operationDefinition.Name.LocalName}Response" };
-
                 var outputType = operationDefinition.MethodInfo.ReturnType;
-                outputElement.SchemaTypeName = GetSchemaTypeName(outputType, targetNamespace);
+                var outputTypeName = GetSchemaTypeName(outputType, targetNamespace);
+
+                if (operationDefinition.HideXRoadFaultDefinition)
+                    outputElement.SchemaTypeName = outputTypeName;
+                else
+                {
+                    var stringTypeName = GetSchemaTypeName(typeof(string), targetNamespace);
+
+                    var faultSequence = new XmlSchemaSequence
+                    {
+                        Items =
+                        {
+                            new XmlSchemaElement { Name = "faultCode", SchemaTypeName = stringTypeName },
+                            new XmlSchemaElement { Name = "faultString", SchemaTypeName = stringTypeName }
+                        }
+                    };
+
+                    XmlSchemaParticle outputParticle;
+
+                    if (outputType == typeof(void))
+                    {
+                        faultSequence.MinOccurs = 0;
+                        outputParticle = new XmlSchemaSequence { Items = { faultSequence } };
+                    }
+                    else
+                    {
+                        var resultElement = new XmlSchemaElement { Name = "result", SchemaTypeName = outputTypeName };
+                        outputParticle = new XmlSchemaChoice { Items = { faultSequence, resultElement } };
+                    }
+
+                    outputElement.SchemaType = new XmlSchemaComplexType { Particle = outputParticle };
+                }
 
                 schema.Items.Add(inputElement);
                 schema.Items.Add(outputElement);
