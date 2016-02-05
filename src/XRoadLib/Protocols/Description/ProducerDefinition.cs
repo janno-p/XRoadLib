@@ -176,11 +176,40 @@ namespace XRoadLib.Protocols.Description
                     SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } }
                 });
 
+                var outputElement = new XmlSchemaElement { Name = $"{operationDefinition.Name.LocalName}Response" };
                 var outputType = operationDefinition.MethodInfo.ReturnType;
+                var outputTypeName = outputType.IsArray ? null : GetSchemaTypeName(outputType, targetNamespace);
 
-                // TODO: temp
-                if (!outputType.IsArray)
-                    responseElement.SchemaTypeName = GetSchemaTypeName(outputType, targetNamespace);
+                if (operationDefinition.HideXRoadFaultDefinition)
+                    outputElement.SchemaTypeName = outputTypeName;
+                else
+                {
+                    var stringTypeName = GetSchemaTypeName(typeof(string), targetNamespace);
+
+                    var faultSequence = new XmlSchemaSequence
+                    {
+                        Items =
+                        {
+                            new XmlSchemaElement { Name = "faultCode", SchemaTypeName = stringTypeName },
+                            new XmlSchemaElement { Name = "faultString", SchemaTypeName = stringTypeName }
+                        }
+                    };
+
+                    XmlSchemaParticle outputParticle;
+
+                    if (outputType == typeof(void))
+                    {
+                        faultSequence.MinOccurs = 0;
+                        outputParticle = new XmlSchemaSequence { Items = { faultSequence } };
+                    }
+                    else
+                    {
+                        var resultElement = new XmlSchemaElement { Name = "result", SchemaTypeName = outputTypeName };
+                        outputParticle = new XmlSchemaChoice { Items = { faultSequence, resultElement } };
+                    }
+
+                    outputElement.SchemaType = new XmlSchemaComplexType { Particle = outputParticle };
+                }
 
                 if (operationDefinition.IsAbstract)
                     continue;
