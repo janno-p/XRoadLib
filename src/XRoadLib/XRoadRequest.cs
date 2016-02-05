@@ -13,15 +13,15 @@ using XRoadLib.Serialization;
 
 namespace XRoadLib
 {
-    public class XRoadRequest<THeader> where THeader : IXRoadHeader, new()
+    public class XRoadRequest
     {
-        private readonly XRoadProtocol<THeader> protocol;
-        private readonly THeader header;
+        private readonly XRoadProtocol protocol;
+        private readonly IXRoadHeader header;
         private readonly XName operationName;
 
         public IDictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
 
-        public XRoadRequest(XRoadProtocol<THeader> protocol, THeader header, XName operationName)
+        public XRoadRequest(XRoadProtocol protocol, IXRoadHeader header, XName operationName)
         {
             this.header = header;
             this.operationName = operationName;

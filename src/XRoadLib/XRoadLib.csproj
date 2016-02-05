@@ -49,7 +49,6 @@
     <Compile Include="Extensions\MethodInfoExtensions.cs" />
     <Compile Include="Schema\ArrayItemDefinition.cs" />
     <Compile Include="Schema\CollectionDefinition.cs" />
-    <Compile Include="Schema\ContentComparer.cs" />
     <Compile Include="Schema\Definition.cs" />
     <Compile Include="Schema\DefinitionState.cs" />
     <Compile Include="Schema\IContentDefinition.cs" />

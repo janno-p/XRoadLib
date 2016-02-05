@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Services.Description;
-using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
 
@@ -13,7 +12,7 @@ namespace XRoadLib.Protocols
         string XRoadNamespace { get; }
     }
 
-    public abstract class XRoadLegacyProtocol<THeader> : XRoadProtocol<THeader>, IXRoadLegacyProtocol where THeader : IXRoadHeader, new()
+    public abstract class XRoadLegacyProtocol : XRoadProtocol, IXRoadLegacyProtocol
     {
         public string ProducerName { get; }
         public IDictionary<string, string> Titles { get; } = new Dictionary<string, string>();

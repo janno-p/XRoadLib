@@ -19,17 +19,23 @@ namespace XRoadLib.Protocols
 {
     public abstract class XRoadProtocol
     {
+        protected readonly XmlDocument document = new XmlDocument();
+
         private readonly SchemaDefinitionReader schemaDefinitionReader;
 
         private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
         private ISerializerCache serializerCache;
 
-        internal abstract ISet<XName> MandatoryHeaders { get; }
-        internal abstract string RequestPartNameInRequest { get; }
-        internal abstract string RequestPartNameInResponse { get; }
-        internal abstract string ResponsePartNameInResponse { get; }
+        protected abstract string XRoadPrefix { get; }
+        protected abstract string XRoadNamespace { get; }
+
+        internal ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>(new XNameComparer());
 
         public abstract string Name { get; }
+
+        public virtual string RequestPartNameInRequest => "request";
+        public virtual string RequestPartNameInResponse => "request";
+        public virtual string ResponsePartNameInResponse => "response";
 
         public IEnumerable<uint> SupportedVersions => versioningSerializerCaches?.Keys ?? Enumerable.Empty<uint>();
 
@@ -60,7 +66,9 @@ namespace XRoadLib.Protocols
         }
 
         public virtual void ExportServiceDescription(ServiceDescription serviceDescription)
-        { }
+        {
+            serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
+        }
 
         internal abstract IXRoadHeader CreateHeader();
 
@@ -73,16 +81,49 @@ namespace XRoadLib.Protocols
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, ProducerNamespace);
         }
 
-        internal abstract void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null);
+        protected abstract void WriteXRoadHeader(XmlWriter writer, IXRoadHeader header);
+
+        public void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null)
+        {
+            writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
+
+            WriteXRoadHeader(writer, header);
+
+            foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
+                additionalHeader.WriteTo(writer);
+
+            writer.WriteEndElement();
+        }
 
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
             new ProducerDefinition(this, schemaDefinitionReader, ContractAssembly, version).SaveTo(outputStream);
         }
 
-        internal abstract XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition);
+        internal XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition)
+        {
+            if (operationDefinition.Version == 0)
+                return null;
 
-        internal abstract XmlElement CreateTitleElement(string languageCode, string value);
+            var addressElement = document.CreateElement(XRoadPrefix, "version", XRoadNamespace);
+            addressElement.InnerText = $"v{operationDefinition.Version}";
+            return addressElement;
+        }
+
+        internal XmlElement CreateTitleElement(string languageCode, string value)
+        {
+            var titleElement = document.CreateElement(XRoadPrefix, "title", XRoadNamespace);
+            titleElement.InnerText = value;
+
+            if (string.IsNullOrWhiteSpace(languageCode))
+                return titleElement;
+
+            var attribute = document.CreateAttribute("xml", "lang", null);
+            attribute.Value = languageCode;
+            titleElement.Attributes.Append(attribute);
+
+            return titleElement;
+        }
 
         public void SetContractAssembly(Assembly assembly, params uint[] supportedVersions)
         {
@@ -103,7 +144,7 @@ namespace XRoadLib.Protocols
                 versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionReader, assembly, dtoVersion));
         }
 
-        internal ISerializerCache GetSerializerCache(uint? version = null)
+        public ISerializerCache GetSerializerCache(uint? version = null)
         {
             if (serializerCache == null && versioningSerializerCaches == null)
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) is not configured with contract assembly.");
@@ -120,31 +161,8 @@ namespace XRoadLib.Protocols
 
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
         }
-    }
 
-    public abstract class XRoadProtocol<THeader> : XRoadProtocol where THeader : IXRoadHeader, new()
-    {
-        protected readonly XmlDocument document = new XmlDocument();
-
-        protected abstract string XRoadPrefix { get; }
-        protected abstract string XRoadNamespace { get; }
-
-        internal override string RequestPartNameInRequest => "request";
-        internal override string RequestPartNameInResponse => "request";
-        internal override string ResponsePartNameInResponse => "response";
-
-        internal override ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>(new XNameComparer());
-
-        protected XRoadProtocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
-            : base(producerNamespace, style, schemaExporter)
-        { }
-
-        public override void ExportServiceDescription(ServiceDescription serviceDescription)
-        {
-            serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
-        }
-
-        protected void AddMandatoryHeaderElement<T>(Expression<Func<THeader, T>> expression)
+        protected void AddMandatoryHeaderElement<THeader, T>(Expression<Func<THeader, T>> expression) where THeader : IXRoadHeader
         {
             var memberExpression = expression.Body as MemberExpression;
             if (memberExpression == null)
@@ -187,51 +205,6 @@ namespace XRoadLib.Protocols
             }
 
             return null;
-        }
-
-        internal override IXRoadHeader CreateHeader()
-        {
-            return new THeader();
-        }
-
-        internal override void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null)
-        {
-            writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
-
-            if (header is THeader)
-                WriteSoapHeader(writer, (THeader)header);
-
-            foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
-                additionalHeader.WriteTo(writer);
-
-            writer.WriteEndElement();
-        }
-
-        protected abstract void WriteSoapHeader(XmlWriter writer, THeader header);
-
-        internal override XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition)
-        {
-            if (operationDefinition.Version == 0)
-                return null;
-
-            var addressElement = document.CreateElement(XRoadPrefix, "version", XRoadNamespace);
-            addressElement.InnerText = $"v{operationDefinition.Version}";
-            return addressElement;
-        }
-
-        internal override XmlElement CreateTitleElement(string languageCode, string value)
-        {
-            var titleElement = document.CreateElement(XRoadPrefix, "title", XRoadNamespace);
-            titleElement.InnerText = value;
-
-            if (string.IsNullOrWhiteSpace(languageCode))
-                return titleElement;
-
-            var attribute = document.CreateAttribute("xml", "lang", null);
-            attribute.Value = languageCode;
-            titleElement.Attributes.Append(attribute);
-
-            return titleElement;
         }
 
         protected void WriteHeaderElement(XmlWriter writer, string name, object value)
