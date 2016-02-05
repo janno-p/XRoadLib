@@ -95,7 +95,7 @@ namespace XRoadLib.Serialization
                 throw new Exception($"Invalid X-Road operation contract `{operationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
 
             var inputTypeMap = GetTypeMap(methodParameters.SingleOrDefault()?.ParameterType);
-            var outputTypeMap = GetTypeMap(operationDefinition.MethodInfo.ReturnType);
+            var outputTypeMap = GetReturnValueTypeMap(operationDefinition);
 
             return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(operationDefinition, inputTypeMap, outputTypeMap));
         }
@@ -267,7 +267,9 @@ namespace XRoadLib.Serialization
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("testSystem", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
 
-            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, null));
+            var outputTypeMap = GetReturnValueTypeMap(operationDefinition);
+
+            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, outputTypeMap));
         }
 
         private void CreateGetState(IXRoadLegacyProtocol legacyProtocol)
@@ -277,7 +279,7 @@ namespace XRoadLib.Serialization
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("getState", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
 
-            var outputTypeMap = GetTypeMap(methodInfo.ReturnType);
+            var outputTypeMap = GetReturnValueTypeMap(operationDefinition);
             var serviceMap = new ServiceMap(operationDefinition, null, outputTypeMap);
 
             serviceMaps.GetOrAdd(operationDefinition.Name, serviceMap);
@@ -290,7 +292,7 @@ namespace XRoadLib.Serialization
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("listMethods", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
 
-            var outputTypeMap = GetTypeMap(methodInfo.ReturnType);
+            var outputTypeMap = GetReturnValueTypeMap(operationDefinition);
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, outputTypeMap));
         }
 
@@ -347,6 +349,19 @@ namespace XRoadLib.Serialization
             typeMap = (ITypeMap)Activator.CreateInstance(typeMapType, null, this);
 
             return customTypeMaps.GetOrAdd(typeMapType, typeMap);
+        }
+
+        private ITypeMap GetReturnValueTypeMap(OperationDefinition operationDefinition)
+        {
+            var returnValueDefinition = schemaDefinitionReader.GetResponseValueDefinition(operationDefinition);
+            if (returnValueDefinition.State == DefinitionState.Ignored)
+                return null;
+
+            var outputTypeMap = GetContentDefinitionTypeMap(returnValueDefinition, null);
+            if (outputTypeMap != null)
+                returnValueDefinition.TypeName = outputTypeMap.Definition.Name;
+
+            return outputTypeMap;
         }
     }
 }

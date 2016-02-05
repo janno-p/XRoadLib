@@ -15,7 +15,6 @@ namespace XRoadLib.Schema
 
         public string OutputMessageName { get; set; }
         public BinaryMode OutputBinaryMode { get; set; }
-        public bool HideXRoadFaultDefinition { get; set; }
 
         public OperationDefinition(MethodInfo methodInfo)
         {

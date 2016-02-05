@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 
 namespace XRoadLib.Schema
 {
@@ -8,6 +9,11 @@ namespace XRoadLib.Schema
 
         public DefinitionState State { get; set; }
 
-        public string Documentation { get; set; }
+        public Tuple<string, string>[] Documentation { get; set; }
+
+        internal static Type NormalizeType(Type type)
+        {
+            return Nullable.GetUnderlyingType(type) ?? type;
+        }
     }
 }

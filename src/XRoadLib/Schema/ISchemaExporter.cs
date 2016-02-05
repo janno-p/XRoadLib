@@ -7,5 +7,7 @@
         void ExportPropertyDefinition(PropertyDefinition propertyDefinition);
 
         void ExportTypeDefinition(TypeDefinition typeDefinition);
+
+        void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition);
     }
 }

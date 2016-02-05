@@ -7,5 +7,7 @@
         public virtual void ExportPropertyDefinition(PropertyDefinition propertyDefinition) { }
 
         public virtual void ExportTypeDefinition(TypeDefinition typeDefinition) { }
+
+        public virtual void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition) { }
     }
 }

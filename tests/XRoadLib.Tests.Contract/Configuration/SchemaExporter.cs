@@ -4,6 +4,9 @@ namespace XRoadLib.Tests.Contract.Configuration
 {
     public class SchemaExporter : ISchemaExporter
     {
+        public void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition)
+        { }
+
         public void ExportOperationDefinition(OperationDefinition operationDefinition)
         {
             // Customize operation message names:

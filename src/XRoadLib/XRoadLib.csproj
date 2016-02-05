@@ -54,6 +54,7 @@
     <Compile Include="Schema\IContentDefinition.cs" />
     <Compile Include="Schema\ISchemaExporter.cs" />
     <Compile Include="Schema\MockMethods.cs" />
+    <Compile Include="Schema\RequestValueDefinition.cs" />
     <Compile Include="Schema\PropertyComparer.cs" />
     <Compile Include="Extensions\PropertyInfoExtensions.cs" />
     <Compile Include="Extensions\XRoadMessageExtensions.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Schema\ContentDefinition.cs" />
     <Compile Include="Schema\OperationDefinition.cs" />
     <Compile Include="Schema\PropertyDefinition.cs" />
+    <Compile Include="Schema\ResponseValueDefinition.cs" />
     <Compile Include="Schema\SchemaDefinitionReader.cs" />
     <Compile Include="Schema\SchemaExporterBase.cs" />
     <Compile Include="Schema\TypeDefinition.cs" />

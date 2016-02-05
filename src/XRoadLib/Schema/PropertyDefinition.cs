@@ -8,8 +8,6 @@ namespace XRoadLib.Schema
 
         public PropertyInfo PropertyInfo { get; }
 
-        public override string ContainerName => $"{PropertyInfo.DeclaringType?.FullName}";
-
         public override string RuntimeName
         {
             get
@@ -23,6 +21,14 @@ namespace XRoadLib.Schema
         {
             DeclaringTypeDefinition = declaringTypeDefinition;
             PropertyInfo = propertyInfo;
+            RuntimeType = NormalizeType(propertyInfo.PropertyType);
+
+            InitializeContentDefinition(propertyInfo);
+        }
+
+        public override string ToString()
+        {
+            return $"Return value of {PropertyInfo.DeclaringType?.FullName ?? "<null>"}.{RuntimeName} ({Name})";
         }
     }
 }
