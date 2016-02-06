@@ -122,15 +122,29 @@ namespace XRoadLib.Protocols.Description
             }
         }
 
+        private IEnumerable<TypeDefinition> GetTypeDefinitions(string targetNamespace)
+        {
+            return schemaTypeDefinitions.Where(x => x.Key.NamespaceName == targetNamespace)
+                                                     .OrderBy(x => x.Key.LocalName)
+                                                     .Select(x => x.Value);
+        }
+
+        private IEnumerable<OperationDefinition> GetOperationDefinitions(string targetNamespace)
+        {
+            return contractAssembly.GetServiceContracts()
+                                   .SelectMany(x => x.Value
+                                                     .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
+                                                     .Select(op => schemaDefinitionReader.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), version)))
+                                   .Where(def => def.State == DefinitionState.Default)
+                                   .OrderBy(def => def.Name.LocalName)
+                                   .ToList();
+        }
+
         private XmlSchema BuildSchema(string targetNamespace, MessageCollection messages)
         {
             var schema = new XmlSchema { TargetNamespace = targetNamespace };
 
-            var typeDefinitions = schemaTypeDefinitions.Where(x => x.Key.NamespaceName == targetNamespace)
-                                                       .OrderBy(x => x.Key.LocalName)
-                                                       .Select(x => x.Value);
-
-            foreach (var typeDefinition in typeDefinitions)
+            foreach (var typeDefinition in GetTypeDefinitions(targetNamespace))
             {
                 var schemaType = new XmlSchemaComplexType
                 {
@@ -144,15 +158,7 @@ namespace XRoadLib.Protocols.Description
                 schema.Items.Add(schemaType);
             }
 
-            var operationDefinitions = contractAssembly.GetServiceContracts()
-                                                       .SelectMany(x => x.Value
-                                                                         .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
-                                                                         .Select(op => schemaDefinitionReader.GetOperationDefinition(x.Key, XName.Get(op.Name, protocol.ProducerNamespace), version)))
-                                                       .Where(def => def.State == DefinitionState.Default)
-                                                       .OrderBy(def => def.Name.LocalName)
-                                                       .ToList();
-
-            foreach (var operationDefinition in operationDefinitions)
+            foreach (var operationDefinition in GetOperationDefinitions(targetNamespace))
             {
                 var methodParameters = operationDefinition.MethodInfo.GetParameters();
                 if (methodParameters.Length > 1)
@@ -246,51 +252,62 @@ namespace XRoadLib.Protocols.Description
 
                 messages.Add(outputMessage);
 
-                var operation = new Operation
-                {
-                    Name = operationDefinition.Name.LocalName,
-                    Messages =
-                    {
-                        new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) },
-                        new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) }
-                    }
-                };
 
-                portType.Operations.Add(operation);
+                AddPortTypeOperation(operationDefinition.Name.LocalName, inputMessage, outputMessage, targetNamespace);
 
-                var inputBinding = new InputBinding();
-                if (operationDefinition.InputBinaryMode == BinaryMode.Attachment)
-                {
-                    var soapPart = new MimePart();
-                    AddOperationContentBinding(soapPart.Extensions, protocol.Style.CreateSoapHeader);
-                    var filePart = new MimePart { Extensions = { new MimeContentBinding { Part = "file", Type = "application/binary" } } };
-                    inputBinding.Extensions.Add(new MimeMultipartRelatedBinding { Parts = { soapPart, filePart } });
-                }
-                else AddOperationContentBinding(inputBinding.Extensions, x => x);
-
-                var outputBinding = new OutputBinding();
-                if (operationDefinition.OutputBinaryMode == BinaryMode.Attachment)
-                {
-                    var soapPart = new MimePart();
-                    AddOperationContentBinding(soapPart.Extensions, protocol.Style.CreateSoapHeader);
-                    var filePart = new MimePart { Extensions = { new MimeContentBinding { Part = "file", Type = "application/binary" } } };
-                    outputBinding.Extensions.Add(new MimeMultipartRelatedBinding { Parts = { soapPart, filePart } });
-                }
-                else AddOperationContentBinding(outputBinding.Extensions, x => x);
-
-                binding.Operations.Add(new OperationBinding
-                {
-                    Name = operationDefinition.Name.LocalName,
-                    Extensions = { protocol.CreateOperationVersionElement(operationDefinition), protocol.Style.CreateSoapOperationBinding() },
-                    Input = inputBinding,
-                    Output = outputBinding
-                });
+                AddBindingOperation(operationDefinition);
             }
 
             foreach (var requiredImport in requiredImports)
                 schema.Includes.Add(new XmlSchemaImport { Namespace = requiredImport, SchemaLocation = requiredImport });
 
             return schema;
+        }
+
+        private void AddPortTypeOperation(string operationName, Message inputMessage, Message outputMessage, string targetNamespace)
+        {
+            portType.Operations.Add(new Operation
+            {
+                Name = operationName,
+                Messages =
+                {
+                    new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) },
+                    new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) }
+                }
+            });
+        }
+
+        private void AddOperationMessageBindingContent(BinaryMode binaryMode, MessageBinding messageBinding)
+        {
+            if (binaryMode != BinaryMode.Attachment)
+            {
+                AddOperationContentBinding(messageBinding.Extensions, x => x);
+                return;
+            }
+
+            var soapPart = new MimePart();
+            AddOperationContentBinding(soapPart.Extensions, protocol.Style.CreateSoapHeader);
+
+            var filePart = new MimePart { Extensions = { new MimeContentBinding { Part = "file", Type = "application/binary" } } };
+
+            messageBinding.Extensions.Add(new MimeMultipartRelatedBinding { Parts = { soapPart, filePart } });
+        }
+
+        private void AddBindingOperation(OperationDefinition operationDefinition)
+        {
+            var inputBinding = new InputBinding();
+            AddOperationMessageBindingContent(operationDefinition.InputBinaryMode, inputBinding);
+
+            var outputBinding = new OutputBinding();
+            AddOperationMessageBindingContent(operationDefinition.OutputBinaryMode, outputBinding);
+
+            binding.Operations.Add(new OperationBinding
+            {
+                Name = operationDefinition.Name.LocalName,
+                Extensions = { protocol.CreateOperationVersionElement(operationDefinition), protocol.Style.CreateSoapOperationBinding() },
+                Input = inputBinding,
+                Output = outputBinding
+            });
         }
 
         private void AddOperationContentBinding<THeader>(ServiceDescriptionFormatExtensionCollection extensions, Func<SoapHeaderBinding, THeader> projectionFunc)
