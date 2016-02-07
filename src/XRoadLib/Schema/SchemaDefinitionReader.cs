@@ -49,7 +49,7 @@ namespace XRoadLib.Schema
             return collectionDefinition;
         }
 
-        public TypeDefinition GetTypeDefinition(Type type)
+        public TypeDefinition GetTypeDefinition(Type type, string typeName = null)
         {
             XName qualifiedName = null;
 
@@ -73,7 +73,7 @@ namespace XRoadLib.Schema
             var normalizedType = Definition.NormalizeType(type);
 
             if (!isAnonymous)
-                qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(normalizedType.Name),
+                qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(typeName ?? normalizedType.Name),
                                           typeAttribute?.Namespace ?? ProducerNamespace);
 
             var typeDefinition = new TypeDefinition(normalizedType)

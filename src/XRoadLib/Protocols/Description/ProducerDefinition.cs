@@ -29,6 +29,7 @@ namespace XRoadLib.Protocols.Description
         private readonly Port servicePort;
         private readonly Service service;
 
+        private readonly IDictionary<Type, XmlQualifiedName> additionalTypeDefinitions = new Dictionary<Type, XmlQualifiedName>();
         private readonly IDictionary<XName, TypeDefinition> schemaTypeDefinitions = new Dictionary<XName, TypeDefinition>();
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
         private readonly ISet<string> requiredImports = new SortedSet<string>();
@@ -142,21 +143,7 @@ namespace XRoadLib.Protocols.Description
 
         private XmlSchema BuildSchema(string targetNamespace, MessageCollection messages)
         {
-            var schema = new XmlSchema { TargetNamespace = targetNamespace };
-
-            foreach (var typeDefinition in GetTypeDefinitions(targetNamespace))
-            {
-                var schemaType = new XmlSchemaComplexType
-                {
-                    Name = typeDefinition.Name.LocalName,
-                    IsAbstract = typeDefinition.Type.IsAbstract,
-                    Annotation = CreateSchemaAnnotation(typeDefinition)
-                };
-
-                AddComplexTypeContent(schemaType, typeDefinition, targetNamespace);
-
-                schema.Items.Add(schemaType);
-            }
+            var schemaElements = new List<XmlSchemaElement>();
 
             foreach (var operationDefinition in GetOperationDefinitions(targetNamespace))
             {
@@ -170,7 +157,7 @@ namespace XRoadLib.Protocols.Description
                     : new XmlSchemaElement { Name = "request", SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() } };
 
                 if (protocol.Style.UseElementInMessagePart)
-                    schema.Items.Add(new XmlSchemaElement
+                    schemaElements.Add(new XmlSchemaElement
                     {
                         Name = operationDefinition.Name.LocalName,
                         SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement } } }
@@ -180,8 +167,6 @@ namespace XRoadLib.Protocols.Description
 
                 XmlSchemaElement responseElement;
                 XmlSchemaElement resultElement = null;
-
-                var outputType = operationDefinition.MethodInfo.ReturnType;
 
                 if (responseValueDefinition.HasExplicitXRoadFault)
                 {
@@ -197,7 +182,7 @@ namespace XRoadLib.Protocols.Description
                         }
                     };
 
-                    if (outputType == typeof(void))
+                    if (operationDefinition.MethodInfo.ReturnType == typeof(void))
                     {
                         faultSequence.MinOccurs = 0;
                         outputParticle.Items.Add(faultSequence);
@@ -211,7 +196,7 @@ namespace XRoadLib.Protocols.Description
                 else responseElement = resultElement = CreateContentElement(responseValueDefinition, targetNamespace);
 
                 if (protocol.Style.UseElementInMessagePart)
-                    schema.Items.Add(new XmlSchemaElement
+                    schemaElements.Add(new XmlSchemaElement
                     {
                         Name = $"{operationDefinition.Name.LocalName}Response",
                         SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } }
@@ -242,7 +227,7 @@ namespace XRoadLib.Protocols.Description
                 else
                 {
                     var requestTypeName = requestElement?.SchemaTypeName;
-                    var responseTypeName = resultElement?.SchemaTypeName;
+                    var responseTypeName = GetOutputMessageTypeName(resultElement, operationDefinition.MethodInfo.ReturnType, targetNamespace);
                     outputMessage.Parts.Add(new MessagePart { Name = protocol.RequestPartNameInResponse, Type = requestTypeName });
                     outputMessage.Parts.Add(new MessagePart { Name = protocol.ResponsePartNameInResponse, Type = responseTypeName });
                 }
@@ -258,10 +243,58 @@ namespace XRoadLib.Protocols.Description
                 AddBindingOperation(operationDefinition);
             }
 
+            var schema = new XmlSchema { TargetNamespace = targetNamespace };
+
+            foreach (var typeDefinition in GetTypeDefinitions(targetNamespace))
+            {
+                var schemaType = new XmlSchemaComplexType
+                {
+                    Name = typeDefinition.Name.LocalName,
+                    IsAbstract = typeDefinition.Type.IsAbstract,
+                    Annotation = CreateSchemaAnnotation(typeDefinition)
+                };
+
+                AddComplexTypeContent(schemaType, typeDefinition, targetNamespace);
+
+                schema.Items.Add(schemaType);
+            }
+
             foreach (var requiredImport in requiredImports)
                 schema.Includes.Add(new XmlSchemaImport { Namespace = requiredImport, SchemaLocation = requiredImport });
 
             return schema;
+        }
+
+        private XmlQualifiedName AddAdditionalTypeDefinition(Type type, string typeName)
+        {
+            XmlQualifiedName qualifiedName;
+            if (additionalTypeDefinitions.TryGetValue(type, out qualifiedName))
+                return qualifiedName;
+
+            var definition = schemaDefinitionReader.GetTypeDefinition(type, typeName);
+            if (definition.State != DefinitionState.Default)
+                return null;
+
+            schemaTypeDefinitions.Add(definition.Name, definition);
+
+            qualifiedName = new XmlQualifiedName(definition.Name.LocalName, definition.Name.NamespaceName);
+            additionalTypeDefinitions.Add(type, qualifiedName);
+
+            return qualifiedName;
+        }
+
+        private XmlQualifiedName GetOutputMessageTypeName(XmlSchemaElement resultElement, Type resultType, string targetNamespace)
+        {
+            if (resultType == typeof(void))
+                return AddAdditionalTypeDefinition(resultType, "Void");
+
+            if (resultElement.SchemaTypeName != null)
+                return resultElement.SchemaTypeName;
+
+            if (resultType.IsArray)
+                return AddAdditionalTypeDefinition(resultType, $"ArrayOf{resultType.GetElementType().Name}");
+
+            return null;
         }
 
         private void AddPortTypeOperation(string operationName, Message inputMessage, Message outputMessage, string targetNamespace)
