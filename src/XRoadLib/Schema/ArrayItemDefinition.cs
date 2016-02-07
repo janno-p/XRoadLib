@@ -13,6 +13,8 @@ namespace XRoadLib.Schema
 
         public bool IsOptional { get; set; }
 
+        public bool MergeContent { get; set; }
+
         public bool UseXop { get; set; }
 
         public Type TypeMapType { get; set; }

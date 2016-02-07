@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
@@ -12,6 +11,8 @@ namespace XRoadLib.Schema
 {
     public abstract class ContentDefinition : Definition, IContentDefinition
     {
+        public bool MergeContent { get; set; }
+
         public bool IsNullable { get; set; }
 
         public bool IsOptional { get; set; }
@@ -81,6 +82,7 @@ namespace XRoadLib.Schema
             IsOptional = sourceInfo.GetSingleAttribute<XRoadOptionalAttribute>() != null;
             State = DefinitionState.Default;
             Documentation = sourceInfo.GetXRoadTitles().Where(title => !string.IsNullOrWhiteSpace(title.Item2)).ToArray();
+            MergeContent = sourceInfo.GetSingleAttribute<XRoadMergeContentAttribute>() != null || sourceInfo.GetSingleAttribute<XmlTextAttribute>() != null;
 
             if (!RuntimeType.IsArray)
                 return;
@@ -90,6 +92,7 @@ namespace XRoadLib.Schema
                 Name = itemQualifiedName,
                 IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
                 IsOptional = false,
+                MergeContent = elementAttribute != null,
                 UseXop = typeof(Stream).IsAssignableFrom(RuntimeType.GetElementType()),
                 RuntimeType = RuntimeType.GetElementType(),
             };

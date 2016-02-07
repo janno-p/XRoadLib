@@ -240,7 +240,8 @@ namespace XRoadLib.Protocols.Description
                     Annotation = CreateSchemaAnnotation(typeDefinition)
                 };
 
-                AddComplexTypeContent(schemaType, typeDefinition, targetNamespace);
+                if (AddComplexTypeContent(schemaType, typeDefinition, targetNamespace) != null)
+                    throw new NotImplementedException();
 
                 schemaTypes.Add(schemaType);
             }
@@ -350,12 +351,35 @@ namespace XRoadLib.Protocols.Description
                 extensions.Add(headerBinding);
         }
 
-        private void AddComplexTypeContent(XmlSchemaComplexType schemaType, TypeDefinition typeDefinition, string targetNamespace)
+        private XmlQualifiedName AddComplexTypeContent(XmlSchemaComplexType schemaType, TypeDefinition typeDefinition, string targetNamespace)
         {
             var contentParticle = new XmlSchemaSequence();
 
-            foreach (var propertyDefinition in GetDescriptionProperties(typeDefinition))
-                contentParticle.Items.Add(CreateContentElement(propertyDefinition, targetNamespace));
+            var propertyDefinitions = GetDescriptionProperties(typeDefinition).ToList();
+
+            foreach (var propertyDefinition in propertyDefinitions)
+            {
+                if (propertyDefinition.MergeContent && propertyDefinitions.Count > 1)
+                    throw new Exception($"Property {propertyDefinition} of type {typeDefinition} cannot be merged, because there are more than 1 properties present.");
+
+                var contentElement = CreateContentElement(propertyDefinition, targetNamespace);
+
+                if (!propertyDefinition.MergeContent)
+                {
+                    contentParticle.Items.Add(contentElement);
+                    continue;
+                }
+
+                if (!contentElement.SchemaTypeName.IsEmpty)
+                    return contentElement.SchemaTypeName;
+
+                var particle = ((XmlSchemaComplexType)contentElement.SchemaType)?.Particle;
+                if (particle != null) schemaType.Particle = particle;
+                var content = ((XmlSchemaComplexType)contentElement.SchemaType)?.ContentModel;
+                if (content != null) schemaType.ContentModel = content;
+
+                return null;
+            }
 
             if (typeDefinition.Type.BaseType != typeof(XRoadSerializable))
             {
@@ -368,6 +392,8 @@ namespace XRoadLib.Protocols.Description
                 schemaType.ContentModel = new XmlSchemaComplexContent { Content = extension };
             }
             else schemaType.Particle = contentParticle;
+
+            return null;
         }
 
         private XmlQualifiedName GetSchemaTypeName(Type type, string targetNamespace)
@@ -433,6 +459,8 @@ namespace XRoadLib.Protocols.Description
             }
 
             XmlSchemaType schemaType;
+            XmlQualifiedName schemaTypeName = null;
+
             if (contentDefinition.RuntimeType.IsEnum)
             {
                 schemaType = new XmlSchemaSimpleType();
@@ -441,11 +469,13 @@ namespace XRoadLib.Protocols.Description
             else
             {
                 schemaType = new XmlSchemaComplexType();
-                AddComplexTypeContent((XmlSchemaComplexType)schemaType, typeDefinition, targetNamespace);
+                schemaTypeName = AddComplexTypeContent((XmlSchemaComplexType)schemaType, typeDefinition, targetNamespace);
             }
             schemaType.Annotation = CreateSchemaAnnotation(typeDefinition);
 
-            schemaElement.SchemaType = schemaType;
+            if (schemaTypeName == null)
+                schemaElement.SchemaType = schemaType;
+            else schemaElement.SchemaTypeName = schemaTypeName;
         }
 
         private static void AddEnumTypeContent(Type type, XmlSchemaSimpleType schemaType)
@@ -470,7 +500,7 @@ namespace XRoadLib.Protocols.Description
                 Annotation = CreateSchemaAnnotation(propertyDefinition)
             };
 
-            if (propertyDefinition.Name == null)
+            if (propertyDefinition.ArrayItemDefinition?.MergeContent ?? false)
             {
                 schemaElement.Name = propertyDefinition.ArrayItemDefinition.Name.LocalName;
 
@@ -494,6 +524,13 @@ namespace XRoadLib.Protocols.Description
             if (propertyDefinition.ArrayItemDefinition == null)
             {
                 SetSchemaElementType(schemaElement, propertyDefinition, targetNamespace);
+                return schemaElement;
+            }
+
+            if (propertyDefinition.TypeName != null)
+            {
+                var typeDefinition = schemaTypeDefinitions[propertyDefinition.TypeName];
+                schemaElement.SchemaTypeName = new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
                 return schemaElement;
             }
 
