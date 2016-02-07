@@ -73,15 +73,7 @@ namespace XRoadLib.Protocols.Description
         public void SaveTo(Stream stream)
         {
             using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Indent = true, IndentChars = "  ", NewLineChars = "\r\n" }))
-            {
-                writer.WriteStartDocument();
-
                 WriteServiceDescription(writer);
-                writer.Flush();
-
-                writer.WriteEndDocument();
-                writer.Flush();
-            }
         }
 
         private void CollectTypes()
@@ -123,13 +115,6 @@ namespace XRoadLib.Protocols.Description
             }
         }
 
-        private IEnumerable<TypeDefinition> GetTypeDefinitions(string targetNamespace)
-        {
-            return schemaTypeDefinitions.Where(x => x.Key.NamespaceName == targetNamespace)
-                                                     .OrderBy(x => x.Key.LocalName)
-                                                     .Select(x => x.Value);
-        }
-
         private IEnumerable<OperationDefinition> GetOperationDefinitions(string targetNamespace)
         {
             return contractAssembly.GetServiceContracts()
@@ -137,12 +122,13 @@ namespace XRoadLib.Protocols.Description
                                                      .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
                                                      .Select(op => schemaDefinitionReader.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), version)))
                                    .Where(def => def.State == DefinitionState.Default)
-                                   .OrderBy(def => def.Name.LocalName)
+                                   .OrderBy(def => def.Name.LocalName.ToLower())
                                    .ToList();
         }
 
         private XmlSchema BuildSchema(string targetNamespace, MessageCollection messages)
         {
+            var schemaTypes = new List<XmlSchemaType>();
             var schemaElements = new List<XmlSchemaElement>();
 
             foreach (var operationDefinition in GetOperationDefinitions(targetNamespace))
@@ -227,7 +213,7 @@ namespace XRoadLib.Protocols.Description
                 else
                 {
                     var requestTypeName = requestElement?.SchemaTypeName;
-                    var responseTypeName = GetOutputMessageTypeName(resultElement, operationDefinition.MethodInfo.ReturnType, targetNamespace);
+                    var responseTypeName = GetOutputMessageTypeName(resultElement, operationDefinition.MethodInfo.ReturnType, schemaTypes);
                     outputMessage.Parts.Add(new MessagePart { Name = protocol.RequestPartNameInResponse, Type = requestTypeName });
                     outputMessage.Parts.Add(new MessagePart { Name = protocol.ResponsePartNameInResponse, Type = responseTypeName });
                 }
@@ -245,7 +231,7 @@ namespace XRoadLib.Protocols.Description
 
             var schema = new XmlSchema { TargetNamespace = targetNamespace };
 
-            foreach (var typeDefinition in GetTypeDefinitions(targetNamespace))
+            foreach (var typeDefinition in schemaTypeDefinitions.Where(x => x.Key.NamespaceName == targetNamespace).Select(x => x.Value))
             {
                 var schemaType = new XmlSchemaComplexType
                 {
@@ -256,8 +242,14 @@ namespace XRoadLib.Protocols.Description
 
                 AddComplexTypeContent(schemaType, typeDefinition, targetNamespace);
 
-                schema.Items.Add(schemaType);
+                schemaTypes.Add(schemaType);
             }
+
+            foreach (var schemaType in schemaTypes.OrderBy(x => x.Name.ToLower()))
+                schema.Items.Add(schemaType);
+
+            foreach (var schemaElement in schemaElements.OrderBy(x => x.Name.ToLower()))
+                schema.Items.Add(schemaElement);
 
             foreach (var requiredImport in requiredImports)
                 schema.Includes.Add(new XmlSchemaImport { Namespace = requiredImport, SchemaLocation = requiredImport });
@@ -265,7 +257,7 @@ namespace XRoadLib.Protocols.Description
             return schema;
         }
 
-        private XmlQualifiedName AddAdditionalTypeDefinition(Type type, string typeName)
+        private XmlQualifiedName AddAdditionalTypeDefinition(Type type, string typeName, XmlSchemaElement schemaElement, IList<XmlSchemaType> schemaTypes)
         {
             XmlQualifiedName qualifiedName;
             if (additionalTypeDefinitions.TryGetValue(type, out qualifiedName))
@@ -275,24 +267,32 @@ namespace XRoadLib.Protocols.Description
             if (definition.State != DefinitionState.Default)
                 return null;
 
-            schemaTypeDefinitions.Add(definition.Name, definition);
-
             qualifiedName = new XmlQualifiedName(definition.Name.LocalName, definition.Name.NamespaceName);
             additionalTypeDefinitions.Add(type, qualifiedName);
+
+            var schemaType = new XmlSchemaComplexType { Name = qualifiedName.Name };
+
+            var elementType = (XmlSchemaComplexType)schemaElement.SchemaType;
+            if (elementType.Particle != null)
+                schemaType.Particle = elementType.Particle;
+            if (elementType.ContentModel != null)
+                schemaType.ContentModel = elementType.ContentModel;
+
+            schemaTypes.Add(schemaType);
 
             return qualifiedName;
         }
 
-        private XmlQualifiedName GetOutputMessageTypeName(XmlSchemaElement resultElement, Type resultType, string targetNamespace)
+        private XmlQualifiedName GetOutputMessageTypeName(XmlSchemaElement resultElement, Type resultType, IList<XmlSchemaType> schemaTypes)
         {
             if (resultType == typeof(void))
-                return AddAdditionalTypeDefinition(resultType, "Void");
+                return AddAdditionalTypeDefinition(resultType, "Void", resultElement, schemaTypes);
 
-            if (resultElement.SchemaTypeName != null)
+            if (!resultElement.SchemaTypeName.IsEmpty)
                 return resultElement.SchemaTypeName;
 
             if (resultType.IsArray)
-                return AddAdditionalTypeDefinition(resultType, $"ArrayOf{resultType.GetElementType().Name}");
+                return AddAdditionalTypeDefinition(resultType, $"ArrayOf{resultType.GetElementType().Name}", resultElement, schemaTypes);
 
             return null;
         }
@@ -539,7 +539,10 @@ namespace XRoadLib.Protocols.Description
 
             protocol.ExportServiceDescription(serviceDescription);
 
+            writer.WriteStartDocument();
             serviceDescription.Write(writer);
+            writer.WriteEndDocument();
+            writer.Flush();
         }
 
         private void AddServiceDescriptionNamespaces(DocumentableItem serviceDescription)

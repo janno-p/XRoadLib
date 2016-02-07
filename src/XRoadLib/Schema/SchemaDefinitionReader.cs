@@ -55,10 +55,14 @@ namespace XRoadLib.Schema
 
             if (type.IsArray)
             {
+                if (!string.IsNullOrWhiteSpace(typeName))
+                    qualifiedName = XName.Get(typeName, ProducerNamespace);
+
                 var collectionDefinition = new CollectionDefinition(type)
                 {
+                    Name = qualifiedName,
                     ItemDefinition = GetTypeDefinition(type.GetElementType()),
-                    IsAnonymous = true,
+                    IsAnonymous = qualifiedName == null,
                     CanHoldNullValues = true
                 };
 
