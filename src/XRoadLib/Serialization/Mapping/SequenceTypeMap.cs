@@ -58,7 +58,7 @@ namespace XRoadLib.Serialization.Mapping
             while (properties.MoveNext())
             {
                 var propertyName = properties.Current.Definition.Name.LocalName;
-                var propertyNode = templateNode[propertyName, message.Version];
+                var propertyNode = templateNode[properties.Current.Definition.TemplateName, message.Version];
 
                 if (reader.LocalName == propertyName)
                     return propertyNode;
@@ -76,7 +76,7 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyMap in propertyMaps)
             {
-                var childTemplateNode = templateNode?[propertyMap.Definition.Name.LocalName, message.Version];
+                var childTemplateNode = templateNode?[propertyMap.Definition.TemplateName, message.Version];
                 if (templateNode == null || childTemplateNode != null)
                     propertyMap.Serialize(writer, childTemplateNode, value, message);
             }

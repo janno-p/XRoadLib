@@ -95,9 +95,9 @@ namespace XRoadLib.Serialization
                 throw new Exception($"Invalid X-Road operation contract `{operationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
 
             var inputTypeMap = GetTypeMap(methodParameters.SingleOrDefault()?.ParameterType);
-            var outputTypeMap = GetReturnValueTypeMap(operationDefinition);
+            var outputTuple = GetReturnValueTypeMap(operationDefinition);
 
-            return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(operationDefinition, inputTypeMap, outputTypeMap));
+            return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(operationDefinition, inputTypeMap, outputTuple.Item2, outputTuple.Item1));
         }
 
         private MethodInfo GetServiceInterface(Assembly typeAssembly, XName qualifiedName)
@@ -267,9 +267,9 @@ namespace XRoadLib.Serialization
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("testSystem", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
 
-            var outputTypeMap = GetReturnValueTypeMap(operationDefinition);
+            var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
 
-            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, outputTypeMap));
+            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
 
         private void CreateGetState(IXRoadLegacyProtocol legacyProtocol)
@@ -279,8 +279,8 @@ namespace XRoadLib.Serialization
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("getState", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
 
-            var outputTypeMap = GetReturnValueTypeMap(operationDefinition);
-            var serviceMap = new ServiceMap(operationDefinition, null, outputTypeMap);
+            var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
+            var serviceMap = new ServiceMap(operationDefinition, null, outputTuple.Item2, outputTuple.Item1);
 
             serviceMaps.GetOrAdd(operationDefinition.Name, serviceMap);
         }
@@ -292,8 +292,8 @@ namespace XRoadLib.Serialization
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("listMethods", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
 
-            var outputTypeMap = GetReturnValueTypeMap(operationDefinition);
-            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, outputTypeMap));
+            var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
+            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
 
         private void AddSystemType<T>(string typeName, Func<TypeDefinition, ITypeMap> createTypeMap)
@@ -351,9 +351,9 @@ namespace XRoadLib.Serialization
             return customTypeMaps.GetOrAdd(typeMapType, typeMap);
         }
 
-        private ITypeMap GetReturnValueTypeMap(OperationDefinition operationDefinition)
+        private Tuple<ResponseValueDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, bool? explicitFault = null)
         {
-            var returnValueDefinition = schemaDefinitionReader.GetResponseValueDefinition(operationDefinition);
+            var returnValueDefinition = schemaDefinitionReader.GetResponseValueDefinition(operationDefinition, explicitFault);
             if (returnValueDefinition.State == DefinitionState.Ignored)
                 return null;
 
@@ -361,7 +361,7 @@ namespace XRoadLib.Serialization
             if (outputTypeMap != null)
                 returnValueDefinition.TypeName = outputTypeMap.Definition.Name;
 
-            return outputTypeMap;
+            return Tuple.Create(returnValueDefinition, outputTypeMap);
         }
     }
 }

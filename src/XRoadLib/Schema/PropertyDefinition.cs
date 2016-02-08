@@ -8,6 +8,8 @@ namespace XRoadLib.Schema
 
         public PropertyInfo PropertyInfo { get; }
 
+        public string TemplateName { get; set; }
+
         public override string RuntimeName
         {
             get
@@ -24,6 +26,8 @@ namespace XRoadLib.Schema
             RuntimeType = NormalizeType(propertyInfo.PropertyType);
 
             InitializeContentDefinition(propertyInfo);
+
+            TemplateName = Name?.LocalName;
         }
 
         public override string ToString()

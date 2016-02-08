@@ -10,13 +10,15 @@ namespace XRoadLib.Serialization.Mapping
     {
         private readonly ITypeMap inputTypeMap;
         private readonly ITypeMap outputTypeMap;
+        private readonly ResponseValueDefinition responseValueDefinition;
 
         public OperationDefinition Definition { get; }
 
-        public ServiceMap(OperationDefinition operationDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
+        public ServiceMap(OperationDefinition operationDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap, ResponseValueDefinition responseValueDefinition)
         {
             this.inputTypeMap = inputTypeMap;
             this.outputTypeMap = outputTypeMap;
+            this.responseValueDefinition = responseValueDefinition;
 
             Definition = operationDefinition;
         }
@@ -67,7 +69,7 @@ namespace XRoadLib.Serialization.Mapping
             var fault = value as IXRoadFault;
             if (Definition.ProhibitRequestPartInResponse && fault != null)
                 SerializeFault(writer, fault, message.Protocol);
-            else
+            else if (outputTypeMap != null)
             {
                 if (Equals(namespaceInContext, ""))
                     writer.WriteStartElement(message.Protocol.ResponsePartNameInResponse);
@@ -75,7 +77,16 @@ namespace XRoadLib.Serialization.Mapping
 
                 if (fault != null)
                     SerializeFault(writer, fault, message.Protocol);
-                else outputTypeMap.Serialize(writer, message.ResponseNode, value, outputTypeMap.Definition.Type, message);
+                else if (outputTypeMap != null)
+                {
+                    if (responseValueDefinition.HasExplicitXRoadFault)
+                        writer.WriteStartElement(responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName);
+
+                    outputTypeMap?.Serialize(writer, message.ResponseNode, value, outputTypeMap.Definition.Type, message);
+
+                    if (responseValueDefinition.HasExplicitXRoadFault)
+                        writer.WriteEndElement();
+                }
 
                 writer.WriteEndElement();
 

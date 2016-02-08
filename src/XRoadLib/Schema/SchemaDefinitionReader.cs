@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -104,9 +103,9 @@ namespace XRoadLib.Schema
             return propertyDefinition;
         }
 
-        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition)
+        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, bool? explicitFault = null)
         {
-            var responseValueDefinition = new ResponseValueDefinition(operationDefinition);
+            var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { HasExplicitXRoadFault = explicitFault ?? true };
 
             SchemaExporter?.ExportResponseValueDefinition(responseValueDefinition);
 
