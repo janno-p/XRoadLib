@@ -122,20 +122,7 @@ namespace XRoadLib.Schema
 
         public OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XName qualifiedName, uint? version)
         {
-            var serviceAttribute = methodInfo.GetServices().SingleOrDefault(x => x.Name == qualifiedName.LocalName);
-
-            var operationDefinition = new OperationDefinition(methodInfo)
-            {
-                Name = qualifiedName,
-                IsAbstract = (serviceAttribute?.IsAbstract).GetValueOrDefault(),
-                InputBinaryMode = BinaryMode.Xml,
-                OutputBinaryMode = BinaryMode.Xml,
-                State = (serviceAttribute?.IsHidden).GetValueOrDefault() ? DefinitionState.Hidden : DefinitionState.Default,
-                Version = version.GetValueOrDefault(serviceAttribute?.AddedInVersion ?? 1u),
-                ProhibitRequestPartInResponse = false,
-                InputMessageName = qualifiedName.LocalName,
-                OutputMessageName = $"{qualifiedName.LocalName}Response"
-            };
+            var operationDefinition = new OperationDefinition(qualifiedName, version, methodInfo);
 
             SchemaExporter?.ExportOperationDefinition(operationDefinition);
 

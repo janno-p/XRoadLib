@@ -223,8 +223,7 @@ namespace XRoadLib.Protocols.Description
 
                 messages.Add(outputMessage);
 
-
-                AddPortTypeOperation(operationDefinition.Name.LocalName, inputMessage, outputMessage, targetNamespace);
+                AddPortTypeOperation(operationDefinition, inputMessage, outputMessage, targetNamespace);
 
                 AddBindingOperation(operationDefinition);
             }
@@ -298,11 +297,12 @@ namespace XRoadLib.Protocols.Description
             return null;
         }
 
-        private void AddPortTypeOperation(string operationName, Message inputMessage, Message outputMessage, string targetNamespace)
+        private void AddPortTypeOperation(OperationDefinition operationDefinition, Message inputMessage, Message outputMessage, string targetNamespace)
         {
             portType.Operations.Add(new Operation
             {
-                Name = operationName,
+                DocumentationElement = protocol.CreateDocumentationElement(operationDefinition.Documentation),
+                Name = operationDefinition.Name.LocalName,
                 Messages =
                 {
                     new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) },
