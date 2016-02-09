@@ -2,7 +2,7 @@
 
 namespace XRoadLib.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.ReturnValue)]
     public class XRoadOptionalAttribute : Attribute
     { }
 }

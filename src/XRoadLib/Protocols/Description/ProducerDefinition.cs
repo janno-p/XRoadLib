@@ -100,7 +100,7 @@ namespace XRoadLib.Protocols.Description
             AddSystemType<Stream>("base64");
 
             var typeDefinitions = contractAssembly.GetTypes()
-                                                  .Where(type => type.IsXRoadSerializable())
+                                                  .Where(type => type.IsXRoadSerializable() || (type.IsEnum && type.GetSingleAttribute<XmlTypeAttribute>() != null))
                                                   .Where(type => !version.HasValue || type.ExistsInVersion(version.Value))
                                                   .Select(type => schemaDefinitionReader.GetTypeDefinition(type))
                                                   .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default);
@@ -232,15 +232,23 @@ namespace XRoadLib.Protocols.Description
 
             foreach (var typeDefinition in schemaTypeDefinitions.Where(x => x.Key.NamespaceName == targetNamespace).Select(x => x.Value))
             {
-                var schemaType = new XmlSchemaComplexType
-                {
-                    Name = typeDefinition.Name.LocalName,
-                    IsAbstract = typeDefinition.Type.IsAbstract,
-                    Annotation = CreateSchemaAnnotation(typeDefinition)
-                };
+                XmlSchemaType schemaType;
 
-                if (AddComplexTypeContent(schemaType, typeDefinition, targetNamespace) != null)
-                    throw new NotImplementedException();
+                if (typeDefinition.Type.IsEnum)
+                {
+                    schemaType = new XmlSchemaSimpleType();
+                    AddEnumTypeContent(typeDefinition.Type, (XmlSchemaSimpleType)schemaType);
+                }
+                else
+                {
+                    schemaType = new XmlSchemaComplexType { IsAbstract = typeDefinition.Type.IsAbstract };
+
+                    if (AddComplexTypeContent((XmlSchemaComplexType)schemaType, typeDefinition, targetNamespace) != null)
+                        throw new NotImplementedException();
+                }
+
+                schemaType.Name = typeDefinition.Name.LocalName;
+                schemaType.Annotation = CreateSchemaAnnotation(typeDefinition);
 
                 schemaTypes.Add(schemaType);
             }
@@ -381,7 +389,9 @@ namespace XRoadLib.Protocols.Description
                 return null;
             }
 
-            if (typeDefinition.Type.BaseType != typeof(XRoadSerializable))
+            if (typeDefinition.Type.BaseType == typeof(XRoadSerializable))
+                schemaType.Particle = contentParticle;
+            else
             {
                 var extension = new XmlSchemaComplexContentExtension
                 {
@@ -391,7 +401,6 @@ namespace XRoadLib.Protocols.Description
 
                 schemaType.ContentModel = new XmlSchemaComplexContent { Content = extension };
             }
-            else schemaType.Particle = contentParticle;
 
             return null;
         }

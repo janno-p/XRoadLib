@@ -91,7 +91,7 @@ namespace XRoadLib.Schema
             {
                 Name = itemQualifiedName,
                 IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
-                IsOptional = false,
+                IsOptional = elementAttribute != null && IsOptional,
                 MergeContent = elementAttribute != null,
                 UseXop = typeof(Stream).IsAssignableFrom(RuntimeType.GetElementType()),
                 RuntimeType = RuntimeType.GetElementType(),
