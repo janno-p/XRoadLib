@@ -16,7 +16,7 @@ namespace XRoadLib.Serialization.Mapping
             Definition = contentTypeMap.Definition;
         }
 
-        public object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message)
+        public object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
         {
             if (!reader.ReadToDescendant("Include", NamespaceConstants.XOP))
                 throw XRoadException.InvalidQuery("Missing `xop:Include` reference to multipart content.");
@@ -47,7 +47,7 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
-        public void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions)
+        public void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions, IEnumerable<string> availableFilters)
         { }
     }
 }

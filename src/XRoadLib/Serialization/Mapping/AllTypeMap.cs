@@ -14,19 +14,27 @@ namespace XRoadLib.Serialization.Mapping
         private readonly IDictionary<string, IPropertyMap> deserializationPropertyMaps = new Dictionary<string, IPropertyMap>();
         private readonly IList<IPropertyMap> serializationPropertyMaps = new List<IPropertyMap>();
 
+        private IPropertyMap mergePropertyMap;
+
         public AllTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
             : base(typeDefinition)
         {
             this.serializerCache = serializerCache;
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
         {
             var dtoObject = new T();
             dtoObject.SetTemplateMembers(templateNode.ChildNames);
 
             if (reader.IsEmptyElement)
                 return dtoObject;
+
+            if (mergePropertyMap != null)
+            {
+                ReadPropertyValue(reader, mergePropertyMap, templateNode, message, validateRequired, dtoObject);
+                return dtoObject;
+            }
 
             var depth = reader.Depth;
             var requiredCount = 0;
@@ -38,28 +46,33 @@ namespace XRoadLib.Serialization.Mapping
 
                 var propertyMap = GetPropertyMap(reader);
 
-                var propertyNode = templateNode[propertyMap.Definition.TemplateName, message.Version];
-                if (propertyNode == null)
-                {
-                    reader.ReadToEndElement();
-                    continue;
-                }
-
-                var isNull = reader.IsNilElement();
-                if (isNull && propertyNode.IsRequired)
-                    throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(propertyMap.Definition.Name.LocalName, 1));
-
-                if (propertyNode.IsRequired)
+                if (ReadPropertyValue(reader, propertyMap, templateNode, message, validateRequired, dtoObject) && validateRequired)
                     requiredCount++;
-
-                if (isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message))
-                    dtoObject.OnMemberDeserialized(reader.LocalName);
             }
 
-            if (requiredCount < templateNode.CountRequiredNodes(message.Version))
+            if (validateRequired && requiredCount < templateNode.CountRequiredNodes(message.Version))
                 throw XRoadException.MissingRequiredPropertyValues(GetMissingRequiredPropertyNames(dtoObject, templateNode, message));
 
             return dtoObject;
+        }
+
+        private static bool ReadPropertyValue(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired, T dtoObject)
+        {
+            var propertyNode = templateNode[propertyMap.Definition.TemplateName, message.Version];
+            if (propertyNode == null)
+            {
+                reader.ReadToEndElement();
+                return false;
+            }
+
+            var isNull = reader.IsNilElement();
+            if (validateRequired && isNull && propertyNode.IsRequired)
+                throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(propertyMap.Definition.Name.LocalName, 1));
+
+            if (isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message))
+                dtoObject.OnMemberDeserialized(reader.LocalName);
+
+            return propertyNode.IsRequired;
         }
 
         private IEnumerable<string> GetMissingRequiredPropertyNames(IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
@@ -92,13 +105,23 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions)
+        public override void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions, IEnumerable<string> availableFilters)
         {
             if (deserializationPropertyMaps.Count > 0)
                 return;
 
-            foreach (var propertyMap in propertyDefinitions.Select(x => new PropertyMap(serializerCache, x.Item1, x.Item2)))
+            var createdPropertyMaps = propertyDefinitions.Select(x => new PropertyMap(serializerCache, x.Item1, x.Item2, availableFilters)).ToList();
+            if (createdPropertyMaps.Count == 1 && createdPropertyMaps[0].Definition.MergeContent)
             {
+                mergePropertyMap = createdPropertyMaps[0];
+                return;
+            }
+
+            foreach (var propertyMap in createdPropertyMaps)
+            {
+                if (propertyMap.Definition.MergeContent)
+                    throw new Exception($"Property {propertyMap.Definition} of type {Definition} cannot be merged, because there are more than 1 properties present.");
+
                 deserializationPropertyMaps.Add(propertyMap.Definition.Name.LocalName, propertyMap);
                 serializationPropertyMaps.Add(propertyMap);
             }

@@ -135,7 +135,7 @@ namespace XRoadLib.Protocols
             return documentationElement;
         }
 
-        public void SetContractAssembly(Assembly assembly, params uint[] supportedVersions)
+        public void SetContractAssembly(Assembly assembly, IList<string> availableFilters, params uint[] supportedVersions)
         {
             if (ContractAssembly != null)
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) already has contract configured.");
@@ -145,13 +145,13 @@ namespace XRoadLib.Protocols
 
             if (supportedVersions == null || supportedVersions.Length == 0)
             {
-                serializerCache = new SerializerCache(this, schemaDefinitionReader, assembly);
+                serializerCache = new SerializerCache(this, schemaDefinitionReader, assembly) { AvailableFilters = availableFilters };
                 return;
             }
 
             versioningSerializerCaches = new Dictionary<uint, ISerializerCache>();
             foreach (var dtoVersion in supportedVersions)
-                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionReader, assembly, dtoVersion));
+                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionReader, assembly, dtoVersion) { AvailableFilters = availableFilters });
         }
 
         public ISerializerCache GetSerializerCache(uint? version = null)

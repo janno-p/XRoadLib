@@ -21,7 +21,9 @@ namespace XRoadLib.Serialization
 
         private readonly List<XRoadAttachment> attachments = new List<XRoadAttachment>();
 
-        public bool EnableFiltering { get; set; }
+        public bool EnableFiltering { get; private set; }
+        public string FilterName { get; private set; }
+
         public IXmlTemplate XmlTemplate { get; set; }
         public string MultipartContentType { get; set; }
         public Encoding ContentEncoding { get; set; }
@@ -141,6 +143,12 @@ namespace XRoadLib.Serialization
         public ISerializerCache GetSerializerCache()
         {
             return Protocol?.GetSerializerCache(Version);
+        }
+
+        public void EnableFilter(string filterName)
+        {
+            EnableFiltering = true;
+            FilterName = filterName;
         }
     }
 }

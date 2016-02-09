@@ -24,8 +24,12 @@ namespace XRoadLib.Serialization
         private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
         private readonly ConcurrentDictionary<Type, ITypeMap> runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
+        private ICollection<string> availableFilters;
+
         public XRoadProtocol Protocol { get; }
         public uint? Version { get; }
+
+        public IEnumerable<string> AvailableFilters { get { return availableFilters; } set { availableFilters = value != null ? new List<string>(value) : null; } }
 
         public SerializerCache(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
         {
@@ -84,11 +88,9 @@ namespace XRoadLib.Serialization
 
         private IServiceMap AddServiceMap(XName qualifiedName)
         {
-            var methodInfo = GetServiceInterface(contractAssembly, qualifiedName);
-            if (methodInfo == null)
+            var operationDefinition = GetOperationDefinition(contractAssembly, qualifiedName);
+            if (operationDefinition == null)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
-
-            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, qualifiedName, Version);
 
             var methodParameters = operationDefinition.MethodInfo.GetParameters();
             if (methodParameters.Length > 1)
@@ -97,17 +99,19 @@ namespace XRoadLib.Serialization
             var inputTypeMap = GetTypeMap(methodParameters.SingleOrDefault()?.ParameterType);
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
 
-            return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(operationDefinition, inputTypeMap, outputTuple.Item2, outputTuple.Item1));
+            return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(this, operationDefinition, inputTypeMap, outputTuple.Item2, outputTuple.Item1));
         }
 
-        private MethodInfo GetServiceInterface(Assembly typeAssembly, XName qualifiedName)
+        private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
         {
             return typeAssembly?.GetTypes()
                                 .Where(t => t.IsInterface)
                                 .SelectMany(t => t.GetMethods())
-                                .SingleOrDefault(x => x.GetServices()
-                                                       .Any(m => m.Name == qualifiedName.LocalName
-                                                                 && (!Version.HasValue || m.ExistsInVersion(Version.Value))));
+                                .Where(x => x.GetServices()
+                                             .Any(m => m.Name == qualifiedName.LocalName
+                                                       && (!Version.HasValue || m.ExistsInVersion(Version.Value))))
+                                .Select(mi => schemaDefinitionReader.GetOperationDefinition(mi, qualifiedName, Version))
+                                .SingleOrDefault(d => d.State != DefinitionState.Ignored);
         }
 
         public ITypeMap GetTypeMapFromXsiType(XmlReader reader)
@@ -154,7 +158,11 @@ namespace XRoadLib.Serialization
             var collectionDefinition = typeDefinition as CollectionDefinition;
             if (collectionDefinition != null)
             {
-                var itemTypeMap = GetTypeMap(typeDefinition.Type.GetElementType(), partialTypeMaps);
+                var elementType = typeDefinition.Type.GetElementType();
+                if (elementType.Assembly != contractAssembly)
+                    return null;
+
+                var itemTypeMap = GetTypeMap(elementType, partialTypeMaps);
                 collectionDefinition.ItemDefinition = itemTypeMap.Definition;
 
                 var typeMapType = typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.Definition.Type);
@@ -177,7 +185,7 @@ namespace XRoadLib.Serialization
 
             partialTypeMaps = partialTypeMaps ?? new Dictionary<Type, ITypeMap>();
             partialTypeMaps.Add(typeDefinition.Type, typeMap);
-            typeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps));
+            typeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), availableFilters);
             partialTypeMaps.Remove(typeDefinition.Type);
 
             return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
@@ -210,7 +218,7 @@ namespace XRoadLib.Serialization
                 { arrayTypeMap.Definition.Type, arrayTypeMap }
             };
 
-            typeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps));
+            typeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), availableFilters);
 
             return xmlTypeMaps.GetOrAdd(qualifiedName, Tuple.Create(typeMap, arrayTypeMap));
         }
@@ -269,7 +277,7 @@ namespace XRoadLib.Serialization
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
 
-            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
+            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
 
         private void CreateGetState(IXRoadLegacyProtocol legacyProtocol)
@@ -280,7 +288,7 @@ namespace XRoadLib.Serialization
             operationDefinition.State = DefinitionState.Hidden;
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
-            var serviceMap = new ServiceMap(operationDefinition, null, outputTuple.Item2, outputTuple.Item1);
+            var serviceMap = new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1);
 
             serviceMaps.GetOrAdd(operationDefinition.Name, serviceMap);
         }
@@ -293,7 +301,7 @@ namespace XRoadLib.Serialization
             operationDefinition.State = DefinitionState.Hidden;
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
-            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
+            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
 
         private void AddSystemType<T>(string typeName, Func<TypeDefinition, ITypeMap> createTypeMap)

@@ -21,7 +21,7 @@ namespace XRoadLib.Serialization.Mapping
             return optimizedContentTypeMap;
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
         {
             var contentID = reader.GetAttribute("href");
 

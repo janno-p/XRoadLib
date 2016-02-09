@@ -8,14 +8,16 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class ServiceMap : IServiceMap
     {
+        private readonly ISerializerCache serializerCache;
         private readonly ITypeMap inputTypeMap;
         private readonly ITypeMap outputTypeMap;
         private readonly ResponseValueDefinition responseValueDefinition;
 
         public OperationDefinition Definition { get; }
 
-        public ServiceMap(OperationDefinition operationDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap, ResponseValueDefinition responseValueDefinition)
+        public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap, ResponseValueDefinition responseValueDefinition)
         {
+            this.serializerCache = serializerCache;
             this.inputTypeMap = inputTypeMap;
             this.outputTypeMap = outputTypeMap;
             this.responseValueDefinition = responseValueDefinition;
@@ -30,7 +32,7 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
-            return inputTypeMap.Deserialize(reader, message.RequestNode, message);
+            return inputTypeMap.Deserialize(reader, message.RequestNode, message, true);
         }
 
         public object DeserializeResponse(XmlReader reader, XRoadMessage message)
@@ -82,7 +84,14 @@ namespace XRoadLib.Serialization.Mapping
                     if (responseValueDefinition.HasExplicitXRoadFault)
                         writer.WriteStartElement(responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName);
 
-                    outputTypeMap?.Serialize(writer, message.ResponseNode, value, outputTypeMap.Definition.Type, message);
+                    if (value == null)
+                        writer.WriteNilAttribute();
+                    else
+                    {
+                        var concreteTypeMap = outputTypeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : outputTypeMap;
+
+                        concreteTypeMap.Serialize(writer, message.ResponseNode, value, outputTypeMap.Definition.Type, message);
+                    }
 
                     if (responseValueDefinition.HasExplicitXRoadFault)
                         writer.WriteEndElement();

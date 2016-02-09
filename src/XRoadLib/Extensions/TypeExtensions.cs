@@ -67,12 +67,6 @@ namespace XRoadLib.Extensions
                                     .Select(x => Tuple.Create(x.LanguageCode, x.Value));
         }
 
-        public static XName GetElementName(this ICustomAttributeProvider attributeProvider)
-        {
-            var attribute = attributeProvider.GetSingleAttribute<XmlElementAttribute>();
-            return attribute == null ? null : XName.Get(attribute.ElementName, attribute.Namespace ?? "");
-        }
-
         public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)
         {
             return IsVersionInRange(
@@ -130,14 +124,14 @@ namespace XRoadLib.Extensions
             return type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
-        public static bool IsFilterableField(this Type runtimeType, string fieldName)
+        public static bool IsFilterableField(this Type runtimeType, string fieldName, string groupName)
         {
             return runtimeType.Assembly
                               .GetTypes()
                               .Where(t => typeof(IXRoadFilterMap).IsAssignableFrom(t))
                               .Where(t => t.BaseType != null && t.BaseType.IsGenericType && t.BaseType.GetGenericArguments().Single().IsAssignableFrom(runtimeType))
                               .Select(t => (IXRoadFilterMap)Activator.CreateInstance(t))
-                              .Where(m => m.GroupName.Equals("AvalikudAndmed"))
+                              .Where(m => m.GroupName.Equals(groupName))
                               .Any(m => m.EnabledProperties.Contains(fieldName));
         }
 

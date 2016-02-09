@@ -11,7 +11,7 @@ namespace XRoadLib.Serialization.Mapping
             : base(typeDefinition)
         { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
         {
             throw XRoadException.TypeAttributeRequired(Definition.Name.ToString());
         }

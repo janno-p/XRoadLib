@@ -5,5 +5,5 @@ let XRoadProtocol31 = XRoadLib.Tests.Contract.Configuration.CustomXRoad31Protoco
 
 let XRoadProtocol40 =
     let protocol = XRoadLib.Protocols.XRoad40Protocol("http://test-producer.x-road.eu/")
-    protocol.SetContractAssembly(typeof<XRoadLib.Tests.Contract.Class1>.Assembly, 1u, 2u)
+    protocol.SetContractAssembly(typeof<XRoadLib.Tests.Contract.Class1>.Assembly, null, 1u, 2u)
     protocol

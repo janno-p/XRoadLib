@@ -1,4 +1,6 @@
-﻿using System.Xml;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -7,7 +9,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class PropertyMap : IPropertyMap
     {
-        private readonly bool isFilterable;
+        private readonly ISet<string> filters = new HashSet<string>();
         private readonly ISerializerCache serializerCache;
         private readonly ITypeMap typeMap;
         private readonly GetValueMethod getValueMethod;
@@ -15,7 +17,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public PropertyDefinition Definition { get; }
 
-        public PropertyMap(ISerializerCache serializerCache, PropertyDefinition propertyDefinition, ITypeMap typeMap)
+        public PropertyMap(ISerializerCache serializerCache, PropertyDefinition propertyDefinition, ITypeMap typeMap, IEnumerable<string> availableFilters)
         {
             this.serializerCache = serializerCache;
 
@@ -26,12 +28,17 @@ namespace XRoadLib.Serialization.Mapping
 
             getValueMethod = Definition.PropertyInfo.CreateGetValueMethod();
             setValueMethod = Definition.PropertyInfo.CreateSetValueMethod();
-            isFilterable = Definition.DeclaringTypeDefinition.Type.IsFilterableField(Definition.Name.LocalName);
+
+            if (availableFilters == null)
+                return;
+
+            foreach (var availableFilter in availableFilters.Where(f => Definition.DeclaringTypeDefinition.Type.IsFilterableField(Definition.RuntimeName, f)))
+                filters.Add(availableFilter);
         }
 
         public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
         {
-            if (message.EnableFiltering && !isFilterable)
+            if (message.EnableFiltering && !filters.Contains(message.FilterName))
             {
                 reader.ReadToEndElement();
                 return false;
@@ -54,10 +61,10 @@ namespace XRoadLib.Serialization.Mapping
 
         public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message)
         {
-            if (message.EnableFiltering && !isFilterable)
+            if (message.EnableFiltering && !filters.Contains(message.FilterName))
                 return;
 
-            var propertyValue = getValueMethod(value);
+            var propertyValue = value != null ? getValueMethod(value) : null;
 
             writer.WriteStartElement(Definition.Name.LocalName);
 
