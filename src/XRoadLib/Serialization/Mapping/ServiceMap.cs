@@ -42,7 +42,13 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, responseName))
                 throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` was not found in SOAP message.");
 
-            return outputTypeMap.Deserialize(reader, message.ResponseNode, message);
+            string typeAttribute;
+            if (outputTypeMap.Definition.IsAnonymous && !(outputTypeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
+                throw XRoadException.InvalidQuery("Expected anonymous type, but `{0}` was given.", typeAttribute);
+
+            var concreteTypeMap = (outputTypeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? outputTypeMap;
+
+            return concreteTypeMap.Deserialize(reader, message.ResponseNode, message);
         }
 
         public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message)
