@@ -42,6 +42,12 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, responseName))
                 throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` was not found in SOAP message.");
 
+            if (reader.IsNilElement())
+            {
+                reader.ReadToEndElement();
+                return null;
+            }
+
             string typeAttribute;
             if (outputTypeMap.Definition.IsAnonymous && !(outputTypeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
                 throw XRoadException.InvalidQuery("Expected anonymous type, but `{0}` was given.", typeAttribute);
