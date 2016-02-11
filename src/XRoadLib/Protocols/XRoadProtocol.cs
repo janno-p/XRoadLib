@@ -125,8 +125,11 @@ namespace XRoadLib.Protocols
             return titleElement;
         }
 
-        internal XmlElement CreateDocumentationElement(IEnumerable<Tuple<string, string>> titles)
+        internal XmlElement CreateDocumentationElement(IList<Tuple<string, string>> titles)
         {
+            if (titles == null || !titles.Any())
+                return null;
+
             var documentationElement = document.CreateElement(PrefixConstants.WSDL, "documentation", NamespaceConstants.WSDL);
 
             foreach (var title in titles)
