@@ -36,6 +36,8 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.IsEmptyElement)
                     return MoveNextAndReturn(reader, tempAttachment.ContentStream);
 
+                reader.Read();
+
                 const int bufferSize = 1000;
 
                 int bytesRead;

@@ -62,7 +62,8 @@ namespace XRoadLib.Serialization.Mapping
             var propertyNode = templateNode[propertyMap.Definition.TemplateName, message.Version];
             if (propertyNode == null)
             {
-                reader.ReadToEndElement();
+                if (reader.IsEmptyElement) reader.Read();
+                else reader.ReadToEndElement();
                 return false;
             }
 
@@ -70,8 +71,8 @@ namespace XRoadLib.Serialization.Mapping
             if (validateRequired && isNull && propertyNode.IsRequired)
                 throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(propertyMap.Definition.Name.LocalName, 1));
 
-            if (isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message))
-                dtoObject.OnMemberDeserialized(reader.LocalName);
+            if ((isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message)) && !string.IsNullOrWhiteSpace(propertyNode.Name))
+                dtoObject.OnMemberDeserialized(propertyNode.Name);
 
             if (isNull && reader.IsEmptyElement)
                 reader.Read();
