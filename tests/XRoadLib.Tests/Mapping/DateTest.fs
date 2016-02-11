@@ -27,7 +27,7 @@ module MappingTestHelpers =
 
         use message = new XRoadMessage(Globals.XRoadProtocol20, XRoadHeader20())
 
-        typeMap.Deserialize(reader, null, message)
+        typeMap.Deserialize(reader, null, Globals.TestDefinition(typeMap.Definition.Type), message)
 
 [<TestFixture>]
 module DateTest =

@@ -9,6 +9,7 @@ open System.Xml
 open XRoadLib
 open XRoadLib.Extensions
 open XRoadLib.Protocols.Headers
+open XRoadLib.Schema
 open XRoadLib.Serialization
 open XRoadLib.Serialization.Mapping
 open XRoadLib.Serialization.Template
@@ -434,7 +435,7 @@ module XRoadDeserializerTest =
         reader.MoveToElement(0) |> ignore
         let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>)
         use message = new XRoadMessage()
-        let entity = typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, message)
+        let entity = typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.TestDefinition(typeof<Wsdl.ContainerType>), message)
         entity |> should not' (be Null)
         entity |> should be instanceOfType<Wsdl.ContainerType>
         let container = unbox<Wsdl.ContainerType> entity
@@ -462,5 +463,5 @@ module XRoadDeserializerTest =
         reader.MoveToElement(0) |> ignore
         let typeMap = serializerCache.GetTypeMap(typeof<Wsdl.ContainerType>)
         use message = new XRoadMessage()
-        TestDelegate(fun _ -> typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, message) |> ignore)
+        TestDelegate(fun _ -> typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.TestDefinition(typeof<Wsdl.ContainerType>), message) |> ignore)
         |> should (throwWithMessage "Expected anonymous type, but `Test` was given.") typeof<XRoadException>

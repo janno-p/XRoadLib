@@ -13,12 +13,14 @@ namespace XRoadLib.Schema
 
         public bool IsOptional { get; set; }
 
-        public bool MergeContent { get; set; }
-
         public bool UseXop { get; set; }
 
         public Type TypeMapType { get; set; }
 
         public Type RuntimeType { get; set; }
+
+        bool IContentDefinition.MergeContent => false;
+
+        ArrayItemDefinition IContentDefinition.ArrayItemDefinition { get { throw new NotImplementedException(); } }
     }
 }

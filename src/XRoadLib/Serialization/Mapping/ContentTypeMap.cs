@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Xml;
+using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class ContentTypeMap : TypeMap<XRoadAttachment>, IContentTypeMap
+    public class ContentTypeMap : TypeMap, IContentTypeMap
     {
         private readonly ITypeMap optimizedContentTypeMap;
 
@@ -21,7 +21,7 @@ namespace XRoadLib.Serialization.Mapping
             return optimizedContentTypeMap;
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
         {
             var contentID = reader.GetAttribute("href");
 
@@ -33,8 +33,8 @@ namespace XRoadLib.Serialization.Mapping
                 var tempAttachment = new XRoadAttachment(new MemoryStream()) { IsMultipartContent = false };
                 message.AllAttachments.Add(tempAttachment);
 
-                if (reader.IsEmptyElement || !reader.Read())
-                    return tempAttachment.ContentStream;
+                if (reader.IsEmptyElement)
+                    return MoveNextAndReturn(reader, tempAttachment.ContentStream);
 
                 const int bufferSize = 1000;
 
@@ -51,15 +51,21 @@ namespace XRoadLib.Serialization.Mapping
             if (attachment == null)
                 throw XRoadException.PäringusPuudubAttachment(contentID);
 
+            if (reader.IsEmptyElement)
+                return MoveNextAndReturn(reader, attachment.ContentStream);
+
+            reader.ReadToEndElement();
+
             return attachment.ContentStream;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, XRoadMessage message)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
         {
             var attachment = new XRoadAttachment((Stream)value);
             message.AllAttachments.Add(attachment);
 
-            message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
+            if (!(definition is RequestValueDefinition))
+                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             if (message.BinaryMode == BinaryMode.Attachment)
             {

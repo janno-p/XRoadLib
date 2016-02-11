@@ -96,10 +96,16 @@ namespace XRoadLib.Serialization
             if (methodParameters.Length > 1)
                 throw new Exception($"Invalid X-Road operation contract `{operationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
 
-            var inputTypeMap = GetTypeMap(methodParameters.SingleOrDefault()?.ParameterType);
+            var parameterInfo = methodParameters.SingleOrDefault();
+            var inputTypeMap = GetTypeMap(parameterInfo?.ParameterType);
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
 
-            return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(this, operationDefinition, inputTypeMap, outputTuple.Item2, outputTuple.Item1));
+            var serviceMap = new ServiceMap(this, operationDefinition, inputTypeMap, outputTuple.Item2, outputTuple.Item1)
+            {
+                RequestValueDefinition = parameterInfo != null ? new RequestValueDefinition(parameterInfo, operationDefinition) : null
+            };
+
+            return serviceMaps.GetOrAdd(qualifiedName, serviceMap);
         }
 
         private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
@@ -173,22 +179,28 @@ namespace XRoadLib.Serialization
             if (typeDefinition.Type.Assembly != contractAssembly)
                 return null;
 
-            if (!typeDefinition.Type.IsAbstract && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
+            if (!typeDefinition.Type.IsEnum && !typeDefinition.Type.IsAbstract && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
                 throw XRoadException.NoDefaultConstructorForType(typeDefinition.Type.Name);
 
-            if (typeDefinition.Type.IsAbstract)
-                typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap<>).MakeGenericType(typeDefinition.Type), typeDefinition);
+            if (typeDefinition.Type.IsEnum)
+                typeMap = (ITypeMap)Activator.CreateInstance(typeof(EnumTypeMap), typeDefinition);
+            else if (typeDefinition.Type.IsAbstract)
+                typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap), typeDefinition);
             else if (typeDefinition.HasStrictContentOrder)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
             else
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
 
+            var compositeTypeMap = typeMap as ICompositeTypeMap;
+            if (compositeTypeMap == null)
+                return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
+
             partialTypeMaps = partialTypeMaps ?? new Dictionary<Type, ITypeMap>();
-            partialTypeMaps.Add(typeDefinition.Type, typeMap);
-            typeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), availableFilters);
+            partialTypeMaps.Add(typeDefinition.Type, compositeTypeMap);
+            compositeTypeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), availableFilters);
             partialTypeMaps.Remove(typeDefinition.Type);
 
-            return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
+            return runtimeTypeMaps.GetOrAdd(runtimeType, compositeTypeMap);
         }
 
         private Tuple<ITypeMap, ITypeMap> AddTypeMap(XName qualifiedName)
@@ -199,28 +211,35 @@ namespace XRoadLib.Serialization
 
             var typeDefinition = schemaDefinitionReader.GetTypeDefinition(runtimeType);
 
-            if (!typeDefinition.Type.IsAbstract && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
+            if (!typeDefinition.Type.IsEnum && !typeDefinition.Type.IsAbstract && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
                 throw XRoadException.NoDefaultConstructorForType(typeDefinition.Name);
 
             ITypeMap typeMap;
-            if (typeDefinition.Type.IsAbstract)
-                typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap<>).MakeGenericType(typeDefinition.Type), typeDefinition);
+            if (typeDefinition.Type.IsEnum)
+                typeMap = (ITypeMap)Activator.CreateInstance(typeof(EnumTypeMap), typeDefinition);
+            else if (typeDefinition.Type.IsAbstract)
+                typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap), typeDefinition);
             else if (typeDefinition.HasStrictContentOrder)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
             else
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
 
             var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.Type), this, schemaDefinitionReader.GetCollectionDefinition(typeDefinition), typeMap);
+            var typeMapTuple = Tuple.Create(typeMap, arrayTypeMap);
+
+            var compositeTypeMap = typeMap as ICompositeTypeMap;
+            if (compositeTypeMap == null)
+                return xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
 
             var partialTypeMaps = new Dictionary<Type, ITypeMap>
             {
-                { typeMap.Definition.Type, typeMap },
+                { compositeTypeMap.Definition.Type, compositeTypeMap },
                 { arrayTypeMap.Definition.Type, arrayTypeMap }
             };
 
-            typeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), availableFilters);
+            compositeTypeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), availableFilters);
 
-            return xmlTypeMaps.GetOrAdd(qualifiedName, Tuple.Create(typeMap, arrayTypeMap));
+            return xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
         }
 
         private Type GetRuntimeType(XName qualifiedName)
@@ -288,9 +307,8 @@ namespace XRoadLib.Serialization
             operationDefinition.State = DefinitionState.Hidden;
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
-            var serviceMap = new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1);
 
-            serviceMaps.GetOrAdd(operationDefinition.Name, serviceMap);
+            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
 
         private void CreateListMethods(IXRoadLegacyProtocol legacyProtocol)
@@ -301,6 +319,7 @@ namespace XRoadLib.Serialization
             operationDefinition.State = DefinitionState.Hidden;
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
+
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
 
@@ -338,11 +357,9 @@ namespace XRoadLib.Serialization
 
         private ITypeMap GetContentDefinitionTypeMap(IContentDefinition contentDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
-            var runtimeType = contentDefinition.RuntimeType;
-
             return contentDefinition.TypeName == null
-                ? GetTypeMap(runtimeType, partialTypeMaps)
-                : GetTypeMap(contentDefinition.TypeName, runtimeType.IsArray);
+                ? GetTypeMap(contentDefinition.RuntimeType, partialTypeMaps)
+                : GetTypeMap(contentDefinition.TypeName, contentDefinition.RuntimeType.IsArray);
         }
 
         private ITypeMap GetCustomTypeMap(Type typeMapType)

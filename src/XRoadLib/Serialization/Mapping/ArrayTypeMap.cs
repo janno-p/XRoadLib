@@ -9,7 +9,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public interface IArrayTypeMap { }
 
-    public class ArrayTypeMap<T> : TypeMap<T[]>, IArrayTypeMap
+    public class ArrayTypeMap<T> : TypeMap, IArrayTypeMap
     {
         private readonly ISerializerCache serializerCache;
 
@@ -22,43 +22,70 @@ namespace XRoadLib.Serialization.Mapping
             this.elementTypeMap = elementTypeMap;
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return new T[0];
+                return MoveNextAndReturn(reader, new T[0]);
 
             var items = new List<T>();
 
-            var depth = reader.Depth;
-            while (reader.Read() && depth < reader.Depth)
+            var parentDepth = definition.MergeContent ? reader.Depth - 1 : reader.Depth;
+            var itemDepth = parentDepth + 1;
+            var itemName = definition.ArrayItemDefinition.Name.LocalName;
+
+            if (!definition.MergeContent)
+                reader.Read();
+
+            while (parentDepth < reader.Depth)
             {
-                if (reader.NodeType != XmlNodeType.Element || reader.IsNilElement())
+                if (reader.NodeType != XmlNodeType.Element || reader.Depth != itemDepth)
+                {
+                    reader.Read();
                     continue;
+                }
+
+                if (reader.LocalName != itemName)
+                {
+                    if (definition.MergeContent)
+                        break;
+                    throw new Exception($"Invalid array item name {reader.LocalName}.");
+                }
+
+                if (reader.IsNilElement())
+                {
+                    items.Add(default(T));
+                    reader.Read();
+                    continue;
+                }
 
                 var typeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? elementTypeMap;
 
-                var value = typeMap.Deserialize(reader, templateNode, message);
-                if (value != null)
-                    items.Add((T)value);
+                var value = typeMap.Deserialize(reader, templateNode, definition.ArrayItemDefinition, message);
+
+                items.Add(value == null ? default(T) : (T)value);
             }
 
             return items.ToArray();
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, XRoadMessage message)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
         {
             var valueArray = (Array)value;
 
-            message.Protocol.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
+            if (!(definition is RequestValueDefinition))
+                message.Protocol.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
 
-            foreach (var element in valueArray)
+            var arrayItemDefinition = definition.ArrayItemDefinition;
+            var itemName = arrayItemDefinition.Name.LocalName;
+
+            foreach (var valueItem in valueArray)
             {
-                writer.WriteStartElement("item");
+                writer.WriteStartElement(itemName);
 
-                if (element != null)
+                if (valueItem != null)
                 {
-                    var typeMap = serializerCache.GetTypeMap(element.GetType());
-                    typeMap.Serialize(writer, templateNode, element, elementTypeMap.Definition.Type, message);
+                    var typeMap = serializerCache.GetTypeMap(valueItem.GetType());
+                    typeMap.Serialize(writer, templateNode, valueItem, arrayItemDefinition, message);
                 }
                 else writer.WriteNilAttribute();
 

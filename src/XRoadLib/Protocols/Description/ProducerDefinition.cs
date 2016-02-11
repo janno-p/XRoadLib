@@ -279,14 +279,16 @@ namespace XRoadLib.Protocols.Description
             additionalTypeDefinitions.Add(type, qualifiedName);
 
             var schemaType = new XmlSchemaComplexType { Name = qualifiedName.Name };
+            schemaTypes.Add(schemaType);
+
+            if (schemaElement == null)
+                return qualifiedName;
 
             var elementType = (XmlSchemaComplexType)schemaElement.SchemaType;
             if (elementType.Particle != null)
                 schemaType.Particle = elementType.Particle;
             if (elementType.ContentModel != null)
                 schemaType.ContentModel = elementType.ContentModel;
-
-            schemaTypes.Add(schemaType);
 
             return qualifiedName;
         }
@@ -367,12 +369,12 @@ namespace XRoadLib.Protocols.Description
 
             foreach (var propertyDefinition in propertyDefinitions)
             {
-                if (propertyDefinition.MergeContent && propertyDefinitions.Count > 1)
+                if (propertyDefinition.MergeContent && propertyDefinitions.Count > 1 && propertyDefinition.ArrayItemDefinition == null)
                     throw new Exception($"Property {propertyDefinition} of type {typeDefinition} cannot be merged, because there are more than 1 properties present.");
 
                 var contentElement = CreateContentElement(propertyDefinition, targetNamespace);
 
-                if (!propertyDefinition.MergeContent)
+                if (!propertyDefinition.MergeContent || propertyDefinition.ArrayItemDefinition != null)
                 {
                     contentParticle.Items.Add(contentElement);
                     continue;
@@ -509,7 +511,7 @@ namespace XRoadLib.Protocols.Description
                 Annotation = CreateSchemaAnnotation(propertyDefinition)
             };
 
-            if (propertyDefinition.ArrayItemDefinition?.MergeContent ?? false)
+            if (propertyDefinition.ArrayItemDefinition != null && propertyDefinition.MergeContent)
             {
                 schemaElement.Name = propertyDefinition.ArrayItemDefinition.Name.LocalName;
 

@@ -16,6 +16,10 @@ open XRoadLib.Tests.Contract
 
 [<TestFixture>]
 module XRoadSerializerTest =
+    type X<'T>() =
+        member __.Method(t: 'X) =
+            ()
+
     let serializeWithContext<'T> elementName (value: 'T) dtoVersion addEnvelope isMultipart f =
         use message = new XRoadMessage(Globals.XRoadProtocol20, XRoadHeader20(), IsMultipartContainer=true, BinaryMode=BinaryMode.Attachment)
 
@@ -31,8 +35,13 @@ module XRoadSerializerTest =
 
         writer.WriteStartElement(elementName)
 
+        let propType = typedefof<X<_>>.MakeGenericType(typeof<'T>)
+        let paramInfo = propType.GetMethod("Method").GetParameters().[0]
+
+        let arrayItemDefinition = if typeof<'T>.IsArray then ArrayItemDefinition(Name = System.Xml.Linq.XName.Get("item")) else null
+
         let typeMap = Globals.XRoadProtocol20.GetSerializerCache(Nullable(dtoVersion)).GetTypeMap(typeof<'T>)
-        typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, typeof<'T>, message)
+        typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, RequestValueDefinition(paramInfo, null, ArrayItemDefinition = arrayItemDefinition), message)
 
         writer.WriteEndElement()
 
@@ -68,95 +77,95 @@ module XRoadSerializerTest =
     let ``can serialize array content in envelope`` () =
         let data = [| 5; 4; 3 |]
         serializeWithContext "keha" data 1u true false (fun msg xml ->
-            xml |> should equal """<keha xsi:type="SOAP-ENC:Array" SOAP-ENC:arrayType="xsd:int[3]"><item xsi:type="xsd:int">5</item><item xsi:type="xsd:int">4</item><item xsi:type="xsd:int">3</item></keha>"""
+            xml |> should equal """<keha><item xsi:type="xsd:int">5</item><item xsi:type="xsd:int">4</item><item xsi:type="xsd:int">3</item></keha>"""
             msg.AllAttachments.Count |> should equal 0)
 
     [<Test>]
     let ``can serialize array content`` () =
         [| 5; 4; 3 |]
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:Array" d1p2:arrayType="d1p3:int[3]" xmlns:d1p3="http://www.w3.org/2001/XMLSchema" xmlns:d1p2="http://schemas.xmlsoap.org/soap/encoding/" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><item d1p1:type="d1p3:int">5</item><item d1p1:type="d1p3:int">4</item><item d1p1:type="d1p3:int">3</item></keha>"""
+        |> shouldSerializeTo """<keha><item d2p1:type="d2p2:int" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">5</item><item d2p1:type="d2p2:int" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">4</item><item d2p1:type="d2p2:int" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">3</item></keha>"""
 
     [<Test>]
     let ``can serialize boolean 'false' value`` () =
         false
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:boolean" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">false</keha>"""
+        |> shouldSerializeTo """<keha>false</keha>"""
 
     [<Test>]
     let ``can serialize boolean 'true' value`` () =
         true
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:boolean" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">true</keha>"""
+        |> shouldSerializeTo """<keha>true</keha>"""
 
     [<Test>]
     let ``can serialize dateTime value`` () =
         DateTime(2000, 10, 12, 4, 14, 55, 989)
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:dateTime" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">2000-10-12T04:14:55.989</keha>"""
+        |> shouldSerializeTo """<keha>2000-10-12T04:14:55.989</keha>"""
 
     [<Test>]
     let ``can serialize decimal value`` () =
         0.4M
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:decimal" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">0.4</keha>"""
+        |> shouldSerializeTo """<keha>0.4</keha>"""
 
     [<Test>]
     let ``can serialize float value`` () =
         0.1f
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:float" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">0.1</keha>"""
+        |> shouldSerializeTo """<keha>0.1</keha>"""
 
     [<Test>]
     let ``can serialize int value`` () =
         44345
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:int" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">44345</keha>"""
+        |> shouldSerializeTo """<keha>44345</keha>"""
 
     [<Test>]
     let ``can serialize short value`` () =
         445s
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:short" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">445</keha>"""
+        |> shouldSerializeTo """<keha>445</keha>"""
 
     [<Test>]
     let ``can serialize long value`` () =
         44345L
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:long" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">44345</keha>"""
+        |> shouldSerializeTo """<keha>44345</keha>"""
 
     [<Test>]
     let ``can serialize long array value`` () =
         [| 5L; 4L; 3L; |]
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:Array" d1p2:arrayType="d1p3:long[3]" xmlns:d1p3="http://www.w3.org/2001/XMLSchema" xmlns:d1p2="http://schemas.xmlsoap.org/soap/encoding/" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><item d1p1:type="d1p3:long">5</item><item d1p1:type="d1p3:long">4</item><item d1p1:type="d1p3:long">3</item></keha>"""
+        |> shouldSerializeTo """<keha><item d2p1:type="d2p2:long" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">5</item><item d2p1:type="d2p2:long" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">4</item><item d2p1:type="d2p2:long" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">3</item></keha>"""
 
     [<Test>]
     let ``can serialize short dateTime value`` () =
         DateTime(2000, 10, 12)
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:dateTime" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">2000-10-12T00:00:00</keha>"""
+        |> shouldSerializeTo """<keha>2000-10-12T00:00:00</keha>"""
 
     [<Test>]
     let ``can serialize string value`` () =
         "someString"
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:string" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance">someString</keha>"""
+        |> shouldSerializeTo """<keha>someString</keha>"""
 
     [<Test>]
     let ``can serialize string value with special characters`` () =
         "&<>"
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:string" xmlns:d1p2="http://www.w3.org/2001/XMLSchema" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><![CDATA[&<>]]></keha>"""
+        |> shouldSerializeTo """<keha><![CDATA[&<>]]></keha>"""
 
     [<Test>]
     let ``can serialize struct value`` () =
         TestDto(Nimi = "Mauno", Kood = "1235", Loodud = DateTime(2000, 12, 12, 12, 12, 12))
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:TestDto" xmlns:d1p2="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><Nimi d1p1:type="d2p1:string" xmlns:d2p1="http://www.w3.org/2001/XMLSchema">Mauno</Nimi><Kood d1p1:type="d2p1:string" xmlns:d2p1="http://www.w3.org/2001/XMLSchema">1235</Kood><Loodud d1p1:type="d2p1:dateTime" xmlns:d2p1="http://www.w3.org/2001/XMLSchema">2000-12-12T12:12:12</Loodud></keha>"""
+        |> shouldSerializeTo """<keha><Nimi d2p1:type="d2p2:string" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">Mauno</Nimi><Kood d2p1:type="d2p2:string" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">1235</Kood><Loodud d2p1:type="d2p2:dateTime" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">2000-12-12T12:12:12</Loodud></keha>"""
 
     [<Test>]
     let ``can serialize binary value`` () =
         use stream = new MemoryStream()
         XRoadBinaryTestDto(Sisu = stream)
-        |> shouldSerializeMultipartTo 1 """<keha d1p1:type="d1p2:XRoadBinaryTestDto" xmlns:d1p2="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><Sisu d1p1:type="d2p1:base64Binary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p1="http://www.w3.org/2001/XMLSchema" /></keha>"""
+        |> shouldSerializeMultipartTo 1 """<keha><Sisu d2p1:type="d2p2:base64Binary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" /></keha>"""
 
     [<Test>]
     let ``can serialize hex binary value`` () =
         use stream = new MemoryStream()
         XRoadHexTestDto(Sisu = stream)
-        |> shouldSerializeMultipartTo 1 """<keha d1p1:type="d1p2:XRoadHexTestDto" xmlns:d1p2="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><Sisu d1p1:type="d2p1:hexBinary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p1="http://www.w3.org/2001/XMLSchema" /></keha>"""
+        |> shouldSerializeMultipartTo 1 """<keha><Sisu d2p1:type="d2p2:hexBinary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" /></keha>"""
 
     [<Test>]
     let ``can serialize date type with custom name`` () =
         DateTestDto(Synniaeg = Nullable(DateTime(2012, 11, 26, 16, 29, 13)))
-        |> shouldSerializeTo """<keha d1p1:type="d1p2:DateTestDto" xmlns:d1p2="http://producers.test-producer.xtee.riik.ee/producer/test-producer" xmlns:d1p1="http://www.w3.org/2001/XMLSchema-instance"><ttIsik.dSyn d1p1:type="d2p1:date" xmlns:d2p1="http://www.w3.org/2001/XMLSchema">2012-11-26</ttIsik.dSyn></keha>"""
+        |> shouldSerializeTo """<keha><ttIsik.dSyn d2p1:type="d2p2:date" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance">2012-11-26</ttIsik.dSyn></keha>"""
 
     [<Test>]
     let ``serialize default DTO version`` () =
@@ -168,15 +177,15 @@ module XRoadSerializerTest =
                            StaticProperty = Nullable(6L),
                            SingleProperty = Nullable(7L),
                            MultipleProperty = [| 8L; 9L |])
-        |> shouldSerializeTo ([ @"<keha d1p1:type=""d1p2:WsdlChangesTestDto"" xmlns:d1p2=""http://producers.test-producer.xtee.riik.ee/producer/test-producer"" xmlns:d1p1=""http://www.w3.org/2001/XMLSchema-instance"">"
-                                @"<AddedProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">1</AddedProperty>"
-                                @"<ChangedTypeProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">2</ChangedTypeProperty>"
-                                @"<MultipleProperty d1p1:type=""d2p1:Array"" d2p1:arrayType=""d2p2:long[2]"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://schemas.xmlsoap.org/soap/encoding/"">"
-                                @"<item d1p1:type=""d2p2:long"">8</item>"
-                                @"<item d1p1:type=""d2p2:long"">9</item>"
+        |> shouldSerializeTo ([ @"<keha>"
+                                @"<AddedProperty d2p1:type=""d2p2:long"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">1</AddedProperty>"
+                                @"<ChangedTypeProperty d2p1:type=""d2p2:long"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">2</ChangedTypeProperty>"
+                                @"<MultipleProperty d2p1:type=""d2p2:Array"" d2p2:arrayType=""d2p3:long[2]"" xmlns:d2p3=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p2=""http://schemas.xmlsoap.org/soap/encoding/"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">"
+                                @"<item d2p1:type=""d2p3:long"">8</item>"
+                                @"<item d2p1:type=""d2p3:long"">9</item>"
                                 @"</MultipleProperty>"
-                                @"<RenamedToProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">4</RenamedToProperty>"
-                                @"<StaticProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">6</StaticProperty>"
+                                @"<RenamedToProperty d2p1:type=""d2p2:long"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">4</RenamedToProperty>"
+                                @"<StaticProperty d2p1:type=""d2p2:long"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">6</StaticProperty>"
                                 @"</keha>" ] |> String.concat "")
 
     [<Test>]
@@ -189,23 +198,23 @@ module XRoadSerializerTest =
                            StaticProperty = Nullable(6L),
                            SingleProperty = Nullable(7L),
                            MultipleProperty = [| 8L; 9L |])
-        |> shouldSerializeToV1 ([ @"<keha d1p1:type=""d1p2:WsdlChangesTestDto"" xmlns:d1p2=""http://producers.test-producer.xtee.riik.ee/producer/test-producer"" xmlns:d1p1=""http://www.w3.org/2001/XMLSchema-instance"">"
-                                  @"<ChangedTypeProperty d1p1:type=""d2p1:string"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">2</ChangedTypeProperty>"
-                                  @"<RemovedProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">3</RemovedProperty>"
-                                  @"<RenamedFromProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">4</RenamedFromProperty>"
-                                  @"<SingleProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">8</SingleProperty>"
-                                  @"<StaticProperty d1p1:type=""d2p1:long"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">6</StaticProperty>"
+        |> shouldSerializeToV1 ([ @"<keha>"
+                                  @"<ChangedTypeProperty d2p1:type=""d2p2:string"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">2</ChangedTypeProperty>"
+                                  @"<RemovedProperty d2p1:type=""d2p2:long"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">3</RemovedProperty>"
+                                  @"<RenamedFromProperty d2p1:type=""d2p2:long"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">4</RenamedFromProperty>"
+                                  @"<SingleProperty d2p1:type=""d2p2:long"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">8</SingleProperty>"
+                                  @"<StaticProperty d2p1:type=""d2p2:long"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">6</StaticProperty>"
                                   @"</keha>" ] |> String.concat "")
 
     let [<Test>] ``can serialize anonymous type`` () =
         let entity = Wsdl.ContainerType()
         entity.KnownProperty <- "value"
         entity.AnonymousProperty <- Wsdl.AnonymousType(Property1 = "1", Property2 = "2", Property3 = "3")
-        entity |> shouldSerializeTo ([ @"<keha d1p1:type=""d1p2:ContainerType"" xmlns:d1p2=""http://producers.test-producer.xtee.riik.ee/producer/test-producer"" xmlns:d1p1=""http://www.w3.org/2001/XMLSchema-instance"">"
+        entity |> shouldSerializeTo ([ @"<keha>"
                                        @"<AnonymousProperty>"
-                                       @"<Property1 d1p1:type=""d3p1:string"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema"">1</Property1>"
-                                       @"<Property2 d1p1:type=""d3p1:string"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema"">2</Property2>"
-                                       @"<Property3 d1p1:type=""d3p1:string"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema"">3</Property3>"
+                                       @"<Property1 d3p1:type=""d3p2:string"" xmlns:d3p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema-instance"">1</Property1>"
+                                       @"<Property2 d3p1:type=""d3p2:string"" xmlns:d3p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema-instance"">2</Property2>"
+                                       @"<Property3 d3p1:type=""d3p2:string"" xmlns:d3p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d3p1=""http://www.w3.org/2001/XMLSchema-instance"">3</Property3>"
                                        @"</AnonymousProperty>"
-                                       @"<KnownProperty d1p1:type=""d2p1:string"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema"">value</KnownProperty>"
+                                       @"<KnownProperty d2p1:type=""d2p2:string"" xmlns:d2p2=""http://www.w3.org/2001/XMLSchema"" xmlns:d2p1=""http://www.w3.org/2001/XMLSchema-instance"">value</KnownProperty>"
                                        @"</keha>" ] |> String.concat "")

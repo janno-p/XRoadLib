@@ -87,12 +87,13 @@ namespace XRoadLib.Schema
             if (!RuntimeType.IsArray)
                 return;
 
+            MergeContent = MergeContent || elementAttribute != null;
+
             ArrayItemDefinition = new ArrayItemDefinition
             {
                 Name = itemQualifiedName,
                 IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
                 IsOptional = elementAttribute != null && IsOptional,
-                MergeContent = elementAttribute != null,
                 UseXop = typeof(Stream).IsAssignableFrom(RuntimeType.GetElementType()),
                 RuntimeType = RuntimeType.GetElementType(),
             };

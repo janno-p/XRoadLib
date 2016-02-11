@@ -47,6 +47,7 @@
     <Compile Include="Configuration\CustomXRoad31Protocol.cs" />
     <Compile Include="DateTestDto.cs" />
     <Compile Include="InheritsParamType1.cs" />
+    <Compile Include="Mapping\MergeArrayContent.cs" />
     <Compile Include="MimeContent.cs" />
     <Compile Include="ParamType1.cs" />
     <Compile Include="ParamType2.cs" />

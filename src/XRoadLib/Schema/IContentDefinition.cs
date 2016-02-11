@@ -12,5 +12,7 @@ namespace XRoadLib.Schema
         Type RuntimeType { get; }
 
         XName TypeName { get; }
+
+        ArrayItemDefinition ArrayItemDefinition { get; }
     }
 }

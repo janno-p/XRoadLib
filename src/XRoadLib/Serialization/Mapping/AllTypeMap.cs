@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using XRoadLib.Extensions;
@@ -8,41 +7,43 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class AllTypeMap<T> : TypeMap<T> where T : class, IXRoadSerializable, new()
+    public class AllTypeMap<T> : CompositeTypeMap<T> where T : class, IXRoadSerializable, new()
     {
-        private readonly ISerializerCache serializerCache;
         private readonly IDictionary<string, IPropertyMap> deserializationPropertyMaps = new Dictionary<string, IPropertyMap>();
-        private readonly IList<IPropertyMap> serializationPropertyMaps = new List<IPropertyMap>();
-
-        private IPropertyMap mergePropertyMap;
 
         public AllTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
-            : base(typeDefinition)
-        {
-            this.serializerCache = serializerCache;
-        }
+            : base(serializerCache, typeDefinition)
+        { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
         {
             var dtoObject = new T();
             dtoObject.SetTemplateMembers(templateNode.ChildNames);
 
             if (reader.IsEmptyElement)
-                return dtoObject;
+                return MoveNextAndReturn(reader, dtoObject);
 
-            if (mergePropertyMap != null)
+            var validateRequired = definition is RequestValueDefinition;
+
+            if (contentPropertyMap != null)
             {
-                ReadPropertyValue(reader, mergePropertyMap, templateNode, message, validateRequired, dtoObject);
+                ReadPropertyValue(reader, contentPropertyMap, templateNode, message, validateRequired, dtoObject);
                 return dtoObject;
             }
 
-            var depth = reader.Depth;
+            var parentDepth = reader.Depth;
+            var itemDepth = parentDepth + 1;
             var requiredCount = 0;
 
-            while (reader.Read() && depth < reader.Depth)
+            reader.Read();
+
+            while (parentDepth < reader.Depth)
             {
-                if (reader.NodeType != XmlNodeType.Element)
+                if (reader.NodeType != XmlNodeType.Element || reader.Depth != itemDepth)
+                {
+                    reader.Read();
                     continue;
+                }
 
                 var propertyMap = GetPropertyMap(reader);
 
@@ -72,10 +73,13 @@ namespace XRoadLib.Serialization.Mapping
             if (isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message))
                 dtoObject.OnMemberDeserialized(reader.LocalName);
 
+            if (isNull && reader.IsEmptyElement)
+                reader.Read();
+
             return propertyNode.IsRequired;
         }
 
-        private IEnumerable<string> GetMissingRequiredPropertyNames(IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
+        private static IEnumerable<string> GetMissingRequiredPropertyNames(IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
         {
             return templateNode.ChildNames
                                .Select(n => templateNode[n, message.Version])
@@ -93,38 +97,13 @@ namespace XRoadLib.Serialization.Mapping
             throw XRoadException.UnknownProperty(reader.LocalName, Definition.Name);
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, XRoadMessage message)
+        protected override void AddPropertyMap(IPropertyMap propertyMap)
         {
-            message.Protocol.Style.WriteType(writer, Definition, expectedType);
+            base.AddPropertyMap(propertyMap);
 
-            foreach (var propertyMap in serializationPropertyMaps)
-            {
-                var childTemplateNode = templateNode?[propertyMap.Definition.TemplateName, message.Version];
-                if (templateNode == null || childTemplateNode != null)
-                    propertyMap.Serialize(writer, childTemplateNode, value, message);
-            }
-        }
+            var propertyName = propertyMap.Definition.MergeContent ? propertyMap.Definition.ArrayItemDefinition.Name.LocalName : propertyMap.Definition.Name.LocalName;
 
-        public override void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions, IEnumerable<string> availableFilters)
-        {
-            if (deserializationPropertyMaps.Count > 0)
-                return;
-
-            var createdPropertyMaps = propertyDefinitions.Select(x => new PropertyMap(serializerCache, x.Item1, x.Item2, availableFilters)).ToList();
-            if (createdPropertyMaps.Count == 1 && createdPropertyMaps[0].Definition.MergeContent)
-            {
-                mergePropertyMap = createdPropertyMaps[0];
-                return;
-            }
-
-            foreach (var propertyMap in createdPropertyMaps)
-            {
-                if (propertyMap.Definition.MergeContent)
-                    throw new Exception($"Property {propertyMap.Definition} of type {Definition} cannot be merged, because there are more than 1 properties present.");
-
-                deserializationPropertyMaps.Add(propertyMap.Definition.Name.LocalName, propertyMap);
-                serializationPropertyMaps.Add(propertyMap);
-            }
+            deserializationPropertyMaps.Add(propertyName, propertyMap);
         }
     }
 }

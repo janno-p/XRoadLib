@@ -1,30 +1,30 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class IntegerTypeMap : TypeMap<BigInteger>
+    public class IntegerTypeMap : TypeMap
     {
         public IntegerTypeMap(TypeDefinition typeDefinition)
             : base(typeDefinition)
         { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return null;
+                return MoveNextAndReturn(reader, 0);
 
             var value = reader.ReadString();
 
-            return string.IsNullOrEmpty(value) ? defaultValue : new BigInteger(XmlConvert.ToDecimal(value));
+            return string.IsNullOrEmpty(value) ? new BigInteger() : new BigInteger(XmlConvert.ToDecimal(value));
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, XRoadMessage message)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
         {
-            message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
+            if (!(definition is RequestValueDefinition))
+                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteValue(value.ToString());
         }

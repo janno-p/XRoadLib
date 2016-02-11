@@ -15,6 +15,8 @@ namespace XRoadLib.Serialization.Mapping
 
         public OperationDefinition Definition { get; }
 
+        internal RequestValueDefinition RequestValueDefinition { get; set; }
+
         public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap, ResponseValueDefinition responseValueDefinition)
         {
             this.serializerCache = serializerCache;
@@ -32,7 +34,10 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
-            return inputTypeMap.Deserialize(reader, message.RequestNode, message, true);
+            if (RequestValueDefinition != null)
+                return inputTypeMap.Deserialize(reader, message.RequestNode, RequestValueDefinition, message);
+
+            return null;
         }
 
         public object DeserializeResponse(XmlReader reader, XRoadMessage message)
@@ -54,15 +59,20 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = (outputTypeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? outputTypeMap;
 
-            return concreteTypeMap.Deserialize(reader, message.ResponseNode, message);
+            return concreteTypeMap.Deserialize(reader, message.ResponseNode, responseValueDefinition, message);
         }
 
         public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message)
         {
-            writer.WriteStartElement(Definition.Name.LocalName, Definition.Name.NamespaceName);
+            var addPrefix = writer.LookupPrefix(Definition.Name.NamespaceName) == null;
+
+            if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, Definition.Name.LocalName, Definition.Name.NamespaceName);
+            else writer.WriteStartElement(Definition.Name.LocalName, Definition.Name.NamespaceName);
+
             writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
 
-            inputTypeMap.Serialize(writer, message.RequestNode, value, inputTypeMap.Definition.Type, message);
+            if (RequestValueDefinition != null)
+                inputTypeMap.Serialize(writer, message.RequestNode, value, RequestValueDefinition, message);
 
             writer.WriteEndElement();
             writer.WriteEndElement();
@@ -93,7 +103,7 @@ namespace XRoadLib.Serialization.Mapping
                     SerializeFault(writer, fault, message.Protocol);
                 else if (outputTypeMap != null)
                 {
-                    if (responseValueDefinition.HasExplicitXRoadFault)
+                    if (!responseValueDefinition.MergeContent && responseValueDefinition.HasExplicitXRoadFault)
                         writer.WriteStartElement(responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName);
 
                     if (value == null)
@@ -102,10 +112,10 @@ namespace XRoadLib.Serialization.Mapping
                     {
                         var concreteTypeMap = outputTypeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : outputTypeMap;
 
-                        concreteTypeMap.Serialize(writer, message.ResponseNode, value, outputTypeMap.Definition.Type, message);
+                        concreteTypeMap.Serialize(writer, message.ResponseNode, value, responseValueDefinition, message);
                     }
 
-                    if (responseValueDefinition.HasExplicitXRoadFault)
+                    if (!responseValueDefinition.MergeContent && responseValueDefinition.HasExplicitXRoadFault)
                         writer.WriteEndElement();
                 }
 

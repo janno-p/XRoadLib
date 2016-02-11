@@ -1,0 +1,64 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using XRoadLib.Schema;
+using XRoadLib.Serialization.Template;
+
+namespace XRoadLib.Serialization.Mapping
+{
+    public abstract class CompositeTypeMap<T> : TypeMap, ICompositeTypeMap where T : class, IXRoadSerializable, new()
+    {
+        protected readonly ISerializerCache serializerCache;
+        protected readonly IList<IPropertyMap> propertyMaps = new List<IPropertyMap>();
+
+        protected IPropertyMap contentPropertyMap;
+
+        protected CompositeTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
+            : base(typeDefinition)
+        {
+            this.serializerCache = serializerCache;
+        }
+
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
+        {
+            if (!(definition is RequestValueDefinition))
+                message.Protocol.Style.WriteType(writer, Definition, definition.RuntimeType);
+
+            foreach (var propertyMap in propertyMaps)
+            {
+                var childTemplateNode = templateNode?[propertyMap.Definition.TemplateName, message.Version];
+                if (templateNode == null || childTemplateNode != null)
+                    propertyMap.Serialize(writer, childTemplateNode, value, message);
+            }
+        }
+
+        public void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions, IEnumerable<string> availableFilters)
+        {
+            if (propertyMaps.Count > 0)
+                return;
+
+            var createdPropertyMaps = propertyDefinitions.Select(x => new PropertyMap(serializerCache, x.Item1, x.Item2, availableFilters))
+                                                         .ToList();
+
+            if (createdPropertyMaps.Count == 1 && createdPropertyMaps[0].Definition.MergeContent && createdPropertyMaps[0].Definition.ArrayItemDefinition == null)
+            {
+                contentPropertyMap = createdPropertyMaps[0];
+                return;
+            }
+
+            foreach (var propertyMap in createdPropertyMaps)
+            {
+                if (propertyMap.Definition.MergeContent && propertyMap.Definition.ArrayItemDefinition == null)
+                    throw new Exception($"Property {propertyMap.Definition} of type {Definition} cannot be merged, because mixed element content is not allowed.");
+
+                AddPropertyMap(propertyMap);
+            }
+        }
+
+        protected virtual void AddPropertyMap(IPropertyMap propertyMap)
+        {
+            propertyMaps.Add(propertyMap);
+        }
+    }
+}

@@ -78,6 +78,9 @@
     <Compile Include="Schema\SchemaDefinitionReader.cs" />
     <Compile Include="Schema\SchemaExporterBase.cs" />
     <Compile Include="Schema\TypeDefinition.cs" />
+    <Compile Include="Serialization\Mapping\CompositeTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\EnumTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\ICompositeTypeMap.cs" />
     <Compile Include="Serialization\Mapping\IContentTypeMap.cs" />
     <Compile Include="Serialization\Mapping\Int16TypeMap.cs" />
     <Compile Include="Serialization\Mapping\IntegerTypeMap.cs" />

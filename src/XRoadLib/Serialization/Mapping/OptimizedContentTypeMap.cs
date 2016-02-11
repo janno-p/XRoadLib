@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -16,7 +14,7 @@ namespace XRoadLib.Serialization.Mapping
             Definition = contentTypeMap.Definition;
         }
 
-        public object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
+        public object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
         {
             if (!reader.ReadToDescendant("Include", NamespaceConstants.XOP))
                 throw XRoadException.InvalidQuery("Missing `xop:Include` reference to multipart content.");
@@ -32,12 +30,13 @@ namespace XRoadLib.Serialization.Mapping
             return attachment.ContentStream;
         }
 
-        public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, Type expectedType, XRoadMessage message)
+        public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
         {
             var attachment = new XRoadAttachment((Stream)value);
             message.AllAttachments.Add(attachment);
 
-            message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
+            if (!(definition is RequestValueDefinition))
+                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);
             writer.WriteAttributeString(PrefixConstants.XMIME, "contentType", NamespaceConstants.XMIME, "application/octet-stream");
@@ -46,8 +45,5 @@ namespace XRoadLib.Serialization.Mapping
 
             writer.WriteEndElement();
         }
-
-        public void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions, IEnumerable<string> availableFilters)
-        { }
     }
 }

@@ -64,6 +64,7 @@
   <Import Project="..\..\.paket\paket.targets" />
   <ItemGroup>
     <Compile Include="Globals.fs" />
+    <Compile Include="Mapping\ArrayTest.fs" />
     <Compile Include="Mapping\DateTest.fs" />
     <Compile Include="Mapping\DateTimeTest.fs" />
     <Compile Include="ProducerDefinitionTest.fs" />

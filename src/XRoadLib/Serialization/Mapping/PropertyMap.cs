@@ -40,7 +40,8 @@ namespace XRoadLib.Serialization.Mapping
         {
             if (message.EnableFiltering && !filters.Contains(message.FilterName))
             {
-                reader.ReadToEndElement();
+                if (reader.IsEmptyElement) reader.Read();
+                else reader.ReadToEndElement();
                 return false;
             }
 
@@ -50,7 +51,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 
-            var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, message);
+            var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, Definition, message);
             if (propertyValue == null)
                 return true;
 
@@ -66,18 +67,22 @@ namespace XRoadLib.Serialization.Mapping
 
             var propertyValue = value != null ? getValueMethod(value) : null;
 
-            writer.WriteStartElement(Definition.Name.LocalName);
-
-            if (propertyValue == null)
-                writer.WriteNilAttribute();
-            else
+            if (!Definition.MergeContent)
             {
-                var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(propertyValue.GetType()) : typeMap;
+                writer.WriteStartElement(Definition.Name.LocalName);
 
-                concreteTypeMap.Serialize(writer, templateNode, propertyValue, typeMap.Definition.Type, message);
+                if (propertyValue == null)
+                    writer.WriteNilAttribute();
             }
 
-            writer.WriteEndElement();
+            if (propertyValue != null)
+            {
+                var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(propertyValue.GetType()) : typeMap;
+                concreteTypeMap.Serialize(writer, templateNode, propertyValue, Definition, message);
+            }
+
+            if (!Definition.MergeContent)
+                writer.WriteEndElement();
         }
     }
 }
