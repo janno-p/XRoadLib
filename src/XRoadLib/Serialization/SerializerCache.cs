@@ -161,6 +161,12 @@ namespace XRoadLib.Serialization
 
             ITypeMap typeMap;
 
+            if (typeDefinition.TypeMapType != null)
+            {
+                typeMap = (ITypeMap)Activator.CreateInstance(typeDefinition.TypeMapType, this, typeDefinition);
+                return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
+            }
+
             var collectionDefinition = typeDefinition as CollectionDefinition;
             if (collectionDefinition != null)
             {
@@ -215,7 +221,10 @@ namespace XRoadLib.Serialization
                 throw XRoadException.NoDefaultConstructorForType(typeDefinition.Name);
 
             ITypeMap typeMap;
-            if (typeDefinition.Type.IsEnum)
+
+            if (typeDefinition.TypeMapType != null)
+                typeMap = (ITypeMap)Activator.CreateInstance(typeDefinition.TypeMapType, this, typeDefinition);
+            else if (typeDefinition.Type.IsEnum)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(EnumTypeMap), typeDefinition);
             else if (typeDefinition.Type.IsAbstract)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap), typeDefinition);
@@ -249,9 +258,6 @@ namespace XRoadLib.Serialization
                 var type = contractAssembly.GetType($"{qualifiedName.Namespace}.{qualifiedName.LocalName}");
                 return type != null && type.IsXRoadSerializable() ? type : null;
             }
-
-            if (!Protocol.ProducerNamespace.Equals(qualifiedName.NamespaceName))
-                throw XRoadException.TundmatuNimeruum(qualifiedName.NamespaceName);
 
             var runtimeType = contractAssembly.GetTypes()
                                               .Where(type => type.Name.Equals(qualifiedName.LocalName))

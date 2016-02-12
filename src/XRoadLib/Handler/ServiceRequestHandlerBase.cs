@@ -81,9 +81,6 @@ namespace XRoadLib.Handler
 
             serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName);
 
-            if (requestMessage.IsMultipartContainer && requestMessage.BinaryMode == BinaryMode.Attachment && serviceMap.Definition.InputBinaryMode != BinaryMode.Attachment)
-                throw XRoadException.InvalidQuery("Teenuse `{0}` multipart päringu sisuks oodati `application/xop+xml`, kuid edastati `{1}`.", serviceMap.Definition.Name.LocalName, requestMessage.MultipartContentType);
-
             var input = DeserializeMethodInput(serviceMap);
 
             try
