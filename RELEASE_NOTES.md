@@ -1,7 +1,11 @@
-#### 1.0.0-alpha21 - Unreleased
-* Move producer definition to Description namespace.
-* Fix handling of max supported operation version.
-* Fix operation types in service description.
+#### 1.0.0-beta1 - Unreleased
+* Redesign X-Road protocol concept.
+* Default protocol implementations for X-Road message protocol versions 2.0, 3.1 and 4.0.
+* Improved customization of properties, types and methods.
+* Customizable serialization processor.
+* Better separation of encoded and literal styles.
+* Type improvements: merged content and arrays without wrapper element.
+* Clean attributes and support more existing attributes from System.Xml.Serialization namespace.
 
 #### 1.0.0-alpha20 - January 26 2016
 * Improve protocol v4.0 generated service description.
