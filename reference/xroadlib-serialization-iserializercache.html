@@ -50,11 +50,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '264', 264)" onmouseover="showTip(event, '264', 264)">
-            GetServiceMap(operationName, dtoVersion)
+          <code onmouseout="hideTip(event, '387', 387)" onmouseover="showTip(event, '387', 387)">
+            GetServiceMap(operationName)
           </code>
-          <div class="tip" id="264">
-            <strong>Signature:</strong> (operationName:string * dtoVersion:uint32) -&gt; IServiceMap<br />
+          <div class="tip" id="387">
+            <strong>Signature:</strong> operationName:string -&gt; IServiceMap<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -65,11 +65,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '265', 265)" onmouseover="showTip(event, '265', 265)">
-            GetServiceMap(qualifiedName, dtoVersion)
+          <code onmouseout="hideTip(event, '388', 388)" onmouseover="showTip(event, '388', 388)">
+            GetServiceMap(qualifiedName)
           </code>
-          <div class="tip" id="265">
-            <strong>Signature:</strong> (qualifiedName:XName * dtoVersion:uint32) -&gt; IServiceMap<br />
+          <div class="tip" id="388">
+            <strong>Signature:</strong> qualifiedName:XName -&gt; IServiceMap<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -80,11 +80,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '266', 266)" onmouseover="showTip(event, '266', 266)">
-            GetTypeMap(...)
+          <code onmouseout="hideTip(event, '389', 389)" onmouseover="showTip(event, '389', 389)">
+            GetTypeMap(qualifiedName, isArray)
           </code>
-          <div class="tip" id="266">
-            <strong>Signature:</strong> (qualifiedName:XName * isArray:bool * dtoVersion:uint32) -&gt; ITypeMap<br />
+          <div class="tip" id="389">
+            <strong>Signature:</strong> (qualifiedName:XName * isArray:bool) -&gt; ITypeMap<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -95,11 +95,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '267', 267)" onmouseover="showTip(event, '267', 267)">
-            GetTypeMap(...)
+          <code onmouseout="hideTip(event, '390', 390)" onmouseover="showTip(event, '390', 390)">
+            GetTypeMap(runtimeType, partialTypeMaps)
           </code>
-          <div class="tip" id="267">
-            <strong>Signature:</strong> (runtimeType:Type * dtoVersion:uint32 * partialTypeMaps:IDictionary&lt;Type,ITypeMap&gt;) -&gt; ITypeMap<br />
+          <div class="tip" id="390">
+            <strong>Signature:</strong> (runtimeType:Type * partialTypeMaps:IDictionary&lt;Type,ITypeMap&gt;) -&gt; ITypeMap<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -110,11 +110,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '268', 268)" onmouseover="showTip(event, '268', 268)">
-            GetTypeMapFromXsiType(...)
+          <code onmouseout="hideTip(event, '391', 391)" onmouseover="showTip(event, '391', 391)">
+            GetTypeMapFromXsiType(reader)
           </code>
-          <div class="tip" id="268">
-            <strong>Signature:</strong> (reader:XmlReader * dtoVersion:uint32) -&gt; ITypeMap<br />
+          <div class="tip" id="391">
+            <strong>Signature:</strong> reader:XmlReader -&gt; ITypeMap<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -125,10 +125,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '269', 269)" onmouseover="showTip(event, '269', 269)">
+          <code onmouseout="hideTip(event, '392', 392)" onmouseover="showTip(event, '392', 392)">
             GetXmlTypeName(type)
           </code>
-          <div class="tip" id="269">
+          <div class="tip" id="392">
             <strong>Signature:</strong> type:Type -&gt; XName<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -140,11 +140,26 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '270', 270)" onmouseover="showTip(event, '270', 270)">
-            ProducerNamespace
+          <code onmouseout="hideTip(event, '393', 393)" onmouseover="showTip(event, '393', 393)">
+            Protocol
           </code>
-          <div class="tip" id="270">
-            <strong>Signature:</strong> string<br />
+          <div class="tip" id="393">
+            <strong>Signature:</strong> XRoadProtocol<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '394', 394)" onmouseover="showTip(event, '394', 394)">
+            Version
+          </code>
+          <div class="tip" id="394">
+            <strong>Signature:</strong> Nullable&lt;uint32&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>

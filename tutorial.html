@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Introducing your project
+    <title>Sample tutorial
 </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach."/>
@@ -33,21 +33,355 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1><a name="Introducing-your-project" class="anchor" href="#Introducing-your-project">Introducing your project</a></h1>
-<p>Say more</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
+<h1><a name="Sample-tutorial" class="anchor" href="#Sample-tutorial">Sample tutorial</a></h1>
+<p>In this tutorial we will create simple X-Road service and set up a complete infrastructure to make that service
+available for X-Road infrastucture. This includes:</p>
+<ul>
+<li>Describe types and methods which describe and implement X-Road operation.</li>
+<li>Set up service request handler which listens for incoming messages and executes specified operations.</li>
+<li>
+<p>Set up service description handler to provide WSDL document which represents technical specification for the
+X-Road operation.</p>
+</li>
+</ul>
+<h2><a name="Create-new-solution" class="anchor" href="#Create-new-solution">Create new solution</a></h2>
+<p>Create new empty ASP.NET Web application <code>Calculator</code> in Visual Studio. XRoadLib is designed to be used with ASP.NET
+applications, but it shouldn't be difficult to use it in alternative setups. This tutorial assumes we're working on
+ASP.NET Web application. Add reference to <code>XRoadLib</code> in web project.</p>
+<h2><a name="Contract-library" class="anchor" href="#Contract-library">Contract library</a></h2>
+<p>Create empty library project <code>Calculator.Contract</code> to the solution, which defines service contracts for our
+application. Add reference to XRoadLib library using NuGet or local assembly file. In this project create new class
+<code>AddRequest</code> which represents main request type for our X-Road service.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;XRoadLib.dll&quot;</span>
-<span class="k">open</span> <span class="i">XRoadLib</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> System.Xml.Serialization;
+<span class="k">using</span> XRoadLib.Serialization;
 
-<span class="i">Library</span><span class="o">.</span><span class="i">hello</span> <span class="n">0</span>
-</code></pre></td>
-</tr>
-</table>
-<p>Some more info</p>
+<span class="k">namespace</span> Calculator.Contract
+{
+    <span class="k">public</span> <span class="k">class</span> AddRequest <span class="o">:</span> XRoadSerializable
+    {
+        [XmlElement(Order <span class="o">=</span> <span class="n">1</span>)]
+        <span class="k">public</span> <span class="k">int</span> X { get; set; }
+        
+        [XmlElement(Order <span class="o">=</span> <span class="n">2</span>)]
+        <span class="k">public</span> <span class="k">int</span> Y { get; set; }
+    }
+}
+</code></pre></td></tr></table>
+<p>Defined class describes <code>request</code> part of our operation message, which has two integer type arguments <code>X</code> and <code>Y</code>.
+XRoadLib defines its types as XML Schema sequences, which means the order of elements is important. By default XRoadLib
+orders elements by name. To use specific order we use <code>System.Xml.Serialization.XmlElementAttribute</code> attribute <code>Order</code>
+property. More advanced alternative to sort type properties, is to provide custom comparer for <code>TypeDefinition</code> through
+<code>ISchemaExporter</code> interface.</p>
+<p>Next we need to define contract for operation itself. For that create new interface in contract project named
+<code>ISumOfIntegers</code>.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> XRoadLib.Attributes;
+
+<span class="k">namespace</span> Calculator.Contract
+{
+    <span class="k">public</span> <span class="k">interface</span> ISumOfIntegers
+    {
+        [XRoadService(<span class="s">"SumOfIntegers"</span>)]
+        <span class="k">int</span> Sum(AddRequest request);
+    }
+}
+</code></pre></td></tr></table>
+<p>In here we defined new operation contract with input of type <code>AddRequest</code> and output of type <code>integer</code>. Currently XRoadLib
+allows at most 1 parameter for method interface which represents operation contract. Attribute
+<code>XRoadLib.Attributes.XRoadServiceAttribute</code> defines service code for X-Road operation which will be used in X-Road header
+to identify the service.</p>
+<h2><a name="Custom-X-Road-protocol" class="anchor" href="#Custom-X-Road-protocol">Custom X-Road protocol</a></h2>
+<p>XRoadLib supports different X-Road message protocol versions, and allows to extend them to add provider specific details
+and configurations. Add new class to web project <code>CalculatorXRoadProtocol</code>:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> Calculator.Contract;
+<span class="k">using</span> XRoadLib.Protocols;
+
+<span class="k">namespace</span> Calculator.WebService
+{
+    <span class="k">public</span> <span class="k">class</span> CalculatorXRoadProtocol <span class="o">:</span> XRoad<span class="n">31</span>Protocol
+    {
+        <span class="k">public</span> <span class="k">static</span> <span class="k">readonly</span> XRoadProtocol Instance <span class="o">=</span> <span class="k">new</span> CalculatorXRoadProtocol();
+
+        <span class="k">private</span> CalculatorXRoadProtocol()
+            <span class="o">:</span> <span class="k">base</span>(<span class="s">"calculator"</span>, <span class="s">"http://calculator.x-road.eu/producer/"</span>)
+        { }
+
+        <span class="k">static</span> CalculatorXRoadProtocol()
+        {
+            Instance.SetContractAssembly(<span class="k">typeof</span>(AddRequest).Assembly, <span class="k">null</span>);
+        }
+    }
+}
+</code></pre></td></tr></table>
+<p>Here we specify that our Calculator application is based on X-Road message protocol version 3.1. We define our producer
+name and namespace. Since XRoadProtocol caches type specific information, its necessary to follow singleton pattern
+when creating instance of the protocol. Also, we need to bind contract assembly to protocol.</p>
+<p>If required, same web application can support multiple X-Road message protocols and have separate configurations for
+individual protocol instances.</p>
+<h2><a name="Service-contract-handler" class="anchor" href="#Service-contract-handler">Service contract handler</a></h2>
+<p>In this section we're going to create new handler which generates WSDL document according to service contract. Add new
+generic handler <code>wsdl.ashx</code> to the web project:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> XRoadLib.Handler;
+<span class="k">using</span> XRoadLib.Protocols;
+
+<span class="k">namespace</span> Calculator.WebService
+{
+    <span class="k">public</span> <span class="k">class</span> Wsdl <span class="o">:</span> ServiceDescriptionHandlerBase
+    {
+        <span class="k">protected</span> <span class="k">override</span> XRoadProtocol Protocol <span class="o">=</span><span class="o">&gt;</span> CalculatorXRoadProtocol.Instance;
+    }
+}
+</code></pre></td></tr></table>
+<p><code>Wsdl</code> handler derives from <code>XRoadLib.Handler.ServiceDescriptionHandlerBase</code> which implements minimal service
+description handler for X-Road web service. To generate correct WSDL documentation, service description handler
+requires reference to implementing X-Road message protocol.</p>
+<p>After this step we can compile the project and navigate to service description handler with web browser, which should
+display valid service description document for our contract.</p>
+<h2><a name="Service-request-handler" class="anchor" href="#Service-request-handler">Service request handler</a></h2>
+<p>Final step in our small tutorial is to create handler which serves incoming requests. Since we're missing the
+implementation of the service, lets add new class to web project named <code>SumOfIntegersWebService</code>:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> Calculator.Contract;
+
+<span class="k">namespace</span> Calculator.WebService
+{
+    <span class="k">public</span> <span class="k">class</span> SumOfIntegersWebService <span class="o">:</span> ISumOfIntegers
+    {
+        <span class="k">public</span> <span class="k">int</span> Sum(AddRequest request)
+        {
+            <span class="k">return</span> request.X <span class="o">+</span> request.Y;
+        }
+    }
+}
+</code></pre></td></tr></table>
+<p>Last step is to create service request handler, which brings together service contract definition and its
+implementation. Add new generic handler <code>Calculator.ashx</code> to your web project:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> System;
+<span class="k">using</span> Calculator.WebService;
+<span class="k">using</span> XRoadLib.Handler;
+<span class="k">using</span> XRoadLib.Serialization;
+
+<span class="k">namespace</span> Calculator.WebService
+{
+    <span class="k">public</span> <span class="k">class</span> Calculator <span class="o">:</span> ServiceRequestHandlerBase
+    {
+        <span class="k">public</span> Calculator()
+            <span class="o">:</span> <span class="k">base</span>(<span class="k">new</span>[] { CalculatorXRoadProtocol.Instance })
+        { }
+
+        <span class="k">protected</span> <span class="k">override</span> <span class="k">object</span> InvokeMetaService(MetaServiceName metaServiceName)
+        {
+            <span class="k">throw</span> <span class="k">new</span> NotImplementedException();
+        }
+
+        <span class="k">protected</span> <span class="k">override</span> <span class="k">object</span> GetServiceObject(<span class="k">string</span> operationName)
+        {
+            <span class="k">if</span> (operationName <span class="o">=</span><span class="o">=</span> <span class="s">"SumOfIntegers"</span>)
+                <span class="k">return</span> <span class="k">new</span> SumOfIntegersWebService();
+
+            <span class="k">throw</span> <span class="k">new</span> NotImplementedException();
+        }
+    }
+}
+</code></pre></td></tr></table>
+<p>Base handlers expects list of all supported protocols as constructor arguments which will be used to detect
+message protocol version of incoming service request.</p>
+<p>Our simple example won't support any meta services, so we leave that with default implementation which returns
+exception. We're only supporting one functional service at the moment, so for the simplicity we're initializing
+it every time by creating new instance of the service object.</p>
+<p>After that, our simple web application is ready to accept incoming X-Road requests.</p>
+<h2><a name="Sample-request" class="anchor" href="#Sample-request">Sample request</a></h2>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="xml"><span class="prep">&lt;?</span>xml version=<span class="s">"1.0"</span> encoding=<span class="s">"utf-8"</span><span class="prep">?&gt;</span>
+<span class="k">&lt;</span><span class="i">soapenv:Envelope</span> <span class="o">xmlns:soapenv</span><span class="k">="http://schemas.xmlsoap.org/soap/envelope/"</span>
+                  <span class="o">xmlns:xrd</span><span class="k">="http://x-road.ee/xsd/x-road.xsd"</span>
+                  <span class="o">xmlns:calc</span><span class="k">="http://calculator.x-road.eu/producer/"</span><span class="k">&gt;</span>
+  <span class="k">&lt;</span><span class="i">soapenv:Header</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:consumer</span><span class="k">&gt;</span>1234<span class="k">&lt;/</span><span class="i">xrd:consumer</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:producer</span><span class="k">&gt;</span>calculator<span class="k">&lt;/</span><span class="i">xrd:producer</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:service</span><span class="k">&gt;</span>calculator.SumOfIntegers.v1<span class="k">&lt;/</span><span class="i">xrd:service</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:id</span><span class="k">&gt;</span>ABCDE<span class="k">&lt;/</span><span class="i">xrd:id</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:userId</span><span class="k">&gt;</span>30101010001<span class="k">&lt;/</span><span class="i">xrd:userId</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:userName</span><span class="k">&gt;</span>toomas.dumpti<span class="k">&lt;/</span><span class="i">xrd:userName</span><span class="k">&gt;</span>
+  <span class="k">&lt;/</span><span class="i">soapenv:Header</span><span class="k">&gt;</span>
+  <span class="k">&lt;</span><span class="i">soapenv:Body</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">calc:SumOfIntegers</span><span class="k">&gt;</span>
+      <span class="k">&lt;</span><span class="i">request</span><span class="k">&gt;</span>
+        <span class="k">&lt;</span><span class="i">X</span><span class="k">&gt;</span>12<span class="k">&lt;/</span><span class="i">X</span><span class="k">&gt;</span>
+        <span class="k">&lt;</span><span class="i">Y</span><span class="k">&gt;</span>7<span class="k">&lt;/</span><span class="i">Y</span><span class="k">&gt;</span>
+      <span class="k">&lt;/</span><span class="i">request</span><span class="k">&gt;</span>
+    <span class="k">&lt;/</span><span class="i">calc:SumOfIntegers</span><span class="k">&gt;</span>
+  <span class="k">&lt;/</span><span class="i">soapenv:Body</span><span class="k">&gt;</span>
+<span class="k">&lt;/</span><span class="i">soapenv:Envelope</span><span class="k">&gt;</span>
+</code></pre></td></tr></table>
+<h2><a name="Sample-response" class="anchor" href="#Sample-response">Sample response</a></h2>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="xml"><span class="prep">&lt;?</span>xml version=<span class="s">"1.0"</span><span class="prep">?&gt;</span>
+<span class="k">&lt;</span><span class="i">soapenv:Envelope</span> <span class="o">xmlns:soapenv</span><span class="k">="http://schemas.xmlsoap.org/soap/envelope/"</span>
+                  <span class="o">xmlns:xrd</span><span class="k">="http://x-road.ee/xsd/x-road.xsd"</span>
+                  <span class="o">xmlns:calc</span><span class="k">="http://calculator.x-road.eu/producer/"</span><span class="k">&gt;</span>
+  <span class="k">&lt;</span><span class="i">soapenv:Header</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:consumer</span><span class="k">&gt;</span>1234<span class="k">&lt;/</span><span class="i">xrd:consumer</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:producer</span><span class="k">&gt;</span>calculator<span class="k">&lt;/</span><span class="i">xrd:producer</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:service</span><span class="k">&gt;</span>calculator.SumOfIntegers.v1<span class="k">&lt;/</span><span class="i">xrd:service</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:id</span><span class="k">&gt;</span>ABCDE<span class="k">&lt;/</span><span class="i">xrd:id</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:userId</span><span class="k">&gt;</span>30101010001<span class="k">&lt;/</span><span class="i">xrd:userId</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">xrd:userName</span><span class="k">&gt;</span>toomas.dumpti<span class="k">&lt;/</span><span class="i">xrd:userName</span><span class="k">&gt;</span>
+  <span class="k">&lt;/</span><span class="i">soapenv:Header</span><span class="k">&gt;</span>
+  <span class="k">&lt;</span><span class="i">soapenv:Body</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">calc:SumOfIntegersResponse</span><span class="k">&gt;</span>
+      <span class="k">&lt;</span><span class="i">request</span><span class="k">&gt;</span>
+        <span class="k">&lt;</span><span class="i">X</span><span class="k">&gt;</span>12<span class="k">&lt;/</span><span class="i">X</span><span class="k">&gt;</span>
+        <span class="k">&lt;</span><span class="i">Y</span><span class="k">&gt;</span>7<span class="k">&lt;/</span><span class="i">Y</span><span class="k">&gt;</span>
+      <span class="k">&lt;/</span><span class="i">request</span><span class="k">&gt;</span>
+      <span class="k">&lt;</span><span class="i">response</span><span class="k">&gt;</span>
+        <span class="k">&lt;</span><span class="i">result</span><span class="k">&gt;</span>19<span class="k">&lt;/</span><span class="i">result</span><span class="k">&gt;</span>
+      <span class="k">&lt;/</span><span class="i">response</span><span class="k">&gt;</span>
+    <span class="k">&lt;/</span><span class="i">calc:SumOfIntegersResponse</span><span class="k">&gt;</span>
+  <span class="k">&lt;/</span><span class="i">soapenv:Body</span><span class="k">&gt;</span>
+<span class="k">&lt;/</span><span class="i">soapenv:Envelope</span><span class="k">&gt;</span>
+</code></pre></td></tr></table>
 
 
         </div>

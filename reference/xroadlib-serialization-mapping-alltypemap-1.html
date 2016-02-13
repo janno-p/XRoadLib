@@ -50,11 +50,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '334', 334)" onmouseover="showTip(event, '334', 334)">
-            new(serializerCache, typeName)
+          <code onmouseout="hideTip(event, '464', 464)" onmouseover="showTip(event, '464', 464)">
+            new(serializerCache, typeDefinition)
           </code>
-          <div class="tip" id="334">
-            <strong>Signature:</strong> (serializerCache:ISerializerCache * typeName:XName) -&gt; unit<br />
+          <div class="tip" id="464">
+            <strong>Signature:</strong> (serializerCache:ISerializerCache * typeDefinition:TypeDefinition) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -72,56 +72,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '335', 335)" onmouseover="showTip(event, '335', 335)">
+          <code onmouseout="hideTip(event, '465', 465)" onmouseover="showTip(event, '465', 465)">
             Deserialize(...)
           </code>
-          <div class="tip" id="335">
-            <strong>Signature:</strong> (reader:XmlReader * templateNode:IXmlTemplateNode * context:SerializationContext) -&gt; obj<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '336', 336)" onmouseover="showTip(event, '336', 336)">
-            InitializeProperties(...)
-          </code>
-          <div class="tip" id="336">
-            <strong>Signature:</strong> (partialTypeMaps:IDictionary&lt;Type,ITypeMap&gt; * typeConfiguration:ITypeConfiguration) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '337', 337)" onmouseover="showTip(event, '337', 337)">
-            IsSimpleType
-          </code>
-          <div class="tip" id="337">
-            <strong>Signature:</strong> bool<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '338', 338)" onmouseover="showTip(event, '338', 338)">
-            Serialize(...)
-          </code>
-          <div class="tip" id="338">
-            <strong>Signature:</strong> (writer:XmlWriter * templateNode:IXmlTemplateNode * value:obj * fieldType:Type * context:SerializationContext) -&gt; unit<br />
+          <div class="tip" id="465">
+            <strong>Signature:</strong> (reader:XmlReader * templateNode:IXmlTemplateNode * definition:IContentDefinition * message:XRoadMessage) -&gt; obj<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>

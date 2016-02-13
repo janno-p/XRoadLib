@@ -50,10 +50,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '121', 121)" onmouseover="showTip(event, '121', 121)">
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
             ExistsInVersion(provider, version)
           </code>
-          <div class="tip" id="121">
+          <div class="tip" id="49">
             <strong>Signature:</strong> (provider:ICustomAttributeProvider * version:uint32) -&gt; bool<br />
                       </div>
         </td>
@@ -64,10 +64,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '122', 122)" onmouseover="showTip(event, '122', 122)">
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
             ExistsInVersion(attribute, version)
           </code>
-          <div class="tip" id="122">
+          <div class="tip" id="50">
             <strong>Signature:</strong> (attribute:XRoadServiceAttribute * version:uint32) -&gt; bool<br />
                       </div>
         </td>
@@ -78,10 +78,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '123', 123)" onmouseover="showTip(event, '123', 123)">
+          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
             FindMethodDeclaration(...)
           </code>
-          <div class="tip" id="123">
+          <div class="tip" id="51">
             <strong>Signature:</strong> (method:MethodInfo * operationName:string * serviceContracts:IDictionary&lt;MethodInfo,IDictionary&lt;string,XRoadServiceAttribute&gt;&gt;) -&gt; MethodInfo * XRoadServiceAttribute<br />
                       </div>
         </td>
@@ -92,11 +92,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '124', 124)" onmouseover="showTip(event, '124', 124)">
+          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
             GetAllPropertiesSorted(...)
           </code>
-          <div class="tip" id="124">
-            <strong>Signature:</strong> (type:Type * comparer:IComparer&lt;PropertyInfo&gt; * version:Nullable&lt;uint32&gt;) -&gt; IEnumerable&lt;PropertyInfo&gt;<br />
+          <div class="tip" id="52">
+            <strong>Signature:</strong> (type:Type * comparer:IComparer&lt;PropertyDefinition&gt; * version:Nullable&lt;uint32&gt; * createDefinition:Func&lt;PropertyInfo,PropertyDefinition&gt;) -&gt; IEnumerable&lt;PropertyDefinition&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -106,53 +106,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
-            GetElementName(attributeProvider)
-          </code>
-          <div class="tip" id="125">
-            <strong>Signature:</strong> attributeProvider:ICustomAttributeProvider -&gt; string<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
-            GetExtraMessageParts(methodInfo)
-          </code>
-          <div class="tip" id="126">
-            <strong>Signature:</strong> methodInfo:MethodInfo -&gt; IEnumerable&lt;XRoadMessagePartAttribute&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '127', 127)" onmouseover="showTip(event, '127', 127)">
-            GetImportAttribute(methodInfo, protocol)
-          </code>
-          <div class="tip" id="127">
-            <strong>Signature:</strong> (methodInfo:MethodInfo * protocol:XRoadProtocol) -&gt; XRoadImportAttribute<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '128', 128)" onmouseover="showTip(event, '128', 128)">
+          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
             GetPropertiesSorted(...)
           </code>
-          <div class="tip" id="128">
-            <strong>Signature:</strong> (type:Type * comparer:IComparer&lt;PropertyInfo&gt; * version:Nullable&lt;uint32&gt;) -&gt; IEnumerable&lt;PropertyInfo&gt;<br />
+          <div class="tip" id="53">
+            <strong>Signature:</strong> (type:Type * comparer:IComparer&lt;PropertyDefinition&gt; * version:Nullable&lt;uint32&gt; * createDefinition:Func&lt;PropertyInfo,PropertyDefinition&gt;) -&gt; IEnumerable&lt;PropertyDefinition&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -162,10 +120,24 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '129', 129)" onmouseover="showTip(event, '129', 129)">
+          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
+            GetServices(methodInfo)
+          </code>
+          <div class="tip" id="54">
+            <strong>Signature:</strong> methodInfo:MethodInfo -&gt; IEnumerable&lt;XRoadServiceAttribute&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
             GetServicesInVersion(...)
           </code>
-          <div class="tip" id="129">
+          <div class="tip" id="55">
             <strong>Signature:</strong> (methodInfo:MethodInfo * version:uint32 * includeHidden:bool) -&gt; IEnumerable&lt;string&gt;<br />
                       </div>
         </td>
@@ -176,10 +148,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '130', 130)" onmouseover="showTip(event, '130', 130)">
+          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
             GetSingleAttribute(...)
           </code>
-          <div class="tip" id="130">
+          <div class="tip" id="56">
             <strong>Signature:</strong> customAttributeProvider:ICustomAttributeProvider -&gt; &#39;T<br />
                           <strong>Type parameters:</strong> 'T          </div>
         </td>
@@ -190,10 +162,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '131', 131)" onmouseover="showTip(event, '131', 131)">
+          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
             GetXRoadTitles(attributeProvider)
           </code>
-          <div class="tip" id="131">
+          <div class="tip" id="57">
             <strong>Signature:</strong> attributeProvider:ICustomAttributeProvider -&gt; IEnumerable&lt;string * string&gt;<br />
                       </div>
         </td>
@@ -204,38 +176,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '132', 132)" onmouseover="showTip(event, '132', 132)">
-            HasMultipartRequest(methodInfo)
-          </code>
-          <div class="tip" id="132">
-            <strong>Signature:</strong> methodInfo:MethodInfo -&gt; bool<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '133', 133)" onmouseover="showTip(event, '133', 133)">
-            HasMultipartResponse(methodInfo)
-          </code>
-          <div class="tip" id="133">
-            <strong>Signature:</strong> methodInfo:MethodInfo -&gt; bool<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '134', 134)" onmouseover="showTip(event, '134', 134)">
+          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
             IsAnonymous(type)
           </code>
-          <div class="tip" id="134">
+          <div class="tip" id="58">
             <strong>Signature:</strong> type:Type -&gt; bool<br />
                       </div>
         </td>
@@ -246,11 +190,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '135', 135)" onmouseover="showTip(event, '135', 135)">
+          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
             IsFilterableField(...)
           </code>
-          <div class="tip" id="135">
-            <strong>Signature:</strong> (runtimeType:Type * fieldName:string) -&gt; bool<br />
+          <div class="tip" id="59">
+            <strong>Signature:</strong> (runtimeType:Type * fieldName:string * groupName:string) -&gt; bool<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -260,10 +204,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '136', 136)" onmouseover="showTip(event, '136', 136)">
+          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
             IsNullable(type)
           </code>
-          <div class="tip" id="136">
+          <div class="tip" id="60">
             <strong>Signature:</strong> type:Type -&gt; bool<br />
                       </div>
         </td>
@@ -274,10 +218,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '137', 137)" onmouseover="showTip(event, '137', 137)">
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
             IsXRoadSerializable(type)
           </code>
-          <div class="tip" id="137">
+          <div class="tip" id="61">
             <strong>Signature:</strong> type:Type -&gt; bool<br />
                       </div>
         </td>
