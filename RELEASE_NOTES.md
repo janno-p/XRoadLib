@@ -1,4 +1,4 @@
-#### 1.0.0-beta1 - Unreleased
+#### 1.0.0-beta1 - February 13 2016
 * Redesign X-Road protocol concept.
 * Default protocol implementations for X-Road message protocol versions 2.0, 3.1 and 4.0.
 * Improved customization of properties, types and methods.
