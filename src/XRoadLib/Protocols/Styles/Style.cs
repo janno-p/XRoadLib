@@ -53,7 +53,7 @@ namespace XRoadLib.Protocols.Styles
             return null;
         }
 
-        public abstract void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, ISet<string> requiredImports);
+        public abstract void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, Action<string> addSchemaImport);
 
         public abstract SoapBinding CreateSoapBinding();
 

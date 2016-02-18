@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using XRoadLib.Extensions;
-using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols.Styles
 {
@@ -41,9 +40,9 @@ namespace XRoadLib.Protocols.Styles
             return attribute;
         }
 
-        public override void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, ISet<string> requiredImports)
+        public override void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, Action<string> addSchemaImport)
         {
-            requiredImports.Add(NamespaceConstants.SOAP_ENC);
+            addSchemaImport(NamespaceConstants.SOAP_ENC);
 
             var schemaAttribute = new XmlSchemaAttribute { RefName = new XmlQualifiedName("arrayType", NamespaceConstants.SOAP_ENC) };
 

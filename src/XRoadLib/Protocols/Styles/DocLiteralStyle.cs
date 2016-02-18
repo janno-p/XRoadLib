@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols.Styles
 {
@@ -20,7 +19,7 @@ namespace XRoadLib.Protocols.Styles
             return element;
         }
 
-        public override void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, ISet<string> requiredImports)
+        public override void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, Action<string> addSchemaImport)
         {
             arrayElement.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { itemElement } } };
         }
