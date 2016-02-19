@@ -50,10 +50,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '288', 288)" onmouseover="showTip(event, '288', 288)">
+          <code onmouseout="hideTip(event, '289', 289)" onmouseover="showTip(event, '289', 289)">
             new()
           </code>
-          <div class="tip" id="288">
+          <div class="tip" id="289">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -72,26 +72,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '289', 289)" onmouseover="showTip(event, '289', 289)">
+          <code onmouseout="hideTip(event, '290', 290)" onmouseover="showTip(event, '290', 290)">
             AddItemElementToArrayElement(...)
           </code>
-          <div class="tip" id="289">
-            <strong>Signature:</strong> (arrayElement:XmlSchemaElement * itemElement:XmlSchemaElement * requiredImports:ISet&lt;string&gt;) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '290', 290)" onmouseover="showTip(event, '290', 290)">
-            CreateArrayTypeAttribute(qualifiedName)
-          </code>
           <div class="tip" id="290">
-            <strong>Signature:</strong> qualifiedName:XName -&gt; XmlAttribute<br />
+            <strong>Signature:</strong> (arrayElement:XmlSchemaElement * itemElement:XmlSchemaElement * addSchemaImport:Action&lt;string&gt;) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -103,10 +88,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '291', 291)" onmouseover="showTip(event, '291', 291)">
-            CreateExpectedContentType(contentType)
+            CreateArrayTypeAttribute(qualifiedName)
           </code>
           <div class="tip" id="291">
-            <strong>Signature:</strong> contentType:string -&gt; XmlAttribute<br />
+            <strong>Signature:</strong> qualifiedName:XName -&gt; XmlAttribute<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -118,10 +103,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '292', 292)" onmouseover="showTip(event, '292', 292)">
-            CreateSoapBinding()
+            CreateExpectedContentType(contentType)
           </code>
           <div class="tip" id="292">
-            <strong>Signature:</strong> unit -&gt; SoapBinding<br />
+            <strong>Signature:</strong> contentType:string -&gt; XmlAttribute<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -133,10 +118,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '293', 293)" onmouseover="showTip(event, '293', 293)">
-            CreateSoapBodyBinding(targetNamespace)
+            CreateSoapBinding()
           </code>
           <div class="tip" id="293">
-            <strong>Signature:</strong> targetNamespace:string -&gt; SoapBodyBinding<br />
+            <strong>Signature:</strong> unit -&gt; SoapBinding<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -148,10 +133,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '294', 294)" onmouseover="showTip(event, '294', 294)">
-            CreateSoapHeader(binding)
+            CreateSoapBodyBinding(targetNamespace)
           </code>
           <div class="tip" id="294">
-            <strong>Signature:</strong> binding:SoapHeaderBinding -&gt; XmlElement<br />
+            <strong>Signature:</strong> targetNamespace:string -&gt; SoapBodyBinding<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -163,10 +148,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '295', 295)" onmouseover="showTip(event, '295', 295)">
-            CreateSoapHeaderBinding(...)
+            CreateSoapHeader(binding)
           </code>
           <div class="tip" id="295">
-            <strong>Signature:</strong> (headerName:XName * messageName:string * targetNamespace:string) -&gt; SoapHeaderBinding<br />
+            <strong>Signature:</strong> binding:SoapHeaderBinding -&gt; XmlElement<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -178,10 +163,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '296', 296)" onmouseover="showTip(event, '296', 296)">
-            CreateSoapOperationBinding()
+            CreateSoapHeaderBinding(...)
           </code>
           <div class="tip" id="296">
-            <strong>Signature:</strong> unit -&gt; SoapOperationBinding<br />
+            <strong>Signature:</strong> (headerName:XName * messageName:string * targetNamespace:string) -&gt; SoapHeaderBinding<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -193,10 +178,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '297', 297)" onmouseover="showTip(event, '297', 297)">
-            UseElementInMessagePart
+            CreateSoapOperationBinding()
           </code>
           <div class="tip" id="297">
-            <strong>Signature:</strong> bool<br />
+            <strong>Signature:</strong> unit -&gt; SoapOperationBinding<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -208,10 +193,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '298', 298)" onmouseover="showTip(event, '298', 298)">
-            WriteExplicitArrayType(...)
+            UseElementInMessagePart
           </code>
           <div class="tip" id="298">
-            <strong>Signature:</strong> (writer:XmlWriter * itemQualifiedName:XName * arraySize:int) -&gt; unit<br />
+            <strong>Signature:</strong> bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -223,10 +208,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '299', 299)" onmouseover="showTip(event, '299', 299)">
-            WriteExplicitType(writer, qualifiedName)
+            WriteExplicitArrayType(...)
           </code>
           <div class="tip" id="299">
-            <strong>Signature:</strong> (writer:XmlWriter * qualifiedName:XName) -&gt; unit<br />
+            <strong>Signature:</strong> (writer:XmlWriter * itemQualifiedName:XName * arraySize:int) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -238,9 +223,24 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '300', 300)" onmouseover="showTip(event, '300', 300)">
-            WriteType(...)
+            WriteExplicitType(writer, qualifiedName)
           </code>
           <div class="tip" id="300">
+            <strong>Signature:</strong> (writer:XmlWriter * qualifiedName:XName) -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '301', 301)" onmouseover="showTip(event, '301', 301)">
+            WriteType(...)
+          </code>
+          <div class="tip" id="301">
             <strong>Signature:</strong> (writer:XmlWriter * typeDefinition:TypeDefinition * expectedType:Type) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
