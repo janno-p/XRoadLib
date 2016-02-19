@@ -1,5 +1,6 @@
-#### 1.0.0-beta002 - Unreleased
+#### 1.0.0-beta002 - 19.02.2016
 * Multiple schemas in single WSDL file.
+* Detect type dependency to filter out unused types from service description.
 
 #### 1.0.0-beta001 - February 14 2016
 * Fix version number.
