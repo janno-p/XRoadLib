@@ -251,23 +251,21 @@ namespace XRoadLib.Protocols.Description
                 schemaTypes.Add(Tuple.Create(typeDefinition.Name.NamespaceName, schemaType));
             }
 
-            var externalNamespaces = schemaTypes.Select(x => x.Item1)
-                                                .Where(x => x != targetNamespace && x != NamespaceConstants.XSD)
-                                                .Distinct()
-                                                .ToList();
+            var allNamespaces = schemaTypes.Select(x => x.Item1).Where(x => x != NamespaceConstants.XSD).Distinct().ToList();
+            var externalNamespaces = allNamespaces.Where(x => x != targetNamespace).ToList();
 
             var schemas = new List<XmlSchema>();
 
             if (protocol.IncludeExternalSchemas)
                 foreach (var externalNamespace in externalNamespaces)
-                    schemas.Add(BuildSchemaForNamespace(externalNamespace, schemaTypes, new List<XmlSchemaElement>()));
+                    schemas.Add(BuildSchemaForNamespace(externalNamespace, schemaTypes, new List<XmlSchemaElement>(), allNamespaces));
 
-            schemas.Add(BuildSchemaForNamespace(targetNamespace, schemaTypes, schemaElements));
+            schemas.Add(BuildSchemaForNamespace(targetNamespace, schemaTypes, schemaElements, allNamespaces));
 
             return schemas;
         }
 
-        private XmlSchema BuildSchemaForNamespace(string schemaNamespace, IList<Tuple<string, XmlSchemaType>> schemaTypes, IList<XmlSchemaElement> schemaElements)
+        private XmlSchema BuildSchemaForNamespace(string schemaNamespace, IList<Tuple<string, XmlSchemaType>> schemaTypes, IList<XmlSchemaElement> schemaElements, IList<string> customNamespaces)
         {
             var namespaceTypes = schemaTypes.Where(x => x.Item1 == schemaNamespace).Select(x => x.Item2).ToList();
             var namespaceImports = requiredImports.Where(x => x.Item1 == schemaNamespace).Select(x => x.Item2).ToList();
@@ -280,8 +278,13 @@ namespace XRoadLib.Protocols.Description
             foreach (var schemaElement in schemaElements.OrderBy(x => x.Name.ToLower()))
                 schema.Items.Add(schemaElement);
 
+            var n = 1;
             foreach (var namespaceImport in namespaceImports)
+            {
                 schema.Includes.Add(new XmlSchemaImport { Namespace = namespaceImport });
+                if (customNamespaces.Contains(namespaceImport))
+                    schema.Namespaces.Add($"ns{n++}", namespaceImport);
+            }
 
             return schema;
         }

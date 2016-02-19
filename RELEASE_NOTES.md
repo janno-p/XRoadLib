@@ -1,3 +1,6 @@
+#### 1.0.0-beta002 - Unreleased
+* Multiple schemas in single WSDL file.
+
 #### 1.0.0-beta001 - February 14 2016
 * Fix version number.
 
