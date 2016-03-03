@@ -25,6 +25,14 @@ namespace XRoadLib.Serialization.Mapping
             if (!(definition is RequestValueDefinition))
                 message.Protocol.Style.WriteType(writer, Definition, definition.RuntimeType);
 
+            if (contentPropertyMap != null)
+            {
+                var childTemplateNode = templateNode?[contentPropertyMap.Definition.TemplateName, message.Version];
+                if (templateNode == null || childTemplateNode != null)
+                    contentPropertyMap.Serialize(writer, childTemplateNode, value, message);
+                return;
+            }
+
             foreach (var propertyMap in propertyMaps)
             {
                 var childTemplateNode = templateNode?[propertyMap.Definition.TemplateName, message.Version];

@@ -42,7 +42,11 @@ namespace XRoadLib.Extensions
             var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
             var navigator = doc.CreateNavigator();
 
-            if (navigator.SelectSingleNode("/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/keha/faultCode | /*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/keha/faultString") != null)
+            var pathRoot = "/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*";
+            if (message.Protocol.NonTechnicalFaultInResponseElement)
+                pathRoot = $"{pathRoot}/{message.Protocol.ResponsePartNameInResponse}";
+
+            if (navigator.SelectSingleNode($"{pathRoot}/faultCode | {pathRoot}/faultString") != null)
                 throw new XRoadFaultException(message.DeserializeXRoadFault());
 
             message.ContentStream.Position = 0;

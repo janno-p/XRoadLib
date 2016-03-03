@@ -47,6 +47,10 @@ namespace XRoadLib.Serialization.Mapping
             if (!reader.MoveToElement(3, responseName))
                 throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` was not found in SOAP message.");
 
+            var hasWrapperElement = HasWrapperResultElement(message);
+            if (hasWrapperElement && !reader.MoveToElement(4, responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName))
+                throw XRoadException.InvalidQuery($"Expected result wrapper element `{responseValueDefinition.Name}` was not found in SOAP message.");
+
             if (reader.IsNilElement())
             {
                 reader.ReadToEndElement();
@@ -104,7 +108,7 @@ namespace XRoadLib.Serialization.Mapping
                     SerializeFault(writer, fault, message.Protocol);
                 else if (outputTypeMap != null)
                 {
-                    var addWrapperElement = !responseValueDefinition.MergeContent && responseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit && message.Protocol.NonTechnicalFaultInResponseElement;
+                    var addWrapperElement = HasWrapperResultElement(message);
 
                     if (addWrapperElement)
                         writer.WriteStartElement(responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName);
@@ -128,6 +132,13 @@ namespace XRoadLib.Serialization.Mapping
             }
 
             writer.WriteEndElement();
+        }
+
+        private bool HasWrapperResultElement(XRoadMessage message)
+        {
+            return !responseValueDefinition.MergeContent
+                   && responseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit
+                   && message.Protocol.NonTechnicalFaultInResponseElement;
         }
 
         private static void SerializeFault(XmlWriter writer, IXRoadFault fault, XRoadProtocol protocol)
