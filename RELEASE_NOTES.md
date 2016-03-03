@@ -1,3 +1,7 @@
+#### 1.0.0-beta005 - 04.03.2016
+* Fix Xop binary content serialization bug.
+* Fix deserialization of merged empty root element.
+
 #### 1.0.0-beta004 - 03.03.2016
 * Fix serialization/deserialization in reverse direction.
 
