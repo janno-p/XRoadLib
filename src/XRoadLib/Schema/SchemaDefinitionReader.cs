@@ -103,9 +103,9 @@ namespace XRoadLib.Schema
             return propertyDefinition;
         }
 
-        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, bool? explicitFault = null)
+        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
-            var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { HasExplicitXRoadFault = explicitFault ?? true };
+            var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
 
             SchemaExporter?.ExportResponseValueDefinition(responseValueDefinition);
 

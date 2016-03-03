@@ -33,6 +33,7 @@ namespace XRoadLib.Protocols
 
         public abstract string Name { get; }
 
+        public virtual bool NonTechnicalFaultInResponseElement => false;
         public virtual bool IncludeExternalSchemas => false;
 
         public virtual string RequestPartNameInRequest => "request";

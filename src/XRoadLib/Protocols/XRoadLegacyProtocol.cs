@@ -17,6 +17,8 @@ namespace XRoadLib.Protocols
         public string ProducerName { get; }
         public IDictionary<string, string> Titles { get; } = new Dictionary<string, string>();
 
+        public override bool NonTechnicalFaultInResponseElement => true;
+
         string IXRoadLegacyProtocol.XRoadNamespace => XRoadNamespace;
 
         protected XRoadLegacyProtocol(string producerName, string producerNamespace, Style style, ISchemaExporter schemaExporter)

@@ -299,8 +299,9 @@ namespace XRoadLib.Serialization
 
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("testSystem", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
+            operationDefinition.IsMetaService = true;
 
-            var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
+            var outputTuple = GetReturnValueTypeMap(operationDefinition, XRoadFaultPresentation.Implicit);
 
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
@@ -311,8 +312,9 @@ namespace XRoadLib.Serialization
 
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("getState", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
+            operationDefinition.IsMetaService = true;
 
-            var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
+            var outputTuple = GetReturnValueTypeMap(operationDefinition, XRoadFaultPresentation.Implicit);
 
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
@@ -323,8 +325,9 @@ namespace XRoadLib.Serialization
 
             var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("listMethods", legacyProtocol.XRoadNamespace), 1u);
             operationDefinition.State = DefinitionState.Hidden;
+            operationDefinition.IsMetaService = true;
 
-            var outputTuple = GetReturnValueTypeMap(operationDefinition, false);
+            var outputTuple = GetReturnValueTypeMap(operationDefinition, XRoadFaultPresentation.Implicit);
 
             serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
@@ -382,9 +385,9 @@ namespace XRoadLib.Serialization
             return customTypeMaps.GetOrAdd(typeMapType, typeMap);
         }
 
-        private Tuple<ResponseValueDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, bool? explicitFault = null)
+        private Tuple<ResponseValueDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
-            var returnValueDefinition = schemaDefinitionReader.GetResponseValueDefinition(operationDefinition, explicitFault);
+            var returnValueDefinition = schemaDefinitionReader.GetResponseValueDefinition(operationDefinition, xRoadFaultPresentation);
             if (returnValueDefinition.State == DefinitionState.Ignored)
                 return null;
 

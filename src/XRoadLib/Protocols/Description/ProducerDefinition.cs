@@ -167,29 +167,31 @@ namespace XRoadLib.Protocols.Description
                 XmlSchemaElement responseElement;
                 XmlSchemaElement resultElement = null;
 
-                if (responseValueDefinition.HasExplicitXRoadFault)
+                if (responseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit && protocol.NonTechnicalFaultInResponseElement)
                 {
                     var outputParticle = new XmlSchemaSequence();
                     responseElement = new XmlSchemaElement { Name = "response", SchemaType = new XmlSchemaComplexType { Particle = outputParticle } };
 
-                    var faultSequence = new XmlSchemaSequence
-                    {
-                        Items =
-                        {
-                            new XmlSchemaElement { Name = "faultCode", SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) },
-                            new XmlSchemaElement { Name = "faultString", SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) }
-                        }
-                    };
+                    var faultSequence = CreateFaultSequence();
 
                     if (operationDefinition.MethodInfo.ReturnType == typeof(void))
                     {
                         faultSequence.MinOccurs = 0;
                         outputParticle.Items.Add(faultSequence);
                     }
+                    else if (responseValueDefinition.XRoadFaultPresentation == XRoadFaultPresentation.Choice)
+                    {
+                        resultElement = CreateContentElement(responseValueDefinition, targetNamespace, referencedTypes);
+                        outputParticle.Items.Add(new XmlSchemaChoice { Items = { resultElement, faultSequence } });
+                    }
                     else
                     {
                         resultElement = CreateContentElement(responseValueDefinition, targetNamespace, referencedTypes);
-                        outputParticle.Items.Add(new XmlSchemaChoice { Items = { faultSequence, resultElement } });
+                        resultElement.MinOccurs = 0;
+                        outputParticle.Items.Add(resultElement);
+
+                        faultSequence.MinOccurs = 0;
+                        outputParticle.Items.Add(faultSequence);
                     }
                 }
                 else responseElement = resultElement = CreateContentElement(responseValueDefinition, targetNamespace, referencedTypes);
@@ -198,7 +200,7 @@ namespace XRoadLib.Protocols.Description
                     schemaElements.Add(new XmlSchemaElement
                     {
                         Name = $"{operationDefinition.Name.LocalName}Response",
-                        SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } }
+                        SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, requestElement, responseElement)
                     });
 
                 if (operationDefinition.IsAbstract)
@@ -303,6 +305,47 @@ namespace XRoadLib.Protocols.Description
             return schemas;
         }
 
+        private XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseValueDefinition definition, XmlSchemaElement requestElement, XmlSchemaElement responseElement)
+        {
+            var sequence = new XmlSchemaSequence { Items = { requestElement, responseElement } };
+
+            if (protocol.NonTechnicalFaultInResponseElement)
+                return new XmlSchemaComplexType { Particle = sequence };
+
+            responseElement.Name = "response";
+
+            var particle = sequence;
+            switch (definition.XRoadFaultPresentation)
+            {
+                case XRoadFaultPresentation.Choice:
+                    particle = new XmlSchemaSequence { Items = { new XmlSchemaChoice { Items = { sequence, CreateFaultSequence() } } } };
+                    break;
+                case XRoadFaultPresentation.Explicit:
+                    sequence.MinOccurs = 0;
+                    var faultSequence = CreateFaultSequence();
+                    faultSequence.MinOccurs = 0;
+                    particle = new XmlSchemaSequence { Items = { sequence, faultSequence } };
+                    break;
+                case XRoadFaultPresentation.Implicit:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return new XmlSchemaComplexType { Particle = particle };
+        }
+
+        private XmlSchemaSequence CreateFaultSequence()
+        {
+            return new XmlSchemaSequence
+            {
+                Items =
+                {
+                    new XmlSchemaElement { Name = "faultCode", SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) }, new XmlSchemaElement { Name = "faultString", SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) }
+                }
+            };
+        }
+
         private XmlSchema BuildSchemaForNamespace(string schemaNamespace, IList<Tuple<string, XmlSchemaType>> schemaTypes, IList<XmlSchemaElement> schemaElements, IList<string> customNamespaces)
         {
             var namespaceTypes = schemaTypes.Where(x => x.Item1 == schemaNamespace).Select(x => x.Item2).ToList();
@@ -373,12 +416,9 @@ namespace XRoadLib.Protocols.Description
         {
             portType.Operations.Add(new Operation
             {
-                DocumentationElement = protocol.CreateDocumentationElement(operationDefinition.Documentation),
-                Name = operationDefinition.Name.LocalName,
-                Messages =
+                DocumentationElement = protocol.CreateDocumentationElement(operationDefinition.Documentation), Name = operationDefinition.Name.LocalName, Messages =
                 {
-                    new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) },
-                    new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) }
+                    new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) }, new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) }
                 }
             });
         }
@@ -409,10 +449,7 @@ namespace XRoadLib.Protocols.Description
 
             binding.Operations.Add(new OperationBinding
             {
-                Name = operationDefinition.Name.LocalName,
-                Extensions = { protocol.CreateOperationVersionElement(operationDefinition), protocol.Style.CreateSoapOperationBinding() },
-                Input = inputBinding,
-                Output = outputBinding
+                Name = operationDefinition.Name.LocalName, Extensions = { protocol.CreateOperationVersionElement(operationDefinition), protocol.Style.CreateSoapOperationBinding() }, Input = inputBinding, Output = outputBinding
             });
         }
 
@@ -459,8 +496,7 @@ namespace XRoadLib.Protocols.Description
             {
                 var extension = new XmlSchemaComplexContentExtension
                 {
-                    BaseTypeName = GetSchemaTypeName(typeDefinition.Type.BaseType, schemaNamespace),
-                    Particle = contentParticle
+                    BaseTypeName = GetSchemaTypeName(typeDefinition.Type.BaseType, schemaNamespace), Particle = contentParticle
                 };
 
                 if (!referencedTypes.ContainsKey(extension.BaseTypeName))
@@ -489,10 +525,7 @@ namespace XRoadLib.Protocols.Description
 
         private XmlSchemaAnnotation CreateSchemaAnnotation(Definition definition)
         {
-            var nodes = definition.Documentation
-                                  .Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2))
-                                  .Cast<XmlNode>()
-                                  .ToArray();
+            var nodes = definition.Documentation.Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2)).Cast<XmlNode>().ToArray();
 
             return definition.Documentation.Any() ? new XmlSchemaAnnotation { Items = { new XmlSchemaAppInfo { Markup = nodes } } } : null;
         }
@@ -574,8 +607,7 @@ namespace XRoadLib.Protocols.Description
         {
             var schemaElement = new XmlSchemaElement
             {
-                Name = propertyDefinition.Name?.LocalName,
-                Annotation = CreateSchemaAnnotation(propertyDefinition)
+                Name = propertyDefinition.Name?.LocalName, Annotation = CreateSchemaAnnotation(propertyDefinition)
             };
 
             if (propertyDefinition.ArrayItemDefinition != null && propertyDefinition.MergeContent)
@@ -616,8 +648,7 @@ namespace XRoadLib.Protocols.Description
 
             var itemElement = new XmlSchemaElement
             {
-                Name = propertyDefinition.ArrayItemDefinition.Name.LocalName,
-                MaxOccursString = "unbounded"
+                Name = propertyDefinition.ArrayItemDefinition.Name.LocalName, MaxOccursString = "unbounded"
             };
 
             if (propertyDefinition.ArrayItemDefinition.IsOptional)
@@ -677,9 +708,7 @@ namespace XRoadLib.Protocols.Description
 
         private IEnumerable<PropertyDefinition> GetDescriptionProperties(TypeDefinition typeDefinition)
         {
-            return typeDefinition.Type
-                                 .GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaDefinitionReader.GetPropertyDefinition(p, typeDefinition))
-                                 .Where(d => d.State == DefinitionState.Default);
+            return typeDefinition.Type.GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaDefinitionReader.GetPropertyDefinition(p, typeDefinition)).Where(d => d.State == DefinitionState.Default);
         }
 
         private void AddSystemType<T>(string typeName)

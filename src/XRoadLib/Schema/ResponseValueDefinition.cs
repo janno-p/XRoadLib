@@ -7,7 +7,7 @@ namespace XRoadLib.Schema
         public OperationDefinition DeclaringOperationDefinition { get; }
         public ParameterInfo ParameterInfo { get; }
 
-        public bool HasExplicitXRoadFault { get; set; }
+        public XRoadFaultPresentation XRoadFaultPresentation { get; set; } = XRoadFaultPresentation.Choice;
 
         public override string RuntimeName => "result";
 
@@ -18,7 +18,6 @@ namespace XRoadLib.Schema
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = parameterInfo;
             RuntimeType = NormalizeType(parameterInfo?.ParameterType);
-            HasExplicitXRoadFault = true;
 
             InitializeContentDefinition(parameterInfo);
         }

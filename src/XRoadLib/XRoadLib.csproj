@@ -52,6 +52,7 @@
     <Compile Include="Schema\CollectionDefinition.cs" />
     <Compile Include="Schema\Definition.cs" />
     <Compile Include="Schema\DefinitionState.cs" />
+    <Compile Include="Schema\XRoadFaultPresentation.cs" />
     <Compile Include="Schema\IContentDefinition.cs" />
     <Compile Include="Schema\ISchemaExporter.cs" />
     <Compile Include="Schema\MockMethods.cs" />

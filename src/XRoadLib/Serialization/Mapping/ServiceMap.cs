@@ -86,12 +86,13 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteStartElement(requestReader.Prefix, $"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
             else writer.WriteStartElement($"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
 
+            var fault = value as IXRoadFault;
             var namespaceInContext = requestReader.NamespaceURI;
-            if (containsRequest && !Definition.ProhibitRequestPartInResponse)
+
+            if (containsRequest && !Definition.ProhibitRequestPartInResponse && (message.Protocol.NonTechnicalFaultInResponseElement || fault == null))
                 CopyRequestToResponse(writer, requestReader, message, out namespaceInContext);
 
-            var fault = value as IXRoadFault;
-            if (Definition.ProhibitRequestPartInResponse && fault != null)
+            if (!message.Protocol.NonTechnicalFaultInResponseElement && fault != null)
                 SerializeFault(writer, fault, message.Protocol);
             else if (outputTypeMap != null)
             {
@@ -103,7 +104,9 @@ namespace XRoadLib.Serialization.Mapping
                     SerializeFault(writer, fault, message.Protocol);
                 else if (outputTypeMap != null)
                 {
-                    if (!responseValueDefinition.MergeContent && responseValueDefinition.HasExplicitXRoadFault)
+                    var addWrapperElement = !responseValueDefinition.MergeContent && responseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit && message.Protocol.NonTechnicalFaultInResponseElement;
+
+                    if (addWrapperElement)
                         writer.WriteStartElement(responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName);
 
                     if (value == null)
@@ -115,7 +118,7 @@ namespace XRoadLib.Serialization.Mapping
                         concreteTypeMap.Serialize(writer, message.ResponseNode, value, responseValueDefinition, message);
                     }
 
-                    if (!responseValueDefinition.MergeContent && responseValueDefinition.HasExplicitXRoadFault)
+                    if (addWrapperElement)
                         writer.WriteEndElement();
                 }
 

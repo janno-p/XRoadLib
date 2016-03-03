@@ -1,3 +1,7 @@
+#### 1.0.0-beta003 - 03.03.2016
+* Add X-Road v4.0 style non-technical faults.
+* Alternative explicit non-technical fault representations.
+
 #### 1.0.0-beta002 - 19.02.2016
 * Multiple schemas in single WSDL file.
 * Detect type dependency to filter out unused types from service description.
