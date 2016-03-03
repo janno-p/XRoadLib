@@ -95,13 +95,11 @@ namespace XRoadLib.Serialization
             writer.WriteLine("Content-Transfer-Encoding: binary");
             writer.WriteLine("Content-ID: <{0}>", attachment.ContentID.Trim('<', '>', ' '));
             writer.WriteLine();
+            writer.Flush();
 
             attachment.ContentStream.Position = 0;
             attachment.ContentStream.CopyTo(outputStream);
             outputStream.Flush();
-
-            writer.WriteLine(attachment.ToBase64String());
-            writer.Flush();
         }
     }
 }

@@ -20,9 +20,6 @@ namespace XRoadLib.Serialization.Mapping
             var dtoObject = new T();
             dtoObject.SetTemplateMembers(templateNode.ChildNames);
 
-            if (reader.IsEmptyElement)
-                return MoveNextAndReturn(reader, dtoObject);
-
             var validateRequired = definition is RequestValueDefinition;
 
             if (contentPropertyMap != null)
@@ -30,6 +27,9 @@ namespace XRoadLib.Serialization.Mapping
                 ReadPropertyValue(reader, contentPropertyMap, templateNode, message, validateRequired, dtoObject);
                 return dtoObject;
             }
+
+            if (reader.IsEmptyElement)
+                return MoveNextAndReturn(reader, dtoObject);
 
             var parentDepth = reader.Depth;
             var itemDepth = parentDepth + 1;
