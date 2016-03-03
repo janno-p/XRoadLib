@@ -1,3 +1,6 @@
+#### 1.0.0-beta004 - 03.03.2016
+* Fix serialization/deserialization in reverse direction.
+
 #### 1.0.0-beta003 - 03.03.2016
 * Add X-Road v4.0 style non-technical faults.
 * Alternative explicit non-technical fault representations.
