@@ -50,10 +50,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
             IsCurrentElement(...)
           </code>
-          <div class="tip" id="64">
+          <div class="tip" id="65">
             <strong>Signature:</strong> (reader:XmlReader * depth:int * name:string * namespace:string) -&gt; bool<br />
                       </div>
         </td>
@@ -64,22 +64,8 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
-            IsHeaderNamespace(reader)
-          </code>
-          <div class="tip" id="65">
-            <strong>Signature:</strong> reader:XmlReader -&gt; bool<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
           <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
-            IsNilElement(reader)
+            IsHeaderNamespace(reader)
           </code>
           <div class="tip" id="66">
             <strong>Signature:</strong> reader:XmlReader -&gt; bool<br />
@@ -93,10 +79,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
-            MoveToBody(reader)
+            IsNilElement(reader)
           </code>
           <div class="tip" id="67">
-            <strong>Signature:</strong> reader:XmlReader -&gt; unit<br />
+            <strong>Signature:</strong> reader:XmlReader -&gt; bool<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -107,10 +93,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
-            MoveToElement(...)
+            MoveToBody(reader)
           </code>
           <div class="tip" id="68">
-            <strong>Signature:</strong> (reader:XmlReader * depth:int * name:string * namespace:string) -&gt; bool<br />
+            <strong>Signature:</strong> reader:XmlReader -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -121,10 +107,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
-            MoveToPayload(reader, rootElementName)
+            MoveToElement(...)
           </code>
           <div class="tip" id="69">
-            <strong>Signature:</strong> (reader:XmlReader * rootElementName:XName) -&gt; unit<br />
+            <strong>Signature:</strong> (reader:XmlReader * depth:int * name:string * namespace:string) -&gt; bool<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -135,10 +121,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
-            ReadToElement(reader, localName)
+            MoveToPayload(reader, rootElementName)
           </code>
           <div class="tip" id="70">
-            <strong>Signature:</strong> (reader:XmlReader * localName:string) -&gt; bool<br />
+            <strong>Signature:</strong> (reader:XmlReader * rootElementName:XName) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -149,9 +135,23 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
-            ReadToEndElement(reader)
+            ReadToElement(reader, localName)
           </code>
           <div class="tip" id="71">
+            <strong>Signature:</strong> (reader:XmlReader * localName:string) -&gt; bool<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
+            ReadToEndElement(reader)
+          </code>
+          <div class="tip" id="72">
             <strong>Signature:</strong> reader:XmlReader -&gt; unit<br />
                       </div>
         </td>
