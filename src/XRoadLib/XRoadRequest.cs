@@ -50,13 +50,20 @@ namespace XRoadLib
                 writer.Flush();
 
                 var request = WebRequest.Create(uri);
+
+                request.ContentType = $"text/xml; charset={Encoding.UTF8.HeaderName}";
+                request.Headers.Set("SOAPAction", string.Empty);
+                request.Method = "POST";
+
                 requestMessage.SaveTo(request);
 
                 using (var response = request.GetResponse())
                 using (var responseStream = response.GetResponseStream())
+                using (var seekableStream = new MemoryStream())
                 using (var responseMessage = new XRoadMessage())
                 {
-                    responseMessage.LoadResponse(responseStream, response.Headers, Encoding.UTF8, Path.GetTempPath(), Enumerable.Repeat(protocol, 1));
+                    responseStream?.CopyTo(seekableStream);
+                    responseMessage.LoadResponse(seekableStream, response.Headers, Encoding.UTF8, Path.GetTempPath(), Enumerable.Repeat(protocol, 1));
                     return (T)responseMessage.DeserializeMessageContent(operationName.LocalName);
                 }
             }
