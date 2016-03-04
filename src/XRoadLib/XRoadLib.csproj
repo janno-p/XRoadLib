@@ -162,6 +162,7 @@
     <Compile Include="Soap\FaultCode.cs" />
     <Compile Include="Soap\ServerFaultCode.cs" />
     <Compile Include="XRoadException.cs" />
+    <Compile Include="XRoadHelper.cs" />
     <Compile Include="XRoadRequest.cs" />
   </ItemGroup>
   <ItemGroup>

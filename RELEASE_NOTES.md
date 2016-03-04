@@ -1,3 +1,7 @@
+#### 1.0.0-beta007 - 04.03.2016
+* Fix XRoadRequest helper class.
+* Add helper method to generate X-Road request ID-s.
+
 #### 1.0.0-beta006 - 04.03.2016
 * Fix XRoadRequest class to make POST requests instead of GET.
 * Refactor X-Road meta services to handle them separately.
