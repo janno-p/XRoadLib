@@ -25,5 +25,8 @@ namespace XRoadLib.Tests.Contract.Configuration
         {
             propertyDefinition.UseXop = false;
         }
+
+        public void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition)
+        { }
     }
 }

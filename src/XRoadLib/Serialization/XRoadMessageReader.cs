@@ -10,6 +10,7 @@ using XRoadLib.Extensions;
 using XRoadLib.Protocols;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
+using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Serialization
 {
@@ -69,6 +70,8 @@ namespace XRoadLib.Serialization
 
                 if (target.Protocol == null && target.RootElementName != null)
                     target.Protocol = supportedProtocols.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
+
+                target.MetaServiceMap = GetMetaServiceMap(target.RootElementName);
             }
 
             var xrh4 = target.Header as IXRoadHeader40;
@@ -429,6 +432,22 @@ namespace XRoadLib.Serialization
             target.Header = header;
             target.UnresolvedHeaders = unresolved;
             target.Protocol = protocol;
+        }
+
+        private static IServiceMap GetMetaServiceMap(XName rootElementName)
+        {
+            if (rootElementName == null || (rootElementName.NamespaceName != NamespaceConstants.XROAD && rootElementName.NamespaceName != NamespaceConstants.XTEE))
+                return null;
+
+            switch (rootElementName.LocalName)
+            {
+                case "listMethods":
+                    return rootElementName.NamespaceName == NamespaceConstants.XROAD ? SystemServiceMap.ListMethodsLiteral : SystemServiceMap.ListMethodsEncoded;
+                case "testSystem":
+                    return rootElementName.NamespaceName == NamespaceConstants.XROAD ? SystemServiceMap.TestSystemLiteral : SystemServiceMap.TestSystemEncoded;
+                default:
+                    return null;
+            }
         }
 
         private static XName ParseMessageRootElementName(XmlReader reader)

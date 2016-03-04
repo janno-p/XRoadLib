@@ -55,7 +55,6 @@
     <Compile Include="Schema\XRoadFaultPresentation.cs" />
     <Compile Include="Schema\IContentDefinition.cs" />
     <Compile Include="Schema\ISchemaExporter.cs" />
-    <Compile Include="Schema\MockMethods.cs" />
     <Compile Include="Schema\RequestValueDefinition.cs" />
     <Compile Include="Schema\PropertyComparer.cs" />
     <Compile Include="Extensions\PropertyInfoExtensions.cs" />
@@ -86,6 +85,7 @@
     <Compile Include="Serialization\Mapping\Int16TypeMap.cs" />
     <Compile Include="Serialization\Mapping\IntegerTypeMap.cs" />
     <Compile Include="Serialization\Mapping\OptimizedContentTypeMap.cs" />
+    <Compile Include="Serialization\SystemServiceMap.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />
     <Compile Include="Soap\ISoapFault.cs" />
@@ -131,7 +131,6 @@
     <Compile Include="Serialization\Mapping\SequenceTypeMap.cs" />
     <Compile Include="Serialization\Mapping\ServiceMap.cs" />
     <Compile Include="Serialization\Mapping\ContentTypeMap.cs" />
-    <Compile Include="Serialization\MetaServiceEnum.cs" />
     <Compile Include="Serialization\Template\IXmlTemplateNode.cs" />
     <Compile Include="Serialization\Mapping\AbstractTypeMap.cs" />
     <Compile Include="Serialization\Mapping\ArrayTypeMap.cs" />

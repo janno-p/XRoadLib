@@ -59,14 +59,6 @@ namespace XRoadLib.Serialization
             AddSystemType<Stream>("base64Binary", x => new ContentTypeMap(x));
             AddSystemType<Stream>("hexBinary", x => new ContentTypeMap(x));
             AddSystemType<Stream>("base64", x => new ContentTypeMap(x));
-
-            var legacyProtocol = protocol as IXRoadLegacyProtocol;
-            if (legacyProtocol == null)
-                return;
-
-            CreateTestSystem(legacyProtocol);
-            CreateGetState(legacyProtocol);
-            CreateListMethods(legacyProtocol);
         }
 
         public IServiceMap GetServiceMap(string operationName)
@@ -100,12 +92,10 @@ namespace XRoadLib.Serialization
             var inputTypeMap = GetTypeMap(parameterInfo?.ParameterType);
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
 
-            var serviceMap = new ServiceMap(this, operationDefinition, inputTypeMap, outputTuple.Item2, outputTuple.Item1)
-            {
-                RequestValueDefinition = parameterInfo != null ? new RequestValueDefinition(parameterInfo, operationDefinition) : null
-            };
+            var requestValueDefinition = new RequestValueDefinition(parameterInfo, operationDefinition);
+            schemaDefinitionReader.SchemaExporter.ExportRequestValueDefinition(requestValueDefinition);
 
-            return serviceMaps.GetOrAdd(qualifiedName, serviceMap);
+            return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(this, operationDefinition, requestValueDefinition, outputTuple.Item1, inputTypeMap, outputTuple.Item2));
         }
 
         private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
@@ -291,45 +281,6 @@ namespace XRoadLib.Serialization
                 return XName.Get(type.Name, Protocol.ProducerNamespace);
 
             throw XRoadException.AndmetüübileVastavNimeruumPuudub(type.FullName);
-        }
-
-        private void CreateTestSystem(IXRoadLegacyProtocol legacyProtocol)
-        {
-            var methodInfo = typeof(MockMethods).GetMethod("TestSystem");
-
-            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("testSystem", legacyProtocol.XRoadNamespace), 1u);
-            operationDefinition.State = DefinitionState.Hidden;
-            operationDefinition.IsMetaService = true;
-
-            var outputTuple = GetReturnValueTypeMap(operationDefinition, XRoadFaultPresentation.Implicit);
-
-            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
-        }
-
-        private void CreateGetState(IXRoadLegacyProtocol legacyProtocol)
-        {
-            var methodInfo = typeof(MockMethods).GetMethod("GetState");
-
-            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("getState", legacyProtocol.XRoadNamespace), 1u);
-            operationDefinition.State = DefinitionState.Hidden;
-            operationDefinition.IsMetaService = true;
-
-            var outputTuple = GetReturnValueTypeMap(operationDefinition, XRoadFaultPresentation.Implicit);
-
-            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
-        }
-
-        private void CreateListMethods(IXRoadLegacyProtocol legacyProtocol)
-        {
-            var methodInfo = typeof(MockMethods).GetMethod("ListMethods");
-
-            var operationDefinition = schemaDefinitionReader.GetOperationDefinition(methodInfo, XName.Get("listMethods", legacyProtocol.XRoadNamespace), 1u);
-            operationDefinition.State = DefinitionState.Hidden;
-            operationDefinition.IsMetaService = true;
-
-            var outputTuple = GetReturnValueTypeMap(operationDefinition, XRoadFaultPresentation.Implicit);
-
-            serviceMaps.GetOrAdd(operationDefinition.Name, new ServiceMap(this, operationDefinition, null, outputTuple.Item2, outputTuple.Item1));
         }
 
         private void AddSystemType<T>(string typeName, Func<TypeDefinition, ITypeMap> createTypeMap)

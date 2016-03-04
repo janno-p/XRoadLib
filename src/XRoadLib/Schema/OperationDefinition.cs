@@ -11,7 +11,6 @@ namespace XRoadLib.Schema
 
         public uint Version { get; set; }
         public bool IsAbstract { get; set; }
-        public bool IsMetaService { get; set; }
 
         public string InputMessageName { get; set; }
         public BinaryMode InputBinaryMode { get; set; }

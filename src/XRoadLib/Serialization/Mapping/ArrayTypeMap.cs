@@ -84,7 +84,7 @@ namespace XRoadLib.Serialization.Mapping
 
                 if (valueItem != null)
                 {
-                    var typeMap = serializerCache.GetTypeMap(valueItem.GetType());
+                    var typeMap = serializerCache != null ? serializerCache.GetTypeMap(valueItem.GetType()) : elementTypeMap;
                     typeMap.Serialize(writer, templateNode, valueItem, arrayItemDefinition, message);
                 }
                 else writer.WriteNilAttribute();

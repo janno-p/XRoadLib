@@ -2,10 +2,12 @@
 
 namespace XRoadLib.Schema
 {
-    internal class RequestValueDefinition : ContentDefinition
+    public class RequestValueDefinition : ContentDefinition
     {
         public OperationDefinition DeclaringOperationDefinition { get; }
         public ParameterInfo ParameterInfo { get; }
+
+        public bool MergeContent { get; set; }
 
         public override string RuntimeName => "request";
 
@@ -13,7 +15,11 @@ namespace XRoadLib.Schema
         {
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = parameterInfo;
-            RuntimeType = NormalizeType(parameterInfo?.ParameterType);
+
+            if (parameterInfo == null)
+                return;
+
+            RuntimeType = NormalizeType(parameterInfo.ParameterType);
 
             InitializeContentDefinition(parameterInfo);
         }

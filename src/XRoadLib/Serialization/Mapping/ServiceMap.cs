@@ -11,17 +11,19 @@ namespace XRoadLib.Serialization.Mapping
         private readonly ISerializerCache serializerCache;
         private readonly ITypeMap inputTypeMap;
         private readonly ITypeMap outputTypeMap;
+        private readonly RequestValueDefinition requestValueDefinition;
         private readonly ResponseValueDefinition responseValueDefinition;
 
         public OperationDefinition Definition { get; }
 
-        internal RequestValueDefinition RequestValueDefinition { get; set; }
+        public bool HasParameters => requestValueDefinition.ParameterInfo != null;
 
-        public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap, ResponseValueDefinition responseValueDefinition)
+        public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestValueDefinition requestValueDefinition, ResponseValueDefinition responseValueDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
         {
             this.serializerCache = serializerCache;
             this.inputTypeMap = inputTypeMap;
             this.outputTypeMap = outputTypeMap;
+            this.requestValueDefinition = requestValueDefinition;
             this.responseValueDefinition = responseValueDefinition;
 
             Definition = operationDefinition;
@@ -31,11 +33,11 @@ namespace XRoadLib.Serialization.Mapping
         {
             var requestName = message.Protocol.RequestPartNameInRequest;
 
-            if (!reader.MoveToElement(3, requestName))
+            if (!requestValueDefinition.MergeContent && !reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
-            if (RequestValueDefinition != null)
-                return inputTypeMap.Deserialize(reader, message.RequestNode, RequestValueDefinition, message);
+            if (requestValueDefinition.ParameterInfo != null)
+                return inputTypeMap.Deserialize(reader, message.RequestNode, requestValueDefinition, message);
 
             return null;
         }
@@ -73,12 +75,15 @@ namespace XRoadLib.Serialization.Mapping
             if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, Definition.Name.LocalName, Definition.Name.NamespaceName);
             else writer.WriteStartElement(Definition.Name.LocalName, Definition.Name.NamespaceName);
 
-            writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
+            if (!requestValueDefinition.MergeContent)
+                writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
 
-            if (RequestValueDefinition != null)
-                inputTypeMap.Serialize(writer, message.RequestNode, value, RequestValueDefinition, message);
+            if (requestValueDefinition.ParameterInfo != null)
+                inputTypeMap.Serialize(writer, message.RequestNode, value, requestValueDefinition, message);
 
-            writer.WriteEndElement();
+            if (!requestValueDefinition.MergeContent)
+                writer.WriteEndElement();
+
             writer.WriteEndElement();
         }
 

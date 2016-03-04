@@ -7,7 +7,6 @@ using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Handler.Events;
 using XRoadLib.Protocols;
-using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
@@ -27,9 +26,9 @@ namespace XRoadLib.Handler
             this.supportedProtocols = new List<XRoadProtocol>(supportedProtocols);
         }
 
-        protected abstract object InvokeMetaService(MetaServiceName metaServiceName);
+        protected abstract object InvokeMetaService(IServiceMap serviceMap);
 
-        protected abstract object GetServiceObject(string operationName);
+        protected abstract object GetServiceObject(IServiceMap serviceMap);
 
         protected virtual void OnRequestLoaded()
         { }
@@ -55,7 +54,7 @@ namespace XRoadLib.Handler
                 throw XRoadException.InvalidQuery("Empty request content");
 
             requestMessage.LoadRequest(httpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), supportedProtocols);
-            if (requestMessage.Protocol == null)
+            if (requestMessage.Protocol == null && requestMessage.MetaServiceMap == null)
                 throw XRoadException.InvalidQuery("Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {0}.", string.Join(", ", supportedProtocols.Select(x => $@"""{x.Name}""")));
 
             responseMessage.Copy(requestMessage);
@@ -73,19 +72,18 @@ namespace XRoadLib.Handler
         private object InvokeServiceMethod(ISerializerCache serializerCache, out IServiceMap serviceMap)
         {
             object result;
-            if ((serviceMap = InvokeMetaService(serializerCache, out result)) != null)
+            if ((serviceMap = InvokeMetaService(out result)) != null)
                 return result;
 
-            var operationName = requestMessage.Header?.Service?.ServiceCode ?? requestMessage.RootElementName?.LocalName;
-            var serviceObject = GetServiceObject(operationName);
-
             serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName);
+
+            var serviceObject = GetServiceObject(serviceMap);
 
             var input = DeserializeMethodInput(serviceMap);
 
             try
             {
-                result = serviceMap.Definition.MethodInfo.Invoke(serviceObject, new[] { input });
+                result = serviceMap.Definition.MethodInfo.Invoke(serviceObject, serviceMap.HasParameters ? new[] { input } : new object[0]);
             }
             catch (Exception exception)
             {
@@ -101,17 +99,16 @@ namespace XRoadLib.Handler
             return result;
         }
 
-        private IServiceMap InvokeMetaService(ISerializerCache serializerCache, out object result)
+        private IServiceMap InvokeMetaService(out object result)
         {
             result = null;
 
-            var metaServiceName = requestMessage.GetMetaServiceName();
-            if (metaServiceName == MetaServiceName.None)
+            if (requestMessage.MetaServiceMap == null)
                 return null;
 
-            var serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName);
+            var serviceMap = requestMessage.MetaServiceMap;
 
-            result = InvokeMetaService(metaServiceName);
+            result = InvokeMetaService(serviceMap);
 
             return serviceMap;
         }

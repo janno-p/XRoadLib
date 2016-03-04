@@ -9,5 +9,7 @@
         void ExportTypeDefinition(TypeDefinition typeDefinition);
 
         void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition);
+
+        void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition);
     }
 }

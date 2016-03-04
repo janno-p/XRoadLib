@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using XRoadLib.Protocols;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
+using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization
@@ -34,6 +35,7 @@ namespace XRoadLib.Serialization
         public XName RootElementName { get; set; }
         public BinaryMode BinaryMode { get; set; }
         public bool IsMultipartContainer { get; set; }
+        public IServiceMap MetaServiceMap { get; set; }
 
         public IList<XRoadAttachment> AllAttachments => attachments;
         public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }
@@ -112,26 +114,6 @@ namespace XRoadLib.Serialization
                 attachment.Dispose();
 
             attachments.Clear();
-        }
-
-        public MetaServiceName GetMetaServiceName()
-        {
-            if (Header?.Service?.ServiceCode != null)
-                return Header.Service.ServiceCode == "getState" ? MetaServiceName.GetState : MetaServiceName.None;
-
-            var legacyProtocol = Protocol as IXRoadLegacyProtocol;
-            if (legacyProtocol == null || RootElementName.Namespace != legacyProtocol.XRoadNamespace)
-                return MetaServiceName.Unsupported;
-
-            switch (RootElementName.LocalName)
-            {
-                case "listMethods":
-                    return MetaServiceName.ListMethods;
-                case "testSystem":
-                    return MetaServiceName.TestSystem;
-                default:
-                    return MetaServiceName.Unsupported;
-            }
         }
 
         public void Copy(XRoadMessage message)

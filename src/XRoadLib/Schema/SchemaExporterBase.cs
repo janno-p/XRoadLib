@@ -9,5 +9,7 @@
         public virtual void ExportTypeDefinition(TypeDefinition typeDefinition) { }
 
         public virtual void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition) { }
+
+        public virtual void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition) { }
     }
 }
