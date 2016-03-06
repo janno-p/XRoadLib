@@ -408,37 +408,37 @@ module XRoadHeader40Tests =
     [<Test>]
     let ``validates content of client element`` () =
         TestDelegate(fun _ -> parseHeader "<xrd:client />" |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:client` cannot be empty.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` cannot be empty.") typeof<XRoadException>
 
     [<Test>]
     let ``validates objectType attribute of client element`` () =
         TestDelegate(fun _ -> parseHeader @"<xrd:client></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:client` must have attribute `http://x-road.eu/xsd/identifiers:objectType` value.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.") typeof<XRoadException>
 
     [<Test>]
     let ``validates xRoadInstance subelement of client element`` () =
         TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:client` must have child element `http://x-road.eu/xsd/identifiers:xRoadInstance`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
 
     [<Test>]
     let ``validates xRoadInstance subelement of client element with unknown element`` () =
         TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><x /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:client` must have child element `http://x-road.eu/xsd/identifiers:xRoadInstance`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
 
     [<Test>]
     let ``validates memberClass subelement of client element`` () =
         TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:client` must have child element `http://x-road.eu/xsd/identifiers:memberClass`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}memberClass`.") typeof<XRoadException>
 
     [<Test>]
     let ``validates memberCode subelement of client element`` () =
         TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:client` must have child element `http://x-road.eu/xsd/identifiers:memberCode`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}memberCode`.") typeof<XRoadException>
 
     [<Test>]
     let ``validates invalid subelement of client element`` () =
         TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /><x /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Unexpected element `http://schemas.xmlsoap.org/soap/envelope/:x` in element `http://x-road.eu/xsd/xroad.xsd:client`.") typeof<XRoadException>
+        |> should (throwWithMessage "Unexpected element `{http://schemas.xmlsoap.org/soap/envelope/}x` in element `{http://x-road.eu/xsd/xroad.xsd}client`.") typeof<XRoadException>
 
     [<Test>]
     let ``validates presence of id element`` () =
@@ -513,42 +513,42 @@ module XRoadHeader40Tests =
     [<Test>]
     let ``unrecognized X-Road header element`` () =
         TestDelegate(fun _ -> parseHeader @"<xrd:x />" |> ignore)
-        |> should (throwWithMessage "Unexpected X-Road header element `http://x-road.eu/xsd/xroad.xsd:x`.") typeof<XRoadException>
+        |> should (throwWithMessage "Unexpected X-Road header element `{http://x-road.eu/xsd/xroad.xsd}x`.") typeof<XRoadException>
 
     [<Test>]
     let ``empty service element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service />") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:service` cannot be empty.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` cannot be empty.") typeof<XRoadException>
 
     [<Test>]
     let ``missing objectType attribute for service element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:service` must have attribute `http://x-road.eu/xsd/identifiers:objectType` value.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.") typeof<XRoadException>
 
     [<Test>]
     let ``missing xRoadInstance element for service element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:service` must have child element `http://x-road.eu/xsd/identifiers:xRoadInstance`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
 
     [<Test>]
     let ``invalid element in service element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><x /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:service` must have child element `http://x-road.eu/xsd/identifiers:xRoadInstance`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
 
     [<Test>]
     let ``missing memberClass element for service element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:service` must have child element `http://x-road.eu/xsd/identifiers:memberClass`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}memberClass`.") typeof<XRoadException>
 
     [<Test>]
     let ``missing memberCode element for service element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:service` must have child element `http://x-road.eu/xsd/identifiers:memberCode`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}memberCode`.") typeof<XRoadException>
 
     [<Test>]
     let ``missing serviceCode element for service element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:service` must have child element `http://x-road.eu/xsd/identifiers:serviceCode`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}serviceCode`.") typeof<XRoadException>
 
     [<Test>]
     let ``read minimal group of elements for service element`` () =
@@ -577,7 +577,7 @@ module XRoadHeader40Tests =
     [<Test>]
     let ``optional parameter at wrong position for service element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /><id:subsystemCode /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Unexpected element `http://x-road.eu/xsd/identifiers:subsystemCode` in element `http://x-road.eu/xsd/xroad.xsd:service`.") typeof<XRoadException>
+        |> should (throwWithMessage "Unexpected element `{http://x-road.eu/xsd/identifiers}subsystemCode` in element `{http://x-road.eu/xsd/xroad.xsd}service`.") typeof<XRoadException>
 
     [<Test>]
     let ``read simple optional element values`` () =
@@ -589,22 +589,22 @@ module XRoadHeader40Tests =
     [<Test>]
     let ``empty centralService element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:centralService />") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:centralService` cannot be empty.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}centralService` cannot be empty.") typeof<XRoadException>
 
     [<Test>]
     let ``missing objectType attribute for centralService element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:centralService></xrd:centralService>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:centralService` must have attribute `http://x-road.eu/xsd/identifiers:objectType` value.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.") typeof<XRoadException>
 
     [<Test>]
     let ``missing xRoadInstance element for centralService element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:centralService id:objectType=""CENTRALSERVICE""></xrd:centralService>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:centralService` must have child element `http://x-road.eu/xsd/identifiers:xRoadInstance`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
 
     [<Test>]
     let ``missing serviceCode element for centralService element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance /></xrd:centralService>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/xroad.xsd:centralService` must have child element `http://x-road.eu/xsd/identifiers:serviceCode`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have child element `{http://x-road.eu/xsd/identifiers}serviceCode`.") typeof<XRoadException>
 
     [<Test>]
     let ``valid centralService element`` () =
@@ -620,17 +620,17 @@ module XRoadHeader40Tests =
     [<Test>]
     let ``emtpy representedParty element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<repr:representedParty />") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/representation.xsd:representedParty` cannot be empty.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/representation.xsd}representedParty` cannot be empty.") typeof<XRoadException>
 
     [<Test>]
     let ``element partyCode is required for representedParty element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<repr:representedParty></repr:representedParty>") |> ignore)
-        |> should (throwWithMessage "Element `http://x-road.eu/xsd/representation.xsd:representedParty` must have child element `http://x-road.eu/xsd/representation.xsd:partyCode`.") typeof<XRoadException>
+        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/representation.xsd}representedParty` must have child element `{http://x-road.eu/xsd/representation.xsd}partyCode`.") typeof<XRoadException>
 
     [<Test>]
     let ``wrong element order for representedParty element`` () =
         TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<repr:representedParty><repr:partyCode /><repr:partyClass /></repr:representedParty>") |> ignore)
-        |> should (throwWithMessage "Unexpected element `http://x-road.eu/xsd/representation.xsd:partyClass` in element `http://x-road.eu/xsd/representation.xsd:representedParty`.") typeof<XRoadException>
+        |> should (throwWithMessage "Unexpected element `{http://x-road.eu/xsd/representation.xsd}partyClass` in element `{http://x-road.eu/xsd/representation.xsd}representedParty`.") typeof<XRoadException>
 
     [<Test>]
     let ``can handle missing optional element for representedParty element`` () =
