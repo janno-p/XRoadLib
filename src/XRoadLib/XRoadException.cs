@@ -10,15 +10,15 @@ namespace XRoadLib
     {
         public FaultCode FaultCode { get; }
 
-        private XRoadException(FaultCode faultCode, string message, params object[] args)
-            : base(string.Format(message, args))
+        private XRoadException(FaultCode faultCode, string message)
+            : base(message)
         {
             FaultCode = faultCode;
         }
 
         public static XRoadException UnknownType(string typeName)
         {
-            return new XRoadException(new ClientFaultCode("UnknownType"), "Unknown type `{0}`.", typeName);
+            return new XRoadException(new ClientFaultCode("UnknownType"), $"Unknown type `{typeName}`.");
         }
 
         public static XRoadException UnknownOperation(XName typeName)
@@ -28,42 +28,43 @@ namespace XRoadLib
 
         public static XRoadException UnknownProperty(string propertyName, XName typeName)
         {
-            return new XRoadException(new ClientFaultCode("UnknownProperty"), "Type '{0}' does not define property '{1}' (property names are case-sensitive).", typeName, propertyName);
+            return new XRoadException(new ClientFaultCode("UnknownProperty"), $"Type '{typeName}' does not define property '{propertyName}' (property names are case-sensitive).");
         }
 
         public static XRoadException ParameterUndefinedInTemplate(string parameterName)
         {
-            return new XRoadException(ServerFaultCode.InternalError, "Service template does not define parameter named '{0}'.", parameterName);
+            return new XRoadException(ServerFaultCode.InternalError, $"Service template does not define parameter named '{parameterName}'.");
         }
 
         public static XRoadException AndmetüübileVastavNimeruumPuudub(string andmetüübiNimi)
         {
-            return new XRoadException(ServerFaultCode.InternalError, "Ei tuvastatud Xml nimeruumi süsteemsele andmetüübile '{0}'.", andmetüübiNimi);
+            return new XRoadException(ServerFaultCode.InternalError, $"Ei tuvastatud Xml nimeruumi süsteemsele andmetüübile '{andmetüübiNimi}'.");
         }
 
         public static XRoadException MissingRequiredPropertyValues(IEnumerable<string> propertyNames)
         {
-            return new XRoadException(new ClientFaultCode("ParameterRequired"), "Service input is missing required parameters: {0}.", string.Join(", ", propertyNames.Select(x => $"`{x}`")));
+            var missingParameters = string.Join(", ", propertyNames.Select(x => $"`{x}`"));
+            return new XRoadException(new ClientFaultCode("ParameterRequired"), $"Service input is missing required parameters: {missingParameters}.");
         }
 
         public static XRoadException TypeAttributeRequired(string typeName)
         {
-            return new XRoadException(new ClientFaultCode("TypeAttributeRequired"), "The type '{0}' is abstract, type attribute is required to specify target type.", typeName);
+            return new XRoadException(new ClientFaultCode("TypeAttributeRequired"), $"The type '{typeName}' is abstract, type attribute is required to specify target type.");
         }
 
         public static XRoadException PäringSisaldabVarasematKuupäeva(DateTime kuupäev)
         {
-            return new XRoadException(new ClientFaultCode("UnsupportedDateValue"), "Päring sisaldab kuupäeva, mis on varasem kui '{0}'.", kuupäev);
+            return new XRoadException(new ClientFaultCode("UnsupportedDateValue"), $"Päring sisaldab kuupäeva, mis on varasem kui '{kuupäev}'.");
         }
 
         public static XRoadException NoDefaultConstructorForType(XName qualifiedName)
         {
-            return new XRoadException(ServerFaultCode.InternalError, "The type '{0}' does not have default constructor.", qualifiedName);
+            return new XRoadException(ServerFaultCode.InternalError, $"The type '{qualifiedName}' does not have default constructor.");
         }
 
         public static XRoadException PäringusPuudubAttachment(string attachmentContentID)
         {
-            return new XRoadException(new ClientFaultCode("MultipartAttachmentMissing"), "MIME multipart message does not contain content with ID `{0}`.", attachmentContentID);
+            return new XRoadException(new ClientFaultCode("MultipartAttachmentMissing"), $"MIME multipart message does not contain content with ID `{attachmentContentID}`.");
         }
 
         public static XRoadException MultipartManusegaSõnumiOotamatuLõpp()
@@ -73,22 +74,22 @@ namespace XRoadLib
 
         public static XRoadException ToetamataKodeering(string kodeering)
         {
-            return new XRoadException(new ClientFaultCode("UnsupportedContentTransferEncoding"), "Kodeering `{0}` ei ole rakenduse poolt toetatud.", kodeering);
+            return new XRoadException(new ClientFaultCode("UnsupportedContentTransferEncoding"), $"Kodeering `{kodeering}` ei ole rakenduse poolt toetatud.");
         }
 
-        public static XRoadException InvalidQuery(string message, params object[] args)
+        public static XRoadException InvalidQuery(string message)
         {
-            return new XRoadException(new ClientFaultCode("InvalidQuery"), message, args);
+            return new XRoadException(new ClientFaultCode("InvalidQuery"), message);
         }
 
         public static XRoadException UndefinedContract(string operationName)
         {
-            throw new XRoadException(new ServerFaultCode("UndefinedContract"), "Operation `{0}` does not implement any known service contract.", operationName);
+            throw new XRoadException(new ServerFaultCode("UndefinedContract"), $"Operation `{operationName}` does not implement any known service contract.");
         }
 
         public static XRoadException AmbiguousMatch(string operationName)
         {
-            throw new XRoadException(new ServerFaultCode("AmbiguousMatch"), "Unable to detect unique service contract for operation `{0}` (method implements multiple service contracts).", operationName);
+            throw new XRoadException(new ServerFaultCode("AmbiguousMatch"), $"Unable to detect unique service contract for operation `{operationName}` (method implements multiple service contracts).");
         }
     }
 }

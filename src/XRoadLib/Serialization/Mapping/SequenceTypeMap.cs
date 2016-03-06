@@ -87,7 +87,7 @@ namespace XRoadLib.Serialization.Mapping
                     throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(propertyName, 1));
             }
 
-            throw XRoadException.InvalidQuery("Andmetüübil `{0}` puudub element `{1}` või see on esitatud vales kohas.", Definition.Name, reader.LocalName);
+            throw XRoadException.InvalidQuery($"Andmetüübil `{Definition.Name}` puudub element `{reader.LocalName}` või see on esitatud vales kohas.");
         }
     }
 }

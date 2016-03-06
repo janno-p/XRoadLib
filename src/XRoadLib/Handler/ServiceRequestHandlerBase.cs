@@ -55,7 +55,10 @@ namespace XRoadLib.Handler
 
             requestMessage.LoadRequest(httpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), supportedProtocols);
             if (requestMessage.Protocol == null && requestMessage.MetaServiceMap == null)
-                throw XRoadException.InvalidQuery("Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {0}.", string.Join(", ", supportedProtocols.Select(x => $@"""{x.Name}""")));
+            {
+                var supportedProtocolsString = string.Join(", ", supportedProtocols.Select(x => $@"""{x.Name}"""));
+                throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
+            }
 
             responseMessage.Copy(requestMessage);
 

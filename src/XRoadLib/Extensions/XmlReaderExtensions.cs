@@ -55,7 +55,7 @@ namespace XRoadLib.Extensions
 
             var typeNamespace = reader.LookupNamespace(namespacePrefix);
             if (typeNamespace == null)
-                throw XRoadException.InvalidQuery("Undefined namespace prefix `{0}` given in XML message for element `{1}` xsi:type.", namespacePrefix, reader.LocalName);
+                throw XRoadException.InvalidQuery($"Undefined namespace prefix `{namespacePrefix}` given in XML message for element `{reader.LocalName}` xsi:type.");
 
             if (isArrayType)
                 typeName = typeName.Substring(0, typeName.LastIndexOf('['));
@@ -109,10 +109,10 @@ namespace XRoadLib.Extensions
         public static void MoveToBody(this XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
-                throw XRoadException.InvalidQuery("Element `{0}:Envelope` is missing from request content.", NamespaceConstants.SOAP);
+                throw XRoadException.InvalidQuery($"Element `{NamespaceConstants.SOAP}:Envelope` is missing from request content.");
 
             if (!reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
-                throw XRoadException.InvalidQuery("Element `{0}:Body` is missing from request content.", NamespaceConstants.SOAP);
+                throw XRoadException.InvalidQuery($"Element `{NamespaceConstants.SOAP}:Body` is missing from request content.");
         }
 
         public static void MoveToPayload(this XmlReader reader, XName rootElementName)
@@ -121,6 +121,11 @@ namespace XRoadLib.Extensions
 
             if (!reader.MoveToElement(2, rootElementName.LocalName, rootElementName.NamespaceName))
                 throw XRoadException.InvalidQuery("Payload is missing from request content.");
+        }
+
+        public static XName GetXName(this XmlReader reader)
+        {
+            return XName.Get(reader.LocalName, reader.NamespaceURI);
         }
     }
 }

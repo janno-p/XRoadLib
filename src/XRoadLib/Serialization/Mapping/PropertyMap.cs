@@ -47,7 +47,7 @@ namespace XRoadLib.Serialization.Mapping
 
             string typeAttribute;
             if (typeMap.Definition.IsAnonymous && !(typeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
-                throw XRoadException.InvalidQuery("Expected anonymous type, but `{0}` was given.", typeAttribute);
+                throw XRoadException.InvalidQuery($"Expected anonymous type, but `{typeAttribute}` was given.");
 
             var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 

@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using XRoadLib.Extensions;
 
 namespace XRoadLib.Protocols.Headers
 {
@@ -107,7 +108,7 @@ namespace XRoadLib.Protocols.Headers
                 }
             }
 
-            throw XRoadException.InvalidQuery("Unexpected X-Road header element `{0}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI));
+            throw XRoadException.InvalidQuery($"Unexpected X-Road header element `{reader.GetXName()}`.");
         }
 
         public void Validate()

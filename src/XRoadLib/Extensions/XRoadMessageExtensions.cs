@@ -16,7 +16,7 @@ namespace XRoadLib.Extensions
 
                 var responseName = message.Protocol.ResponsePartNameInResponse;
                 if (!reader.MoveToElement(3, responseName))
-                    throw XRoadException.InvalidQuery("X-Road fault should be wrapped inside `{0}` element.", responseName);
+                    throw XRoadException.InvalidQuery($"X-Road fault should be wrapped inside `{responseName}` element.");
 
                 var fault = new XRoadFault();
 

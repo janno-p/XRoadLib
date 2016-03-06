@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 
 namespace XRoadLib.Soap
@@ -76,7 +77,7 @@ namespace XRoadLib.Soap
             }
 
             if (success)
-                throw XRoadException.InvalidQuery("Unexpected element `{0}:{1}` in SOAP Fault element.", reader.NamespaceURI, reader.LocalName);
+                throw XRoadException.InvalidQuery($"Unexpected element `{reader.GetXName()}` in SOAP Fault element.");
 
             return fault;
         }

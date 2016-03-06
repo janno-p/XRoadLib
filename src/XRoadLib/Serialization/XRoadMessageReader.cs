@@ -76,7 +76,7 @@ namespace XRoadLib.Serialization
 
             var xrh4 = target.Header as IXRoadHeader40;
             if (xrh4 != null && xrh4.ProtocolVersion?.Trim() != "4.0")
-                throw XRoadException.InvalidQuery("Unsupported X-Road v6 protocol version value `{0}`.", xrh4.ProtocolVersion ?? string.Empty);
+                throw XRoadException.InvalidQuery($"Unsupported X-Road v6 protocol version value `{xrh4.ProtocolVersion ?? string.Empty}`.");
 
             if (target.IsMultipartContainer)
                 target.BinaryMode = BinaryMode.Attachment;
@@ -91,7 +91,7 @@ namespace XRoadLib.Serialization
                 return;
 
             if (!Equals(target.RootElementName.LocalName, target.Header.Service.ServiceCode))
-                throw XRoadException.InvalidQuery("Teenuse nimi `{0}` ei ole vastavuses päringu sisuga `{1}`.", target.Header.Service.ServiceCode, target.RootElementName);
+                throw XRoadException.InvalidQuery($"Teenuse nimi `{target.Header.Service.ServiceCode}` ei ole vastavuses päringu sisuga `{target.RootElementName}`.");
         }
 
         public void Dispose()
@@ -453,7 +453,7 @@ namespace XRoadLib.Serialization
         private static XName ParseMessageRootElementName(XmlReader reader)
         {
             return (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV)) && reader.MoveToElement(2)
-                ? XName.Get(reader.LocalName, reader.NamespaceURI)
+                ? reader.GetXName()
                 : null;
         }
     }

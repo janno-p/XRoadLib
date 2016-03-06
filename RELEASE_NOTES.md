@@ -1,3 +1,7 @@
+#### 1.0.0-beta009 - 06.03.2016
+* Fix regression of 1.0.0-beta008.
+* Refactor to use string interpolation instead of string.Format in error messages.
+
 #### 1.0.0-beta008 - 06.03.2016
 * Remove unused X-Road exceptions.
 * Replace exception message of unsuccessful service detection.

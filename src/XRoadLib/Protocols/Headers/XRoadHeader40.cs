@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 
 namespace XRoadLib.Protocols.Headers
@@ -69,15 +70,15 @@ namespace XRoadLib.Protocols.Headers
                 }
             }
 
-            throw XRoadException.InvalidQuery("Unexpected X-Road header element `{0}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI));
+            throw XRoadException.InvalidQuery($"Unexpected X-Road header element `{reader.GetXName()}`.");
         }
 
         private static XRoadRepresentedParty ReadRepresentedParty(XmlReader reader)
         {
-            var qualifiedName = new XmlQualifiedName(reader.LocalName, reader.NamespaceURI);
+            var qualifiedName = reader.GetXName();
 
             if (reader.IsEmptyElement)
-                throw XRoadException.InvalidQuery("Element `{0}` cannot be empty.", qualifiedName);
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` cannot be empty.");
 
             var representedParty = new XRoadRepresentedParty();
 
@@ -91,7 +92,7 @@ namespace XRoadLib.Protocols.Headers
             }
 
             if (!success)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("partyCode", NamespaceConstants.XROAD_V4_REPR));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("partyCode", NamespaceConstants.XROAD_V4_REPR)}`.");
 
             if (reader.LocalName == "partyCode" && reader.NamespaceURI == NamespaceConstants.XROAD_V4_REPR)
             {
@@ -100,15 +101,15 @@ namespace XRoadLib.Protocols.Headers
                     return representedParty;
             }
 
-            throw XRoadException.InvalidQuery("Unexpected element `{0}` in element `{1}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), qualifiedName);
+            throw XRoadException.InvalidQuery($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
         }
 
         private static XRoadClientIdentifier ReadClient(XmlReader reader)
         {
-            var qualifiedName = new XmlQualifiedName(reader.LocalName, reader.NamespaceURI);
+            var qualifiedName = reader.GetXName();
 
             if (reader.IsEmptyElement)
-                throw XRoadException.InvalidQuery("Element `{0}` cannot be empty.", qualifiedName);
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` cannot be empty.");
 
             var client = new XRoadClientIdentifier();
 
@@ -116,19 +117,19 @@ namespace XRoadLib.Protocols.Headers
 
             var objectType = reader.GetAttribute("objectType", NamespaceConstants.XROAD_V4_ID);
             if (string.IsNullOrWhiteSpace(objectType))
-                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}` value.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have attribute `{XName.Get("objectType", NamespaceConstants.XROAD_V4_ID)}` value.");
             client.ObjectType = GetObjectType(objectType);
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("xRoadInstance", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("xRoadInstance", NamespaceConstants.XROAD_V4_ID)}`.");
             client.XRoadInstance = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberClass" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("memberClass", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("memberClass", NamespaceConstants.XROAD_V4_ID)}`.");
             client.MemberClass = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberCode" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("memberCode", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("memberCode", NamespaceConstants.XROAD_V4_ID)}`.");
             client.MemberCode = reader.ReadElementContentAsString();
 
             var success = reader.MoveToElement(depth + 1);
@@ -140,17 +141,17 @@ namespace XRoadLib.Protocols.Headers
             }
 
             if (success)
-                throw XRoadException.InvalidQuery("Unexpected element `{0}` in element `{1}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), qualifiedName);
+                throw XRoadException.InvalidQuery($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
 
             return client;
         }
 
         private static XRoadServiceIdentifier ReadService(XmlReader reader)
         {
-            var qualifiedName = new XmlQualifiedName(reader.LocalName, reader.NamespaceURI);
+            var qualifiedName = reader.GetXName();
 
             if (reader.IsEmptyElement)
-                throw XRoadException.InvalidQuery("Element `{0}` cannot be empty.", qualifiedName);
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` cannot be empty.");
 
             var service = new XRoadServiceIdentifier();
 
@@ -158,19 +159,19 @@ namespace XRoadLib.Protocols.Headers
 
             var objectType = reader.GetAttribute("objectType", NamespaceConstants.XROAD_V4_ID);
             if (string.IsNullOrWhiteSpace(objectType))
-                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}` value.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have attribute `{XName.Get("objectType", NamespaceConstants.XROAD_V4_ID)}` value.");
             service.ObjectType = GetObjectType(objectType);
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("xRoadInstance", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("xRoadInstance", NamespaceConstants.XROAD_V4_ID)}`.");
             service.XRoadInstance = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberClass" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("memberClass", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("memberClass", NamespaceConstants.XROAD_V4_ID)}`.");
             service.MemberClass = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberCode" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("memberCode", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("memberCode", NamespaceConstants.XROAD_V4_ID)}`.");
             service.MemberCode = reader.ReadElementContentAsString();
 
             var success = reader.MoveToElement(depth + 1);
@@ -181,7 +182,7 @@ namespace XRoadLib.Protocols.Headers
             }
 
             if (!success || reader.LocalName != "serviceCode" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("serviceCode", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("serviceCode", NamespaceConstants.XROAD_V4_ID)}`.");
             service.ServiceCode = reader.ReadElementContentAsString();
 
             success = reader.MoveToElement(depth + 1);
@@ -192,17 +193,17 @@ namespace XRoadLib.Protocols.Headers
             }
 
             if (success)
-                throw XRoadException.InvalidQuery("Unexpected element `{0}` in element `{1}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), qualifiedName);
+                throw XRoadException.InvalidQuery($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
 
             return service;
         }
 
         private static XRoadCentralServiceIdentifier ReadCentralService(XmlReader reader)
         {
-            var qualifiedName = new XmlQualifiedName(reader.LocalName, reader.NamespaceURI);
+            var qualifiedName = reader.GetXName();
 
             if (reader.IsEmptyElement)
-                throw XRoadException.InvalidQuery("Element `{0}` cannot be empty.", qualifiedName);
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` cannot be empty.");
 
             var centralService = new XRoadCentralServiceIdentifier();
 
@@ -210,19 +211,19 @@ namespace XRoadLib.Protocols.Headers
 
             var objectType = reader.GetAttribute("objectType", NamespaceConstants.XROAD_V4_ID);
             if (string.IsNullOrWhiteSpace(objectType))
-                throw XRoadException.InvalidQuery("Element `{0}` must have attribute `{1}` value.", qualifiedName, new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have attribute `{XName.Get("objectType", NamespaceConstants.XROAD_V4_ID)}` value.");
             centralService.ObjectType = GetObjectType(objectType);
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("xRoadInstance", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("xRoadInstance", NamespaceConstants.XROAD_V4_ID)}`.");
             centralService.XRoadInstance = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth + 1) || reader.LocalName != "serviceCode" || reader.NamespaceURI != NamespaceConstants.XROAD_V4_ID)
-                throw XRoadException.InvalidQuery("Element `{0}` must have child element `{1}`.", qualifiedName, new XmlQualifiedName("serviceCode", NamespaceConstants.XROAD_V4_ID));
+                throw XRoadException.InvalidQuery($"Element `{qualifiedName}` must have child element `{XName.Get("serviceCode", NamespaceConstants.XROAD_V4_ID)}`.");
             centralService.ServiceCode = reader.ReadElementContentAsString();
 
             if (reader.MoveToElement(depth + 1))
-                throw XRoadException.InvalidQuery("Unexpected element `{0}` in element `{1}`.", new XmlQualifiedName(reader.LocalName, reader.NamespaceURI), qualifiedName);
+                throw XRoadException.InvalidQuery($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
 
             return centralService;
         }
@@ -240,7 +241,7 @@ namespace XRoadLib.Protocols.Headers
                 case "CENTRALSERVICE":
                     return XRoadObjectType.CentralService;
                 default:
-                    throw XRoadException.InvalidQuery("Invalid `{0}` attribute value `{1}`.", new XmlQualifiedName("objectType", NamespaceConstants.XROAD_V4_ID), value);
+                    throw XRoadException.InvalidQuery($"Invalid `{XName.Get("objectType", NamespaceConstants.XROAD_V4_ID)}` attribute value `{value}`.");
             }
         }
     }
