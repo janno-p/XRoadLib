@@ -1,3 +1,7 @@
+#### 1.0.0-beta008 - 06.03.2016
+* Remove unused X-Road exceptions.
+* Replace exception message of unsuccessful service detection.
+
 #### 1.0.0-beta007 - 04.03.2016
 * Fix XRoadRequest helper class.
 * Add helper method to generate X-Road request ID-s.

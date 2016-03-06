@@ -82,7 +82,7 @@ namespace XRoadLib.Serialization
         {
             var operationDefinition = GetOperationDefinition(contractAssembly, qualifiedName);
             if (operationDefinition == null)
-                throw XRoadException.UnknownType(qualifiedName.ToString());
+                throw XRoadException.UnknownOperation(qualifiedName);
 
             var methodParameters = operationDefinition.MethodInfo.GetParameters();
             if (methodParameters.Length > 1)

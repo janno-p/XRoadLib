@@ -21,6 +21,11 @@ namespace XRoadLib
             return new XRoadException(new ClientFaultCode("UnknownType"), "Unknown type `{0}`.", typeName);
         }
 
+        public static XRoadException UnknownOperation(XName typeName)
+        {
+            return new XRoadException(new ClientFaultCode("UnknownOperation"), $"Unknown operation `{typeName}`.");
+        }
+
         public static XRoadException UnknownProperty(string propertyName, XName typeName)
         {
             return new XRoadException(new ClientFaultCode("UnknownProperty"), "Type '{0}' does not define property '{1}' (property names are case-sensitive).", typeName, propertyName);
@@ -39,11 +44,6 @@ namespace XRoadLib
         public static XRoadException MissingRequiredPropertyValues(IEnumerable<string> propertyNames)
         {
             return new XRoadException(new ClientFaultCode("ParameterRequired"), "Service input is missing required parameters: {0}.", string.Join(", ", propertyNames.Select(x => $"`{x}`")));
-        }
-
-        public static XRoadException UnknownParameter(string parameterName)
-        {
-            return new XRoadException(new ClientFaultCode("UnknownParameter"), "Service does not define parameter named '{0}'.", parameterName);
         }
 
         public static XRoadException TypeAttributeRequired(string typeName)
@@ -71,16 +71,6 @@ namespace XRoadLib
             return new XRoadException(new ClientFaultCode("MultipartStreamEndMarkerMissing"), "MIME multipart sõnum lõppes enne lõppu tähistava märgise tuvastamist.");
         }
 
-        public static XRoadException TundmatuNimeruum(string nimeruum)
-        {
-            return new XRoadException(new ClientFaultCode("UndefinedNamespace"), "X-tee sõnumis kasutatud andmetüübi nimeruum `{0}` on rakenduses defineerimata.", nimeruum);
-        }
-
-        public static XRoadException SamaAndmekoguNimiKorduvaltKasutuses(string andmekoguNimi)
-        {
-            return new XRoadException(ServerFaultCode.InternalError, "Sama andmekogu nimi '{0}' on korduvalt kasutuses.", andmekoguNimi);
-        }
-
         public static XRoadException ToetamataKodeering(string kodeering)
         {
             return new XRoadException(new ClientFaultCode("UnsupportedContentTransferEncoding"), "Kodeering `{0}` ei ole rakenduse poolt toetatud.", kodeering);
@@ -89,11 +79,6 @@ namespace XRoadLib
         public static XRoadException InvalidQuery(string message, params object[] args)
         {
             return new XRoadException(new ClientFaultCode("InvalidQuery"), message, args);
-        }
-
-        public static XRoadException UnsupportedQuery()
-        {
-            return new XRoadException(new ClientFaultCode("UnsupportedQuery"), "Received request does not meet any known operation.");
         }
 
         public static XRoadException UndefinedContract(string operationName)
