@@ -1,3 +1,8 @@
+#### 1.0.0-beta010 - 10.03.2016
+* Add content length to XRoadMessage for write and read operations.
+* Add definition property to allow optionally ignore array item element names.
+* Fix MIME message output for Linux systems.
+
 #### 1.0.0-beta009 - 06.03.2016
 * Fix regression of 1.0.0-beta008.
 * Refactor to use string interpolation instead of string.Format in error messages.
