@@ -25,6 +25,8 @@ namespace XRoadLib.Serialization
             if (!source.MultipartContentAttachments.Any())
             {
                 WriteContent(source);
+                writer.Flush();
+                source.ContentLength = outputStream.Length;
                 return;
             }
 
@@ -51,6 +53,9 @@ namespace XRoadLib.Serialization
 
             writer.WriteLine();
             writer.WriteLine("--{0}--", boundaryMarker);
+            writer.Flush();
+
+            source.ContentLength = outputStream.Length;
         }
 
         public void Dispose()

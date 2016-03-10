@@ -36,6 +36,7 @@ namespace XRoadLib.Serialization
         public BinaryMode BinaryMode { get; set; }
         public bool IsMultipartContainer { get; set; }
         public IServiceMap MetaServiceMap { get; set; }
+        public long ContentLength { get; internal set; }
 
         public IList<XRoadAttachment> AllAttachments => attachments;
         public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }

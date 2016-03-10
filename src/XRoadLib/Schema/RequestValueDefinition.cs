@@ -7,8 +7,6 @@ namespace XRoadLib.Schema
         public OperationDefinition DeclaringOperationDefinition { get; }
         public ParameterInfo ParameterInfo { get; }
 
-        public bool MergeContent { get; set; }
-
         public override string RuntimeName => "request";
 
         public RequestValueDefinition(ParameterInfo parameterInfo, OperationDefinition declaringOperationDefinition)

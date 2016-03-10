@@ -49,7 +49,7 @@ namespace XRoadLib.Serialization
 
         private void Close()
         {
-            ContentStream.Close();
+            ContentStream?.Close();
             ContentStream = null;
 
             // kui path on teada, siis on temp fail ja see tuleb kustutada ..

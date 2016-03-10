@@ -118,6 +118,7 @@ namespace XRoadLib.Serialization
             if (!IsMultipartMsg(contentType))
             {
                 ReadNextPart(target.ContentStream, GetByteDecoder(null), contentEncoding, null);
+                target.ContentLength = StreamPosition;
                 return false;
             }
 
@@ -150,6 +151,8 @@ namespace XRoadLib.Serialization
 
                 lastLine = ReadNextPart(targetStream, GetByteDecoder(partTransferEncoding), contentEncoding, multipartBoundaryMarker);
             } while (StreamPosition < stream.Length && !BufferStartsWith(lastLine, multipartEndMarker));
+
+            target.ContentLength = StreamPosition;
 
             return true;
         }
