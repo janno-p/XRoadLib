@@ -78,6 +78,7 @@
     <Compile Include="Schema\SchemaDefinitionReader.cs" />
     <Compile Include="Schema\SchemaExporterBase.cs" />
     <Compile Include="Schema\TypeDefinition.cs" />
+    <Compile Include="Serialization\CountingStream.cs" />
     <Compile Include="Serialization\Mapping\CompositeTypeMap.cs" />
     <Compile Include="Serialization\Mapping\EnumTypeMap.cs" />
     <Compile Include="Serialization\Mapping\ICompositeTypeMap.cs" />

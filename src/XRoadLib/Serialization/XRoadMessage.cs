@@ -85,21 +85,20 @@ namespace XRoadLib.Serialization
 
         public void SaveTo(HttpContext httpContext)
         {
-            using (var writer = new XRoadMessageWriter(httpContext.Response.Output, httpContext.Response.OutputStream))
+            using (var writer = new XRoadMessageWriter(httpContext.Response.OutputStream))
                 writer.Write(this, contentType => httpContext.Response.ContentType = contentType, httpContext.Response.AppendHeader);
         }
 
         public void SaveTo(WebRequest webRequest)
         {
             using (var outputStream = webRequest.GetRequestStream())
-            using (var textWriter = new StreamWriter(outputStream))
-            using (var writer = new XRoadMessageWriter(textWriter, outputStream))
+            using (var writer = new XRoadMessageWriter(outputStream))
                 writer.Write(this, contentType => webRequest.ContentType = contentType, webRequest.Headers.Add);
         }
 
-        public void SaveTo(TextWriter textWriter, Stream outputStream, Action<string> setContentType, Action<string, string> appendHeader)
+        public void SaveTo(Stream outputStream, Action<string> setContentType, Action<string, string> appendHeader)
         {
-            using (var writer = new XRoadMessageWriter(textWriter, outputStream))
+            using (var writer = new XRoadMessageWriter(outputStream))
                 writer.Write(this, setContentType, appendHeader);
         }
 

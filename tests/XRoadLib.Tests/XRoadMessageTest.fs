@@ -12,23 +12,22 @@ open System.Text
 module ContentLengthTest =
     let writeContent (content, attachments) =
         use outputStream = new MemoryStream()
-        use writer = new StreamWriter(outputStream)
         use contentStream = new MemoryStream()
         content |> Option.iter (fun value ->
             let buf = Encoding.UTF8.GetBytes(value: string)
             contentStream.Write(buf, 0, buf.Length))
         use message = new XRoadMessage(contentStream)
         attachments |> List.iter message.AllAttachments.Add
-        message.SaveTo(writer, outputStream, (fun _ -> ()), (fun _ _ -> ()))
+        message.SaveTo(outputStream, (fun _ -> ()), (fun _ _ -> ()))
         message.ContentLength
 
     [<Test>]
     let ``write empty content`` () =
-        (None, []) |> writeContent |> should equal 2
+        (None, []) |> writeContent |> should equal 0
 
     [<Test>]
     let ``write content without attachments`` () =
-        (Some("test"), []) |> writeContent |> should equal 6
+        (Some("test"), []) |> writeContent |> should equal 4
 
     [<Test>]
     let ``write content with attachments`` () =

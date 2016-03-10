@@ -8,14 +8,16 @@ namespace XRoadLib.Serialization
 {
     internal class XRoadMessageWriter : IDisposable
     {
-        private readonly Stream outputStream;
+        private const string NEW_LINE = "\r\n";
+
+        private readonly CountingStream outputStream;
 
         private TextWriter writer;
 
-        public XRoadMessageWriter(TextWriter writer, Stream outputStream)
+        public XRoadMessageWriter(Stream outputStream)
         {
-            this.outputStream = outputStream;
-            this.writer = writer;
+            this.outputStream = new CountingStream(outputStream);
+            writer = new StreamWriter(this.outputStream);
         }
 
         public void Write(XRoadMessage source, Action<string> setContentType, Action<string, string> appendHeader)
@@ -26,7 +28,7 @@ namespace XRoadLib.Serialization
             {
                 WriteContent(source);
                 writer.Flush();
-                source.ContentLength = outputStream.Length;
+                source.ContentLength = outputStream.WriteCount;
                 return;
             }
 
@@ -51,11 +53,12 @@ namespace XRoadLib.Serialization
                 else SerializeAttachment(attachment, boundaryMarker);
             }
 
-            writer.WriteLine();
-            writer.WriteLine("--{0}--", boundaryMarker);
+            writer.Write(NEW_LINE);
+            writer.Write("--{0}--", boundaryMarker);
+            writer.Write(NEW_LINE);
             writer.Flush();
 
-            source.ContentLength = outputStream.Length;
+            source.ContentLength = outputStream.WriteCount;
         }
 
         public void Dispose()
@@ -66,40 +69,55 @@ namespace XRoadLib.Serialization
 
         private void WriteContent(XRoadMessage source)
         {
-            writer.WriteLine(new StreamReader(source.ContentStream).ReadToEnd());
+            writer.Write(new StreamReader(source.ContentStream).ReadToEnd());
         }
 
         private void SerializeMessage(XRoadMessage source, string contentID, string boundaryMarker)
         {
-            writer.WriteLine();
-            writer.WriteLine("--{0}", boundaryMarker);
-            writer.WriteLine("Content-Type: text/xml; charset=UTF-8");
-            writer.WriteLine("Content-Transfer-Encoding: 8bit");
-            writer.WriteLine("Content-ID: <{0}>", contentID.Trim('<', '>', ' '));
-            writer.WriteLine();
+            writer.Write(NEW_LINE);
+            writer.Write("--{0}", boundaryMarker);
+            writer.Write(NEW_LINE);
+            writer.Write("Content-Type: text/xml; charset=UTF-8");
+            writer.Write(NEW_LINE);
+            writer.Write("Content-Transfer-Encoding: 8bit");
+            writer.Write(NEW_LINE);
+            writer.Write("Content-ID: <{0}>", contentID.Trim('<', '>', ' '));
+            writer.Write(NEW_LINE);
+            writer.Write(NEW_LINE);
             WriteContent(source);
+            writer.Write(NEW_LINE);
         }
 
         private void SerializeAttachment(XRoadAttachment attachment, string boundaryMarker)
         {
-            writer.WriteLine();
-            writer.WriteLine("--{0}", boundaryMarker);
-            writer.WriteLine("Content-Disposition: attachment; filename=notAnswering");
-            writer.WriteLine("Content-Type: application/octet-stream");
-            writer.WriteLine("Content-Transfer-Encoding: base64");
-            writer.WriteLine("Content-ID: <{0}>", attachment.ContentID.Trim('<', '>', ' '));
-            writer.WriteLine();
-            writer.WriteLine(attachment.ToBase64String());
+            writer.Write(NEW_LINE);
+            writer.Write("--{0}", boundaryMarker);
+            writer.Write(NEW_LINE);
+            writer.Write("Content-Disposition: attachment; filename=notAnswering");
+            writer.Write(NEW_LINE);
+            writer.Write("Content-Type: application/octet-stream");
+            writer.Write(NEW_LINE);
+            writer.Write("Content-Transfer-Encoding: base64");
+            writer.Write(NEW_LINE);
+            writer.Write("Content-ID: <{0}>", attachment.ContentID.Trim('<', '>', ' '));
+            writer.Write(NEW_LINE);
+            writer.Write(NEW_LINE);
+            writer.Write(attachment.ToBase64String());
+            writer.Write(NEW_LINE);
         }
 
         private void SerializeXopAttachment(XRoadAttachment attachment, string boundaryMarker)
         {
-            writer.WriteLine();
-            writer.WriteLine("--{0}", boundaryMarker);
-            writer.WriteLine("Content-Type: application/octet-stream");
-            writer.WriteLine("Content-Transfer-Encoding: binary");
-            writer.WriteLine("Content-ID: <{0}>", attachment.ContentID.Trim('<', '>', ' '));
-            writer.WriteLine();
+            writer.Write(NEW_LINE);
+            writer.Write("--{0}", boundaryMarker);
+            writer.Write(NEW_LINE);
+            writer.Write("Content-Type: application/octet-stream");
+            writer.Write(NEW_LINE);
+            writer.Write("Content-Transfer-Encoding: binary");
+            writer.Write(NEW_LINE);
+            writer.Write("Content-ID: <{0}>", attachment.ContentID.Trim('<', '>', ' '));
+            writer.Write(NEW_LINE);
+            writer.Write(NEW_LINE);
             writer.Flush();
 
             attachment.ContentStream.Position = 0;

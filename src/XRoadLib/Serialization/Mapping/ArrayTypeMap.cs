@@ -48,7 +48,9 @@ namespace XRoadLib.Serialization.Mapping
                 {
                     if (definition.MergeContent)
                         break;
-                    throw new Exception($"Invalid array item name {reader.LocalName}.");
+
+                    if (!definition.ArrayItemDefinition.AcceptAnyName)
+                        throw new Exception($"Invalid array item name {reader.LocalName}.");
                 }
 
                 if (reader.IsNilElement())

@@ -9,6 +9,8 @@ namespace XRoadLib.Schema
 
         public XName TypeName { get; set; }
 
+        public bool AcceptAnyName { get; set; }
+
         public bool IsNullable { get; set; }
 
         public bool IsOptional { get; set; }
