@@ -47,11 +47,11 @@ module ContentLengthTest =
     let ``read content without attachments`` () =
         use stream = new MemoryStream()
         use streamWriter = new StreamWriter(stream, Encoding.UTF8)
-        streamWriter.Write("""<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:id="http://x-road.eu/xsd/identifiers" xmlns:repr="http://x-road.eu/xsd/representation.xsd">
-  <Header xmlns:xrd="http://x-road.ee/xsd/x-road.xsd">
-  </Header>
-  <Body />
-</Envelope>""")
+        streamWriter.Write([ @"<Envelope xmlns=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:id=""http://x-road.eu/xsd/identifiers"" xmlns:repr=""http://x-road.eu/xsd/representation.xsd"">"
+                             @"  <Header xmlns:xrd=""http://x-road.ee/xsd/x-road.xsd"">"
+                             @"  </Header>"
+                             @"  <Body />"
+                             @"</Envelope>" ] |> String.concat "\r\n")
         streamWriter.Flush()
         stream.Position <- 0L
         use reader = new XRoadMessageReader(stream, NameValueCollection(), Encoding.UTF8, Path.GetTempPath(), [Globals.XRoadProtocol20; Globals.XRoadProtocol31; Globals.XRoadProtocol40])
@@ -63,32 +63,32 @@ module ContentLengthTest =
     let ``read content with attachments`` () =
         use stream = new MemoryStream()
         use streamWriter = new StreamWriter(stream, Encoding.UTF8)
-        streamWriter.Write("""
---5e7a8827-5850-45be-9a1e-8bbf6aff5da7
-Content-Type: text/xml; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Content-ID: <rQI0gpIFuQMxlrqBj3qHKw==>
-
-<?xml version="1.0" encoding="utf-8"?>
-<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:id="http://x-road.eu/xsd/identifiers" xmlns:repr="http://x-road.eu/xsd/representation.xsd">
-  <Header xmlns:xrd="http://x-road.ee/xsd/x-road.xsd">
-  </Header>
-  <Body />
-</Envelope>
-
---5e7a8827-5850-45be-9a1e-8bbf6aff5da7
-Content-Type: application/octet-stream
-Content-Transfer-Encoding: binary
-Content-ID: <CNbAWiFRKnmh3+udKo8mLw==>
-
-proovikas
---5e7a8827-5850-45be-9a1e-8bbf6aff5da7
-Content-Type: application/octet-stream
-Content-Transfer-Encoding: binary
-Content-ID: <qrOlKraewrdRAu86cFnqwg==>
-
-testikas sisu
---5e7a8827-5850-45be-9a1e-8bbf6aff5da7--""")
+        streamWriter.Write([ @""
+                             @"--5e7a8827-5850-45be-9a1e-8bbf6aff5da7"
+                             @"Content-Type: text/xml; charset=UTF-8"
+                             @"Content-Transfer-Encoding: 8bit"
+                             @"Content-ID: <rQI0gpIFuQMxlrqBj3qHKw==>"
+                             @""
+                             @"<?xml version=""1.0"" encoding=""utf-8""?>"
+                             @"<Envelope xmlns=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:id=""http://x-road.eu/xsd/identifiers"" xmlns:repr=""http://x-road.eu/xsd/representation.xsd"">"
+                             @"  <Header xmlns:xrd=""http://x-road.ee/xsd/x-road.xsd"">"
+                             @"  </Header>"
+                             @"  <Body />"
+                             @"</Envelope>"
+                             @""
+                             @"--5e7a8827-5850-45be-9a1e-8bbf6aff5da7"
+                             @"Content-Type: application/octet-stream"
+                             @"Content-Transfer-Encoding: binary"
+                             @"Content-ID: <CNbAWiFRKnmh3+udKo8mLw==>"
+                             @""
+                             @"proovikas"
+                             @"--5e7a8827-5850-45be-9a1e-8bbf6aff5da7"
+                             @"Content-Type: application/octet-stream"
+                             @"Content-Transfer-Encoding: binary"
+                             @"Content-ID: <qrOlKraewrdRAu86cFnqwg==>"
+                             @""
+                             @"testikas sisu"
+                             @"--5e7a8827-5850-45be-9a1e-8bbf6aff5da7--" ] |> String.concat "\r\n")
         streamWriter.Flush()
         stream.Position <- 0L
         let headers = NameValueCollection()
