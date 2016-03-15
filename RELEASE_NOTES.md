@@ -1,3 +1,7 @@
+#### 1.0.0-beta011 - 15.03.2016
+* Fix types in RPC encoded messages.
+* Remove contentType from xop:Include element.
+
 #### 1.0.0-beta010 - 10.03.2016
 * Add content length to XRoadMessage for write and read operations.
 * Add definition property to allow optionally ignore array item element names.

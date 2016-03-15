@@ -154,13 +154,13 @@ module XRoadSerializerTest =
     let ``can serialize binary value`` () =
         use stream = new MemoryStream()
         XRoadBinaryTestDto(Sisu = stream)
-        |> shouldSerializeMultipartTo 1 """<keha><Sisu d2p1:type="d2p2:base64Binary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" /></keha>"""
+        |> shouldSerializeMultipartTo 1 """<keha><Sisu d2p1:type="d2p2:base64Binary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p2="http://schemas.xmlsoap.org/soap/encoding/" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" /></keha>"""
 
     [<Test>]
     let ``can serialize hex binary value`` () =
         use stream = new MemoryStream()
         XRoadHexTestDto(Sisu = stream)
-        |> shouldSerializeMultipartTo 1 """<keha><Sisu d2p1:type="d2p2:hexBinary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p2="http://www.w3.org/2001/XMLSchema" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" /></keha>"""
+        |> shouldSerializeMultipartTo 1 """<keha><Sisu d2p1:type="d2p2:hexBinary" href="cid:1B2M2Y8AsgTpgAmY7PhCfg==" xmlns:d2p2="http://schemas.xmlsoap.org/soap/encoding/" xmlns:d2p1="http://www.w3.org/2001/XMLSchema-instance" /></keha>"""
 
     [<Test>]
     let ``can serialize date type with custom name`` () =

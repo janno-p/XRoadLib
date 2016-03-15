@@ -39,7 +39,7 @@ namespace XRoadLib.Serialization.Mapping
                 message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);
-            writer.WriteAttributeString(PrefixConstants.XMIME, "contentType", NamespaceConstants.XMIME, "application/octet-stream");
+            //writer.WriteAttributeString(PrefixConstants.XMIME, "contentType", NamespaceConstants.XMIME, "application/octet-stream");
 
             writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
 

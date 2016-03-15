@@ -248,10 +248,13 @@ namespace XRoadLib.Protocols.Description
             {
                 initialCount = referencedTypes.Count;
 
-                foreach (var kvp in referencedTypes.ToList().Where(x => x.Key.Namespace != NamespaceConstants.XSD && x.Value == null))
+                foreach (var kvp in referencedTypes.ToList().Where(x => x.Value == null))
                 {
                     TypeDefinition typeDefinition;
                     if (!schemaTypeDefinitions.TryGetValue(XName.Get(kvp.Key.Name, kvp.Key.Namespace), out typeDefinition))
+                        continue;
+
+                    if (typeDefinition.IsSimpleType)
                         continue;
 
                     XmlSchemaType schemaType;

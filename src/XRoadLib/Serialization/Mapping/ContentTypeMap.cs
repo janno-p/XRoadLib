@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -8,11 +9,13 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class ContentTypeMap : TypeMap, IContentTypeMap
     {
+        private readonly XName encodedTypeName;
         private readonly ITypeMap optimizedContentTypeMap;
 
         public ContentTypeMap(TypeDefinition typeDefinition)
             : base(typeDefinition)
         {
+            encodedTypeName = XName.Get(Definition.Name.LocalName, NamespaceConstants.SOAP_ENC);
             optimizedContentTypeMap = new OptimizedContentTypeMap(this);
         }
 
@@ -66,14 +69,17 @@ namespace XRoadLib.Serialization.Mapping
             var attachment = new XRoadAttachment((Stream)value);
             message.AllAttachments.Add(attachment);
 
-            if (!(definition is RequestValueDefinition))
-                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
-
             if (message.BinaryMode == BinaryMode.Attachment)
             {
+                if (!(definition is RequestValueDefinition))
+                    message.Protocol.Style.WriteExplicitType(writer, encodedTypeName);
+
                 writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
                 return;
             }
+
+            if (!(definition is RequestValueDefinition))
+                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             attachment.IsMultipartContent = false;
             attachment.WriteAsBase64(writer);
