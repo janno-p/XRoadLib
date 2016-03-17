@@ -81,7 +81,7 @@ namespace XRoadLib.Serialization
         private IServiceMap AddServiceMap(XName qualifiedName)
         {
             var operationDefinition = GetOperationDefinition(contractAssembly, qualifiedName);
-            if (operationDefinition == null)
+            if (operationDefinition == null || qualifiedName.NamespaceName != operationDefinition.Name.NamespaceName)
                 throw XRoadException.UnknownOperation(qualifiedName);
 
             var methodParameters = operationDefinition.MethodInfo.GetParameters();
@@ -93,7 +93,7 @@ namespace XRoadLib.Serialization
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
 
             var requestValueDefinition = new RequestValueDefinition(parameterInfo, operationDefinition);
-            schemaDefinitionReader.SchemaExporter.ExportRequestValueDefinition(requestValueDefinition);
+            schemaDefinitionReader.SchemaExporter?.ExportRequestValueDefinition(requestValueDefinition);
 
             return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(this, operationDefinition, requestValueDefinition, outputTuple.Item1, inputTypeMap, outputTuple.Item2));
         }
@@ -206,6 +206,8 @@ namespace XRoadLib.Serialization
                 return null;
 
             var typeDefinition = schemaDefinitionReader.GetTypeDefinition(runtimeType);
+            if (qualifiedName.NamespaceName != typeDefinition.Name.NamespaceName)
+                throw XRoadException.UnknownType(qualifiedName.ToString());
 
             if (!typeDefinition.Type.IsEnum && !typeDefinition.Type.IsAbstract && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
                 throw XRoadException.NoDefaultConstructorForType(typeDefinition.Name);

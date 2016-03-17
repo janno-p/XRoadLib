@@ -1,3 +1,7 @@
+#### 1.0.0-beta012 - 17.03.2016
+* Fix object reference exception when no SchemaExporter is defined for protocol.
+* Check type or operation namespace before creating type map (currently it allowed to use wrong namespaces for composite types).
+
 #### 1.0.0-beta011 - 15.03.2016
 * Fix types in RPC encoded messages.
 * Remove contentType from xop:Include element.
