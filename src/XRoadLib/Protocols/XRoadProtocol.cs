@@ -113,8 +113,10 @@ namespace XRoadLib.Protocols
             return addressElement;
         }
 
-        internal XmlElement CreateTitleElement(string languageCode, string value)
+        internal XmlElement CreateTitleElement(string languageCode, string value, Action<string> addSchemaImport)
         {
+            addSchemaImport(XRoadNamespace);
+
             var titleElement = document.CreateElement(XRoadPrefix, "title", XRoadNamespace);
             titleElement.InnerText = value;
 
@@ -136,7 +138,7 @@ namespace XRoadLib.Protocols
             var documentationElement = document.CreateElement(PrefixConstants.WSDL, "documentation", NamespaceConstants.WSDL);
 
             foreach (var title in titles)
-                documentationElement.AppendChild(CreateTitleElement(title.Item1, title.Item2));
+                documentationElement.AppendChild(CreateTitleElement(title.Item1, title.Item2, _ => { }));
 
             return documentationElement;
         }

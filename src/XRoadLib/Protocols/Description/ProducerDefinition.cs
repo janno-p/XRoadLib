@@ -273,7 +273,7 @@ namespace XRoadLib.Protocols.Description
                     }
 
                     schemaType.Name = typeDefinition.Name.LocalName;
-                    schemaType.Annotation = CreateSchemaAnnotation(typeDefinition);
+                    schemaType.Annotation = CreateSchemaAnnotation(targetNamespace, typeDefinition);
 
                     schemaTypes.Add(Tuple.Create(typeDefinition.Name.NamespaceName, schemaType));
 
@@ -526,11 +526,11 @@ namespace XRoadLib.Protocols.Description
             return new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
         }
 
-        private XmlSchemaAnnotation CreateSchemaAnnotation(Definition definition)
+        private XmlSchemaAnnotation CreateSchemaAnnotation(string schemaNamespace, Definition definition)
         {
-            var nodes = definition.Documentation.Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2)).Cast<XmlNode>().ToArray();
-
-            return definition.Documentation.Any() ? new XmlSchemaAnnotation { Items = { new XmlSchemaAppInfo { Markup = nodes } } } : null;
+            return definition.Documentation.Any()
+                ? new XmlSchemaAnnotation { Items = { new XmlSchemaAppInfo { Markup = definition.Documentation.Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2, ns => requiredImports.Add(Tuple.Create(schemaNamespace, ns)))).Cast<XmlNode>().ToArray() } } }
+                : null;
         }
 
         private void AddBinaryAttribute(string schemaNamespace, XmlSchemaAnnotated schemaElement)
@@ -585,7 +585,7 @@ namespace XRoadLib.Protocols.Description
                 schemaType = new XmlSchemaComplexType();
                 schemaTypeName = AddComplexTypeContent((XmlSchemaComplexType)schemaType, schemaNamespace, typeDefinition, referencedTypes);
             }
-            schemaType.Annotation = CreateSchemaAnnotation(typeDefinition);
+            schemaType.Annotation = CreateSchemaAnnotation(schemaNamespace, typeDefinition);
 
             if (schemaTypeName == null)
                 schemaElement.SchemaType = schemaType;
@@ -610,7 +610,7 @@ namespace XRoadLib.Protocols.Description
         {
             var schemaElement = new XmlSchemaElement
             {
-                Name = propertyDefinition.Name?.LocalName, Annotation = CreateSchemaAnnotation(propertyDefinition)
+                Name = propertyDefinition.Name?.LocalName, Annotation = CreateSchemaAnnotation(schemaNamespace, propertyDefinition)
             };
 
             if (propertyDefinition.ArrayItemDefinition != null && propertyDefinition.MergeContent)
