@@ -1,3 +1,6 @@
+#### 1.0.0-beta013 - 22.03.2016
+* Fix X-Road namespace import when title attributes are used.
+
 #### 1.0.0-beta012 - 17.03.2016
 * Fix object reference exception when no SchemaExporter is defined for protocol.
 * Check type or operation namespace before creating type map (currently it allowed to use wrong namespaces for composite types).
