@@ -40,8 +40,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             if (message.EnableFiltering && !filters.Contains(message.FilterName))
             {
-                if (reader.IsEmptyElement) reader.Read();
-                else reader.ReadToEndElement();
+                reader.ConsumeUnusedElement();
                 return false;
             }
 

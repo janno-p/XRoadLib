@@ -55,8 +55,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             if (propertyNode == null)
             {
-                if (reader.IsEmptyElement) reader.Read();
-                else reader.ReadToEndElement();
+                reader.ConsumeUnusedElement();
                 return;
             }
 
@@ -68,8 +67,7 @@ namespace XRoadLib.Serialization.Mapping
             if ((isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message)) && !string.IsNullOrWhiteSpace(templateName))
                 dtoObject.OnMemberDeserialized(templateName);
 
-            if (isNull && reader.IsEmptyElement)
-                reader.Read();
+            reader.ConsumeNilElement(isNull);
         }
 
         private IXmlTemplateNode MoveToProperty(XmlReader reader, IEnumerator<IPropertyMap> properties, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)

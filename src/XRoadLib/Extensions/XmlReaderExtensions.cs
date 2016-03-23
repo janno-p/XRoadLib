@@ -76,6 +76,30 @@ namespace XRoadLib.Extensions
             { }
         }
 
+        public static void ConsumeNilElement(this XmlReader reader, bool isNil)
+        {
+            if (!isNil)
+                return;
+
+            if (reader.IsEmptyElement)
+            {
+                reader.Read();
+                return;
+            }
+
+            var content = reader.ReadString();
+            if (!string.IsNullOrEmpty(content))
+                throw XRoadException.InvalidQuery($@"An element labeled with `xsi:nil=""true""` must be empty, but had `{content}` as content.");
+
+            reader.ReadToEndElement();
+        }
+
+        public static void ConsumeUnusedElement(this XmlReader reader)
+        {
+            if (reader.IsEmptyElement) reader.Read();
+            else reader.ReadToEndElement();
+        }
+
         public static bool IsCurrentElement(this XmlReader reader, int depth, string name, string @namespace = "")
         {
             return reader.NodeType == XmlNodeType.Element && reader.Depth == depth && reader.LocalName == name && reader.NamespaceURI == @namespace;

@@ -1,3 +1,6 @@
+#### 1.0.0-beta014 - 23.03.2016
+* Fix deserialization bug when element with xsi:nil attribute has content.
+
 #### 1.0.0-beta013 - 22.03.2016
 * Fix X-Road namespace import when title attributes are used.
 

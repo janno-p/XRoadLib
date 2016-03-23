@@ -64,8 +64,7 @@ namespace XRoadLib.Serialization.Mapping
             var propertyNode = templateNode[templateName, message.Version];
             if (propertyNode == null)
             {
-                if (reader.IsEmptyElement) reader.Read();
-                else reader.ReadToEndElement();
+                reader.ConsumeUnusedElement();
                 return false;
             }
 
@@ -76,8 +75,7 @@ namespace XRoadLib.Serialization.Mapping
             if ((isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message)) && !string.IsNullOrWhiteSpace(templateName))
                 dtoObject.OnMemberDeserialized(templateName);
 
-            if (isNull && reader.IsEmptyElement)
-                reader.Read();
+            reader.ConsumeNilElement(isNull);
 
             return propertyNode.IsRequired;
         }
