@@ -1,4 +1,6 @@
-﻿namespace XRoadLib
+﻿using System.Collections.Generic;
+
+namespace XRoadLib
 {
     public static class NamespaceConstants
     {
@@ -19,5 +21,13 @@
         public const string XSD = "http://www.w3.org/2001/XMLSchema";
         public const string XSI = "http://www.w3.org/2001/XMLSchema-instance";
         public const string XTEE = "http://x-tee.riik.ee/xsd/xtee.xsd";
+
+        public static readonly ICollection<string> MetaServiceNamespaces = new[]
+        {
+            XTEE,
+            "http://x-rd.net/xsd/xroad.xsd",
+            XROAD,
+            "http://x-road.eu/xsd/x-road.xsd"
+        };
     }
 }

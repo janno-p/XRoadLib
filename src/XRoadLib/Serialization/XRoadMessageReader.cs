@@ -439,15 +439,17 @@ namespace XRoadLib.Serialization
 
         private static IServiceMap GetMetaServiceMap(XName rootElementName)
         {
-            if (rootElementName == null || (rootElementName.NamespaceName != NamespaceConstants.XROAD && rootElementName.NamespaceName != NamespaceConstants.XTEE))
+            if (rootElementName == null || !NamespaceConstants.MetaServiceNamespaces.Contains(rootElementName.NamespaceName))
                 return null;
 
             switch (rootElementName.LocalName)
             {
                 case "listMethods":
-                    return rootElementName.NamespaceName == NamespaceConstants.XROAD ? SystemServiceMap.ListMethodsLiteral : SystemServiceMap.ListMethodsEncoded;
+                    return new ListMethodsServiceMap(rootElementName);
+
                 case "testSystem":
-                    return rootElementName.NamespaceName == NamespaceConstants.XROAD ? SystemServiceMap.TestSystemLiteral : SystemServiceMap.TestSystemEncoded;
+                    return new TestSystemServiceMap(rootElementName);
+
                 default:
                     return null;
             }

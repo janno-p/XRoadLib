@@ -85,8 +85,9 @@
     <Compile Include="Serialization\Mapping\IContentTypeMap.cs" />
     <Compile Include="Serialization\Mapping\Int16TypeMap.cs" />
     <Compile Include="Serialization\Mapping\IntegerTypeMap.cs" />
+    <Compile Include="Serialization\Mapping\ListMethodsServiceMap.cs" />
     <Compile Include="Serialization\Mapping\OptimizedContentTypeMap.cs" />
-    <Compile Include="Serialization\SystemServiceMap.cs" />
+    <Compile Include="Serialization\Mapping\TestSystemServiceMap.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />
     <Compile Include="Soap\ISoapFault.cs" />
