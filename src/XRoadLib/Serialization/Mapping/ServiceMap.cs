@@ -95,6 +95,12 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteStartElement(requestReader.Prefix, $"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
             else writer.WriteStartElement($"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
 
+            if (message.Protocol == null)
+            {
+                writer.WriteEndElement();
+                return;
+            }
+
             var fault = value as IXRoadFault;
             var namespaceInContext = requestReader.NamespaceURI;
 

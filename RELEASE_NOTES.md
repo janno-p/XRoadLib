@@ -1,3 +1,6 @@
+#### 1.0.0-beta015 - 29.03.2016
+* Fix serialization bug of testSystem response when X-Road message protocol version is not supported.
+
 #### 1.0.0-beta014 - 23.03.2016
 * Fix deserialization bug when element with xsi:nil attribute has content.
 
