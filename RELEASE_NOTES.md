@@ -1,3 +1,7 @@
+#### 1.0.0-beta016 - 01.04.2016
+* Fix identifiers ToString() methods.
+* Add optional inner exception argument to XRoadFaultException type constructor.
+
 #### 1.0.0-beta015 - 29.03.2016
 * Fix serialization bug of testSystem response when X-Road message protocol version is not supported.
 

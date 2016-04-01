@@ -7,8 +7,8 @@ namespace XRoadLib.Serialization
         public string FaultCode { get; }
         public string FaultString { get; }
 
-        public XRoadFaultException(IXRoadFault xRoadFault)
-            : base(xRoadFault?.FaultString)
+        public XRoadFaultException(IXRoadFault xRoadFault, Exception innerException = null)
+            : base(xRoadFault?.FaultString, innerException)
         {
             if (xRoadFault == null)
                 throw new ArgumentNullException(nameof(xRoadFault));
