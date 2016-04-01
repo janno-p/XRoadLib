@@ -16,8 +16,8 @@ namespace XRoadLib.Protocols
 
         public override string Name => "4.0";
 
-        public XRoad40Protocol(string producerName, Style style = null, ISchemaExporter schemaExporter = null)
-            : base(producerName, style ?? new DocLiteralStyle(), schemaExporter)
+        public XRoad40Protocol(string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
+            : base(producerNamespace, style ?? new DocLiteralStyle(), schemaExporter)
         { }
 
         protected override void DefineMandatoryHeaderElements()
