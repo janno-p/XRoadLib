@@ -19,15 +19,11 @@ namespace XRoadLib.Protocols.Headers
 
         public override string ToString()
         {
-            var prefix = ObjectType == XRoadObjectType.Member ? "MEMBER:" : "SUBSYSTEM:";
+            if (string.IsNullOrEmpty(XRoadInstance) && string.IsNullOrEmpty(MemberClass) && string.IsNullOrEmpty(SubsystemCode))
+                return MemberCode ?? "";
 
-            var sb = new StringBuilder(prefix).Append(string.IsNullOrWhiteSpace(XRoadInstance) ? XRoadInstance : "XX")
-                                              .Append("/")
-                                              .Append(string.IsNullOrWhiteSpace(MemberClass) ? MemberClass : "_")
-                                              .Append("/")
-                                              .Append(string.IsNullOrWhiteSpace(MemberCode) ? MemberCode : "_");
-
-            if (!string.IsNullOrWhiteSpace(SubsystemCode))
+            var sb = new StringBuilder($"{XRoadInstance}/{MemberClass}/{MemberCode}");
+            if (!string.IsNullOrEmpty(SubsystemCode))
                 sb.Append($"/{SubsystemCode}");
 
             return sb.ToString();

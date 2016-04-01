@@ -73,18 +73,13 @@ namespace XRoadLib.Protocols.Headers
 
         public override string ToString()
         {
-            var sb = new StringBuilder("SERVICE:").Append(string.IsNullOrWhiteSpace(XRoadInstance) ? "XX" : XRoadInstance)
-                                                  .Append("/")
-                                                  .Append(string.IsNullOrWhiteSpace(MemberClass) ? "_" : MemberClass)
-                                                  .Append("/")
-                                                  .Append(string.IsNullOrWhiteSpace(MemberCode) ? "_" : MemberCode);
+            var sb = new StringBuilder();
 
-            if (!string.IsNullOrWhiteSpace(SubsystemCode))
-                sb.Append($"/{SubsystemCode}");
+            if (!string.IsNullOrEmpty(XRoadInstance) || !string.IsNullOrEmpty(MemberClass) || !string.IsNullOrEmpty(MemberCode))
+                sb.Append($"{XRoadInstance}/{MemberClass}/{MemberCode}/");
 
-            sb.Append("/").Append(string.IsNullOrWhiteSpace(ServiceCode) ? "_" : ServiceCode);
-
-            if (!string.IsNullOrWhiteSpace(ServiceVersion))
+            sb.Append($"{SubsystemCode}/{ServiceCode}");
+            if (!string.IsNullOrEmpty(ServiceVersion))
                 sb.Append($"/{ServiceVersion}");
 
             return sb.ToString();

@@ -21,7 +21,7 @@ namespace XRoadLib.Schema
 
         public ArrayItemDefinition ArrayItemDefinition { get; set; }
 
-        public int Order { get; set; }
+        public int Order { get; set; } = -1;
 
         public XName TypeName { get; set; }
 

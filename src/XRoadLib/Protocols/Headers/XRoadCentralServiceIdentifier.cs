@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace XRoadLib.Protocols.Headers
@@ -18,10 +17,7 @@ namespace XRoadLib.Protocols.Headers
 
         public override string ToString()
         {
-            return new StringBuilder("CENTRALSERVICE:").Append(string.IsNullOrWhiteSpace(XRoadInstance) ? XRoadInstance : "XX")
-                                                       .Append("/")
-                                                       .Append(string.IsNullOrWhiteSpace(ServiceCode) ? ServiceCode : "_")
-                                                       .ToString();
+            return $"{XRoadInstance}/{ServiceCode}";
         }
     }
 }
