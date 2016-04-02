@@ -50,10 +50,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '512', 512)" onmouseover="showTip(event, '512', 512)">
+          <code onmouseout="hideTip(event, '513', 513)" onmouseover="showTip(event, '513', 513)">
             Definition
           </code>
-          <div class="tip" id="512">
+          <div class="tip" id="513">
             <strong>Signature:</strong> OperationDefinition<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -65,23 +65,8 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '513', 513)" onmouseover="showTip(event, '513', 513)">
-            DeserializeRequest(reader, message)
-          </code>
-          <div class="tip" id="513">
-            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
           <code onmouseout="hideTip(event, '514', 514)" onmouseover="showTip(event, '514', 514)">
-            DeserializeResponse(reader, message)
+            DeserializeRequest(reader, message)
           </code>
           <div class="tip" id="514">
             <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
@@ -96,10 +81,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '515', 515)" onmouseover="showTip(event, '515', 515)">
-            HasParameters
+            DeserializeResponse(reader, message)
           </code>
           <div class="tip" id="515">
-            <strong>Signature:</strong> bool<br />
+            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -111,10 +96,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '516', 516)" onmouseover="showTip(event, '516', 516)">
-            SerializeRequest(writer, value, message)
+            HasParameters
           </code>
           <div class="tip" id="516">
-            <strong>Signature:</strong> (writer:XmlWriter * value:obj * message:XRoadMessage) -&gt; unit<br />
+            <strong>Signature:</strong> bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -126,9 +111,24 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '517', 517)" onmouseover="showTip(event, '517', 517)">
-            SerializeResponse(...)
+            SerializeRequest(writer, value, message)
           </code>
           <div class="tip" id="517">
+            <strong>Signature:</strong> (writer:XmlWriter * value:obj * message:XRoadMessage) -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '518', 518)" onmouseover="showTip(event, '518', 518)">
+            SerializeResponse(...)
+          </code>
+          <div class="tip" id="518">
             <strong>Signature:</strong> (writer:XmlWriter * value:obj * message:XRoadMessage * requestReader:XmlReader * customSerialization:ICustomSerialization) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>

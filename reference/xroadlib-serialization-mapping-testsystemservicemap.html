@@ -50,10 +50,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '563', 563)" onmouseover="showTip(event, '563', 563)">
+          <code onmouseout="hideTip(event, '564', 564)" onmouseover="showTip(event, '564', 564)">
             new(operationName)
           </code>
-          <div class="tip" id="563">
+          <div class="tip" id="564">
             <strong>Signature:</strong> operationName:XName -&gt; unit<br />
                       </div>
         </td>
@@ -72,10 +72,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '564', 564)" onmouseover="showTip(event, '564', 564)">
+          <code onmouseout="hideTip(event, '565', 565)" onmouseover="showTip(event, '565', 565)">
             Definition
           </code>
-          <div class="tip" id="564">
+          <div class="tip" id="565">
             <strong>Signature:</strong> OperationDefinition<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -87,23 +87,8 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '565', 565)" onmouseover="showTip(event, '565', 565)">
-            DeserializeRequest(reader, message)
-          </code>
-          <div class="tip" id="565">
-            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
           <code onmouseout="hideTip(event, '566', 566)" onmouseover="showTip(event, '566', 566)">
-            DeserializeResponse(reader, message)
+            DeserializeRequest(reader, message)
           </code>
           <div class="tip" id="566">
             <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
@@ -118,10 +103,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '567', 567)" onmouseover="showTip(event, '567', 567)">
-            HasParameters
+            DeserializeResponse(reader, message)
           </code>
           <div class="tip" id="567">
-            <strong>Signature:</strong> bool<br />
+            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -133,10 +118,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '568', 568)" onmouseover="showTip(event, '568', 568)">
-            SerializeRequest(writer, value, message)
+            HasParameters
           </code>
           <div class="tip" id="568">
-            <strong>Signature:</strong> (writer:XmlWriter * value:obj * message:XRoadMessage) -&gt; unit<br />
+            <strong>Signature:</strong> bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -148,9 +133,24 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '569', 569)" onmouseover="showTip(event, '569', 569)">
-            SerializeResponse(...)
+            SerializeRequest(writer, value, message)
           </code>
           <div class="tip" id="569">
+            <strong>Signature:</strong> (writer:XmlWriter * value:obj * message:XRoadMessage) -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '570', 570)" onmouseover="showTip(event, '570', 570)">
+            SerializeResponse(...)
+          </code>
+          <div class="tip" id="570">
             <strong>Signature:</strong> (writer:XmlWriter * value:obj * message:XRoadMessage * requestReader:XmlReader * customSerialization:ICustomSerialization) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
