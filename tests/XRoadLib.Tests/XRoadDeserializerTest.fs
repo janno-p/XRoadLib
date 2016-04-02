@@ -9,9 +9,7 @@ open System.Xml
 open XRoadLib
 open XRoadLib.Extensions
 open XRoadLib.Protocols.Headers
-open XRoadLib.Schema
 open XRoadLib.Serialization
-open XRoadLib.Serialization.Mapping
 open XRoadLib.Serialization.Template
 open XRoadLib.Tests.Contract
 

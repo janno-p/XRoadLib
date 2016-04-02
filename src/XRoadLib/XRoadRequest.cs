@@ -53,7 +53,7 @@ namespace XRoadLib
 
                 var request = WebRequest.Create(uri);
 
-                request.ContentType = $"text/xml; charset={Encoding.UTF8.HeaderName}";
+                request.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.HeaderName}";
                 request.Headers.Set("SOAPAction", string.Empty);
                 request.Method = "POST";
 
@@ -65,7 +65,7 @@ namespace XRoadLib
                 using (var responseMessage = new XRoadMessage())
                 {
                     responseStream?.CopyTo(seekableStream);
-                    responseMessage.LoadResponse(seekableStream, response.Headers, Encoding.UTF8, Path.GetTempPath(), Enumerable.Repeat(protocol, 1));
+                    responseMessage.LoadResponse(seekableStream, response.Headers, XRoadEncoding.UTF8, Path.GetTempPath(), Enumerable.Repeat(protocol, 1));
                     return (T)responseMessage.DeserializeMessageContent(xRoadHeader.Service.ServiceCode);
                 }
             }

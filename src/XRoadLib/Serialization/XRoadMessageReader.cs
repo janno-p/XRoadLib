@@ -138,8 +138,8 @@ namespace XRoadLib.Serialization
                     continue;
                 }
 
-                string partID, partCharset, partTransferEncoding;
-                ExtractMultipartHeader(out partID, out partCharset, out partTransferEncoding);
+                string partID, partTransferEncoding;
+                ExtractMultipartHeader(out partID, out partTransferEncoding);
 
                 var targetStream = target.ContentStream;
                 if (targetStream.Length > 0 || (!string.IsNullOrEmpty(multipartStartContentID) && !multipartStartContentID.Contains(partID)))
@@ -187,9 +187,9 @@ namespace XRoadLib.Serialization
             }
         }
 
-        private void ExtractMultipartHeader(out string partID, out string partCharset, out string partTransferEncoding)
+        private void ExtractMultipartHeader(out string partID, out string partTransferEncoding)
         {
-            partID = partCharset = partTransferEncoding = null;
+            partID = partTransferEncoding = null;
 
             while (true)
             {
@@ -198,10 +198,6 @@ namespace XRoadLib.Serialization
                 var lastLine = contentEncoding.GetString(buffer).Trim();
                 if (string.IsNullOrEmpty(lastLine))
                     break;
-
-                var tempContentType = ExtractValue("content-type:", lastLine, null);
-                if (tempContentType != null)
-                    partCharset = NormalizeCharset(ExtractValue("chartset=", tempContentType, ";"));
 
                 var tempContentID = ExtractValue("content-id:", lastLine, null);
                 if (tempContentID != null)

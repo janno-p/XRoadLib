@@ -90,6 +90,7 @@
     <Compile Include="Serialization\Mapping\TestSystemServiceMap.cs" />
     <Compile Include="Serialization\XRoadFault.cs" />
     <Compile Include="Serialization\XRoadFaultException.cs" />
+    <Compile Include="Serialization\XRoadEncoding.cs" />
     <Compile Include="Soap\ISoapFault.cs" />
     <Compile Include="Soap\SoapFault.cs" />
     <Compile Include="Soap\SoapFaultException.cs" />

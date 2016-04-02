@@ -27,7 +27,7 @@ namespace XRoadLib.Serialization
 
         public IXmlTemplate XmlTemplate { get; set; }
         public string MultipartContentType { get; set; }
-        public Encoding ContentEncoding { get; set; }
+        public Encoding ContentEncoding { get; set; } = XRoadEncoding.UTF8;
         public Stream ContentStream { get; set; }
         public XRoadProtocol Protocol { get; set; }
         public IXRoadHeader Header { get; set; }
@@ -45,9 +45,7 @@ namespace XRoadLib.Serialization
         public IXmlTemplateNode ResponseNode => XmlTemplate != null ? XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
 
         public XRoadMessage()
-        {
-            ContentEncoding = Encoding.UTF8;
-        }
+        { }
 
         public XRoadMessage(XRoadProtocol protocol, IXRoadHeader header)
             : this(new MemoryStream())

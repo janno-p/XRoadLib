@@ -1,6 +1,7 @@
 #### 1.0.0-beta017 - Unreleased
 * Fix parameter name of XRoadProtocol40 constructor.
 * Add informational version number to released assembly.
+* Remove byte order mark from outgoing messages.
 
 #### 1.0.0-beta016 - 01.04.2016
 * Fix identifiers ToString() methods.

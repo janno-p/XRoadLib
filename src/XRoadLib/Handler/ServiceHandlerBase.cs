@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Web;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -9,7 +10,7 @@ namespace XRoadLib.Handler
 {
     public abstract class ServiceHandlerBase : IHttpHandler
     {
-        private const string RESPONSE_CONTENT_TYPE = "text/xml; charset=utf-8";
+        private static readonly Encoding encoding = XRoadEncoding.UTF8;
 
         protected XRoadMessage requestMessage;
         protected XRoadMessage responseMessage;
@@ -19,7 +20,7 @@ namespace XRoadLib.Handler
         public void ProcessRequest(HttpContext httpContext)
         {
             httpContext.Request.InputStream.Position = 0;
-            httpContext.Response.ContentType = RESPONSE_CONTENT_TYPE;
+            httpContext.Response.ContentType = $"text/xml; charset={encoding.HeaderName}";
 
             using (requestMessage = new XRoadMessage())
             using (responseMessage = new XRoadMessage(new MemoryStream()))
@@ -42,7 +43,7 @@ namespace XRoadLib.Handler
 
         protected virtual void OnExceptionOccured(HttpContext httpContext, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
         {
-            using (var writer = new XmlTextWriter(httpContext.Response.OutputStream, httpContext.Response.ContentEncoding))
+            using (var writer = new XmlTextWriter(httpContext.Response.OutputStream, encoding))
                 SoapMessageHelper.SerializeSoapFaultResponse(writer, faultCode, faultString, faultActor, details, exception);
         }
     }
