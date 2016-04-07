@@ -1,3 +1,6 @@
+#### 1.0.0-beta018 - 07.04.2016
+* Fix serialization of RPC/Encoded style header elements.
+
 #### 1.0.0-beta017 - 02.04.2016
 * Fix parameter name of XRoadProtocol40 constructor.
 * Add informational version number to released assembly.

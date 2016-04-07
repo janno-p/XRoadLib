@@ -42,22 +42,22 @@ namespace XRoadLib.Protocols
             if (writer.LookupPrefix(NamespaceConstants.XROAD) == null)
                 writer.WriteAttributeString("xmlns", PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD);
 
-            WriteHeaderElement(writer, "consumer", header31.Consumer);
-            WriteHeaderElement(writer, "producer", header31.Producer);
-            WriteHeaderElement(writer, "userId", header31.UserId);
-            WriteHeaderElement(writer, "issue", header31.Issue);
-            WriteHeaderElement(writer, "service", header31.Service);
-            WriteHeaderElement(writer, "id", header31.Id);
-            WriteHeaderElement(writer, "unit", header31.Unit);
-            WriteHeaderElement(writer, "position", header31.Position);
-            WriteHeaderElement(writer, "userName", header31.UserName);
-            WriteHeaderElement(writer, "async", header31.Async);
-            WriteHeaderElement(writer, "authenticator", header31.Authenticator);
-            WriteHeaderElement(writer, "paid", header31.Paid);
-            WriteHeaderElement(writer, "encrypt", header31.Encrypt);
-            WriteHeaderElement(writer, "encryptCert", header31.EncryptCert);
-            WriteHeaderElement(writer, "encrypted", header31.Encrypted);
-            WriteHeaderElement(writer, "encryptedCert", header31.EncryptedCert);
+            WriteHeaderElement(writer, "consumer", header31.Consumer, stringTypeName);
+            WriteHeaderElement(writer, "producer", header31.Producer, stringTypeName);
+            WriteHeaderElement(writer, "userId", header31.UserId, stringTypeName);
+            WriteHeaderElement(writer, "issue", header31.Issue, stringTypeName);
+            WriteHeaderElement(writer, "service", header31.Service, stringTypeName);
+            WriteHeaderElement(writer, "id", header31.Id, stringTypeName);
+            WriteHeaderElement(writer, "unit", header31.Unit, stringTypeName);
+            WriteHeaderElement(writer, "position", header31.Position, stringTypeName);
+            WriteHeaderElement(writer, "userName", header31.UserName, stringTypeName);
+            WriteHeaderElement(writer, "async", header31.Async, booleanTypeName);
+            WriteHeaderElement(writer, "authenticator", header31.Authenticator, stringTypeName);
+            WriteHeaderElement(writer, "paid", header31.Paid, stringTypeName);
+            WriteHeaderElement(writer, "encrypt", header31.Encrypt, stringTypeName);
+            WriteHeaderElement(writer, "encryptCert", header31.EncryptCert, base64TypeName);
+            WriteHeaderElement(writer, "encrypted", header31.Encrypted, stringTypeName);
+            WriteHeaderElement(writer, "encryptedCert", header31.EncryptedCert, stringTypeName);
         }
 
         internal override IXRoadHeader CreateHeader()

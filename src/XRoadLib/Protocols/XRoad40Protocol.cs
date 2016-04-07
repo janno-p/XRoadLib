@@ -82,10 +82,10 @@ namespace XRoadLib.Protocols
                 element.WriteTo(writer);
             }
 
-            WriteHeaderElement(writer, "id", header40.Id);
-            WriteHeaderElement(writer, "userId", header40.UserId);
-            WriteHeaderElement(writer, "issue", header40.Issue);
-            WriteHeaderElement(writer, "protocolVersion", header40.ProtocolVersion);
+            WriteHeaderElement(writer, "id", header40.Id, stringTypeName);
+            WriteHeaderElement(writer, "userId", header40.UserId, stringTypeName);
+            WriteHeaderElement(writer, "issue", header40.Issue, stringTypeName);
+            WriteHeaderElement(writer, "protocolVersion", header40.ProtocolVersion, stringTypeName);
         }
 
         internal override IXRoadHeader CreateHeader()

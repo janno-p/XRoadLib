@@ -19,6 +19,10 @@ namespace XRoadLib.Protocols
 {
     public abstract class XRoadProtocol
     {
+        protected static readonly XName stringTypeName = XName.Get("string", NamespaceConstants.XSD);
+        protected static readonly XName booleanTypeName = XName.Get("boolean", NamespaceConstants.XSD);
+        protected static readonly XName base64TypeName = XName.Get("base64", NamespaceConstants.XSD);
+
         protected readonly XmlDocument document = new XmlDocument();
 
         private readonly SchemaDefinitionReader schemaDefinitionReader;
@@ -225,12 +229,14 @@ namespace XRoadLib.Protocols
             return null;
         }
 
-        protected void WriteHeaderElement(XmlWriter writer, string name, object value)
+        protected void WriteHeaderElement(XmlWriter writer, string name, object value, XName typeName)
         {
             if (!MandatoryHeaders.Contains(name) && value == null)
                 return;
 
             writer.WriteStartElement(name, XRoadNamespace);
+
+            Style.WriteExplicitType(writer, typeName);
 
             var stringValue = value as string;
             if (stringValue != null)
