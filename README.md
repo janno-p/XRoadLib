@@ -4,8 +4,7 @@ A .NET library for implementing service interfaces of [X-Road](http://x-road.eu)
 
 [![Mono build status](https://img.shields.io/travis/janno-p/XRoadLib/master.svg?label=Mono build)](https://travis-ci.org/janno-p/XRoadLib/)  
 [![Windows build status](https://img.shields.io/appveyor/ci/janno-p/xroadlib/master.svg?label=Windows build)](https://ci.appveyor.com/project/janno-p/xroadlib)  
-[![Version](http://img.shields.io/nuget/v/XRoadLib.svg?label=Current version)](https://www.nuget.org/packages/XRoadLib/)  
-[![Downloads](https://img.shields.io/nuget/dt/XRoadLib.svg?label=Downloads)](https://www.nuget.org/stats/packages/XRoadLib?groupby=Version)
+[![NuGet](https://buildstats.info/nuget/XRoadLib?includePreReleases=true)](https://www.nuget.org/packages/XRoadLib/)
 
 ## Documentation
 
