@@ -1,3 +1,6 @@
+#### 1.0.0-beta019 - Unreleased
+* Better validation for XML Schema date types.
+
 #### 1.0.0-beta018 - 07.04.2016
 * Fix serialization of RPC/Encoded style header elements.
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -8,6 +9,19 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DateTypeMap : TypeMap
     {
+        private static readonly string[] dateFormats =
+        {
+            "yyyy-MM-dd",
+            "'+'yyyy-MM-dd",
+            "'-'yyyy-MM-dd",
+            "yyyy-MM-ddzzz",
+            "'+'yyyy-MM-ddzzz",
+            "'-'yyyy-MM-ddzzz",
+            "yyyy-MM-dd'Z'",
+            "'+'yyyy-MM-dd'Z'",
+            "'-'yyyy-MM-dd'Z'"
+        };
+
         public DateTypeMap(TypeDefinition typeDefinition)
             : base(typeDefinition)
         { }
@@ -18,11 +32,12 @@ namespace XRoadLib.Serialization.Mapping
                 return MoveNextAndReturn(reader, new DateTime());
 
             var value = reader.ReadString();
-
             if (string.IsNullOrEmpty(value))
                 return null;
 
-            var date = XmlConvert.ToDateTimeOffset(value).Date;
+            var date = DateTime.ParseExact(value, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None);
+            if (value[value.Length - 1] == 'Z')
+                date = TimeZoneInfo.ConvertTime(date, TimeZoneInfo.Utc, TimeZoneInfo.Local);
 
             var minDateTimeValue = (DateTime)SqlDateTime.MinValue;
             if (date == minDateTimeValue || date == DateTime.MinValue)
