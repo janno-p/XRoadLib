@@ -1,4 +1,4 @@
-#### 1.0.0-beta019 - Unreleased
+#### 1.0.0-beta019 - 13.04.2016
 * Better validation for XML Schema date types.
 
 #### 1.0.0-beta018 - 07.04.2016
