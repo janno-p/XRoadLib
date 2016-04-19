@@ -37,7 +37,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var date = DateTime.ParseExact(value, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None);
             if (value[value.Length - 1] == 'Z')
-                date = TimeZoneInfo.ConvertTime(date, TimeZoneInfo.Utc, TimeZoneInfo.Local);
+                date = date.ToLocalTime();
 
             var minDateTimeValue = (DateTime)SqlDateTime.MinValue;
             if (date == minDateTimeValue || date == DateTime.MinValue)

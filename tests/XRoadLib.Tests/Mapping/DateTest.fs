@@ -60,28 +60,16 @@ module DateTest =
 
     [<Test>]
     let ``deserializes universal timezone to local timezone`` () =
+        let expected = TimeZone.CurrentTimeZone.ToLocalTime(DateTime(2013, 8, 27))
         let instance = deserializeValue "2013-08-27Z"
         instance |> should not' (be Null)
         let dateTime: DateTime = unbox instance
-        dateTime.Kind |> should equal DateTimeKind.Local
-        dateTime.Year |> should equal 2013
-        dateTime.Month |> should equal 8
-        dateTime.Day |> should equal 27
-        dateTime.Hour |> should equal 3
-        dateTime.Minute |> should equal 0
-        dateTime.Second |> should equal 0
-        dateTime.Millisecond |> should equal 0
+        dateTime |> should equal expected
 
     [<Test>]
     let ``deserializes explicit timezone to local timezone`` () =
+        let expected = TimeZone.CurrentTimeZone.ToLocalTime(DateTime(2013, 8, 27, 3, 0, 0))
         let instance = deserializeValue "2013-08-27-03:00"
         instance |> should not' (be Null)
         let dateTime: DateTime = unbox instance
-        dateTime.Kind |> should equal DateTimeKind.Local
-        dateTime.Year |> should equal 2013
-        dateTime.Month |> should equal 8
-        dateTime.Day |> should equal 27
-        dateTime.Hour |> should equal 6
-        dateTime.Minute |> should equal 0
-        dateTime.Second |> should equal 0
-        dateTime.Millisecond |> should equal 0
+        dateTime |> should equal expected

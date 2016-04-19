@@ -315,7 +315,16 @@ namespace XRoadLib.Protocols.Description
             if (protocol.NonTechnicalFaultInResponseElement)
                 return new XmlSchemaComplexType { Particle = sequence };
 
-            responseElement.Name = "response";
+            if ("unbounded".Equals(responseElement.MaxOccursString))
+                responseElement = new XmlSchemaElement
+                {
+                    Name = "response",
+                    SchemaType = new XmlSchemaComplexType
+                    {
+                        Particle = new XmlSchemaSequence { Items = { responseElement} }
+                    }
+                };
+            else responseElement.Name = "response";
 
             var particle = sequence;
             switch (definition.XRoadFaultPresentation)

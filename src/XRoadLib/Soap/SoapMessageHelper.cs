@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Extensions;
 
 namespace XRoadLib.Soap
