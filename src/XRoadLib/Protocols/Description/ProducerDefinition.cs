@@ -313,7 +313,7 @@ namespace XRoadLib.Protocols.Description
             if (protocol.NonTechnicalFaultInResponseElement)
                 return new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } };
 
-            if ("unbounded".Equals(responseElement.MaxOccursString))
+            if ("unbounded".Equals(responseElement.MaxOccursString) || responseElement.MaxOccurs > 1)
                 responseElement = new XmlSchemaElement
                 {
                     Name = "response",
