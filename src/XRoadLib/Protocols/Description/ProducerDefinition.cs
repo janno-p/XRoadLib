@@ -310,36 +310,35 @@ namespace XRoadLib.Protocols.Description
 
         private XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseValueDefinition definition, XmlSchemaElement requestElement, XmlSchemaElement responseElement)
         {
-            var sequence = new XmlSchemaSequence { Items = { requestElement, responseElement } };
-
             if (protocol.NonTechnicalFaultInResponseElement)
-                return new XmlSchemaComplexType { Particle = sequence };
+                return new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } };
 
             if ("unbounded".Equals(responseElement.MaxOccursString))
                 responseElement = new XmlSchemaElement
                 {
                     Name = "response",
-                    SchemaType = new XmlSchemaComplexType
-                    {
-                        Particle = new XmlSchemaSequence { Items = { responseElement} }
-                    }
+                    SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { responseElement } } }
                 };
             else responseElement.Name = "response";
 
-            var particle = sequence;
+            var particle = new XmlSchemaSequence { Items = { requestElement, responseElement } };;
+
             switch (definition.XRoadFaultPresentation)
             {
                 case XRoadFaultPresentation.Choice:
-                    particle = new XmlSchemaSequence { Items = { new XmlSchemaChoice { Items = { sequence, CreateFaultSequence() } } } };
+                    particle = new XmlSchemaSequence { Items = { new XmlSchemaChoice { Items = { particle, CreateFaultSequence() } } } };
                     break;
+
                 case XRoadFaultPresentation.Explicit:
-                    sequence.MinOccurs = 0;
+                    particle.MinOccurs = 0;
                     var faultSequence = CreateFaultSequence();
                     faultSequence.MinOccurs = 0;
-                    particle = new XmlSchemaSequence { Items = { sequence, faultSequence } };
+                    particle = new XmlSchemaSequence { Items = { particle, faultSequence } };
                     break;
+
                 case XRoadFaultPresentation.Implicit:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
