@@ -1,3 +1,6 @@
+#### 1.0.0-beta020 - Unreleased
+* Fix service description for rootless list type response element.
+
 #### 1.0.0-beta019 - 13.04.2016
 * Better validation for XML Schema date types.
 
