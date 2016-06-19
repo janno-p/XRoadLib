@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XRoadLib", "src\XRoadLib\XRoadLib.csproj", "{5109476D-6533-4275-AB06-39D95728BBFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XRoadLib", "src\XRoadLib\XRoadLib.xproj", "{5109476D-6533-4275-AB06-39D95728BBFA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{BF60BC93-E09B-4E5F-9D85-95A519479D54}"
 	ProjectSection(SolutionItems) = preProject
@@ -31,11 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{8E6D
 		docs\content\tutorial.md = docs\content\tutorial.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ED8079DD-2B06-4030-9F0F-DC548F98E1C4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{ED8079DD-2B06-4030-9F0F-DC548F98E1C4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "XRoadLib.Tests", "tests\XRoadLib.Tests\XRoadLib.Tests.fsproj", "{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "XRoadLib.Tests", "test\XRoadLib.Tests\XRoadLib.Tests.fsproj", "{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XRoadLib.Tests.Contract", "tests\XRoadLib.Tests.Contract\XRoadLib.Tests.Contract.csproj", "{231811E0-4F3B-45DD-A777-2CE4C7EAB755}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XRoadLib.Tests.Contract", "test\XRoadLib.Tests.Contract\XRoadLib.Tests.Contract.csproj", "{231811E0-4F3B-45DD-A777-2CE4C7EAB755}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

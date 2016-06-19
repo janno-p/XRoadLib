@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -12,6 +11,10 @@ using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
+
+#if !NETSTANDARD1_5
+using System.Web.Services.Description;
+#endif
 
 namespace XRoadLib.Protocols.Description
 {

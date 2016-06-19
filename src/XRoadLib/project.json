@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0-beta020",
+  "buildOptions": {
+    "warningsAsErrors": true
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "dependencies": {
+        "NETStandard.Library": "1.5.0-rc2-24027",
+        "System.Linq.Expressions": "4.0.11-rc2-24027",
+        "System.Net.Requests": "4.0.11-rc2-24027",
+        "System.Security.Cryptography.Algorithms": "4.1.0-rc2-24027",
+        "System.Xml.XmlDocument": "4.0.1-rc2-24027",
+        "System.Xml.XmlSerializer": "4.0.11-rc2-24027",
+        "System.Xml.XPath": "4.0.1-rc2-24027"
+      },
+      "imports": [
+
+      ]
+    },
+    "net46": {
+      "dependencies": {
+
+      },
+      "frameworkAssemblies": {
+        "Microsoft.CSharp": "",
+        "System": "",
+        "System.Core": "",
+        "System.Data": "",
+        "System.Numerics": "",
+        "System.Web": "",
+        "System.Web.Services": "",
+        "System.Xml": "",
+        "System.Xml.Linq": ""
+      }
+    }
+  }
+}

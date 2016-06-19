@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
+
+#if !NETSTANDARD1_5
+using System.Web.Services.Description;
+#endif
 
 namespace XRoadLib.Protocols
 {

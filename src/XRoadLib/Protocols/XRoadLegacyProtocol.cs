@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Services.Description;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
+
+#if !NETSTANDARD1_5
+using System.Web.Services.Description;
+#endif
 
 namespace XRoadLib.Protocols
 {

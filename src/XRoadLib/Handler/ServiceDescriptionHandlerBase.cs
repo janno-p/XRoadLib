@@ -1,5 +1,8 @@
-﻿using System.Web;
-using XRoadLib.Protocols;
+﻿using XRoadLib.Protocols;
+
+#if !NETSTANDARD1_5
+using System.Web;
+#endif
 
 namespace XRoadLib.Handler
 {

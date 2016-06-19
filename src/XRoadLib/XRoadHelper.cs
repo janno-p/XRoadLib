@@ -11,8 +11,9 @@ namespace XRoadLib
             const int nonceLength = (int)(4.0d / 3.0d * randomLength);
 
             var random = new byte[randomLength];
-            var rng = new RNGCryptoServiceProvider();
-            rng.GetNonZeroBytes(random);
+
+            var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(random);
 
             var nch = new char[nonceLength + 2];
             Convert.ToBase64CharArray(random, 0, randomLength, nch, 0);

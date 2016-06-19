@@ -49,7 +49,7 @@ let tags = "x-tee x-road xtee xroad"
 let solutionFile  = "XRoadLib.sln"
 
 // Pattern specifying assemblies to be tested using NUnit
-let testAssemblies = "tests/**/bin/Debug/*Tests.dll"
+let testAssemblies = "test/**/bin/Debug/*Tests.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted

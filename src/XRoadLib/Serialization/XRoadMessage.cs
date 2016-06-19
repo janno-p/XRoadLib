@@ -5,13 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
 using System.Xml.Linq;
 using XRoadLib.Protocols;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
+
+#if !NETSTANDARD1_5
+using System.Web;
+#endif
 
 namespace XRoadLib.Serialization
 {
