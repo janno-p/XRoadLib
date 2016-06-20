@@ -1,13 +1,12 @@
-﻿using System;
+﻿#if !NETSTANDARD1_5
+
+using System;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Web;
 using XRoadLib.Serialization;
 using XRoadLib.Soap;
-
-#if !NETSTANDARD1_5
-using System.Web;
-#endif
 
 namespace XRoadLib.Handler
 {
@@ -51,3 +50,5 @@ namespace XRoadLib.Handler
         }
     }
 }
+
+#endif

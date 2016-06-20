@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,6 +10,12 @@ using XRoadLib.Protocols;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
+
+#if !NETSTANDARD1_5
+using WebHeaderCollection = System.Collections.Specialized.NameValueCollection;
+#else
+using WebHeaderCollection = System.Net.WebHeaderCollection;
+#endif
 
 namespace XRoadLib.Serialization
 {
@@ -28,7 +33,7 @@ namespace XRoadLib.Serialization
         private static readonly byte[] newLine = { (byte)'\r', (byte)'\n' };
 
         private readonly ICollection<XRoadProtocol> supportedProtocols;
-        private readonly NameValueCollection headers;
+        private readonly WebHeaderCollection headers;
         private readonly Encoding contentEncoding;
         private readonly string storagePath;
 
@@ -38,7 +43,7 @@ namespace XRoadLib.Serialization
 
         private long StreamPosition => stream.Position - (peekedByte.HasValue ? 1 : 0);
 
-        public XRoadMessageReader(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public XRoadMessageReader(Stream stream, WebHeaderCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
             this.contentEncoding = contentEncoding;
             this.headers = headers;
@@ -102,8 +107,7 @@ namespace XRoadLib.Serialization
 
         private string GetContentType()
         {
-            var contentTypeKey = headers?.Keys
-                                         .Cast<string>()
+            var contentTypeKey = headers?.AllKeys
                                          .FirstOrDefault(key => key.Trim()
                                                                    .ToLower()
                                                                    .Equals("content-type"));
@@ -387,7 +391,7 @@ namespace XRoadLib.Serialization
 
             charset = charset.ToLower().Replace("cp", "");
 
-            if (charset.StartsWith("125", StringComparison.InvariantCulture))
+            if (charset.StartsWith("125"))
                 charset = "windows-" + charset;
 
             return charset;

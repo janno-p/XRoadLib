@@ -52,11 +52,6 @@ namespace XRoadLib
             return new XRoadException(new ClientFaultCode("TypeAttributeRequired"), $"The type '{typeName}' is abstract, type attribute is required to specify target type.");
         }
 
-        public static XRoadException PäringSisaldabVarasematKuupäeva(DateTime kuupäev)
-        {
-            return new XRoadException(new ClientFaultCode("UnsupportedDateValue"), $"Päring sisaldab kuupäeva, mis on varasem kui '{kuupäev}'.");
-        }
-
         public static XRoadException NoDefaultConstructorForType(XName qualifiedName)
         {
             return new XRoadException(ServerFaultCode.InternalError, $"The type '{qualifiedName}' does not have default constructor.");

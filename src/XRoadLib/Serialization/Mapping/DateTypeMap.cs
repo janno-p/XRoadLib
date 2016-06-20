@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlTypes;
 using System.Globalization;
 using System.Xml;
 using XRoadLib.Schema;
@@ -31,20 +30,13 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.IsEmptyElement)
                 return MoveNextAndReturn(reader, new DateTime());
 
-            var value = reader.ReadString();
+            var value = reader.ReadElementContentAsString();
             if (string.IsNullOrEmpty(value))
                 return null;
 
             var date = DateTime.ParseExact(value, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None);
             if (value[value.Length - 1] == 'Z')
                 date = date.ToLocalTime();
-
-            var minDateTimeValue = (DateTime)SqlDateTime.MinValue;
-            if (date == minDateTimeValue || date == DateTime.MinValue)
-                return null;
-
-            if (date < minDateTimeValue)
-                throw XRoadException.PäringSisaldabVarasematKuupäeva(minDateTimeValue);
 
             return date;
         }

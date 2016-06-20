@@ -1,17 +1,16 @@
-﻿using System;
+﻿#if !NETSTANDARD1_5
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using System.Web;
 using XRoadLib.Extensions;
 using XRoadLib.Handler.Events;
 using XRoadLib.Protocols;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
-
-#if !NETSTANDARD1_5
-using System.Web;
-#endif
 
 namespace XRoadLib.Handler
 {
@@ -177,3 +176,5 @@ namespace XRoadLib.Handler
         }
     }
 }
+
+#endif

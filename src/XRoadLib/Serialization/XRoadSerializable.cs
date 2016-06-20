@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace XRoadLib.Serialization
 {
-    [Serializable]
     public abstract class XRoadSerializable : IXRoadSerializable
     {
         private readonly IDictionary<string, bool> initializedMembers = new Dictionary<string, bool>();

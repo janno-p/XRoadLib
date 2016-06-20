@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,6 +13,9 @@ using XRoadLib.Serialization.Template;
 
 #if !NETSTANDARD1_5
 using System.Web;
+using WebHeaderCollection = System.Collections.Specialized.NameValueCollection;
+#else
+using WebHeaderCollection = System.Net.WebHeaderCollection;
 #endif
 
 namespace XRoadLib.Serialization
@@ -67,34 +69,38 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
+#if !NETSTANDARD1_5
         public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
             LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers, httpContext.Request.ContentEncoding, storagePath, supportedProtocols);
         }
+#endif
 
-        public void LoadRequest(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public void LoadRequest(Stream stream, WebHeaderCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
             using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
                 reader.Read(this);
         }
 
-        public void LoadResponse(Stream stream, NameValueCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public void LoadResponse(Stream stream, WebHeaderCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
             using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
                 reader.Read(this, true);
         }
 
+#if !NETSTANDARD1_5
         public void SaveTo(HttpContext httpContext)
         {
             using (var writer = new XRoadMessageWriter(httpContext.Response.OutputStream))
                 writer.Write(this, contentType => httpContext.Response.ContentType = contentType, httpContext.Response.AppendHeader);
         }
+#endif
 
         public void SaveTo(WebRequest webRequest)
         {
-            using (var outputStream = webRequest.GetRequestStream())
+            using (var outputStream = webRequest.GetRequestStreamAsync().Result)
             using (var writer = new XRoadMessageWriter(outputStream))
-                writer.Write(this, contentType => webRequest.ContentType = contentType, webRequest.Headers.Add);
+                writer.Write(this, contentType => webRequest.ContentType = contentType, (k, v) => webRequest.Headers[k] = v);
         }
 
         public void SaveTo(Stream outputStream, Action<string> setContentType, Action<string, string> appendHeader)
