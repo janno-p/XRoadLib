@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -12,8 +13,9 @@ using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
-#if !NETSTANDARD1_5
-using System.Web.Services.Description;
+#if NETSTANDARD1_5
+using MessageCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.Message>;
+using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.ServiceDescriptionFormatExtension>;
 #endif
 
 namespace XRoadLib.Protocols.Description

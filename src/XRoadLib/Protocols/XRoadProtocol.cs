@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -13,10 +14,6 @@ using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
-
-#if !NETSTANDARD1_5
-using System.Web.Services.Description;
-#endif
 
 namespace XRoadLib.Protocols
 {
@@ -253,8 +250,8 @@ namespace XRoadLib.Protocols
         {
             public int Compare(XName x, XName y)
             {
-                var ns = string.Compare(x.NamespaceName, y.NamespaceName, StringComparison.InvariantCulture);
-                return ns != 0 ? ns : string.Compare(x.LocalName, y.LocalName, StringComparison.InvariantCulture);
+                var ns = string.Compare(x.NamespaceName, y.NamespaceName);
+                return ns != 0 ? ns : string.Compare(x.LocalName, y.LocalName);
             }
         }
     }

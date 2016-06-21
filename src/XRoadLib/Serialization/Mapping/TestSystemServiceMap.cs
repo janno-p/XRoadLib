@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Reflection;
+using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -13,7 +14,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public TestSystemServiceMap(XName operationName)
         {
-            var methodInfo = typeof(Implementation).GetMethod("Execute");
+            var methodInfo = typeof(Implementation).GetTypeInfo().GetMethod("Execute");
 
             Definition = new OperationDefinition(operationName, null, methodInfo);
         }
