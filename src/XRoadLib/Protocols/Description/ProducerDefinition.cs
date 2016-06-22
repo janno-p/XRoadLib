@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Schema;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -16,6 +15,9 @@ using XRoadLib.Serialization;
 #if NETSTANDARD1_5
 using MessageCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.Message>;
 using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.ServiceDescriptionFormatExtension>;
+using XRoadLib.Xml.Schema;
+#else
+using System.Xml.Schema;
 #endif
 
 namespace XRoadLib.Protocols.Description
@@ -106,8 +108,8 @@ namespace XRoadLib.Protocols.Description
             AddSystemType<Stream>("base64");
 
             var typeDefinitions = contractAssembly.GetTypes()
-                                                  .Where(type => type.IsXRoadSerializable() || (type.IsEnum && type.GetSingleAttribute<XmlTypeAttribute>() != null))
-                                                  .Where(type => !version.HasValue || type.ExistsInVersion(version.Value))
+                                                  .Where(type => type.IsXRoadSerializable() || (type.GetTypeInfo().IsEnum && type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>() != null))
+                                                  .Where(type => !version.HasValue || type.GetTypeInfo().ExistsInVersion(version.Value))
                                                   .Select(type => schemaDefinitionReader.GetTypeDefinition(type))
                                                   .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default)
                                                   .ToList();
@@ -120,7 +122,7 @@ namespace XRoadLib.Protocols.Description
                 schemaTypeDefinitions.Add(typeDefinition.Name, typeDefinition);
                 runtimeTypeDefinitions.Add(typeDefinition.Type, typeDefinition);
 
-                var baseType = typeDefinition.Type.BaseType;
+                var baseType = typeDefinition.Type.GetTypeInfo().BaseType;
                 if (baseType == null || !baseType.IsXRoadSerializable())
                     continue;
 
@@ -264,14 +266,14 @@ namespace XRoadLib.Protocols.Description
 
                     XmlSchemaType schemaType;
 
-                    if (typeDefinition.Type.IsEnum)
+                    if (typeDefinition.Type.GetTypeInfo().IsEnum)
                     {
                         schemaType = new XmlSchemaSimpleType();
                         AddEnumTypeContent(typeDefinition.Type, (XmlSchemaSimpleType)schemaType);
                     }
                     else
                     {
-                        schemaType = new XmlSchemaComplexType { IsAbstract = typeDefinition.Type.IsAbstract };
+                        schemaType = new XmlSchemaComplexType { IsAbstract = typeDefinition.Type.GetTypeInfo().IsAbstract };
 
                         if (AddComplexTypeContent((XmlSchemaComplexType)schemaType, typeDefinition.Name.NamespaceName, typeDefinition, referencedTypes) != null)
                             throw new NotImplementedException();
@@ -432,9 +434,12 @@ namespace XRoadLib.Protocols.Description
         {
             portType.Operations.Add(new Operation
             {
-                DocumentationElement = protocol.CreateDocumentationElement(operationDefinition.Documentation), Name = operationDefinition.Name.LocalName, Messages =
+                DocumentationElement = protocol.CreateDocumentationElement(operationDefinition.Documentation),
+                Name = operationDefinition.Name.LocalName,
+                Messages =
                 {
-                    new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) }, new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) }
+                    new OperationInput { Message = new XmlQualifiedName(inputMessage.Name, targetNamespace) },
+                    new OperationOutput { Message = new XmlQualifiedName(outputMessage.Name, targetNamespace) }
                 }
             });
         }
@@ -448,7 +453,12 @@ namespace XRoadLib.Protocols.Description
             }
 
             var soapPart = new MimePart();
+
+#if NETSTANDARD1_5
+            AddOperationContentBinding(soapPart.Extensions, x => x);
+#else
             AddOperationContentBinding(soapPart.Extensions, protocol.Style.CreateSoapHeader);
+#endif
 
             var filePart = new MimePart { Extensions = { new MimeContentBinding { Part = "file", Type = "application/binary" } } };
 
@@ -465,11 +475,21 @@ namespace XRoadLib.Protocols.Description
 
             binding.Operations.Add(new OperationBinding
             {
-                Name = operationDefinition.Name.LocalName, Extensions = { protocol.CreateOperationVersionElement(operationDefinition), protocol.Style.CreateSoapOperationBinding() }, Input = inputBinding, Output = outputBinding
+                Name = operationDefinition.Name.LocalName,
+                Extensions =
+                {
+                    protocol.CreateOperationVersionElement(operationDefinition),
+                    protocol.Style.CreateSoapOperationBinding()
+                },
+                Input = inputBinding,
+                Output = outputBinding
             });
         }
 
         private void AddOperationContentBinding<THeader>(ServiceDescriptionFormatExtensionCollection extensions, Func<SoapHeaderBinding, THeader> projectionFunc)
+#if NETSTANDARD1_5
+            where THeader : ServiceDescriptionFormatExtension
+#endif
         {
             extensions.Add(protocol.Style.CreateSoapBodyBinding(protocol.ProducerNamespace));
             foreach (var headerBinding in protocol.MandatoryHeaders.Select(name => protocol.Style.CreateSoapHeaderBinding(name, STANDARD_HEADER_NAME, protocol.ProducerNamespace)).Select(projectionFunc))
@@ -506,13 +526,14 @@ namespace XRoadLib.Protocols.Description
                 return null;
             }
 
-            if (typeDefinition.Type.BaseType == typeof(XRoadSerializable))
+            if (typeDefinition.Type.GetTypeInfo().BaseType == typeof(XRoadSerializable))
                 schemaType.Particle = contentParticle;
             else
             {
                 var extension = new XmlSchemaComplexContentExtension
                 {
-                    BaseTypeName = GetSchemaTypeName(typeDefinition.Type.BaseType, schemaNamespace), Particle = contentParticle
+                    BaseTypeName = GetSchemaTypeName(typeDefinition.Type.GetTypeInfo().BaseType, schemaNamespace),
+                    Particle = contentParticle
                 };
 
                 if (!referencedTypes.ContainsKey(extension.BaseTypeName))
@@ -572,7 +593,7 @@ namespace XRoadLib.Protocols.Description
 
         private void SetSchemaElementType(XmlSchemaElement schemaElement, string schemaNamespace, IContentDefinition contentDefinition, IDictionary<XmlQualifiedName, XmlSchemaType> referencedTypes)
         {
-            if (typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
+            if (typeof(Stream).GetTypeInfo().IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
                 AddBinaryAttribute(schemaNamespace, schemaElement);
 
             var typeDefinition = GetContentTypeDefinition(contentDefinition);
@@ -588,7 +609,7 @@ namespace XRoadLib.Protocols.Description
             XmlSchemaType schemaType;
             XmlQualifiedName schemaTypeName = null;
 
-            if (contentDefinition.RuntimeType.IsEnum)
+            if (contentDefinition.RuntimeType.GetTypeInfo().IsEnum)
             {
                 schemaType = new XmlSchemaSimpleType();
                 AddEnumTypeContent(contentDefinition.RuntimeType, (XmlSchemaSimpleType)schemaType);
@@ -611,7 +632,7 @@ namespace XRoadLib.Protocols.Description
 
             foreach (var name in Enum.GetNames(type))
             {
-                var memberInfo = type.GetMember(name).Single();
+                var memberInfo = type.GetTypeInfo().GetMember(name).Single();
                 var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
                 restriction.Facets.Add(new XmlSchemaEnumerationFacet { Value = (attribute?.Name).GetValueOrDefault(name) });
             }

@@ -107,14 +107,22 @@ namespace XRoadLib.Protocols
             new ProducerDefinition(this, schemaDefinitionReader, ContractAssembly, version).SaveTo(outputStream);
         }
 
+#if NETSTANDARD1_5
+        internal XRoadOperationVersionBinding CreateOperationVersionElement(OperationDefinition operationDefinition)
+#else
         internal XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition)
+#endif
         {
             if (operationDefinition.Version == 0)
                 return null;
 
+#if NETSTANDARD1_5
+            return new XRoadOperationVersionBinding(XRoadPrefix, XRoadNamespace) { Version = $"v{operationDefinition.Version}" };
+#else
             var addressElement = document.CreateElement(XRoadPrefix, "version", XRoadNamespace);
             addressElement.InnerText = $"v{operationDefinition.Version}";
             return addressElement;
+#endif
         }
 
         internal XmlElement CreateTitleElement(string languageCode, string value, Action<string> addSchemaImport)
@@ -204,9 +212,9 @@ namespace XRoadLib.Protocols
 
             var getMethod = propertyInfo.GetGetMethod();
 
-            foreach (var iface in declaringType.GetInterfaces())
+            foreach (var iface in declaringType.GetTypeInfo().GetInterfaces())
             {
-                var map = declaringType.GetInterfaceMap(iface);
+                var map = declaringType.GetTypeInfo().GetRuntimeInterfaceMap(iface);
 
                 var index = -1;
                 for (var i = 0; i < map.TargetMethods.Length; i++)
@@ -219,7 +227,7 @@ namespace XRoadLib.Protocols
                 if (index < 0)
                     continue;
 
-                var ifaceProperty = iface.GetProperties().SingleOrDefault(p => p.GetGetMethod() == map.InterfaceMethods[index]);
+                var ifaceProperty = iface.GetTypeInfo().GetProperties().SingleOrDefault(p => p.GetGetMethod() == map.InterfaceMethods[index]);
 
                 var attribute = ifaceProperty.GetSingleAttribute<XmlElementAttribute>();
                 if (attribute != null)

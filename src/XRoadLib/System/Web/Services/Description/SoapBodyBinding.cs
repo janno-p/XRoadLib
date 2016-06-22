@@ -2,9 +2,11 @@
 
 namespace System.Web.Services.Description
 {
-    public class SoapBodyBinding
+    public class SoapBodyBinding : ServiceDescriptionFormatExtension
     {
-
+        public string Encoding { get; set; }
+        public string Namespace { get; set; }
+        public SoapBindingUse Use { get; set; }
     }
 }
 

@@ -23,11 +23,11 @@ namespace XRoadLib.Extensions
             generator.Emit(OpCodes.Ldarg_0);
 
             if (converterType != null)
-                generator.Emit(OpCodes.Call, converterType.GetMethod("ConvertBack", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static));
+                generator.Emit(OpCodes.Call, converterType.GetTypeInfo().GetMethod("ConvertBack", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static));
             else
                 generator.Emit(OpCodes.Callvirt, propertyInfo.GetGetMethod(true));
 
-            if (propertyType.IsValueType)
+            if (propertyType.GetTypeInfo().IsValueType)
                 generator.Emit(OpCodes.Box, propertyType);
 
             generator.Emit(OpCodes.Ret);
@@ -52,11 +52,11 @@ namespace XRoadLib.Extensions
             generator.Emit(OpCodes.Ldarg_0);
             generator.Emit(OpCodes.Ldarg_1);
 
-            if (propertyType.IsValueType)
+            if (propertyType.GetTypeInfo().IsValueType)
                 generator.Emit(OpCodes.Unbox_Any, propertyType);
 
             if (converterType != null)
-                generator.Emit(OpCodes.Call, converterType.GetMethod("Convert", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static));
+                generator.Emit(OpCodes.Call, converterType.GetTypeInfo().GetMethod("Convert", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static));
             else
                 generator.Emit(OpCodes.Callvirt, propertyInfo.GetSetMethod(true));
 

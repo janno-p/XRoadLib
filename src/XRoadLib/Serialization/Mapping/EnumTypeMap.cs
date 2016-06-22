@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
@@ -20,7 +20,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             foreach (var name in Enum.GetNames(typeDefinition.Type))
             {
-                var memberInfo = typeDefinition.Type.GetMember(name).Single();
+                var memberInfo = typeDefinition.Type.GetTypeInfo().GetMember(name).Single();
                 var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
                 var value = (attribute?.Name).GetValueOrDefault(name);
                 var enumValue = (int)Enum.Parse(typeDefinition.Type, name);
@@ -34,11 +34,11 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.IsEmptyElement)
                 return MoveNextAndReturn(reader, Enum.ToObject(Definition.Type, 0));
 
-            var stringValue = reader.ReadString();
+            var stringValue = reader.ReadElementContentAsString();
 
             int enumerationValue;
             if (!deserializationMapping.TryGetValue(stringValue, out enumerationValue))
-                throw new InvalidEnumArgumentException($"Unexpected value `{stringValue}` for enumeration type `{Definition.Name}`.");
+                throw new MissingFieldException($"Unexpected value `{stringValue}` for enumeration type `{Definition.Name}`.");
 
             return Enum.ToObject(Definition.Type, enumerationValue);
         }
@@ -50,7 +50,7 @@ namespace XRoadLib.Serialization.Mapping
 
             string enumerationValue;
             if (!serializationMapping.TryGetValue((int)value, out enumerationValue))
-                throw new InvalidEnumArgumentException($"Cannot map value `{value}` to enumeration type `{Definition.Name}`.");
+                throw new MissingFieldException($"Cannot map value `{value}` to enumeration type `{Definition.Name}`.");
 
             writer.WriteValue(enumerationValue);
         }

@@ -33,7 +33,8 @@ namespace XRoadLib.Serialization
             }
 
             var boundaryMarker = Guid.NewGuid().ToString();
-            var contentID = Convert.ToBase64String(new MD5CryptoServiceProvider().ComputeHash(source.ContentStream));
+
+            var contentID = Convert.ToBase64String(MD5.Create().ComputeHash(source.ContentStream));
 
             var contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_SOAP;
             if (source.BinaryMode == BinaryMode.Xml)
@@ -63,7 +64,7 @@ namespace XRoadLib.Serialization
 
         public void Dispose()
         {
-            writer.Close();
+            writer.Dispose();
             writer = null;
         }
 

@@ -14,7 +14,7 @@ namespace XRoadLib.Serialization
 
         public bool IsMultipartContent { get; set; }
 
-        /// <summary>Manuse unikaalne tunnus päringu sees, mille järgi viidatakse manusele SOAP sõnumist.</summary>
+        /// <summary>Manuse unikaalne tunnus pï¿½ringu sees, mille jï¿½rgi viidatakse manusele SOAP sï¿½numist.</summary>
         public string ContentID { get { return contentID; } }
 
         public bool HasContent { get { return ContentStream.Length > 0; } }
@@ -25,22 +25,22 @@ namespace XRoadLib.Serialization
         }
 
         /// <summary>
-        /// Seda interface't kasutatakse süsteemis olemasoleva faili esitamisel attachement'ina
+        /// Seda interface't kasutatakse sï¿½steemis olemasoleva faili esitamisel attachement'ina
         /// St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib
         /// </summary>
         public XRoadAttachment(Stream contentStream) : this()
         {
-            contentID = Convert.ToBase64String(new MD5CryptoServiceProvider().ComputeHash(contentStream));
+            contentID = Convert.ToBase64String(MD5.Create().ComputeHash(contentStream));
             ContentStream = contentStream;
         }
 
-        /// <summary>Seda interfacet kasutatakse faili süsteemi uploadimisel</summary>
+        /// <summary>Seda interfacet kasutatakse faili sï¿½steemi uploadimisel</summary>
         public XRoadAttachment(string contentID, string fullPath) : this()
         {
             ContentStream = new FileStream(fullPath, FileMode.Create);
 
             if (string.IsNullOrEmpty(contentID))
-                contentID = Convert.ToBase64String(new MD5CryptoServiceProvider().ComputeHash(ContentStream));
+                contentID = Convert.ToBase64String(MD5.Create().ComputeHash(ContentStream));
 
             this.contentID = contentID;
 
@@ -49,7 +49,7 @@ namespace XRoadLib.Serialization
 
         private void Close()
         {
-            ContentStream?.Close();
+            ContentStream?.Dispose();
             ContentStream = null;
 
             // kui path on teada, siis on temp fail ja see tuleb kustutada ..
@@ -64,7 +64,7 @@ namespace XRoadLib.Serialization
             var buffer = new byte[ContentStream.Length];
             ContentStream.Read(buffer, 0, buffer.Length);
 
-            return Convert.ToBase64String(buffer, Base64FormattingOptions.InsertLineBreaks);
+            return Convert.ToBase64String(buffer);
         }
 
         public void WriteAsBase64(XmlWriter writer)

@@ -70,7 +70,8 @@ namespace XRoadLib.Schema
                 return collectionDefinition;
             }
 
-            var typeAttribute = type.GetSingleAttribute<XmlTypeAttribute>();
+            var typeInfo = type.GetTypeInfo();
+            var typeAttribute = typeInfo.GetCustomAttribute<XmlTypeAttribute>();
             var isAnonymous = typeAttribute != null && typeAttribute.AnonymousType;
 
             var normalizedType = Definition.NormalizeType(type);
@@ -86,7 +87,7 @@ namespace XRoadLib.Schema
                 IsAnonymous = isAnonymous,
                 Name = qualifiedName,
                 State = DefinitionState.Default,
-                CanHoldNullValues = type.IsClass || normalizedType != type
+                CanHoldNullValues = typeInfo.IsClass || normalizedType != type
             };
 
             SchemaExporter?.ExportTypeDefinition(typeDefinition);

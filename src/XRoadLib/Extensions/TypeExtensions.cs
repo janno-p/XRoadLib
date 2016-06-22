@@ -18,18 +18,18 @@ namespace XRoadLib.Extensions
     {
         public static bool IsAnonymous(this Type type)
         {
-            return (type.GetSingleAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();
+            return (type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();
         }
 
         public static bool IsXRoadSerializable(this Type type)
         {
-            var baseType = type.BaseType;
+            var baseType = type.GetTypeInfo().BaseType;
 
             while (baseType != null)
             {
                 if (baseType == typeof(XRoadSerializable))
                     return true;
-                baseType = baseType.BaseType;
+                baseType = baseType.GetTypeInfo().BaseType;
             }
 
             return false;
@@ -40,7 +40,8 @@ namespace XRoadLib.Extensions
             if (comparer == null)
                 throw new ArgumentNullException(nameof(comparer));
 
-            var properties = type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+            var properties = type.GetTypeInfo()
+                                 .GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                                  .Where(prop => !prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null)
                                  .Where(prop => !version.HasValue || prop.ExistsInVersion(version.Value))
                                  .Select(createDefinition);
@@ -52,19 +53,19 @@ namespace XRoadLib.Extensions
         {
             var properties = new List<PropertyDefinition>();
 
-            if (type.BaseType != typeof(XRoadSerializable))
-                properties.AddRange(type.BaseType.GetAllPropertiesSorted(comparer, version, createDefinition));
+            if (type.GetTypeInfo().BaseType != typeof(XRoadSerializable))
+                properties.AddRange(type.GetTypeInfo().BaseType.GetAllPropertiesSorted(comparer, version, createDefinition));
 
             properties.AddRange(type.GetPropertiesSorted(comparer, version, createDefinition));
 
             return properties;
         }
 
-        public static IEnumerable<Tuple<string, string>> GetXRoadTitles(this ICustomAttributeProvider attributeProvider)
+        public static IEnumerable<Tuple<string, string>> GetXRoadTitles(this ICustomAttributeProvider customAttributeProvider)
         {
-            return attributeProvider.GetCustomAttributes(typeof(XRoadTitleAttribute), false)
-                                    .OfType<XRoadTitleAttribute>()
-                                    .Select(x => Tuple.Create(x.LanguageCode, x.Value));
+            return customAttributeProvider.GetCustomAttributes(typeof(XRoadTitleAttribute), false)
+                                          .OfType<XRoadTitleAttribute>()
+                                          .Select(x => Tuple.Create(x.LanguageCode, x.Value));
         }
 
         public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)
@@ -111,7 +112,7 @@ namespace XRoadLib.Extensions
             if (type == typeof(int)) return XName.Get("int", NamespaceConstants.XSD);
             if (type == typeof(long)) return XName.Get("long", NamespaceConstants.XSD);
             if (type == typeof(string)) return XName.Get("string", NamespaceConstants.XSD);
-            return typeof(Stream).IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.XSD) : null;
+            return typeof(Stream).GetTypeInfo().IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.XSD) : null;
         }
 
         public static T GetSingleAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
@@ -121,15 +122,25 @@ namespace XRoadLib.Extensions
 
         public static bool IsNullable(this Type type)
         {
-            return type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return type != null && type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+        private static bool BaseTypeHasGenericArgument(Type type, Type runtimeType)
+        {
+            var typeInfo = type.GetTypeInfo().BaseType?.GetTypeInfo();
+            if (typeInfo == null)
+                return false;
+
+            return typeInfo.IsGenericType && typeInfo.GetGenericArguments().Single().GetTypeInfo().IsAssignableFrom(runtimeType);
         }
 
         public static bool IsFilterableField(this Type runtimeType, string fieldName, string groupName)
         {
-            return runtimeType.Assembly
+            return runtimeType.GetTypeInfo()
+                              .Assembly
                               .GetTypes()
-                              .Where(t => typeof(IXRoadFilterMap).IsAssignableFrom(t))
-                              .Where(t => t.BaseType != null && t.BaseType.IsGenericType && t.BaseType.GetGenericArguments().Single().IsAssignableFrom(runtimeType))
+                              .Where(t => typeof(IXRoadFilterMap).GetTypeInfo().IsAssignableFrom(t))
+                              .Where(t => BaseTypeHasGenericArgument(t, runtimeType))
                               .Select(t => (IXRoadFilterMap)Activator.CreateInstance(t))
                               .Where(m => m.GroupName.Equals(groupName))
                               .Any(m => m.EnabledProperties.Contains(fieldName));
@@ -141,11 +152,12 @@ namespace XRoadLib.Extensions
                 return null;
 
             var methodContracts = method.DeclaringType
-                                       .GetInterfaces()
-                                       .Select(iface => method.DeclaringType.GetInterfaceMap(iface))
-                                       .Where(map => map.TargetMethods.Contains(method))
-                                       .Select(map => map.InterfaceMethods[Array.IndexOf(map.TargetMethods, method)])
-                                       .ToList();
+                                        .GetTypeInfo()
+                                        .GetInterfaces()
+                                        .Select(iface => method.DeclaringType.GetTypeInfo().GetRuntimeInterfaceMap(iface))
+                                        .Where(map => map.TargetMethods.Contains(method))
+                                        .Select(map => map.InterfaceMethods[Array.IndexOf(map.TargetMethods, method)])
+                                        .ToList();
 
             if (methodContracts.Count > 1)
                 throw XRoadException.AmbiguousMatch(operationName);

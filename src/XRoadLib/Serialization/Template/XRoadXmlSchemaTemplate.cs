@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+
+#if NETSTANDARD1_5
+using XRoadLib.Xml.Schema;
+#else
 using System.Xml.Schema;
+#endif
 
 namespace XRoadLib.Serialization.Template
 {
@@ -22,15 +27,11 @@ namespace XRoadLib.Serialization.Template
             this.schema = schema;
 
             requestElement = schema.Items
-                                    .Cast<XmlSchemaObject>()
-                                    .Where(o => o is XmlSchemaElement)
-                                    .Cast<XmlSchemaElement>()
-                                    .Single(e => e.Name == elementName);
+                                   .OfType<XmlSchemaElement>()
+                                   .Single(e => e.Name == elementName);
 
             responseElement = schema.Items
-                                    .Cast<XmlSchemaObject>()
-                                    .Where(o => o is XmlSchemaElement)
-                                    .Cast<XmlSchemaElement>()
+                                    .OfType<XmlSchemaElement>()
                                     .Single(e => e.Name == elementName);
         }
 
@@ -92,9 +93,7 @@ namespace XRoadLib.Serialization.Template
                     return;
 
                 var schemaType = schema.Items
-                                       .Cast<XmlSchemaObject>()
-                                       .Where(o => o is XmlSchemaType)
-                                       .Cast<XmlSchemaType>()
+                                       .OfType<XmlSchemaType>()
                                        .Single(tp => tp.Name == element.SchemaTypeName.Name);
 
                 var complexType = schemaType as XmlSchemaComplexType;

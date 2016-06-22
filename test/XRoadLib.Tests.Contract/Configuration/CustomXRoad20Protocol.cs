@@ -1,4 +1,5 @@
-﻿using System.Web.Services.Description;
+﻿using System.Reflection;
+using System.Web.Services.Description;
 using System.Xml;
 using XRoadLib.Protocols;
 
@@ -16,7 +17,7 @@ namespace XRoadLib.Tests.Contract.Configuration
             Titles.Add("et", "XRoadLib test andmekogu");
             Titles.Add("pt", "Portugalikeelne loba ...");
 
-            SetContractAssembly(GetType().Assembly, null, 1u, 2u, 3u);
+            SetContractAssembly(GetType().GetTypeInfo().Assembly, null, 1u, 2u, 3u);
         }
 
         public override void ExportServiceDescription(ServiceDescription serviceDescription)
@@ -39,4 +40,3 @@ namespace XRoadLib.Tests.Contract.Configuration
         }
     }
 }
- 

@@ -15,7 +15,7 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.IsEmptyElement)
                 return MoveNextAndReturn(reader, 0L);
 
-            var value = reader.ReadString();
+            var value = reader.ReadElementContentAsString();
 
             return string.IsNullOrEmpty(value) ? 0L : XmlConvert.ToInt64(value);
         }

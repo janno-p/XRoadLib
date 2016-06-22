@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -15,7 +16,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public ListMethodsServiceMap(XName operationName)
         {
-            var methodInfo = typeof(Implementation).GetMethod("Execute");
+            var methodInfo = typeof(Implementation).GetTypeInfo().GetMethod("Execute");
 
             Definition = new OperationDefinition(operationName, null, methodInfo);
         }

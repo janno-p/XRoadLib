@@ -2,9 +2,14 @@
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Schema;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
+
+#if NETSTANDARD1_5
+using XRoadLib.Xml.Schema;
+#else
+using System.Xml.Schema;
+#endif
 
 namespace XRoadLib.Protocols.Styles
 {
@@ -38,7 +43,9 @@ namespace XRoadLib.Protocols.Styles
 
         public abstract SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace);
 
+#if !NETSTANDARD1_5
         public abstract XmlElement CreateSoapHeader(SoapHeaderBinding binding);
+#endif
 
         public virtual XmlAttribute CreateExpectedContentType(string contentType)
         {

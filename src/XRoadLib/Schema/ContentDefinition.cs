@@ -77,7 +77,7 @@ namespace XRoadLib.Schema
             Name = qualifiedName;
             IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault() || (arrayAttribute?.IsNullable).GetValueOrDefault();
             Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault());
-            UseXop = typeof(Stream).IsAssignableFrom(RuntimeType);
+            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(RuntimeType);
             TypeName = customTypeName != null ? XName.Get(customTypeName, NamespaceConstants.XSD) : null;
             IsOptional = sourceInfo.GetSingleAttribute<XRoadOptionalAttribute>() != null;
             State = DefinitionState.Default;
@@ -94,7 +94,7 @@ namespace XRoadLib.Schema
                 Name = itemQualifiedName,
                 IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
                 IsOptional = elementAttribute != null && IsOptional,
-                UseXop = typeof(Stream).IsAssignableFrom(RuntimeType.GetElementType()),
+                UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(RuntimeType.GetElementType()),
                 RuntimeType = RuntimeType.GetElementType(),
             };
         }

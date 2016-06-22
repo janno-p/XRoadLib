@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0-*",
+  "testRunner": "xunit",
+  "buildOptions": {
+    "warningsAsErrors": true
+  },
+  "dependencies": {
+    "dotnet-test-xunit": "1.0.0-rc2-build10025",
+    "xunit": "2.1.0",
+    "XRoadLib": {
+      "target": "project",
+      "version": "1.0.0-*"
+    },
+    "XRoadLib.Tests.Contract": {
+      "target": "project",
+      "version": "1.0.0-*"
+    }
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0-rc2-3002702"
+        }
+      },
+      "imports": "netcore50"
+    }
+  }
+}

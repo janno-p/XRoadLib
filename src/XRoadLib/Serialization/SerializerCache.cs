@@ -101,8 +101,8 @@ namespace XRoadLib.Serialization
         private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
         {
             return typeAssembly?.GetTypes()
-                                .Where(t => t.IsInterface)
-                                .SelectMany(t => t.GetMethods())
+                                .Where(t => t.GetTypeInfo().IsInterface)
+                                .SelectMany(t => t.GetTypeInfo().GetMethods())
                                 .Where(x => x.GetServices()
                                              .Any(m => m.Name == qualifiedName.LocalName
                                                        && (!Version.HasValue || m.ExistsInVersion(Version.Value))))
@@ -144,7 +144,7 @@ namespace XRoadLib.Serialization
 
         private ITypeMap AddTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
-            if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.ExistsInVersion(Version.Value))
+            if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.GetTypeInfo().ExistsInVersion(Version.Value))
                 throw XRoadException.UnknownType(runtimeType.ToString());
 
             var typeDefinition = schemaDefinitionReader.GetTypeDefinition(runtimeType);
@@ -161,7 +161,7 @@ namespace XRoadLib.Serialization
             if (collectionDefinition != null)
             {
                 var elementType = typeDefinition.Type.GetElementType();
-                if (elementType.Assembly != contractAssembly)
+                if (elementType.GetTypeInfo().Assembly != contractAssembly)
                     return null;
 
                 var itemTypeMap = GetTypeMap(elementType, partialTypeMaps);
@@ -172,15 +172,15 @@ namespace XRoadLib.Serialization
                 return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
             }
 
-            if (typeDefinition.Type.Assembly != contractAssembly)
+            if (typeDefinition.Type.GetTypeInfo().Assembly != contractAssembly)
                 return null;
 
-            if (!typeDefinition.Type.IsEnum && !typeDefinition.Type.IsAbstract && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
+            if (!typeDefinition.Type.GetTypeInfo().IsEnum && !typeDefinition.Type.GetTypeInfo().IsAbstract && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
                 throw XRoadException.NoDefaultConstructorForType(typeDefinition.Type.Name);
 
-            if (typeDefinition.Type.IsEnum)
+            if (typeDefinition.Type.GetTypeInfo().IsEnum)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(EnumTypeMap), typeDefinition);
-            else if (typeDefinition.Type.IsAbstract)
+            else if (typeDefinition.Type.GetTypeInfo().IsAbstract)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap), typeDefinition);
             else if (typeDefinition.HasStrictContentOrder)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
@@ -209,16 +209,16 @@ namespace XRoadLib.Serialization
             if (qualifiedName.NamespaceName != typeDefinition.Name.NamespaceName)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
-            if (!typeDefinition.Type.IsEnum && !typeDefinition.Type.IsAbstract && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
+            if (!typeDefinition.Type.GetTypeInfo().IsEnum && !typeDefinition.Type.GetTypeInfo().IsAbstract && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
                 throw XRoadException.NoDefaultConstructorForType(typeDefinition.Name);
 
             ITypeMap typeMap;
 
             if (typeDefinition.TypeMapType != null)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeDefinition.TypeMapType, this, typeDefinition);
-            else if (typeDefinition.Type.IsEnum)
+            else if (typeDefinition.Type.GetTypeInfo().IsEnum)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(EnumTypeMap), typeDefinition);
-            else if (typeDefinition.Type.IsAbstract)
+            else if (typeDefinition.Type.GetTypeInfo().IsAbstract)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap), typeDefinition);
             else if (typeDefinition.HasStrictContentOrder)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
@@ -245,7 +245,7 @@ namespace XRoadLib.Serialization
 
         private Type GetRuntimeType(XName qualifiedName)
         {
-            if (!qualifiedName.NamespaceName.StartsWith("http://", StringComparison.InvariantCulture))
+            if (!qualifiedName.NamespaceName.StartsWith("http://"))
             {
                 var type = contractAssembly.GetType($"{qualifiedName.Namespace}.{qualifiedName.LocalName}");
                 return type != null && type.IsXRoadSerializable() ? type : null;
@@ -253,14 +253,14 @@ namespace XRoadLib.Serialization
 
             var runtimeType = contractAssembly.GetTypes()
                                               .Where(type => type.Name.Equals(qualifiedName.LocalName))
-                                              .Where(type => !Version.HasValue || type.ExistsInVersion(Version.Value))
+                                              .Where(type => !Version.HasValue || type.GetTypeInfo().ExistsInVersion(Version.Value))
                                               .SingleOrDefault(type => type.IsXRoadSerializable());
             if (runtimeType != null)
                 return runtimeType;
 
             throw XRoadException.UnknownType(qualifiedName.ToString());
         }
-        
+
         public XName GetXmlTypeName(Type type)
         {
             if (type.IsNullable())
@@ -279,7 +279,7 @@ namespace XRoadLib.Serialization
                 case "System.String": return XName.Get("string", NamespaceConstants.XSD);
             }
 
-            if (type.Assembly == contractAssembly)
+            if (type.GetTypeInfo().Assembly == contractAssembly)
                 return XName.Get(type.Name, Protocol.ProducerNamespace);
 
             throw XRoadException.AndmetüübileVastavNimeruumPuudub(type.FullName);

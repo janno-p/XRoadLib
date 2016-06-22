@@ -53,12 +53,12 @@ namespace XRoadLib
                 var request = WebRequest.Create(uri);
 
                 request.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
-                request.Headers.Set("SOAPAction", string.Empty);
+                request.Headers["SOAPAction"] = string.Empty;
                 request.Method = "POST";
 
                 requestMessage.SaveTo(request);
 
-                using (var response = request.GetResponse())
+                using (var response = request.GetResponseAsync().Result)
                 using (var responseStream = response.GetResponseStream())
                 using (var seekableStream = new MemoryStream())
                 using (var responseMessage = new XRoadMessage())

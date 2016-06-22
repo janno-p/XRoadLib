@@ -87,7 +87,7 @@ namespace XRoadLib.Extensions
                 return;
             }
 
-            var content = reader.ReadString();
+            var content = reader.ReadElementContentAsString();
             if (!string.IsNullOrEmpty(content))
                 throw XRoadException.InvalidQuery($@"An element labeled with `xsi:nil=""true""` must be empty, but had `{content}` as content.");
 

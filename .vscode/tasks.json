@@ -6,8 +6,14 @@
   "tasks": [
     {
       "taskName": "build",
-      "args": ["${workspaceRoot}/src/XRoadLib"],
+      "args": ["${workspaceRoot}/src/XRoadLib", "${workspaceRoot}/test/XRoadLib.Tests", "${workspaceRoot}/test/XRoadLib.Tests.Contract"],
       "isBuildCommand": true,
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "taskName": "test",
+      "args": ["${workspaceRoot}/test/XRoadLib.Tests"],
+      "isTestCommand": true,
       "problemMatcher": "$msCompile"
     }
   ]

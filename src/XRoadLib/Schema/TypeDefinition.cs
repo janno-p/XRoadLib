@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
@@ -27,7 +28,7 @@ namespace XRoadLib.Schema
 
         public TypeDefinition(Type type)
         {
-            Documentation = type.GetXRoadTitles().Where(title => !string.IsNullOrWhiteSpace(title.Item2)).ToArray();
+            Documentation = type.GetTypeInfo().GetXRoadTitles().Where(title => !string.IsNullOrWhiteSpace(title.Item2)).ToArray();
             Type = type;
         }
     }
