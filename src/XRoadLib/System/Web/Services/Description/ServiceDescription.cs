@@ -12,7 +12,7 @@ namespace System.Web.Services.Description
         public IList<PortType> PortTypes { get; } = new List<PortType>();
         public IList<Service> Services { get; } = new List<Service>();
         public string TargetNamespace { get; set; }
-        public Types Types { get; set; }
+        public Types Types { get; } = new Types();
 
         public void Write(XmlWriter writer)
         {
