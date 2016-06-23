@@ -5,6 +5,12 @@ namespace XRoadLib.Tests.Protocols.Headers
 {
     public class XRoadIdentifierTest
     {
+        private const string PRODUCER_NAME = "producerName";
+        private const string SERVICE_NAME = "serviceName";
+        private const uint VERSION = 3u;
+
+        private readonly string fullName = $"{PRODUCER_NAME}.{SERVICE_NAME}.v{VERSION}";
+
         [Theory]
         [InlineData(null, null, null, null, "")]
         [InlineData("ee-dev", null, null, null, "ee-dev//")]
@@ -68,94 +74,100 @@ namespace XRoadLib.Tests.Protocols.Headers
             Assert.Equal(expectedValue, id.ToString());
         }
 
-/*
-[<TestFixture>]
-module XRoadServiceNameTest =
-    let [<Literal>] producerName = "producerName"
-    let [<Literal>] serviceName = "serviceName"
-    let [<Literal>] version = 3u
+        [Fact]
+        public void CanParseFullServiceName()
+        {
+            var xsn = XRoadServiceIdentifier.FromString(fullName);
+            Assert.Null(xsn.SubsystemCode);
+            Assert.Equal(SERVICE_NAME, xsn.ServiceCode);
+            Assert.Equal(VERSION, xsn.Version);
+        }
 
-    let fullName = sprintf "%s.%s.v%d" producerName serviceName version
+        [Fact]
+        public void CanParseNullValue()
+        {
+            var xsn = XRoadServiceIdentifier.FromString(null);
+            Assert.NotNull(xsn);
+            Assert.Null(xsn.SubsystemCode);
+            Assert.Null(xsn.ServiceCode);
+            Assert.Null(xsn.Version);
+        }
 
-    [<Test>]
-    let ``can parse full service name`` () =
-        let xsn = XRoadServiceIdentifier.FromString(fullName)
-        xsn.SubsystemCode |> should be Null
-        xsn.ServiceCode |> should equal serviceName
-        xsn.Version |> should equal version
+        [Fact]
+        public void CanParseEmptyString()
+        {
+            var xsn = XRoadServiceIdentifier.FromString("");
+            Assert.Null(xsn.SubsystemCode);
+            Assert.Equal("", xsn.ServiceCode);
+            Assert.Null(xsn.Version);
+        }
 
-    [<Test>]
-    let ``initialize with null value`` () =
-        let xsn = XRoadServiceIdentifier.FromString(null)
-        xsn |> should not' (be Null)
-        xsn.SubsystemCode |> should be Null
-        xsn.ServiceCode |> should be Null
-        xsn.Version |> should be Null
+        [Fact]
+        public void InitializeWithoutProducerInFullName()
+        {
+            var withoutProducer = "serviceName.v1";
+            var xsn = XRoadServiceIdentifier.FromString(withoutProducer);
+            Assert.Null(xsn.SubsystemCode);
+            Assert.Equal("serviceName", xsn.ServiceCode);
+            Assert.Equal((uint?)1u, xsn.Version);
+            Assert.Equal("serviceName.v1", xsn.ToFullName());
+            Assert.Equal("/serviceName/v1", xsn.ToString());
+        }
 
-    [<Test>]
-    let ``initialize with empty string`` () =
-        let xsn = XRoadServiceIdentifier.FromString("")
-        xsn.SubsystemCode |> should be Null
-        xsn.ServiceCode |> should equal ""
-        xsn.Version |> should be Null
+        [Fact]
+        public void InitializeWithoutProducerAndVersionInFullName()
+        {
+            var withoutProducerAndVersion = "serviceName";
+            var xsn = XRoadServiceIdentifier.FromString(withoutProducerAndVersion);
+            Assert.Null(xsn.SubsystemCode);
+            Assert.Equal("serviceName", xsn.ServiceCode);
+            Assert.Null(xsn.Version);
+            Assert.Equal("serviceName", xsn.ToFullName());
+            Assert.Equal("/serviceName", xsn.ToString());
+        }
 
-    [<Test>]
-    let ``initialize without producer in full name`` () =
-        let withoutProducer = "serviceName.v1"
-        let xsn = XRoadServiceIdentifier.FromString(withoutProducer)
-        xsn.SubsystemCode |> should be Null
-        xsn.ServiceCode |> should equal "serviceName"
-        xsn.Version |> should equal (Nullable(1u))
-        xsn.ToFullName() |> should equal "serviceName.v1"
-        xsn.ToString() |> should equal "/serviceName/v1"
+        [Fact]
+        public void InitializeWithoutVersionInFullName()
+        {
+            var withoutVersion = "producer.listMethods";
+            var xsn = XRoadServiceIdentifier.FromString(withoutVersion);
+            Assert.Null(xsn.SubsystemCode);
+            Assert.Equal("listMethods", xsn.ServiceCode);
+            Assert.Null(xsn.Version);
+            Assert.Equal("listMethods", xsn.ToFullName());
+            Assert.Equal("/listMethods", xsn.ToString());
+        }
 
-    [<Test>]
-    let ``initialize without producer and version in full name`` () =
-        let withoutProducerAndVersion = "serviceName"
-        let xsn = XRoadServiceIdentifier.FromString(withoutProducerAndVersion)
-        xsn.SubsystemCode |> should be Null
-        xsn.ServiceCode |> should equal "serviceName"
-        xsn.Version |> should be Null
-        xsn.ToFullName() |> should equal "serviceName"
-        xsn.ToString() |> should equal "/serviceName"
+        [Fact]
+        public void InitializeWithoutServiceNameInFullName()
+        {
+            var withoutServiceName = "producer..v2";
+            var xsn = XRoadServiceIdentifier.FromString(withoutServiceName);
+            Assert.Null(xsn.SubsystemCode);
+            Assert.Equal("", xsn.ServiceCode);
+            Assert.Equal((uint?)2, xsn.Version);
+            Assert.Equal(".v2", xsn.ToFullName());
+            Assert.Equal("//v2", xsn.ToString());
+        }
 
-    [<Test>]
-    let ``initialize without version in full name`` () =
-        let withoutVersion = "producer.listMethods"
-        let xsn = XRoadServiceIdentifier.FromString(withoutVersion)
-        xsn.SubsystemCode |> should be Null
-        xsn.ServiceCode |> should equal "listMethods"
-        xsn.Version |> should be Null
-        xsn.ToFullName() |> should equal "listMethods"
-        xsn.ToString() |> should equal "/listMethods"
+        [Fact]
+        public void InitializeWithVersion0()
+        {
+            var fullName = $"{PRODUCER_NAME}.{SERVICE_NAME}.v0";
+            var xsn = XRoadServiceIdentifier.FromString(fullName);
+            Assert.Null(xsn.SubsystemCode);
+            Assert.Equal("serviceName", xsn.ServiceCode);
+            Assert.Equal((uint?)0, xsn.Version);
+            Assert.Equal("serviceName.v0", xsn.ToFullName());
+            Assert.Equal("/serviceName/v0", xsn.ToString());
+        }
 
-    [<Test>]
-    let ``initialize without serviceName in full name`` () =
-        let withoutServiceName = "producer..v2"
-        let xsn = XRoadServiceIdentifier.FromString(withoutServiceName)
-        xsn.SubsystemCode |> should be Null
-        xsn.ServiceCode |> should equal ""
-        xsn.Version |> should equal (Nullable(2u))
-        xsn.ToFullName() |> should equal ".v2"
-        xsn.ToString() |> should equal "//v2"
-
-    [<Test>]
-    let ``initialize with version 0`` () =
-        let fullName = sprintf "%s.%s.v%d" producerName serviceName 0u
-        let xsn = XRoadServiceIdentifier.FromString(fullName)
-        xsn.SubsystemCode |> should be Null
-        xsn.ServiceCode |> should equal "serviceName"
-        xsn.Version |> should equal (Nullable(0u))
-        xsn.ToFullName() |> should equal "serviceName.v0"
-        xsn.ToString() |> should equal "/serviceName/v0"
-
-    [<Test>]
-    let ``convert to string with all parts assigned`` () =
-        let xsn = XRoadServiceIdentifier.FromString(fullName)
-        xsn.ToFullName() |> should equal "serviceName.v3"
-        xsn.ToString() |> should equal "/serviceName/v3"
-
-
-*/
+        [Fact]
+        public void ConvertToStringWithAllPartsAssigned()
+        {
+            var xsn = XRoadServiceIdentifier.FromString(fullName);
+            Assert.Equal("serviceName.v3", xsn.ToFullName());
+            Assert.Equal("/serviceName/v3", xsn.ToString());
+        }
     }
 }
