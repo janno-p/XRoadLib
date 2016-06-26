@@ -1,282 +1,373 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using XRoadLib.Protocols;
+using XRoadLib.Protocols.Headers;
+using Xunit;
+
 namespace XRoadLib.Tests.Serialization
 {
-/*
+    public class ParseXRoadHeader40Test
+    {
+        private static readonly Func<string, string> minimalValidHeader = x => $"<xrd:client id:objectType=\"MEMBER\"><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion>{x}";
 
-[<TestFixture>]
-module XRoadHeader40Tests =
-    let parseHeader xml = Util.parseHeader xml NamespaceConstants.XROAD_V4
+        [Fact]
+        public void NoHeader()
+        {
+            var tuple = ParseHeader("");
+            Assert.Null(tuple.Item1);
+            Assert.Equal(0, tuple.Item2.Count);
+            Assert.Null(tuple.Item3);
+        }
 
-    [<Test>]
-    let ``no header`` () =
-        let hdr,uhs,pr = parseHeader ""
-        hdr |> should be Null
-        uhs.Count |> should equal 0
-        pr |> should be Null
+        [Fact]
+        public void ValidatesPresenceOfClientElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader("<xrd:id>test</xrd:id>"));
+            Assert.Equal("X-Road header `client` element is mandatory.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates presence of client element`` () =
-        TestDelegate(fun _ -> parseHeader "<xrd:id>test</xrd:id>" |> ignore)
-        |> should (throwWithMessage "X-Road header `client` element is mandatory.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesContentOfClientElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader("<xrd:client />"));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}client` cannot be empty.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates content of client element`` () =
-        TestDelegate(fun _ -> parseHeader "<xrd:client />" |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` cannot be empty.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesObjectTypeAttributeOfClientElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client></xrd:client>"));
+        	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}client` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates objectType attribute of client element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesXRoadInstanceSubelementOfClientElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client id:objectType=""MEMBER""></xrd:client>"));
+        	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates xRoadInstance subelement of client element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesXRoadInstanceSubelementOfClientElementWithUnknownElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client id:objectType=""MEMBER""><x /></xrd:client>"));
+        	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates xRoadInstance subelement of client element with unknown element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><x /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesMemberClassSubelementOfClientElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /></xrd:client>"));
+        	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}memberClass`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates memberClass subelement of client element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}memberClass`.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesMemberCodeSubelementOfClientElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /></xrd:client>"));
+        	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}memberCode`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates memberCode subelement of client element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}client` must have child element `{http://x-road.eu/xsd/identifiers}memberCode`.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesInvalidSubelementOfClientElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /><x /></xrd:client>"));
+        	Assert.Equal("Unexpected element `{http://schemas.xmlsoap.org/soap/envelope/}x` in element `{http://x-road.eu/xsd/xroad.xsd}client`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates invalid subelement of client element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /><x /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "Unexpected element `{http://schemas.xmlsoap.org/soap/envelope/}x` in element `{http://x-road.eu/xsd/xroad.xsd}client`.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesPresenceOfIdElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:client>"));
+        	Assert.Equal("X-Road header `id` element is mandatory.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates presence of id element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:client>" |> ignore)
-        |> should (throwWithMessage "X-Road header `id` element is mandatory.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesPresenceOfProtocolVersionElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:client><xrd:id />"));
+        	Assert.Equal("X-Road header `protocolVersion` element is mandatory.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates presence of protocolVersion element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:client><xrd:id />" |> ignore)
-        |> should (throwWithMessage "X-Road header `protocolVersion` element is mandatory.") typeof<XRoadException>
+        [Fact]
+        public void ValidatesValueOfProtocolVersionElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:client><xrd:id /><xrd:protocolVersion />"));
+            Assert.Equal("Unsupported X-Road v6 protocol version value ``.", exception.Message);
+        }
 
-    [<Test>]
-    let ``validates value of protocolVersion element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:client><xrd:id /><xrd:protocolVersion />" |> ignore)
-        |> should (throwWithMessage "Unsupported X-Road v6 protocol version value ``.") typeof<XRoadException>
+        [Fact]
+        public void CollectsClientMandatoryValues()
+        {
+            var tuple = ParseHeader(minimalValidHeader(""));
+            Assert.NotNull(tuple.Item1);
+            Assert.Same(Globals.XRoadProtocol40, tuple.Item3);
+            Assert.NotNull(tuple.Item1.Client);
+            Assert.Equal("EE", tuple.Item1.Client.XRoadInstance);
+            Assert.Equal("GOV", tuple.Item1.Client.MemberClass);
+            Assert.Equal("12345", tuple.Item1.Client.MemberCode);
+            Assert.Equal(XRoadObjectType.Member, tuple.Item1.Client.ObjectType);
+            Assert.Null(tuple.Item1.Client.SubsystemCode);
+            Assert.Equal("ABCDE", tuple.Item1.Id);
+            Assert.Null(tuple.Item1.Issue);
+            Assert.Equal("4.0", tuple.Item1.ProtocolVersion);
+            Assert.Null(tuple.Item1.Service);
+            Assert.Null(tuple.Item1.UserId);
+        }
 
-    let minimalValidHeader = sprintf @"<xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion>%s"
+        [Fact]
+        public void CollectsUnqualifiedSoapHeaderElementsButCannotDetectProtocolVersion()
+        {
+            var tuple = ParseHeader(@"<x><test>bla</test></x><y /><z />");
+            Assert.Null(tuple.Item1);
+            Assert.Null(tuple.Item3);
+            Assert.Equal(3, tuple.Item2.Count);
 
-    [<Test>]
-    let ``collects client mandatory values`` () =
-        let xrh,_,pr = parseHeader (minimalValidHeader "")
-        xrh |> should not' (be Null)
-        pr |> should be (sameAs Globals.XRoadProtocol40)
-        xrh.Client |> should not' (be Null)
-        xrh.Client.XRoadInstance |> should equal "EE"
-        xrh.Client.MemberClass |> should equal "GOV"
-        xrh.Client.MemberCode |> should equal "12345"
-        xrh.Client.ObjectType |> should equal XRoadObjectType.Member
-        xrh.Client.SubsystemCode |> should be Null
-        xrh.Id |> should equal "ABCDE"
-        xrh.Issue |> should be Null
-        xrh.ProtocolVersion |> should equal "4.0"
-        xrh.Service |> should be Null
-        xrh.UserId |> should be Null
+            var elX = tuple.Item2.SingleOrDefault(x => x.Name.LocalName == "x");
+            Assert.NotNull(elX);
 
-    [<Test>]
-    let ``collects unqualified soap header elements, but cannot detect protocol version`` () =
-        let xrh,uhs,pr = parseHeader @"<x><test>bla</test></x><y /><z />"
-        xrh |> should be Null
-        pr |> should be Null
-        uhs.Count |> should equal 3
-        let el_x = uhs |> Seq.tryFind (fun x -> x.Name.LocalName = "x")
-        el_x.IsSome |> should be True
-        el_x |> should not' (be Null)
-        let el_x_test = el_x.Value.Element(XName.Get("test", NamespaceConstants.SOAP_ENV))
-        el_x_test |> should not' (be Null)
-        el_x_test.Value |> should equal "bla"
-        uhs |> Seq.tryFind (fun x -> x.Name.LocalName = "y") |> Option.isSome |> should be True
-        uhs |> Seq.tryFind (fun x -> x.Name.LocalName = "z") |> Option.isSome |> should be True
+            var elXTest = elX.Element(XName.Get("test", NamespaceConstants.SOAP_ENV));
+            Assert.NotNull(elXTest);
+            Assert.Equal("bla", elXTest.Value);
+            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "y"));
+            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "z"));
+        }
 
-    [<Test>]
-    let ``collects unqualified soap headers that are mixed with X-Road elements`` () =
-        let xrh,uhs,pr = parseHeader @"<x /><xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><y /><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion><z />"
-        xrh |> should not' (be Null)
-        pr |> should be (sameAs Globals.XRoadProtocol40)
-        xrh.Client |> should not' (be Null)
-        xrh.Client.XRoadInstance |> should equal "EE"
-        xrh.Client.MemberClass |> should equal "GOV"
-        xrh.Client.MemberCode |> should equal "12345"
-        xrh.Client.ObjectType |> should equal XRoadObjectType.Member
-        xrh.Client.SubsystemCode |> should be Null
-        xrh.Id |> should equal "ABCDE"
-        xrh.Issue |> should be Null
-        xrh.ProtocolVersion |> should equal "4.0"
-        xrh.Service |> should be Null
-        xrh.UserId |> should be Null
-        uhs.Count |> should equal 3
-        uhs |> Seq.tryFind (fun x -> x.Name.LocalName = "x") |> Option.isSome |> should be True
-        uhs |> Seq.tryFind (fun x -> x.Name.LocalName = "y") |> Option.isSome |> should be True
-        uhs |> Seq.tryFind (fun x -> x.Name.LocalName = "z") |> Option.isSome |> should be True
+        [Fact]
+        public void CollectsUnqualifiedSoapHeadersThatAreMixedWithXRoadElements()
+        {
+            var tuple = ParseHeader(@"<x /><xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><y /><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion><z />");
+            Assert.NotNull(tuple.Item1);
+            Assert.Same(Globals.XRoadProtocol40, tuple.Item3);
+            Assert.NotNull(tuple.Item1.Client);
+            Assert.Equal("EE", tuple.Item1.Client.XRoadInstance);
+            Assert.Equal("GOV", tuple.Item1.Client.MemberClass);
+            Assert.Equal("12345", tuple.Item1.Client.MemberCode);
+            Assert.Equal(XRoadObjectType.Member, tuple.Item1.Client.ObjectType);
+            Assert.Null(tuple.Item1.Client.SubsystemCode);
+            Assert.Equal("ABCDE", tuple.Item1.Id);
+            Assert.Null(tuple.Item1.Issue);
+            Assert.Equal("4.0", tuple.Item1.ProtocolVersion);
+            Assert.Null(tuple.Item1.Service);
+            Assert.Null(tuple.Item1.UserId);
+            Assert.Equal(3, tuple.Item2.Count);
+            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "x"));
+            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "y"));
+            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "z"));
+        }
 
-    [<Test>]
-    let ``unrecognized X-Road header element`` () =
-        TestDelegate(fun _ -> parseHeader @"<xrd:x />" |> ignore)
-        |> should (throwWithMessage "Unexpected X-Road header element `{http://x-road.eu/xsd/xroad.xsd}x`.") typeof<XRoadException>
+        [Fact]
+        public void UnrecognizedXRoadHeaderElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<xrd:x />"));
+            Assert.Equal("Unexpected X-Road header element `{http://x-road.eu/xsd/xroad.xsd}x`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``empty service element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service />") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` cannot be empty.") typeof<XRoadException>
+        [Fact]
+        public void EmptyServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:service />")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` cannot be empty.", exception.Message);
+        }
 
-    [<Test>]
-    let ``missing objectType attribute for service element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.") typeof<XRoadException>
+        [Fact]
+        public void MissingObjectTypeAttributeForServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:service></xrd:service>")));
+        	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.", exception.Message);
+        }
 
-    [<Test>]
-    let ``missing xRoadInstance element for service element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
+        [Fact]
+        public void MissingXRoadInstanceElementForServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""></xrd:service>")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``invalid element in service element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><x /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
+        [Fact]
+        public void InvalidElementInServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><x /></xrd:service>")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``missing memberClass element for service element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}memberClass`.") typeof<XRoadException>
+        [Fact]
+        public void MissingMemberClassElementForServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /></xrd:service>")));
+        	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}memberClass`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``missing memberCode element for service element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}memberCode`.") typeof<XRoadException>
+        [Fact]
+        public void MissingMemberCodeElementForServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /></xrd:service>")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}memberCode`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``missing serviceCode element for service element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}serviceCode`.") typeof<XRoadException>
+        [Fact]
+        public void MissingServiceCodeElementForServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:service>")));
+        	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}serviceCode`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``read minimal group of elements for service element`` () =
-        let xhr,_,_ = parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /></xrd:service>")
-        xhr |> should not' (be Null)
-        xhr.Service |> should not' (be Null)
-        xhr.Service.XRoadInstance |> should equal ""
-        xhr.Service.MemberClass |> should equal ""
-        xhr.Service.MemberCode |> should equal ""
-        xhr.Service.SubsystemCode |> should be Null
-        xhr.Service.ServiceCode |> should equal ""
-        xhr.Service.ServiceVersion |> should be Null
+        [Fact]
+        public void ReadMinimalGroupOfElementsForServiceElement()
+        {
+            var tuple = ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /></xrd:service>"));
+            Assert.NotNull(tuple.Item1);
+            Assert.NotNull(tuple.Item1.Service);
+            Assert.Equal("", tuple.Item1.Service.XRoadInstance);
+            Assert.Equal("", tuple.Item1.Service.MemberClass);
+            Assert.Equal("", tuple.Item1.Service.MemberCode);
+            Assert.Null(tuple.Item1.Service.SubsystemCode);
+            Assert.Equal("", tuple.Item1.Service.ServiceCode);
+            Assert.Null(tuple.Item1.Service.ServiceVersion);
+        }
 
-    [<Test>]
-    let ``read all elements for service element`` () =
-        let xhr,_,_ = parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:subsystemCode /><id:serviceCode /><id:serviceVersion /></xrd:service>")
-        xhr |> should not' (be Null)
-        xhr.Service |> should not' (be Null)
-        xhr.Service.XRoadInstance |> should equal ""
-        xhr.Service.MemberClass |> should equal ""
-        xhr.Service.MemberCode |> should equal ""
-        xhr.Service.SubsystemCode |> should equal ""
-        xhr.Service.ServiceCode |> should equal ""
-        xhr.Service.ServiceVersion |> should equal ""
+        [Fact]
+        public void ReadAllElementsForServiceElement()
+        {
+            var tuple = ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:subsystemCode /><id:serviceCode /><id:serviceVersion /></xrd:service>"));
+            Assert.NotNull(tuple.Item1);
+            Assert.NotNull(tuple.Item1.Service);
+            Assert.Equal("", tuple.Item1.Service.XRoadInstance);
+            Assert.Equal("", tuple.Item1.Service.MemberClass);
+            Assert.Equal("", tuple.Item1.Service.MemberCode);
+            Assert.Equal("", tuple.Item1.Service.SubsystemCode);
+            Assert.Equal("", tuple.Item1.Service.ServiceCode);
+            Assert.Equal("", tuple.Item1.Service.ServiceVersion);
+        }
 
-    [<Test>]
-    let ``optional parameter at wrong position for service element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /><id:subsystemCode /></xrd:service>") |> ignore)
-        |> should (throwWithMessage "Unexpected element `{http://x-road.eu/xsd/identifiers}subsystemCode` in element `{http://x-road.eu/xsd/xroad.xsd}service`.") typeof<XRoadException>
+        [Fact]
+        public void OptionalParameterAtWrongPositionForServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /><id:subsystemCode /></xrd:service>")));
+            Assert.Equal("Unexpected element `{http://x-road.eu/xsd/identifiers}subsystemCode` in element `{http://x-road.eu/xsd/xroad.xsd}service`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``read simple optional element values`` () =
-        let xhr,_,_ = parseHeader (minimalValidHeader @"<xrd:userId>Kalle</xrd:userId><xrd:issue>TOIMIK</xrd:issue>")
-        xhr |> should not' (be Null)
-        xhr.UserId |> should equal "Kalle"
-        xhr.Issue |> should equal "TOIMIK"
+        [Fact]
+        public void ReadSimpleOptionalElementValues()
+        {
+            var tuple = ParseHeader(minimalValidHeader(@"<xrd:userId>Kalle</xrd:userId><xrd:issue>TOIMIK</xrd:issue>"));
+            Assert.NotNull(tuple.Item1);
+            Assert.Equal("Kalle", tuple.Item1.UserId);
+            Assert.Equal("TOIMIK", tuple.Item1.Issue);
+        }
 
-    [<Test>]
-    let ``empty centralService element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:centralService />") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}centralService` cannot be empty.") typeof<XRoadException>
+        [Fact]
+        public void EmptyCentralServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:centralService />")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}centralService` cannot be empty.", exception.Message);
+        }
 
-    [<Test>]
-    let ``missing objectType attribute for centralService element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:centralService></xrd:centralService>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.") typeof<XRoadException>
+        [Fact]
+        public void MissingObjectTypeAttributeForCentralServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:centralService></xrd:centralService>")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.", exception.Message);
+        }
 
-    [<Test>]
-    let ``missing xRoadInstance element for centralService element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:centralService id:objectType=""CENTRALSERVICE""></xrd:centralService>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.") typeof<XRoadException>
+        [Fact]
+        public void MissingXRoadInstanceElementForCentralServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""></xrd:centralService>")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``missing serviceCode element for centralService element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance /></xrd:centralService>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have child element `{http://x-road.eu/xsd/identifiers}serviceCode`.") typeof<XRoadException>
+        [Fact]
+        public void MissingServiceCodeElementForCentralServiceElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance /></xrd:centralService>")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have child element `{http://x-road.eu/xsd/identifiers}serviceCode`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``valid centralService element`` () =
-        let xhr,_,_ = parseHeader (minimalValidHeader @"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance>FI</id:xRoadInstance><id:serviceCode>fun</id:serviceCode></xrd:centralService>")
-        xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<IXRoadHeader40>
-        let xhr4 = xhr :?> IXRoadHeader40
-        xhr4.CentralService |> should not' (be Null)
-        xhr4.CentralService.ObjectType |> should equal XRoadObjectType.CentralService
-        xhr4.CentralService.XRoadInstance |> should equal "FI"
-        xhr4.CentralService.ServiceCode |> should equal "fun"
+        [Fact]
+        public void ValidCentralServiceElement()
+        {
+            var tuple = ParseHeader(minimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance>FI</id:xRoadInstance><id:serviceCode>fun</id:serviceCode></xrd:centralService>"));
+            Assert.NotNull(tuple.Item1);
+            Assert.IsType<XRoadHeader40>(tuple.Item1);
 
-    [<Test>]
-    let ``emtpy representedParty element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<repr:representedParty />") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/representation.xsd}representedParty` cannot be empty.") typeof<XRoadException>
+            var xhr4 = (IXRoadHeader40)tuple.Item1;
+            Assert.NotNull(xhr4.CentralService);
+            Assert.Equal(XRoadObjectType.CentralService, xhr4.CentralService.ObjectType);
+            Assert.Equal("FI", xhr4.CentralService.XRoadInstance);
+            Assert.Equal("fun", xhr4.CentralService.ServiceCode);
+        }
 
-    [<Test>]
-    let ``element partyCode is required for representedParty element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<repr:representedParty></repr:representedParty>") |> ignore)
-        |> should (throwWithMessage "Element `{http://x-road.eu/xsd/representation.xsd}representedParty` must have child element `{http://x-road.eu/xsd/representation.xsd}partyCode`.") typeof<XRoadException>
+        [Fact]
+        public void EmptyRepresentedPartyElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<repr:representedParty />")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/representation.xsd}representedParty` cannot be empty.", exception.Message);
+        }
 
-    [<Test>]
-    let ``wrong element order for representedParty element`` () =
-        TestDelegate(fun _ -> parseHeader (minimalValidHeader @"<repr:representedParty><repr:partyCode /><repr:partyClass /></repr:representedParty>") |> ignore)
-        |> should (throwWithMessage "Unexpected element `{http://x-road.eu/xsd/representation.xsd}partyClass` in element `{http://x-road.eu/xsd/representation.xsd}representedParty`.") typeof<XRoadException>
+        [Fact]
+        public void ElementPartyCodeIsRequiredForRepresentedPartyElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<repr:representedParty></repr:representedParty>")));
+            Assert.Equal("Element `{http://x-road.eu/xsd/representation.xsd}representedParty` must have child element `{http://x-road.eu/xsd/representation.xsd}partyCode`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``can handle missing optional element for representedParty element`` () =
-        let xhr,_,_ = parseHeader (minimalValidHeader @"<repr:representedParty><repr:partyCode /></repr:representedParty>")
-        xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<IXRoadHeader40>
-        let xhr4 = xhr :?> IXRoadHeader40
-        xhr4.RepresentedParty |> should not' (be Null)
-        xhr4.RepresentedParty.Class |> should be Null
-        xhr4.RepresentedParty.Code |> should equal ""
+        [Fact]
+        public void WrongElementOrderForRepresentedPartyElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(minimalValidHeader(@"<repr:representedParty><repr:partyCode /><repr:partyClass /></repr:representedParty>")));
+            Assert.Equal("Unexpected element `{http://x-road.eu/xsd/representation.xsd}partyClass` in element `{http://x-road.eu/xsd/representation.xsd}representedParty`.", exception.Message);
+        }
 
-    [<Test>]
-    let ``can handle optional element value for representedParty element`` () =
-        let xhr,_,_ = parseHeader (minimalValidHeader @"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>")
-        xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<IXRoadHeader40>
-        let xhr4 = xhr :?> IXRoadHeader40
-        xhr4.RepresentedParty |> should not' (be Null)
-        xhr4.RepresentedParty.Class |> should equal "CLS"
-        xhr4.RepresentedParty.Code |> should equal "COD"
+        [Fact]
+        public void CanHandleMissingOptionalElementForRepresentedPartyElement()
+        {
+            var tuple = ParseHeader(minimalValidHeader(@"<repr:representedParty><repr:partyCode /></repr:representedParty>"));
+            Assert.NotNull(tuple.Item1);
+            Assert.IsType<XRoadHeader40>(tuple.Item1);
 
-    [<Test>]
-    let ``recognizes v4.0 protocol from representedParty element`` () =
-        TestDelegate(fun _ -> parseHeader @"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>" |> ignore)
-        |> should (throwWithMessage "X-Road header `client` element is mandatory.") typeof<XRoadException>
+            var xhr4 = (IXRoadHeader40)tuple.Item1;
+            Assert.NotNull(xhr4.RepresentedParty);
+            Assert.Null(xhr4.RepresentedParty.Class);
+            Assert.Equal("", xhr4.RepresentedParty.Code);
+        }
 
-    [<Test>]
-    let ``wrong protocol is left unresolved`` () =
-        let xhr,uhs,pr = parseHeader (minimalValidHeader @"<x:userId xmlns:x=""http://x-road.ee/xsd/x-road.xsd"">Mr. X</x:userId>")
-        xhr |> should not' (be Null)
-        pr |> should be (sameAs Globals.XRoadProtocol40)
-        uhs.Count |> should equal 1
-        uhs.[0].Name.LocalName |> should equal "userId"
-        uhs.[0].Name.NamespaceName |> should equal NamespaceConstants.XROAD
-*/
+        [Fact]
+        public void CanHandleOptionalElementValueForRepresentedPartyElement()
+        {
+            var tuple = ParseHeader(minimalValidHeader(@"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>"));
+            Assert.NotNull(tuple.Item1);
+            Assert.IsType<XRoadHeader40>(tuple.Item1);
+
+            var xhr4 = (IXRoadHeader40)tuple.Item1;
+            Assert.NotNull(xhr4.RepresentedParty);
+            Assert.Equal("CLS", xhr4.RepresentedParty.Class);
+            Assert.Equal("COD", xhr4.RepresentedParty.Code);
+        }
+
+        [Fact]
+        public void RecognizesV4ProtocolFromRepresentedPartyElement()
+        {
+            var exception = Assert.Throws<XRoadException>(() => ParseHeader(@"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>"));
+            Assert.Equal("X-Road header `client` element is mandatory.", exception.Message);
+        }
+
+        [Fact]
+        public void WrongProtocolIsLeftUnresolved()
+        {
+            var tuple = ParseHeader(minimalValidHeader(@"<x:userId xmlns:x=""http://x-road.ee/xsd/x-road.xsd"">Mr. X</x:userId>"));
+            Assert.NotNull(tuple.Item1);
+            Assert.Same(Globals.XRoadProtocol40, tuple.Item3);
+            Assert.Equal(1, tuple.Item2.Count);
+            Assert.Equal("userId", tuple.Item2[0].Name.LocalName);
+            Assert.Equal(NamespaceConstants.XROAD, tuple.Item2[0].Name.NamespaceName);
+        }
+
+        public static Tuple<IXRoadHeader, IList<XElement>, XRoadProtocol> ParseHeader(string xml)
+        {
+            return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD_V4);
+        }
+    }
 }
