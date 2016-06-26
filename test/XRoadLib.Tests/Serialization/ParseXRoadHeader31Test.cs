@@ -1,130 +1,186 @@
+using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
+using XRoadLib.Protocols;
+using XRoadLib.Protocols.Headers;
+using Xunit;
+
 namespace XRoadLib.Tests.Serialization
 {
-/*
-[<TestFixture>]
-module XRoadHeader31Tests =
-    let parseHeader xml = Util.parseHeader xml NamespaceConstants.XROAD
+    public class XRoadHeader31Test
+    {
+        [Fact]
+        public void CanParseEmptyElement()
+        {
+            var tuple = ParseHeader("<xrd:userId />");
+            Assert.NotNull(tuple.Item1);
+            Assert.Equal("", tuple.Item1.UserId);
+        }
 
-    let testHeader name value =
-        let xhr,_,pr = parseHeader (sprintf "<xrd:%s>%s</xrd:%s>" name value name)
-        xhr |> should not' (be Null)
-        xhr |> should be instanceOfType<IXRoadHeader31>
-        pr |> should be (sameAs Globals.XRoadProtocol31)
-        xhr, xhr :?> IXRoadHeader31
+        [Fact]
+        public void CanParseConsumerValue()
+        {
+            var xhr3 = CreateHeader("consumer", "12345");
+            var xhr = (IXRoadHeader)xhr3;
+            Assert.NotNull(xhr.Client);
+            Assert.Equal("12345", xhr.Client.MemberCode);
+            Assert.Equal("12345", xhr3.Consumer);
+        }
 
-    [<Test>]
-    let ``can parse empty element`` () =
-        let xhr,_,pr = parseHeader "<xrd:userId />"
-        xhr |> should not' (be Null)
-        xhr.UserId |> should equal ""
+        [Fact]
+        public void CanParseProducerValue()
+        {
+            var xhr3 = CreateHeader("producer", "andmekogu");
+            var xhr = (IXRoadHeader)xhr3;
+            Assert.NotNull(xhr.Service);
+            Assert.Equal("andmekogu", xhr.Service.SubsystemCode);
+            Assert.Equal("andmekogu", xhr3.Producer);
+        }
 
-    [<Test>]
-    let ``can parse consumer value`` () =
-        let xhr,xhr3 = testHeader "consumer" "12345"
-        xhr.Client |> should not' (be Null)
-        xhr.Client.MemberCode |> should equal "12345"
-        xhr3.Consumer |> should equal "12345"
+        [Fact]
+        public void CanParseUserIdValue()
+        {
+            var xhr = (IXRoadHeader)CreateHeader("userId", "Kasutaja");
+            Assert.Equal("Kasutaja", xhr.UserId);
+        }
 
-    [<Test>]
-    let ``can parse producer value`` () =
-        let xhr,xhr3 = testHeader "producer" "andmekogu"
-        xhr.Service |> should not' (be Null)
-        xhr.Service.SubsystemCode |> should equal "andmekogu"
-        xhr3.Producer |> should equal "andmekogu"
+        [Fact]
+        public void CanParseIdValue()
+        {
+            var xhr = (IXRoadHeader)CreateHeader("id", "hash");
+            Assert.Equal("hash", xhr.Id);
+        }
 
-    [<Test>]
-    let ``can parse userId value`` () =
-        let xhr,_ = testHeader "userId" "Kasutaja"
-        xhr.UserId |> should equal "Kasutaja"
+        [Fact]
+        public void CanParseServiceValue()
+        {
+            var xhr3 = CreateHeader("service", "producer.testService.v5");
+            var xhr = (IXRoadHeader)xhr3;
+            Assert.NotNull(xhr.Service);
+            Assert.Null(xhr.Service.SubsystemCode);
+            Assert.Equal("testService", xhr.Service.ServiceCode);
+            Assert.Equal("v5", xhr.Service.ServiceVersion);
+            Assert.Equal((uint?)5, xhr.Service.Version);
+            Assert.Equal("testService.v5", xhr3.Service);
+        }
 
-    [<Test>]
-    let ``can parse id value`` () =
-        let xhr,_ = testHeader "id" "hash"
-        xhr.Id |> should equal "hash"
+        [Fact]
+        public void CanParseIssueValue()
+        {
+            var xhr = (IXRoadHeader)CreateHeader("issue", "toimik");
+            Assert.Equal("toimik", xhr.Issue);
+        }
 
-    [<Test>]
-    let ``can parse service value`` () =
-        let xhr,xhr3 = testHeader "service" "producer.testService.v5"
-        xhr.Service |> should not' (be Null)
-        xhr.Service.SubsystemCode |> should be Null
-        xhr.Service.ServiceCode |> should equal "testService"
-        xhr.Service.ServiceVersion |> should equal "v5"
-        xhr.Service.Version |> should equal (System.Nullable(5u))
-        xhr3.Service |> should equal "testService.v5"
+        [Fact]
+        public void CanParseUnitValue()
+        {
+            var xhr3 = CreateHeader("unit", "yksus");
+            Assert.Equal("yksus", xhr3.Unit);
+        }
 
-    [<Test>]
-    let ``can parse issue value`` () =
-        let xhr,_ = testHeader "issue" "toimik"
-        xhr.Issue |> should equal "toimik"
+        [Fact]
+        public void CanParsePositionValue()
+        {
+            var xhr3 = CreateHeader("position", "ametikoht");
+            Assert.Equal("ametikoht", xhr3.Position);
+        }
 
-    [<Test>]
-    let ``can parse unit value`` () =
-        let _,xhr3 = testHeader "unit" "yksus"
-        xhr3.Unit |> should equal "yksus"
+        [Fact]
+        public void CanParseUserNameValue()
+        {
+            var xhr3 = CreateHeader("userName", "Kuldar");
+            Assert.Equal("Kuldar", xhr3.UserName);
+        }
 
-    [<Test>]
-    let ``can parse position value`` () =
-        let _,xhr3 = testHeader "position" "ametikoht"
-        xhr3.Position |> should equal "ametikoht"
+        [Fact]
+        public void CanParseAsync1Value()
+        {
+            var xhr3 = CreateHeader("async", "1");
+            Assert.True(xhr3.Async);
+        }
 
-    [<Test>]
-    let ``can parse userName value`` () =
-        let _,xhr3 = testHeader "userName" "Kuldar"
-        xhr3.UserName |> should equal "Kuldar"
+        [Fact]
+        public void CanParseAsyncTrueValue()
+        {
+            var xhr3 = CreateHeader("async", "true");
+            Assert.True(xhr3.Async);
+        }
 
-    [<Test>]
-    let ``can parse async "1" value`` () =
-        let _,xhr3 = testHeader "async" "1"
-        xhr3.Async |> should be True
+        [Fact]
+        public void CanParseAsyncFalseValue()
+        {
+            var xhr3 = CreateHeader("async", "false");
+            Assert.False(xhr3.Async);
+        }
 
-    [<Test>]
-    let ``can parse async "true" value`` () =
-        let _,xhr3 = testHeader "async" "true"
-        xhr3.Async |> should be True
+        [Fact]
+        public void CanParseAsync0Value()
+        {
+            var xhr3 = CreateHeader("async", "0");
+            Assert.False(xhr3.Async);
+        }
 
-    [<Test>]
-    let ``can parse async "false" value`` () =
-        let _,xhr3 = testHeader "async" "false"
-        xhr3.Async |> should be False
+        [Fact]
+        public void CanParseAsyncEmptyValue()
+        {
+            var xhr3 = CreateHeader("async", "");
+            Assert.False(xhr3.Async);
+        }
 
-    [<Test>]
-    let ``can parse async "0" value`` () =
-        let _,xhr3 = testHeader "async" "0"
-        xhr3.Async |> should be False
+        [Fact]
+        public void CanParseAuthenticatorValue()
+        {
+            var xhr3 = CreateHeader("authenticator", "Juss");
+            Assert.Equal("Juss", xhr3.Authenticator);
+        }
 
-    [<Test>]
-    let ``can parse async "" value`` () =
-        let _,xhr3 = testHeader "async" ""
-        xhr3.Async |> should be False
+        [Fact]
+        public void CanParsePaidValue()
+        {
+            var xhr3 = CreateHeader("paid", "just");
+            Assert.Equal("just", xhr3.Paid);
+        }
 
-    [<Test>]
-    let ``can parse authenticator value`` () =
-        let _,xhr3 = testHeader "authenticator" "Juss"
-        xhr3.Authenticator |> should equal "Juss"
+        [Fact]
+        public void CanParseEncryptValue()
+        {
+            var xhr3 = CreateHeader("encrypt", "sha1");
+            Assert.Equal("sha1", xhr3.Encrypt);
+        }
 
-    [<Test>]
-    let ``can parse paid value`` () =
-        let _,xhr3 = testHeader "paid" "just"
-        xhr3.Paid |> should equal "just"
+        [Fact]
+        public void CanParseEncryptCertValue()
+        {
+            var xhr3 = CreateHeader("encryptCert", "bibopp");
+            Assert.Equal("bibopp", xhr3.EncryptCert);
+        }
 
-    [<Test>]
-    let ``can parse encrypt value`` () =
-        let _,xhr3 = testHeader "encrypt" "sha1"
-        xhr3.Encrypt |> should equal "sha1"
+        [Fact]
+        public void CanParseEncryptedValue()
+        {
+            var xhr3 = CreateHeader("encrypted", "sha1");
+            Assert.Equal("sha1", xhr3.Encrypted);
+        }
 
-    [<Test>]
-    let ``can parse encryptCert value`` () =
-        let _,xhr3 = testHeader "encryptCert" "bibopp"
-        xhr3.EncryptCert |> should equal "bibopp"
+        [Fact]
+        public void CanParseEncryptedCertValue()
+        {
+            var xhr3 = CreateHeader("encryptedCert", "bibopp");
+            Assert.Equal("bibopp", xhr3.EncryptedCert);
+        }
 
-    [<Test>]
-    let ``can parse encrypted value`` () =
-        let _,xhr3 = testHeader "encrypted" "sha1"
-        xhr3.Encrypted |> should equal "sha1"
+        public static Tuple<IXRoadHeader, IList<XElement>, XRoadProtocol> ParseHeader(string xml)
+        {
+            return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD);
+        }
 
-    [<Test>]
-    let ``can parse encryptedCert value`` () =
-        let _,xhr3 = testHeader "encryptedCert" "bibopp"
-        xhr3.EncryptedCert |> should equal "bibopp"
-*/
+        public static IXRoadHeader31 CreateHeader(string name, string value)
+        {
+            var tuple = ParseHeader($"<xrd:{name}>{value}</xrd:{name}>");
+            Assert.NotNull(tuple.Item1);
+            Assert.IsType<XRoadHeader31>(tuple.Item1);
+            Assert.Same(Globals.XRoadProtocol31, tuple.Item3);
+            return (IXRoadHeader31)tuple.Item1;
+        }
+    }
 }
