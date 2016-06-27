@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Xml;
+using XRoadLib;
 
 namespace System.Web.Services.Description
 {
@@ -16,7 +17,9 @@ namespace System.Web.Services.Description
 
         public void Write(XmlWriter writer)
         {
-            throw new NotImplementedException();
+            writer.WriteStartElement("definitions", NamespaceConstants.WSDL);
+
+            writer.WriteEndElement();
         }
     }
 }
