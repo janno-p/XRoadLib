@@ -42,7 +42,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanReadEmptyContentWithoutAttachments()
         {
             using (var stream = new MemoryStream())
-            using (var reader = new XRoadMessageReader(stream, new WebHeaderCollection(), Encoding.UTF8, Path.GetTempPath(), supportedProtocols))
+            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), supportedProtocols))
             using (var message = new XRoadMessage())
             {
                 reader.Read(message, false);
@@ -64,7 +64,7 @@ namespace XRoadLib.Tests.Serialization
                 streamWriter.Flush();
 
                 stream.Position = 0L;
-                using (var reader = new XRoadMessageReader(stream, new WebHeaderCollection(), Encoding.UTF8, Path.GetTempPath(), supportedProtocols))
+                using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), supportedProtocols))
                 using (var message = new XRoadMessage())
                 {
                     reader.Read(message, false);
@@ -107,12 +107,10 @@ namespace XRoadLib.Tests.Serialization
                 streamWriter.Write("--5e7a8827-5850-45be-9a1e-8bbf6aff5da7--");
                 streamWriter.Flush();
 
-
-                var headers = new WebHeaderCollection();
-                headers["Content-Type"] = "multipart/related; type=\"application/xml+xop\"; start=\"rQI0gpIFuQMxlrqBj3qHKw==\"; boundary=\"5e7a8827-5850-45be-9a1e-8bbf6aff5da7\"";
+                var contentTypeHeader = "multipart/related; type=\"application/xml+xop\"; start=\"rQI0gpIFuQMxlrqBj3qHKw==\"; boundary=\"5e7a8827-5850-45be-9a1e-8bbf6aff5da7\"";
 
                 stream.Position = 0L;
-                using (var reader = new XRoadMessageReader(stream, headers, Encoding.UTF8, Path.GetTempPath(), supportedProtocols))
+                using (var reader = new XRoadMessageReader(stream, contentTypeHeader, Path.GetTempPath(), supportedProtocols))
                 using (var message = new XRoadMessage())
                 {
                     reader.Read(message, false);

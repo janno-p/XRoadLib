@@ -25,7 +25,7 @@ namespace XRoadLib.Tests.Serialization
                 streamWriter.Flush();
 
                 stream.Position = 0;
-                using (var reader = new XRoadMessageReader(stream, new WebHeaderCollection(), Encoding.UTF8, Path.GetTempPath(), new[] { Globals.XRoadProtocol20, Globals.XRoadProtocol31, Globals.XRoadProtocol40 }))
+                using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), new[] { Globals.XRoadProtocol20, Globals.XRoadProtocol31, Globals.XRoadProtocol40 }))
                 using (var msg = new XRoadMessage())
                 {
                     reader.Read(msg, false);

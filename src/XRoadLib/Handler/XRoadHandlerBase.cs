@@ -11,10 +11,7 @@ namespace XRoadLib.Handler
 {
     public abstract class XRoadHandlerBase : IXRoadHandler
     {
-        public virtual void HandleRequest(HttpContext context)
-        {
-
-        }
+        public abstract void HandleRequest(HttpContext context);
 
         public virtual void HandleException(HttpContext context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
         {

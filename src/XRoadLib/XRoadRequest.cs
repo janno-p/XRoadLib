@@ -64,7 +64,7 @@ namespace XRoadLib
                 using (var responseMessage = new XRoadMessage())
                 {
                     responseStream?.CopyTo(seekableStream);
-                    responseMessage.LoadResponse(seekableStream, response.Headers, XRoadEncoding.UTF8, Path.GetTempPath(), Enumerable.Repeat(protocol, 1));
+                    responseMessage.LoadResponse(seekableStream, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), Enumerable.Repeat(protocol, 1));
                     return (T)responseMessage.DeserializeMessageContent(xRoadHeader.Service.ServiceCode);
                 }
             }

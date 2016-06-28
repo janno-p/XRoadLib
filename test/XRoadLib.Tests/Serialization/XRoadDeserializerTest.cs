@@ -505,7 +505,7 @@ namespace XRoadLib.Tests.Serialization
 
                 stream.Position = 0;
                 using (var reader = XmlReader.Create(stream))
-                using (var messageReader = new XRoadMessageReader(stream, null, Encoding.UTF8, null, new[] { Globals.XRoadProtocol20 }))
+                using (var messageReader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", null, new[] { Globals.XRoadProtocol20 }))
                 using (var message = new XRoadMessage(Globals.XRoadProtocol20, new XRoadHeader20()) { XmlTemplate = template })
                 {
                     messageReader.Read(message, false);

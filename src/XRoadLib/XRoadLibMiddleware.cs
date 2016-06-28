@@ -1,13 +1,10 @@
 #if NETSTANDARD1_5
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.OptionsModel;
 using XRoadLib.Handler;
 using XRoadLib.Serialization;
 
@@ -20,13 +17,13 @@ namespace XRoadLib
         private readonly Lazy<IXRoadHandler> wsdlHandler;
         private readonly Lazy<IXRoadHandler> requestHandler;
 
-        public XRoadLibMiddleware(RequestDelegate next, IServiceProvider services, IOptions<XRoadLibOptions> options)
+        public XRoadLibMiddleware(RequestDelegate next, IServiceProvider services, XRoadLibOptions options)
         {
             this.next = next;
-            this.options = options.Value;
+            this.options = options;
 
-            wsdlHandler = new Lazy<IXRoadHandler>(() => this.options.WsdlHandler != null ? (IXRoadHandler)services.GetRequiredService(this.options.WsdlHandler) : new DefaultWsdlHandler());
-            requestHandler = new Lazy<IXRoadHandler>(() => this.options.RequestHandler != null ? (IXRoadHandler)services.GetRequiredService(this.options.RequestHandler) : new DefaultRequestHandler());
+            wsdlHandler = new Lazy<IXRoadHandler>(() => options.WsdlHandler != null ? (IXRoadHandler)services.GetRequiredService(options.WsdlHandler) : new XRoadWsdlHandler(options.SupportedProtocols.FirstOrDefault()));
+            requestHandler = new Lazy<IXRoadHandler>(() => options.RequestHandler != null ? (IXRoadHandler)services.GetRequiredService(options.RequestHandler) : new XRoadRequestHandler(options.SupportedProtocols, options.StoragePath));
         }
 
         public async Task Invoke(HttpContext context)
@@ -54,6 +51,7 @@ namespace XRoadLib
                     context.Response.Body.Position = 0;
                     context.Response.Body.SetLength(0);
                 }
+
                 handler.HandleException(context, exception, null, null, null, null);
             }
         }

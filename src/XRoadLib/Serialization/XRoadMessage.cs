@@ -10,12 +10,12 @@ using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
+using XRoadLib.Extensions;
 
-#if !NETSTANDARD1_5
-using System.Web;
-using WebHeaderCollection = System.Collections.Specialized.NameValueCollection;
+#if NETSTANDARD1_5
+using Microsoft.AspNetCore.Http;
 #else
-using WebHeaderCollection = System.Net.WebHeaderCollection;
+using System.Web;
 #endif
 
 namespace XRoadLib.Serialization
@@ -69,32 +69,41 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
-#if !NETSTANDARD1_5
         public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
-            LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers, httpContext.Request.ContentEncoding, storagePath, supportedProtocols);
-        }
+#if NETSTANDARD1_5
+            var requestStream = httpContext.Request.Body;
+#else
+            var requestStream = httpContext.Request.InputStream;
 #endif
+            LoadRequest(requestStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, supportedProtocols);
+        }
 
-        public void LoadRequest(Stream stream, WebHeaderCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
-            using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
+            using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, supportedProtocols))
                 reader.Read(this);
         }
 
-        public void LoadResponse(Stream stream, WebHeaderCollection headers, Encoding contentEncoding, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
-            using (var reader = new XRoadMessageReader(stream, headers, contentEncoding, storagePath, supportedProtocols))
+            using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, supportedProtocols))
                 reader.Read(this, true);
         }
 
-#if !NETSTANDARD1_5
         public void SaveTo(HttpContext httpContext)
         {
-            using (var writer = new XRoadMessageWriter(httpContext.Response.OutputStream))
-                writer.Write(this, contentType => httpContext.Response.ContentType = contentType, httpContext.Response.AppendHeader);
-        }
+#if NETSTANDARD1_5
+            var outputStream = httpContext.Response.Body;
+            var appendHeader = new Action<string, string>((k, v) => httpContext.Response.Headers[k] = v);
+#else
+            var outputStream = httpContext.Response.OutputStream;
+            var appendHeader = new Action<string, string>(httpContext.Response.AppendHeader);
 #endif
+
+            using (var writer = new XRoadMessageWriter(outputStream))
+                writer.Write(this, contentType => httpContext.Response.ContentType = contentType, appendHeader);
+        }
 
         public void SaveTo(WebRequest webRequest)
         {
