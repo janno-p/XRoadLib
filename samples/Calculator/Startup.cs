@@ -1,5 +1,7 @@
 using System.Reflection;
+using Calculator.Contract;
 using Calculator.Handler;
+using Calculator.WebService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +22,8 @@ namespace Calculator
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(new CalculatorHandler(new[] { protocol }, null));
+            services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
+            services.AddSingleton(provider => new CalculatorHandler(provider, new[] { protocol }, null));
         }
 
         public void Configure(IApplicationBuilder application, ILoggerFactory loggerFactory)
