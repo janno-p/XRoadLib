@@ -32,8 +32,7 @@ namespace XRoadLib.Serialization
 
         private Stream stream;
         private int? peekedByte;
-
-        private long StreamPosition => stream.Position - (peekedByte.HasValue ? 1 : 0);
+        private long streamPosition;
 
         public XRoadMessageReader(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
@@ -45,10 +44,13 @@ namespace XRoadLib.Serialization
 
         public void Read(XRoadMessage target, bool isResponse = false)
         {
-            if (stream.Length == 0)
+            if (stream.CanSeek && stream.Length == 0)
                 return;
 
-            stream.Position = 0;
+            if (stream.CanSeek)
+                stream.Position = 0;
+
+            streamPosition = 0;
 
             target.ContentEncoding = GetContentEncoding();
             target.ContentStream = new MemoryStream();
@@ -101,7 +103,7 @@ namespace XRoadLib.Serialization
             if (!IsMultipartMsg(contentTypeHeader))
             {
                 ReadNextPart(target.ContentStream, GetByteDecoder(null), target.ContentEncoding, null);
-                target.ContentLength = StreamPosition;
+                target.ContentLength = streamPosition;
                 return false;
             }
 
@@ -133,9 +135,9 @@ namespace XRoadLib.Serialization
                 }
 
                 lastLine = ReadNextPart(targetStream, GetByteDecoder(partTransferEncoding), target.ContentEncoding, multipartBoundaryMarker);
-            } while (StreamPosition < stream.Length && !BufferStartsWith(lastLine, multipartEndMarker));
+            } while (streamPosition < stream.Length && !BufferStartsWith(lastLine, multipartEndMarker));
 
-            target.ContentLength = StreamPosition;
+            target.ContentLength = streamPosition;
 
             return true;
         }
@@ -247,9 +249,17 @@ namespace XRoadLib.Serialization
         private int ReadByte()
         {
             if (peekedByte == null)
-                return stream.ReadByte();
+            {
+                var @byte = stream.ReadByte();
+                if (@byte >= 0)
+                    streamPosition++;
+                return @byte;
+            }
 
             var result = peekedByte.Value;
+            if (result >= 0)
+                streamPosition++;
+
             peekedByte = null;
             return result;
         }

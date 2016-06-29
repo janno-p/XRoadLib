@@ -33,7 +33,7 @@ namespace XRoadLib.Handler
             using (var requestMessage = new XRoadMessage())
             using (var responseMessage = new XRoadMessage(new MemoryStream()))
             {
-                if (context.Request.Body.Length == 0)
+                if (context.Request.Body.CanSeek && context.Request.Body.Length == 0)
                     throw XRoadException.InvalidQuery("Empty request content");
 
                 requestMessage.LoadRequest(context, storagePath, supportedProtocols);

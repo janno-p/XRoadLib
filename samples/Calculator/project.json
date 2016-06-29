@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "warningsAsErrors": true
+  },
+  "dependencies": {
+    "XRoadLib": {
+      "target": "project",
+      "version": "1.0.0-*"
+    }
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
+        "Microsoft.Extensions.Logging.Console": "1.0.0",
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      }
+    }
+  }
+}

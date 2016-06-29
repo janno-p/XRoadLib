@@ -22,6 +22,9 @@ namespace XRoadLib
             this.next = next;
             this.options = options;
 
+            if (!options.SupportedProtocols.Any())
+                throw new ArgumentException("At least one supported protocol definition is required.", nameof(options));
+
             wsdlHandler = new Lazy<IXRoadHandler>(() => options.WsdlHandler != null ? (IXRoadHandler)services.GetRequiredService(options.WsdlHandler) : new XRoadWsdlHandler(options.SupportedProtocols.FirstOrDefault()));
             requestHandler = new Lazy<IXRoadHandler>(() => options.RequestHandler != null ? (IXRoadHandler)services.GetRequiredService(options.RequestHandler) : new XRoadRequestHandler(options.SupportedProtocols, options.StoragePath));
         }
@@ -29,7 +32,7 @@ namespace XRoadLib
         public async Task Invoke(HttpContext context)
         {
             var handler = GetXRoadHandler(context);
-            if (handler != null)
+            if (handler == null)
             {
                 await next.Invoke(context);
                 return;
@@ -58,10 +61,12 @@ namespace XRoadLib
 
         private IXRoadHandler GetXRoadHandler(HttpContext context)
         {
-            if (context.Request.Method == "GET" && context.Request.Path.Equals(options.WsdlPath))
+            var path = context.Request.Path.HasValue ? context.Request.Path.Value : null;
+
+            if (context.Request.Method == "GET" && Equals(path, options.WsdlPath))
                 return wsdlHandler.Value;
 
-            if (context.Request.Method == "POST" && context.Request.Path.Equals(options.RequestPath))
+            if (context.Request.Method == "POST" && Equals(path, options.RequestPath))
                 return requestHandler.Value;
 
             return null;
