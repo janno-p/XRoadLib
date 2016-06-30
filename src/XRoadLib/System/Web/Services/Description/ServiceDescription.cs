@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Xml;
-using XRoadLib;
 
 namespace System.Web.Services.Description
 {
@@ -17,9 +16,8 @@ namespace System.Web.Services.Description
 
         public void Write(XmlWriter writer)
         {
-            writer.WriteStartElement("definitions", NamespaceConstants.WSDL);
-
-            writer.WriteEndElement();
+            var serviceDescriptionWriter = new ServiceDescriptionWriter(writer);
+            serviceDescriptionWriter.WriteServiceDescription(this);
         }
     }
 }
