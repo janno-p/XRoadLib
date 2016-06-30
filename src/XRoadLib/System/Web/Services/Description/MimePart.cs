@@ -6,7 +6,7 @@ namespace System.Web.Services.Description
 {
     public class MimePart : ServiceDescriptionFormatExtension
     {
-        public IList<ServiceDescriptionFormatExtension> Extensions { get; } = new List<ServiceDescriptionFormatExtension>();
+        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new List<ServiceDescriptionFormatExtension>();
     }
 }
 

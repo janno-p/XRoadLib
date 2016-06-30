@@ -7,10 +7,10 @@ namespace System.Web.Services.Description
 {
     public class ServiceDescription : NamedItem
     {
-        public IList<Binding> Bindings { get; } = new List<Binding>();
-        public IList<Message> Messages { get; } = new List<Message>();
-        public IList<PortType> PortTypes { get; } = new List<PortType>();
-        public IList<Service> Services { get; } = new List<Service>();
+        public List<Binding> Bindings { get; } = new List<Binding>();
+        public List<Message> Messages { get; } = new List<Message>();
+        public List<PortType> PortTypes { get; } = new List<PortType>();
+        public List<Service> Services { get; } = new List<Service>();
         public string TargetNamespace { get; set; }
         public Types Types { get; } = new Types();
 

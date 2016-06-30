@@ -6,7 +6,7 @@ namespace System.Web.Services.Description
 {
     public class Operation : NamedItem
     {
-        public IList<OperationMessage> Messages { get; } = new List<OperationMessage>();
+        public List<OperationMessage> Messages { get; } = new List<OperationMessage>();
     }
 }
 

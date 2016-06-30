@@ -1,7 +1,6 @@
 #if NETSTANDARD1_5
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml;
 using XRoadLib;
 
@@ -22,19 +21,27 @@ namespace System.Web.Services.Description
 
             WriteNamespaceDeclarations(serviceDescription.Namespaces);
 
+            serviceDescription.ExtensibleAttributes.ForEach(WriteAttribute);
+
             WriteAttribute("name", serviceDescription.Name);
             WriteAttribute("targetNamespace", serviceDescription.TargetNamespace);
 
             WriteExtensions();
-            WriteDocumentation();
+            WriteDocumentation(serviceDescription.DocumentationElement);
             WriteImports();
             WriteTypes();
             WriteMessages();
             WritePortTypes();
             WriteBindings();
-            serviceDescription.Services.ToList().ForEach(WriteService);
+            serviceDescription.Services.ForEach(WriteService);
 
             writer.WriteEndElement();
+        }
+
+        private void WriteAttribute(XmlAttribute attribute)
+        {
+            if (attribute != null)
+                writer.WriteAttributeString(attribute.LocalName, attribute.NamespaceURI, attribute.Value);
         }
 
         private void WriteAttribute(string name, string value)
@@ -55,9 +62,14 @@ namespace System.Web.Services.Description
 
         }
 
-        private void WriteDocumentation()
+        private void WriteDocumentation(XmlElement documentationElement)
         {
+            if (documentationElement == null)
+                return;
 
+            writer.WriteStartElement(documentationElement.LocalName, documentationElement.NamespaceURI);
+            documentationElement.WriteTo(writer);
+            writer.WriteEndElement();
         }
 
         private void WriteExtensions()
@@ -80,7 +92,7 @@ namespace System.Web.Services.Description
 
         }
 
-        private void WritePort()
+        private void WritePort(Port port)
         {
 
         }
@@ -99,8 +111,8 @@ namespace System.Web.Services.Description
             WriteAttribute("name", service.Name);
 
             WriteExtensions();
-            WriteDocumentation();
-            WritePort();
+            WriteDocumentation(service.DocumentationElement);
+            service.Ports.ForEach(WritePort);
 
             writer.WriteEndElement();
         }

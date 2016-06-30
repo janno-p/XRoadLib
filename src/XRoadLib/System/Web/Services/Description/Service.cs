@@ -6,7 +6,7 @@ namespace System.Web.Services.Description
 {
     public class Service : NamedItem
     {
-        public IList<Port> Ports { get; } = new List<Port>();
+        public List<Port> Ports { get; } = new List<Port>();
     }
 }
 

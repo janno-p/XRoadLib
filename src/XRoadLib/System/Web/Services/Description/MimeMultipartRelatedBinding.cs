@@ -6,7 +6,7 @@ namespace System.Web.Services.Description
 {
     public class MimeMultipartRelatedBinding : ServiceDescriptionFormatExtension
     {
-        public IList<MimePart> Parts { get; } = new List<MimePart>();
+        public List<MimePart> Parts { get; } = new List<MimePart>();
     }
 }
 

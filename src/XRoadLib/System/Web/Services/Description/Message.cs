@@ -6,7 +6,7 @@ namespace System.Web.Services.Description
 {
     public class Message : NamedItem
     {
-        public IList<MessagePart> Parts { get; } = new List<MessagePart>();
+        public List<MessagePart> Parts { get; } = new List<MessagePart>();
     }
 }
 

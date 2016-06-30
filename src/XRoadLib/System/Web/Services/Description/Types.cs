@@ -7,7 +7,7 @@ namespace System.Web.Services.Description
 {
     public class Types : DocumentableItem
     {
-        public IList<XmlSchema> Schemas { get; } = new List<XmlSchema>();
+        public List<XmlSchema> Schemas { get; } = new List<XmlSchema>();
     }
 }
 
