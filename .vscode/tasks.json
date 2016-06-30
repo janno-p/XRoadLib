@@ -9,6 +9,7 @@
       "args": [
         "${workspaceRoot}/samples/Calculator",
         "${workspaceRoot}/src/XRoadLib",
+        "${workspaceRoot}/src/XRoadLib.Tools",
         "${workspaceRoot}/test/XRoadLib.Tests",
         "${workspaceRoot}/test/XRoadLib.Tests.Contract"
       ],

@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0-beta020-*",
+  "buildOptions": {
+    "outputName": "dotnet-xroad-gen",
+    "emitEntryPoint": true,
+    "warningsAsErrors": true
+  },
+  "authors": ["Janno Põldma"],
+  "description": "Command line tool to generate C# types from service description.",
+  "packOptions": {
+    "projectUrl": "https://github.com/janno-p/XRoadLib",
+    "licenseUrl": "https://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt",
+    "tags": ["xroad", "x-road", "xtee", "x-tee", "code", "type", "generator", "wsdl", "service", "description"],
+    "summary": "XRoadLib code generator"
+  },
+  "dependencies": {},
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      }
+    }
+  }
+}
