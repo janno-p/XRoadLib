@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "warningsAsErrors": true
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "dependencies": {
+        "Microsoft.NETCore.Platforms": "1.0.1"
+      }
+    },
+    "net46": {
+      "frameworkAssemblies": {
+      }
+    }
+  }
+}

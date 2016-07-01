@@ -1,3 +1,7 @@
+#### 1.0.0-beta021 - Unreleased
+* Add .NET Core support.
+* ...
+
 #### 1.0.0-beta020 - 19.04.2016
 * Fix service description for rootless list type response element.
 
