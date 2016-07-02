@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xrd="http://x-road.ee/xsd/x-road.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://producerName.x-road.ee/producer/" targetNamespace="http://producerName.x-road.ee/producer/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Sample notification service description | X-Road message protocol v3.1</wsdl:documentation>
+  <wsdl:types>
+    <xsd:schema xmlns:ns0="http://notify.x-road.ee/producer/" targetNamespace="http://notify.x-road.ee/producer/">
+      <xsd:import namespace="http://www.w3.org/2005/05/xmlmime" />
+      <xsd:import namespace="http://x-road.ee/xsd/x-road.xsd" />
+      <xsd:complexType name="SendNotificationRequest">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <xrd:title xml:lang="en">Notification data.</xrd:title>
+          </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element name="GivenName" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <xrd:title xml:lang="en">Probationers first name.</xrd:title>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="Surname" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <xrd:title xml:lang="en">Probationers last name.</xrd:title>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="IdentificationNumber" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <xrd:title xml:lang="en">Probationers personal identification number.</xrd:title>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="DateOfBirth" type="xsd:date">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <xrd:title xml:lang="en">Probationers date of birth.</xrd:title>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="Recidence" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <xrd:title xml:lang="en">Probationers real living place.</xrd:title>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="Region" type="xsd:string">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <xrd:title xml:lang="en">Region of probation.</xrd:title>
+              </xsd:appinfo>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="ProbationType" type="xsd:long" />
+          <xsd:element name="ProbationID" type="xsd:long" />
+          <xsd:element name="ProbationStartDate" type="xsd:date" />
+          <xsd:element name="ProbationEndDate" type="xsd:date" />
+          <xsd:element name="CaseNumber" type="xsd:string" />
+          <xsd:element name="VerdictNumber" type="xsd:string" />
+          <xsd:element name="VerdictDate" type="xsd:date" />
+          <xsd:element name="VerdictIssuer" type="xsd:string" />
+          <xsd:element name="Qualifications">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" name="item" type="xsd:string" />
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="Obligations">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" name="item">
+                  <xsd:complexType>
+                    <xsd:sequence>
+                      <xsd:element name="Type" type="xsd:string" />
+                      <xsd:element name="Details" type="xsd:string" />
+                      <xsd:element name="DeadlineDate" type="xsd:date" />
+                      <xsd:element name="Status" type="xsd:string" />
+                    </xsd:sequence>
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="OfficialGivenName" type="xsd:string" />
+          <xsd:element name="OfficialSurname" type="xsd:string" />
+          <xsd:element name="OfficialInstitution" type="xsd:string" />
+          <xsd:element name="OfficialEmail" type="xsd:string" />
+          <xsd:element name="OfficialPhoneNumber" type="xsd:string" />
+          <xsd:element name="OfficialWorkingHours" type="xsd:string" />
+          <xsd:element xmime:expectedContentTypes="application/octet-stream" name="Document" type="xsd:base64Binary" />
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+    <xsd:schema xmlns:ns1="http://notify.x-road.ee/producer/" targetNamespace="http://producerName.x-road.ee/producer/">
+      <xsd:import namespace="http://notify.x-road.ee/producer/" />
+      <xsd:import namespace="http://x-road.ee/xsd/x-road.xsd" />
+      <xsd:element name="SendNotification">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="request" type="ns1:SendNotificationRequest" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="SendNotificationResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="request" type="ns1:SendNotificationRequest" />
+            <xsd:element name="response">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:choice>
+                    <xsd:element maxOccurs="unbounded" name="Success" type="xsd:string" />
+                    <xsd:sequence>
+                      <xsd:element name="faultCode" type="xsd:string" />
+                      <xsd:element name="faultString" type="xsd:string" />
+                    </xsd:sequence>
+                  </xsd:choice>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="RequiredHeaders">
+    <wsdl:part name="consumer" element="xrd:consumer" />
+    <wsdl:part name="id" element="xrd:id" />
+    <wsdl:part name="producer" element="xrd:producer" />
+    <wsdl:part name="service" element="xrd:service" />
+    <wsdl:part name="userId" element="xrd:userId" />
+    <wsdl:part name="userName" element="xrd:userName" />
+  </wsdl:message>
+  <wsdl:message name="SendNotification">
+    <wsdl:part name="body" element="SendNotification" />
+  </wsdl:message>
+  <wsdl:message name="SendNotificationResponse">
+    <wsdl:part name="body" element="SendNotificationResponse" />
+  </wsdl:message>
+  <wsdl:portType name="NotificationPortType">
+    <wsdl:operation name="SendNotification">
+      <wsdl:documentation>
+        <xrd:title xml:lang="en">Service for receiving notifications.</xrd:title>
+      </wsdl:documentation>
+      <wsdl:input message="SendNotification" />
+      <wsdl:output message="SendNotificationResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NotificationBinding" type="NotificationPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendNotification">
+      <xrd:version>v1</xrd:version>
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="RequiredHeaders" part="consumer" use="literal" />
+        <soap:header message="RequiredHeaders" part="id" use="literal" />
+        <soap:header message="RequiredHeaders" part="producer" use="literal" />
+        <soap:header message="RequiredHeaders" part="service" use="literal" />
+        <soap:header message="RequiredHeaders" part="userId" use="literal" />
+        <soap:header message="RequiredHeaders" part="userName" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="RequiredHeaders" part="consumer" use="literal" />
+        <soap:header message="RequiredHeaders" part="id" use="literal" />
+        <soap:header message="RequiredHeaders" part="producer" use="literal" />
+        <soap:header message="RequiredHeaders" part="service" use="literal" />
+        <soap:header message="RequiredHeaders" part="userId" use="literal" />
+        <soap:header message="RequiredHeaders" part="userName" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="NotificationService">
+    <wsdl:port name="NotificationPort" binding="NotificationBinding">
+      <soap:address location="http://TURVASERVER/cgi-bin/consumer_proxy" />
+      <xrd:address producer="producerName" />
+      <xrd:title xml:lang="en">Sample notification service</xrd:title>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

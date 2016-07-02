@@ -13,21 +13,20 @@
     "tags": ["xroad", "x-road", "xtee", "x-tee", "code", "type", "generator", "wsdl", "service", "description"],
     "summary": "XRoadLib code generator"
   },
-  "dependencies": {},
+  "dependencies": {
+    "Microsoft.CodeAnalysis": "1.3.2",
+    "Microsoft.Extensions.CommandLineUtils": "1.0.0",
+    "Microsoft.Extensions.Logging": "1.0.0"
+  },
   "frameworks": {
     "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.0"
-        },
-        "Microsoft.CodeAnalysis": "1.3.2",
-        "Microsoft.Extensions.CommandLineUtils": "1.0.0",
-        "Microsoft.Extensions.Logging": "1.0.0"
+        }
       },
-      "imports": [
-        "portable-net45+win8+wp8+wpa81"
-      ]
+      "imports": "portable-net45+win8+wp8+wpa81"
     }
   }
 }

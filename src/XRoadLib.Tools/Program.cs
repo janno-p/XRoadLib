@@ -1,8 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
-using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace XRoadLib.Tools
 {
@@ -21,10 +21,6 @@ namespace XRoadLib.Tools
         {
             try
             {
-                var cu = SF.CompilationUnit()
-                        .AddUsings(SF.UsingDirective(SF.IdentifierName("System")))
-                        .AddUsings(SF.UsingDirective(SF.IdentifierName("System.Generic")));
-
                 var app = new CommandLineApplication();
                 app.Name = "dotnet-xroad-gen";
                 app.Description = "XRoadLib code generator";
@@ -33,10 +29,20 @@ namespace XRoadLib.Tools
                 app.HelpOption("-?|-h|--help");
 
                 var verboseOption = app.Option("-v|--verbose", "Verbose output", CommandOptionType.NoValue);
+                var codeOption = app.Option("-c|--code", "Generate code", CommandOptionType.NoValue);
+
+                var wsdlArgument = app.Argument("[wsdl]", "Url of service description file");
 
                 app.OnExecute(() =>
                 {
-                    logger.LogInformation("test");
+                    if (string.IsNullOrEmpty(wsdlArgument.Value))
+                        throw new ArgumentNullException("WSDL location url is required.");
+
+                    var fileLocation = ResolveUri(wsdlArgument.Value);
+
+                    CodeGen.Class.Save();
+
+                    logger.LogInformation(fileLocation);
                     return 0;
                 });
 
@@ -44,7 +50,7 @@ namespace XRoadLib.Tools
             }
             catch (Exception exception)
             {
-                logger.LogCritical("Command failed", exception.Message);
+                logger.LogCritical($"Command failed: {exception.Message}");
                 return 1;
             }
         }
@@ -54,6 +60,18 @@ namespace XRoadLib.Tools
             var assembly = typeof(Program).GetTypeInfo().Assembly;
             var attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             return attribute == null ? assembly.GetName().Version.ToString() : attribute.InformationalVersion;
+        }
+
+        private static string ResolveUri(string uri)
+        {
+            if (Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                return uri;
+
+            var fileInfo = new FileInfo(uri);
+            if (fileInfo.Exists)
+                return fileInfo.FullName;
+
+            throw new FileNotFoundException($"Cannot resolve wsdl location `{uri}`.");
         }
 
         public static int Main(string[] args)
