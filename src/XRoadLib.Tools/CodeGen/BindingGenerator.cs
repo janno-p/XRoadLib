@@ -13,18 +13,19 @@ namespace XRoadLib.Tools.CodeGen
     {
         private readonly XElement bindingElement;
 
+        public string BindingName { get; }
+
         public BindingGenerator(XElement bindingElement)
         {
             this.bindingElement = bindingElement;
+            BindingName = bindingElement.Attribute("name").Value;
         }
 
         public CompilationUnitSyntax Generate()
         {
-            var bindingName = bindingElement.Attribute("name").Value;
-
-            var type = SF.ClassDeclaration(bindingName)
+            var type = SF.ClassDeclaration(BindingName)
                 .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
-                .AddBaseListTypes(SF.SimpleBaseType(SF.ParseTypeName($"I{bindingElement.Attribute("type").Value}")));
+                .AddBaseListTypes(SF.SimpleBaseType(SF.ParseTypeName($"{bindingElement.Attribute("type").Value}")));
 
             var methods = bindingElement.Elements(XName.Get("operation", NamespaceConstants.WSDL))
                 .Select(operation =>
@@ -36,17 +37,16 @@ namespace XRoadLib.Tools.CodeGen
                         .WithBody(SF.Block());
                 });
 
-            type = type.AddMembers(methods.ToArray());
+            var ctor = SF.ConstructorDeclaration(BindingName)
+                .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
+                .AddParameterListParameters(SF.Parameter(SF.Identifier("producerName")).WithType(SF.PredefinedType(SF.Token(SyntaxKind.StringKeyword))))
+                .WithBody(SF.Block());
 
-            var cu = SF.CompilationUnit()
-                .AddMembers(SF.NamespaceDeclaration(SF.IdentifierName("MyNamespace"))
-                    .AddMembers(type));
+            type = type.AddMembers(ctor).AddMembers(methods.ToArray());
 
-            var formattedNode = Formatter.Format(cu, new AdhocWorkspace());
-            using (var writer = new StreamWriter(File.OpenWrite(Path.Combine("Output", $"{bindingName}.cs"))))
-                formattedNode.WriteTo(writer);
-
-            return cu;
+            return SF.CompilationUnit()
+                     .AddMembers(SF.NamespaceDeclaration(SF.IdentifierName("MyNamespace"))
+                                   .AddMembers(type));
         }
     }
 }

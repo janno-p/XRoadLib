@@ -8,6 +8,7 @@
       "taskName": "build",
       "args": [
         "${workspaceRoot}/samples/Calculator",
+        "${workspaceRoot}/samples/NotificationService",
         "${workspaceRoot}/src/XRoadLib",
         "${workspaceRoot}/src/XRoadLib.Tools",
         "${workspaceRoot}/test/XRoadLib.Tests",

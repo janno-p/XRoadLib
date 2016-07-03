@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
+using XRoadLib.Tools.CodeGen;
+using XRoadLib.Tools.CodeGen.Extensions;
 
 namespace XRoadLib.Tools
 {
@@ -31,7 +34,8 @@ namespace XRoadLib.Tools
 
                 var optVerbose = app.Option("-v|--verbose", "Verbose output", CommandOptionType.NoValue);
                 var optCode = app.Option("-c|--code", "Generate code", CommandOptionType.NoValue);
-                var optNamespace = app.Option("-n|--namespace", "Namespace root for generated code", CommandOptionType.SingleValue);
+                var optOutput = app.Option("-o|--output", "Output path", CommandOptionType.SingleValue);
+                var optMapping = app.Option("-m|--mapping", "Customization mappings for generated code", CommandOptionType.SingleValue);
 
                 var wsdlArgument = app.Argument("[wsdl]", "Url of service description file");
 
@@ -43,16 +47,24 @@ namespace XRoadLib.Tools
                     var fileLocation = ResolveUri(wsdlArgument.Value);
                     var doc = XDocument.Load(fileLocation);
 
-                    var directory = new DirectoryInfo("Output");
+                    var directory = new DirectoryInfo(optOutput.HasValue() ? optOutput.Value() : "Output");
                     if (!directory.Exists)
                         directory.Create();
 
                     var definitionsElement = doc.Element(XName.Get("definitions", NamespaceConstants.WSDL));
 
-                    CodeGen.ServiceGenerator.GenerateServiceUnit(definitionsElement.Element(XName.Get("service", NamespaceConstants.WSDL)));
+                    var serviceGenerator = new ServiceGenerator(definitionsElement.Element(XName.Get("service", NamespaceConstants.WSDL)));
+                    serviceGenerator.Generate().SaveFile(Path.Combine(directory.FullName, $"{serviceGenerator.ServiceName}.cs"));
 
-                    foreach (var bindingElement in definitionsElement.Elements(XName.Get("binding", NamespaceConstants.WSDL)))
-                       new CodeGen.BindingGenerator(bindingElement).Generate();
+                    definitionsElement.Elements(XName.Get("portType", NamespaceConstants.WSDL))
+                                      .Select(e => new PortTypeGenerator(e))
+                                      .ToList()
+                                      .ForEach(g => g.Generate().SaveFile(Path.Combine(directory.FullName, $"{g.PortTypeName}.cs")));
+
+                    definitionsElement.Elements(XName.Get("binding", NamespaceConstants.WSDL))
+                                      .Select(e => new BindingGenerator(e))
+                                      .ToList()
+                                      .ForEach(g => g.Generate().SaveFile(Path.Combine(directory.FullName, $"{g.BindingName}.cs")));
 
                     logger.LogInformation(fileLocation);
                     return 0;

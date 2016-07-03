@@ -1,21 +1,26 @@
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace XRoadLib.Tools.CodeGen
 {
-    public static class ServiceGenerator
+    public class ServiceGenerator
     {
-        public static CompilationUnitSyntax GenerateServiceUnit(XElement serviceElement)
-        {
-            var serviceName = serviceElement.Attribute("name").Value;
+        private readonly XElement serviceElement;
 
-            var type = SF.ClassDeclaration(serviceName)
+        public string ServiceName { get; }
+
+        public ServiceGenerator(XElement serviceElement)
+        {
+            this.serviceElement = serviceElement;
+            ServiceName = serviceElement.Attribute("name").Value;
+        }
+
+        public CompilationUnitSyntax Generate()
+        {
+            var type = SF.ClassDeclaration(ServiceName)
                 .AddModifiers(SF.Token(SyntaxKind.PublicKeyword));
 
             var properties = serviceElement.Elements(XName.Get("port", NamespaceConstants.WSDL))
@@ -38,15 +43,9 @@ namespace XRoadLib.Tools.CodeGen
 
             type = type.AddMembers(properties.ToArray());
 
-            var cu = SF.CompilationUnit()
-                .AddMembers(SF.NamespaceDeclaration(SF.IdentifierName("MyNamespace"))
-                    .AddMembers(type));
-
-            var formattedNode = Formatter.Format(cu, new AdhocWorkspace());
-            using (var writer = new StreamWriter(File.OpenWrite(Path.Combine("Output", $"{serviceName}.cs"))))
-                formattedNode.WriteTo(writer);
-
-            return cu;
+            return SF.CompilationUnit()
+                     .AddMembers(SF.NamespaceDeclaration(SF.IdentifierName("MyNamespace"))
+                                   .AddMembers(type));
         }
     }
 }

@@ -1,7 +1,11 @@
 namespace MyNamespace
 {
-    public class NotificationBinding : INotificationPortType
+    public class NotificationBinding : NotificationPortType
     {
+        public NotificationBinding(string producerName)
+        {
+        }
+
         public void SendNotification()
         {
         }
