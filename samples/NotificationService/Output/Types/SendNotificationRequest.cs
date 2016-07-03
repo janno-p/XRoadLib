@@ -1,21 +1,15 @@
 using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class SendNotificationRequest : IXmlSerializable
+    public class SendNotificationRequest : IXRoadXmlSerializable
     {
-        XmlSchema IXmlSerializable.GetSchema()
-        {
-            return null;
-        }
-
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {
         }
 
-        void IXmlSerializable.WriteXml(XmlWriter writer)
+        void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
         {
         }
     }
