@@ -66,6 +66,17 @@ namespace XRoadLib.Tools
                                       .ToList()
                                       .ForEach(g => g.Generate().SaveFile(Path.Combine(directory.FullName, $"{g.BindingName}.cs")));
 
+                    var typesDirectory = new DirectoryInfo(Path.Combine(directory.FullName, "Types"));
+                    if (!typesDirectory.Exists)
+                        typesDirectory.Create();
+
+                    definitionsElement.Elements(XName.Get("types", NamespaceConstants.WSDL))
+                                      .SelectMany(e => e.Elements(XName.Get("schema", NamespaceConstants.XSD)))
+                                      .SelectMany(e => e.Elements(XName.Get("complexType", NamespaceConstants.XSD)))
+                                      .Select(e => new TypeGenerator(e))
+                                      .ToList()
+                                      .ForEach(g => g.Generate().SaveFile(Path.Combine(typesDirectory.FullName, $"{g.TypeName}.cs")));
+
                     logger.LogInformation(fileLocation);
                     return 0;
                 });
