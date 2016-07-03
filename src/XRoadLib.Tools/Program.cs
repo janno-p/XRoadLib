@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Xml.Linq;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
@@ -28,8 +29,9 @@ namespace XRoadLib.Tools
 
                 app.HelpOption("-?|-h|--help");
 
-                var verboseOption = app.Option("-v|--verbose", "Verbose output", CommandOptionType.NoValue);
-                var codeOption = app.Option("-c|--code", "Generate code", CommandOptionType.NoValue);
+                var optVerbose = app.Option("-v|--verbose", "Verbose output", CommandOptionType.NoValue);
+                var optCode = app.Option("-c|--code", "Generate code", CommandOptionType.NoValue);
+                var optNamespace = app.Option("-n|--namespace", "Namespace root for generated code", CommandOptionType.SingleValue);
 
                 var wsdlArgument = app.Argument("[wsdl]", "Url of service description file");
 
@@ -39,8 +41,18 @@ namespace XRoadLib.Tools
                         throw new ArgumentNullException("WSDL location url is required.");
 
                     var fileLocation = ResolveUri(wsdlArgument.Value);
+                    var doc = XDocument.Load(fileLocation);
 
-                    CodeGen.Class.Save();
+                    var directory = new DirectoryInfo("Output");
+                    if (!directory.Exists)
+                        directory.Create();
+
+                    var definitionsElement = doc.Element(XName.Get("definitions", NamespaceConstants.WSDL));
+
+                    CodeGen.ServiceGenerator.GenerateServiceUnit(definitionsElement.Element(XName.Get("service", NamespaceConstants.WSDL)));
+
+                    foreach (var bindingElement in definitionsElement.Elements(XName.Get("binding", NamespaceConstants.WSDL)))
+                       new CodeGen.BindingGenerator(bindingElement).Generate();
 
                     logger.LogInformation(fileLocation);
                     return 0;
