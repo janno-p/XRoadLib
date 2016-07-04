@@ -25,7 +25,9 @@ namespace XRoadLib.Tools.CodeGen
         public CompilationUnitSyntax Generate()
         {
             return CompilationUnit()
-                     .AddUsings(UsingDirective(IdentifierName("System.Xml")),
+                     .AddUsings(UsingDirective(IdentifierName("System")),
+                                UsingDirective(IdentifierName("System.IO")),
+                                UsingDirective(IdentifierName("System.Xml")),
                                 UsingDirective(IdentifierName("XRoadLib.Serialization")))
                      .AddMembers(NamespaceDeclaration(IdentifierName("MyNamespace"))
                                    .AddMembers(GenerateType()));
@@ -49,17 +51,32 @@ namespace XRoadLib.Tools.CodeGen
 
             var parseElement = new Action<XElement>(e =>
             {
+                var propertyName = Identifier(e.Attribute("name").Value);
+                var propertyType = GetPredefinedType(e);
+
                 var p = new XElementParser(e);
                 p.IgnoreElement("annotation");
 
                 if (p.ParseElement("simpleType") ||
-                    p.ParseElement("complexType", x => type = type.AddMembers(new ComplexTypeGenerator(x, $"{e.Attribute("name").Value}Type").GenerateType())))
+                    p.ParseElement("complexType", x =>
+                    {
+                        var propertyTypeName = $"{e.Attribute("name").Value}Type";
+                        propertyType = ParseTypeName(propertyTypeName);
+                        type = type.AddMembers(new ComplexTypeGenerator(x, propertyTypeName).GenerateType());
+                    }))
                 { }
 
                 while (p.ParseElement("unique") ||
                        p.ParseElement("key") ||
                        p.ParseElement("keyref"))
                 { }
+
+                var prop = PropertyDeclaration(propertyType, propertyName)
+                    .AddModifiers(Token(SyntaxKind.PublicKeyword))
+                    .AddAccessorListAccessors(AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                                              AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
+
+                type = type.AddMembers(prop);
             });
 
             var parseSequence = new Action<XElement>(e =>
@@ -100,6 +117,28 @@ namespace XRoadLib.Tools.CodeGen
             parser.ThrowIfNotDone();
 
             return type.AddMembers(readXml, writeXml);
+        }
+
+        private TypeSyntax GetPredefinedType(XElement element)
+        {
+            var typeAttribute = element.Attribute("type");
+            if (typeAttribute == null)
+                return null;
+
+            var parts = typeAttribute.Value.Split(new[] { ':' }, 2);
+            var ns = parts.Length == 1 ? element.GetNamespaceOfPrefix("") : element.GetNamespaceOfPrefix(parts[0]);
+            var name = parts.Length == 1 ? parts[0] : parts[1];
+
+            if (ns == NamespaceConstants.XSD)
+                switch (name)
+                {
+                    case "base64Binary": return ParseTypeName("Stream");
+                    case "date": return ParseTypeName("DateTime");
+                    case "long": return PredefinedType(Token(SyntaxKind.LongKeyword));
+                    case "string": return PredefinedType(Token(SyntaxKind.StringKeyword));
+                }
+
+            throw new NotImplementedException(XName.Get(name, ns.NamespaceName).ToString());
         }
     }
 }
