@@ -2,7 +2,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace XRoadLib.Tools.CodeGen
 {
@@ -20,23 +20,20 @@ namespace XRoadLib.Tools.CodeGen
 
         public CompilationUnitSyntax Generate()
         {
-            var type = SF.InterfaceDeclaration(PortTypeName)
-                .AddModifiers(SF.Token(SyntaxKind.PublicKeyword));
+            var type = InterfaceDeclaration(PortTypeName).AddModifiers(Token(SyntaxKind.PublicKeyword));
 
             var methods = portTypeElement.Elements(XName.Get("operation", NamespaceConstants.WSDL))
                 .Select(operation =>
                 {
                     var methodName = operation.Attribute("name").Value;
 
-                    return SF.MethodDeclaration(SF.PredefinedType(SF.Token(SyntaxKind.VoidKeyword)), methodName)
-                        .WithSemicolonToken(SF.Token(SyntaxKind.SemicolonToken));
+                    return MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), methodName)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
                 });
 
             type = type.AddMembers(methods.ToArray());
 
-            return SF.CompilationUnit()
-                     .AddMembers(SF.NamespaceDeclaration(SF.IdentifierName("MyNamespace"))
-                                   .AddMembers(type));
+            return CompilationUnit().AddMembers(NamespaceDeclaration(IdentifierName("MyNamespace")).AddMembers(type));
         }
     }
 }

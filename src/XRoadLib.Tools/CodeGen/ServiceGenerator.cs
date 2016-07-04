@@ -2,7 +2,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace XRoadLib.Tools.CodeGen
 {
@@ -20,32 +20,29 @@ namespace XRoadLib.Tools.CodeGen
 
         public CompilationUnitSyntax Generate()
         {
-            var type = SF.ClassDeclaration(ServiceName)
-                .AddModifiers(SF.Token(SyntaxKind.PublicKeyword));
+            var type = ClassDeclaration(ServiceName).AddModifiers(Token(SyntaxKind.PublicKeyword));
 
             var properties = serviceElement.Elements(XName.Get("port", NamespaceConstants.WSDL))
                 .Select(port =>
                 {
-                    var typeName = SF.ParseTypeName(port.Attribute("binding").Value);
+                    var typeName = ParseTypeName(port.Attribute("binding").Value);
 
-                    var initializer = SF.ObjectCreationExpression(typeName);
+                    var initializer = ObjectCreationExpression(typeName);
                     var producerName = port.Element(XName.Get("address", NamespaceConstants.XROAD)).Attribute("producer").Value;
 
                     if (!string.IsNullOrEmpty(producerName))
-                        initializer = initializer.AddArgumentListArguments(SF.Argument(SF.LiteralExpression(SyntaxKind.StringLiteralExpression, SF.Literal(producerName))));
+                        initializer = initializer.AddArgumentListArguments(Argument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(producerName))));
 
-                    return SF.PropertyDeclaration(typeName, port.Attribute("name").Value)
-                        .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
-                        .AddAccessorListAccessors(SF.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SF.Token(SyntaxKind.SemicolonToken)))
-                        .WithInitializer(SF.EqualsValueClause(initializer))
-                        .WithSemicolonToken(SF.Token(SyntaxKind.SemicolonToken));
+                    return PropertyDeclaration(typeName, port.Attribute("name").Value)
+                        .AddModifiers(Token(SyntaxKind.PublicKeyword))
+                        .AddAccessorListAccessors(AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)))
+                        .WithInitializer(EqualsValueClause(initializer))
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
                 });
 
             type = type.AddMembers(properties.ToArray());
 
-            return SF.CompilationUnit()
-                     .AddMembers(SF.NamespaceDeclaration(SF.IdentifierName("MyNamespace"))
-                                   .AddMembers(type));
+            return CompilationUnit().AddMembers(NamespaceDeclaration(IdentifierName("MyNamespace")).AddMembers(type));
         }
     }
 }

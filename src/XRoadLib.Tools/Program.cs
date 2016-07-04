@@ -73,7 +73,7 @@ namespace XRoadLib.Tools
                     definitionsElement.Elements(XName.Get("types", NamespaceConstants.WSDL))
                                       .SelectMany(e => e.Elements(XName.Get("schema", NamespaceConstants.XSD)))
                                       .SelectMany(e => e.Elements(XName.Get("complexType", NamespaceConstants.XSD)))
-                                      .Select(e => new TypeGenerator(e))
+                                      .Select(e => new ComplexTypeGenerator(e))
                                       .ToList()
                                       .ForEach(g => g.Generate().SaveFile(Path.Combine(typesDirectory.FullName, $"{g.TypeName}.cs")));
 

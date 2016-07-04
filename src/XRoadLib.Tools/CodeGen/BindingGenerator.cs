@@ -1,11 +1,8 @@
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
-using SF = Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace XRoadLib.Tools.CodeGen
 {
@@ -23,30 +20,28 @@ namespace XRoadLib.Tools.CodeGen
 
         public CompilationUnitSyntax Generate()
         {
-            var type = SF.ClassDeclaration(BindingName)
-                .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
-                .AddBaseListTypes(SF.SimpleBaseType(SF.ParseTypeName($"{bindingElement.Attribute("type").Value}")));
+            var type = ClassDeclaration(BindingName)
+                .AddModifiers(Token(SyntaxKind.PublicKeyword))
+                .AddBaseListTypes(SimpleBaseType(ParseTypeName($"{bindingElement.Attribute("type").Value}")));
 
             var methods = bindingElement.Elements(XName.Get("operation", NamespaceConstants.WSDL))
                 .Select(operation =>
                 {
                     var methodName = operation.Attribute("name").Value;
 
-                    return SF.MethodDeclaration(SF.PredefinedType(SF.Token(SyntaxKind.VoidKeyword)), methodName)
-                        .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
-                        .WithBody(SF.Block());
+                    return MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), methodName)
+                        .AddModifiers(Token(SyntaxKind.PublicKeyword))
+                        .WithBody(Block());
                 });
 
-            var ctor = SF.ConstructorDeclaration(BindingName)
-                .AddModifiers(SF.Token(SyntaxKind.PublicKeyword))
-                .AddParameterListParameters(SF.Parameter(SF.Identifier("producerName")).WithType(SF.PredefinedType(SF.Token(SyntaxKind.StringKeyword))))
-                .WithBody(SF.Block());
+            var ctor = ConstructorDeclaration(BindingName)
+                .AddModifiers(Token(SyntaxKind.PublicKeyword))
+                .AddParameterListParameters(Parameter(Identifier("producerName")).WithType(PredefinedType(Token(SyntaxKind.StringKeyword))))
+                .WithBody(Block());
 
             type = type.AddMembers(ctor).AddMembers(methods.ToArray());
 
-            return SF.CompilationUnit()
-                     .AddMembers(SF.NamespaceDeclaration(SF.IdentifierName("MyNamespace"))
-                                   .AddMembers(type));
+            return CompilationUnit().AddMembers(NamespaceDeclaration(IdentifierName("MyNamespace")).AddMembers(type));
         }
     }
 }
