@@ -4,6 +4,10 @@ branches:
     - master
 init:
   - git config --global core.autocrlf true
+environment:
+  matrix:
+    - FRAMEWORK: netcoreapp1.0
+    - FRAMEWORK: net46
 configuration: Release
 before_build:
   - ps: >-
@@ -15,4 +19,4 @@ before_build:
 build:
   verbosity: minimal
 test_script:
-  - cmd: dotnet test test\XRoadLib.Tests
+  - cmd: dotnet test test\XRoadLib.Tests --framework %FRAMEWORK%
