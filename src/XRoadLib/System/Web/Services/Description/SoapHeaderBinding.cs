@@ -11,6 +11,11 @@ namespace System.Web.Services.Description
         public string Namespace { get; set; }
         public string Part { get; set; }
         public SoapBindingUse Use { get; set; }
+
+        internal override void Write(XmlWriter writer)
+        {
+
+        }
     }
 }
 

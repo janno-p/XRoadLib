@@ -1,5 +1,7 @@
 #if NETSTANDARD1_5
 
+using System.Xml;
+
 namespace System.Web.Services.Description
 {
     public class XRoadOperationVersionBinding : ServiceDescriptionFormatExtension
@@ -13,6 +15,11 @@ namespace System.Web.Services.Description
         {
             Prefix = prefix;
             Namespace = ns;
+        }
+
+        internal override void Write(XmlWriter writer)
+        {
+
         }
     }
 }

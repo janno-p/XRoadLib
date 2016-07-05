@@ -1,8 +1,10 @@
 #if NETSTANDARD1_5
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using XRoadLib;
+using XRoadLib.Xml.Schema;
 
 namespace System.Web.Services.Description
 {
@@ -17,7 +19,7 @@ namespace System.Web.Services.Description
 
         public void WriteServiceDescription(ServiceDescription serviceDescription)
         {
-            writer.WriteStartElement("definitions", NamespaceConstants.WSDL);
+            WriteStartElement("definitions", NamespaceConstants.WSDL, serviceDescription);
 
             WriteNamespaceDeclarations(serviceDescription.Namespaces);
 
@@ -26,10 +28,10 @@ namespace System.Web.Services.Description
             WriteAttribute("name", serviceDescription.Name);
             WriteAttribute("targetNamespace", serviceDescription.TargetNamespace);
 
-            WriteExtensions();
+            serviceDescription.Extensions.ForEach(WriteExtension);
             WriteDocumentation(serviceDescription.DocumentationElement);
-            WriteImports();
-            WriteTypes();
+            //serviceDescription.Imports.ForEach(WriteImports);
+            WriteTypes(serviceDescription.Types);
             WriteMessages();
             WritePortTypes();
             WriteBindings();
@@ -57,6 +59,16 @@ namespace System.Web.Services.Description
             writer.WriteAttributeString(name, ns, value);
         }
 
+        private void WriteQualifiedAttribute(string name, XmlQualifiedName qualifiedName)
+        {
+            if (qualifiedName.IsEmpty)
+                return;
+
+            writer.WriteStartAttribute(name);
+            writer.WriteQualifiedName(qualifiedName.Name, qualifiedName.Namespace);
+            writer.WriteEndAttribute();
+        }
+
         private void WriteBindings()
         {
 
@@ -72,14 +84,9 @@ namespace System.Web.Services.Description
             writer.WriteEndElement();
         }
 
-        private void WriteExtensions()
+        private void WriteExtension(ServiceDescriptionFormatExtension extension)
         {
-
-        }
-
-        private void WriteImports()
-        {
-
+            extension.Write(writer);
         }
 
         private void WriteMessages()
@@ -89,12 +96,27 @@ namespace System.Web.Services.Description
 
         private void WriteNamespaceDeclarations(IDictionary<string, string> namespaces)
         {
-
+            namespaces.Where(x => !string.IsNullOrWhiteSpace(x.Value) && writer.LookupPrefix(x.Value) != x.Key)
+                      .ToList()
+                      .ForEach(ns => writer.WriteAttributeString("xmlns", ns.Key, NamespaceConstants.XMLNS, ns.Value));
         }
 
         private void WritePort(Port port)
         {
+            WriteStartElement("port", NamespaceConstants.WSDL, port);
 
+            WriteNamespaceDeclarations(port.Namespaces);
+
+            port.ExtensibleAttributes.ForEach(WriteAttribute);
+
+            WriteAttribute("name", port.Name);
+            WriteQualifiedAttribute("binding", port.Binding);
+
+            port.Extensions.ForEach(WriteExtension);
+
+            WriteDocumentation(port.DocumentationElement);
+
+            writer.WriteEndElement();
         }
 
         private void WritePortTypes()
@@ -102,24 +124,48 @@ namespace System.Web.Services.Description
 
         }
 
+        private void WriteSchema(XmlSchema schema)
+        {
+
+        }
+
         private void WriteService(Service service)
         {
-            writer.WriteStartElement("service", NamespaceConstants.WSDL);
+            WriteStartElement("service", NamespaceConstants.WSDL, service);
 
             WriteNamespaceDeclarations(service.Namespaces);
 
             WriteAttribute("name", service.Name);
 
-            WriteExtensions();
+            service.Extensions.ForEach(WriteExtension);
             WriteDocumentation(service.DocumentationElement);
             service.Ports.ForEach(WritePort);
 
             writer.WriteEndElement();
         }
 
-        private void WriteTypes()
+        private void WriteStartElement(string name, string ns, DocumentableItem documentableItem)
         {
+            var prefix = documentableItem.Namespaces
+                                         .Where(kvp => kvp.Value == NamespaceConstants.WSDL)
+                                         .Select(kvp => kvp.Key).SingleOrDefault() ?? writer.LookupPrefix(ns);
+            writer.WriteStartElement(prefix, name, ns);
+        }
 
+        private void WriteTypes(Types types)
+        {
+            WriteStartElement("types", NamespaceConstants.WSDL, types);
+
+            WriteNamespaceDeclarations(types.Namespaces);
+
+            types.ExtensibleAttributes.ForEach(WriteAttribute);
+            types.Extensions.ForEach(WriteExtension);
+
+            WriteDocumentation(types.DocumentationElement);
+
+            types.Schemas.ForEach(WriteSchema);
+
+            writer.WriteEndElement();
         }
     }
 }

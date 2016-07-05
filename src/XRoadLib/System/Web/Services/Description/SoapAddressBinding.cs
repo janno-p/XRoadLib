@@ -1,10 +1,20 @@
 #if NETSTANDARD1_5
 
+using System.Xml;
+using XRoadLib;
+
 namespace System.Web.Services.Description
 {
     public class SoapAddressBinding : ServiceDescriptionFormatExtension
     {
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
+
+        internal override void Write(XmlWriter writer)
+        {
+            writer.WriteStartElement("address", NamespaceConstants.SOAP);
+            writer.WriteAttributeString("location", Location);
+            writer.WriteEndElement();
+        }
     }
 }
 
