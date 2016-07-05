@@ -36,12 +36,6 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void DeserializesMinValueAsNull()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => deserializeValue("0001-01-01T00:00:00"));
-        }
-
-        [Fact]
         public void CanDeserializeWithTime()
         {
             var instance = deserializeValue("2013-08-27T12:34:56");
