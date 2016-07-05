@@ -15,7 +15,7 @@ before_build:
 
       core.exe /install /quiet /norestart
 
-      dotnet restore
+      dotnet restore src test
 build:
   verbosity: minimal
 test_script:
