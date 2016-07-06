@@ -8,7 +8,10 @@ namespace XRoadLib.Xml.Schema
     {
         internal override void Write(XmlWriter writer)
         {
-
+            WriteStartElement(writer, "sequence");
+            WriteAttributes(writer);
+            base.Write(writer);
+            writer.WriteEndElement();
         }
     }
 }

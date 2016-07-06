@@ -9,6 +9,17 @@ namespace XRoadLib.Xml.Schema
     {
         public XmlSchemaAnnotation Annotation { get; set; }
         public List<XmlAttribute> UnhandledAttributes { get; } = new List<XmlAttribute>();
+
+        internal override void Write(XmlWriter writer)
+        {
+            Annotation?.Write(writer);
+        }
+
+        protected override void WriteAttributes(XmlWriter writer)
+        {
+            base.WriteAttributes(writer);
+            UnhandledAttributes.ForEach(a => a.WriteTo(writer));
+        }
     }
 }
 

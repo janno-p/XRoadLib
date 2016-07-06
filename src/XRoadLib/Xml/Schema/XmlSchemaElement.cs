@@ -13,7 +13,29 @@ namespace XRoadLib.Xml.Schema
 
         internal override void Write(XmlWriter writer)
         {
+            WriteStartElement(writer, "element");
+            WriteAttributes(writer);
+            base.Write(writer);
+            SchemaType?.Write(writer);
+            writer.WriteEndElement();
+        }
 
+        protected override void WriteAttributes(XmlWriter writer)
+        {
+            base.WriteAttributes(writer);
+
+            if (!string.IsNullOrWhiteSpace(Name))
+                writer.WriteAttributeString("name", Name);
+
+            if (IsNillable)
+                writer.WriteAttributeString("nillable", XmlConvert.ToString(IsNillable));
+
+            if (SchemaType == null && !SchemaTypeName.IsEmpty)
+            {
+                writer.WriteStartAttribute("type");
+                writer.WriteQualifiedName(SchemaTypeName.Name, SchemaTypeName.Namespace);
+                writer.WriteEndAttribute();
+            }
         }
     }
 }

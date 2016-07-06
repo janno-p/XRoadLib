@@ -10,7 +10,17 @@ namespace XRoadLib.Xml.Schema
 
         internal override void Write(XmlWriter writer)
         {
+            WriteStartElement(writer, "import");
+            WriteAttributes(writer);
+            writer.WriteEndElement();
+        }
 
+        protected override void WriteAttributes(XmlWriter writer)
+        {
+            base.WriteAttributes(writer);
+
+            if (!string.IsNullOrWhiteSpace(Namespace))
+                writer.WriteAttributeString("namespace", Namespace);
         }
     }
 }

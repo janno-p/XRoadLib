@@ -7,7 +7,7 @@ namespace XRoadLib.Xml.Schema
 {
     public class XmlSchema : XmlSchemaObject
     {
-        public List<XmlSchemaObject> Includes { get; } = new List<XmlSchemaObject>();
+        public List<XmlSchemaExternal> Includes { get; } = new List<XmlSchemaExternal>();
         public List<XmlSchemaObject> Items { get; } = new List<XmlSchemaObject>();
         public string TargetNamespace { get; set; }
 
@@ -16,6 +16,9 @@ namespace XRoadLib.Xml.Schema
             WriteStartElement(writer, "schema");
 
             WriteAttributes(writer);
+
+            Includes.ForEach(x => x.Write(writer));
+            Items.ForEach(x => x.Write(writer));
 
             writer.WriteEndElement();
         }
