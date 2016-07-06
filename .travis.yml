@@ -15,7 +15,7 @@ env:
 
 before_install:
   - chmod +x build.sh
-  - curl -L --create-dirs https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.sh -o install.sh
+  - curl -L --create-dirs https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh -o install.sh
   - chmod +x install.sh
   - export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
   - sudo bash ./install.sh --channel "preview" --version "Latest" --install-dir "$DOTNET_INSTALL_DIR" --no-path
