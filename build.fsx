@@ -179,6 +179,11 @@ Target "RunTests" (fun _ ->
         else None
     match linuxVersion with
     | Some(os) ->
+        ExecProcess (fun p ->
+            p.FileName <- "dotnet"
+            p.Arguments <- sprintf "build test/XRoadLib.Tests --framework %s" framework
+            ) (TimeSpan.FromMinutes 10.0)
+        |> ignore
         let path = sprintf "test/XRoadLib.Tests/bin/Debug/%s" framework
         ExecProcess (fun p ->
             p.FileName <- "mono"
