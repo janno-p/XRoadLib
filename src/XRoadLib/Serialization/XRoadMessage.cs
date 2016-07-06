@@ -107,7 +107,11 @@ namespace XRoadLib.Serialization
 
         public void SaveTo(WebRequest webRequest)
         {
+#if NET40
+            using (var outputStream = webRequest.GetRequestStream())
+#else
             using (var outputStream = webRequest.GetRequestStreamAsync().Result)
+#endif
             using (var writer = new XRoadMessageWriter(outputStream))
                 writer.Write(this, contentType => webRequest.ContentType = contentType, (k, v) => webRequest.Headers[k] = v);
         }
