@@ -1,8 +1,27 @@
 language: csharp
-sudo: false 
+
+sudo: required
+dist: xenial
+osx_image: xcode7.1
+
+os:
+  - osx
+  - linux
+
+env:
+  - CLI_VERSION=Latest
+  matrix:
+    - FRAMEWORK=coreclr
+    - FRAMEWORK=netfx
 
 before_install:
   - chmod +x build.sh
- 
-script: 
-  - ./build.sh RunTests
+  - curl -L --create-dirs https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.sh -o install.sh
+  - chmod +x install.sh
+  - export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
+  - sudo bash ./install.sh --channel "preview" --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR" --no-path
+  - export PATH="$DOTNET_INSTALL_DIR:$PATH"
+
+script:
+  - dotnet --info
+  - ./build.sh RunTests Framework=$FRAMEWORK
