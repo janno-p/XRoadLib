@@ -1,46 +1,16 @@
-FRAMEWORK: >= NET40
-
-GROUP Build
-FRAMEWORK: >= NET40
+FRAMEWORK: >= NET451
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.25.4)
+    FAKE (4.29.2)
     FSharp.Compiler.Service (2.0.0.6)
-    FSharp.Formatting (2.14.2)
+    FSharp.Formatting (2.14.4)
       FSharp.Compiler.Service (2.0.0.6)
       FSharpVSPowerTools.Core (>= 2.3 < 2.4)
     FSharpVSPowerTools.Core (2.3)
       FSharp.Compiler.Service (>= 2.0.0.3)
-    Microsoft.Bcl (1.1.10) - framework: net40, net40-full
-      Microsoft.Bcl.Build (>= 1.0.14)
-    Microsoft.Bcl.Build (1.0.21) - import_targets: false
-    Microsoft.Net.Http (2.2.29) - framework: net40, net40-full
-      Microsoft.Bcl (>= 1.1.10)
-      Microsoft.Bcl.Build (>= 1.0.14)
-    Octokit (0.19)
-      Microsoft.Net.Http  - framework: net40, net40-full
+    Octokit (0.20)
     SourceLink.Fake (1.1)
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (3bf706bd6058733a1a034755741076b3953aaf09)
-      Octokit
-GROUP Test
-FRAMEWORK: >= NET40
-NUGET
-  remote: https://www.nuget.org/api/v2
-    FSharp.Core (4.0.0.1)
-    FsUnit (2.1)
-      FSharp.Core (>= 3.1.2.5)
-      NUnit (3.2)
-    NUnit (3.2)
-    NUnit.ConsoleRunner (3.2)
-    NUnit.Extension.NUnitProjectLoader (3.2)
-    NUnit.Extension.NUnitV2Driver (3.2)
-    NUnit.Extension.NUnitV2ResultWriter (3.2)
-    NUnit.Extension.VSProjectLoader (3.2)
-    NUnit.Runners (3.2)
-      NUnit.ConsoleRunner (3.2)
-      NUnit.Extension.NUnitProjectLoader (3.2)
-      NUnit.Extension.NUnitV2Driver (3.2)
-      NUnit.Extension.NUnitV2ResultWriter (3.2)
-      NUnit.Extension.VSProjectLoader (3.2)
+    modules/Octokit/Octokit.fsx (c56456abac6b744c3bb95b217687db19fd19b367)
+      Octokit (>= 0.20)

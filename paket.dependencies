@@ -1,21 +1,8 @@
 source https://nuget.org/api/v2
-framework >= net40
+framework >= net451
 
-group Build
-    source https://nuget.org/api/v2
-    framework >= net40
+nuget FAKE
+nuget FSharp.Formatting
+nuget SourceLink.Fake
 
-    nuget FAKE
-    nuget FSharp.Formatting
-    nuget SourceLink.Fake
-
-    github fsharp/FAKE modules/Octokit/Octokit.fsx
-
-group Test
-    source https://nuget.org/api/v2
-    framework >= net40
-
-    nuget FSharp.Core
-    nuget FsUnit
-    nuget NUnit
-    nuget NUnit.Runners
+github fsharp/FAKE modules/Octokit/Octokit.fsx
