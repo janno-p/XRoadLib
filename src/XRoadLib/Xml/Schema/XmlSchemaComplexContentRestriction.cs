@@ -9,7 +9,12 @@ namespace XRoadLib.Xml.Schema
     {
         public XmlQualifiedName BaseTypeName { get; set; }
         public XmlSchemaParticle Particle { get; set; }
-        public IList<XmlSchemaObject> Attributes { get; } = new List<XmlSchemaObject>();
+        public List<XmlSchemaObject> Attributes { get; } = new List<XmlSchemaObject>();
+
+        internal override void Write(XmlWriter writer)
+        {
+
+        }
     }
 }
 

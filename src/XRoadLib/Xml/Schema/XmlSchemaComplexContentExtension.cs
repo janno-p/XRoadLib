@@ -8,6 +8,11 @@ namespace XRoadLib.Xml.Schema
     {
         public XmlQualifiedName BaseTypeName { get; set; }
         public XmlSchemaParticle Particle { get; set; }
+
+        internal override void Write(XmlWriter writer)
+        {
+
+        }
     }
 }
 

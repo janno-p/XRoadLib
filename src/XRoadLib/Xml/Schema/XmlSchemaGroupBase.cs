@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace XRoadLib.Xml.Schema
 {
-    public class XmlSchemaGroupBase : XmlSchemaParticle
+    public abstract class XmlSchemaGroupBase : XmlSchemaParticle
     {
-        public IList<XmlSchemaObject> Items { get; } = new List<XmlSchemaObject>();
+        public List<XmlSchemaObject> Items { get; } = new List<XmlSchemaObject>();
     }
 }
 

@@ -7,6 +7,11 @@ namespace XRoadLib.Xml.Schema
     public class XmlSchemaAttribute : XmlSchemaAnnotated
     {
         public XmlQualifiedName RefName { get; set; }
+
+        internal override void Write(XmlWriter writer)
+        {
+
+        }
     }
 }
 

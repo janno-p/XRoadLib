@@ -10,6 +10,11 @@ namespace XRoadLib.Xml.Schema
         public string Name { get; set; }
         public XmlSchemaType SchemaType { get; set; }
         public XmlQualifiedName SchemaTypeName { get; set; }
+
+        internal override void Write(XmlWriter writer)
+        {
+
+        }
     }
 }
 

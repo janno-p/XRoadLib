@@ -2,7 +2,7 @@
 
 namespace XRoadLib.Xml.Schema
 {
-    public class XmlSchemaSimpleTypeContent : XmlSchemaAnnotated
+    public abstract class XmlSchemaSimpleTypeContent : XmlSchemaAnnotated
     {
 
     }

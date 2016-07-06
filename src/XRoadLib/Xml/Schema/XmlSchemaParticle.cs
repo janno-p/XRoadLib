@@ -2,7 +2,7 @@
 
 namespace XRoadLib.Xml.Schema
 {
-    public class XmlSchemaParticle : XmlSchemaAnnotated
+    public abstract class XmlSchemaParticle : XmlSchemaAnnotated
     {
         public decimal MinOccurs { get; set; } = 1M;
         public decimal MaxOccurs { get; set; } = 1M;

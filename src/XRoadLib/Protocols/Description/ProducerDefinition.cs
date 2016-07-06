@@ -562,16 +562,32 @@ namespace XRoadLib.Protocols.Description
 
         private XmlSchemaAnnotation CreateSchemaAnnotation(string schemaNamespace, Definition definition)
         {
-            return definition.Documentation.Any()
-                ? new XmlSchemaAnnotation { Items = { new XmlSchemaAppInfo { Markup = definition.Documentation.Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2, ns => requiredImports.Add(Tuple.Create(schemaNamespace, ns)))).Cast<XmlNode>().ToArray() } } }
-                : null;
+            if (!definition.Documentation.Any())
+                return null;
+
+            var markup = definition.Documentation
+                                   .Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2, ns => requiredImports.Add(Tuple.Create(schemaNamespace, ns))))
+                                   .Cast<XmlNode>();
+
+#if NETSTANDARD1_5
+            var appInfo = new XmlSchemaAppInfo();
+            appInfo.Markup.AddRange(markup);
+#else
+            var appInfo = new XmlSchemaAppInfo { Markup = markup.ToArray() };
+#endif
+
+            return new XmlSchemaAnnotation { Items = { appInfo } };
         }
 
         private void AddBinaryAttribute(string schemaNamespace, XmlSchemaAnnotated schemaElement)
         {
             requiredImports.Add(Tuple.Create(schemaNamespace, NamespaceConstants.XMIME));
 
+#if NETSTANDARD1_5
+            schemaElement.UnhandledAttributes.Add(protocol.Style.CreateExpectedContentType("application/octet-stream"));
+#else
             schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
+#endif
         }
 
         private TypeDefinition GetContentTypeDefinition(IContentDefinition contentDefinition)

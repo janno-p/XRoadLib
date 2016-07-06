@@ -126,7 +126,7 @@ namespace System.Web.Services.Description
 
         private void WriteSchema(XmlSchema schema)
         {
-
+            schema.Write(writer);
         }
 
         private void WriteService(Service service)

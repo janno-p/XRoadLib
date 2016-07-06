@@ -54,7 +54,14 @@ namespace XRoadLib.Protocols.Styles
             var schemaAttribute = new XmlSchemaAttribute { RefName = new XmlQualifiedName("arrayType", NamespaceConstants.SOAP_ENC) };
 
             if (itemElement.SchemaTypeName != null)
-                schemaAttribute.UnhandledAttributes = new[] { CreateArrayTypeAttribute(XName.Get(itemElement.SchemaTypeName.Name, itemElement.SchemaTypeName.Namespace)) };
+            {
+                var attribute = CreateArrayTypeAttribute(XName.Get(itemElement.SchemaTypeName.Name, itemElement.SchemaTypeName.Namespace));
+#if NETSTANDARD1_5
+                schemaAttribute.UnhandledAttributes.Add(attribute);
+#else
+                schemaAttribute.UnhandledAttributes = new[] { attribute };
+#endif
+            }
 
             var restriction = new XmlSchemaComplexContentRestriction
             {

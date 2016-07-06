@@ -2,7 +2,7 @@
 
 namespace XRoadLib.Xml.Schema
 {
-    public class XmlSchemaExternal : XmlSchemaObject
+    public abstract class XmlSchemaExternal : XmlSchemaObject
     {
 
     }
