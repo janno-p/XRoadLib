@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using XRoadLib.Extensions;
@@ -10,10 +11,13 @@ namespace XRoadLib.Serialization.Mapping
     public class AllTypeMap<T> : CompositeTypeMap<T> where T : class, IXRoadSerializable, new()
     {
         private readonly IDictionary<string, IPropertyMap> deserializationPropertyMaps = new Dictionary<string, IPropertyMap>();
+        private readonly Lazy<int> requiredPropertiesCount;
 
         public AllTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
             : base(serializerCache, typeDefinition)
-        { }
+        {
+            requiredPropertiesCount = new Lazy<int>(() => deserializationPropertyMaps.Where(x => !x.Value.Definition.IsOptional).Count());
+        }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
         {
@@ -28,8 +32,13 @@ namespace XRoadLib.Serialization.Mapping
                 return dtoObject;
             }
 
+            var existingPropertyNames = new HashSet<string>();
+
             if (reader.IsEmptyElement)
+            {
+                ValidateRemainingProperties(existingPropertyNames, definition);
                 return MoveNextAndReturn(reader, dtoObject);
+            }
 
             var parentDepth = reader.Depth;
             var itemDepth = parentDepth + 1;
@@ -47,12 +56,17 @@ namespace XRoadLib.Serialization.Mapping
 
                 var propertyMap = GetPropertyMap(reader);
 
+                if (!propertyMap.Definition.IsOptional)
+                    existingPropertyNames.Add(reader.LocalName);
+
                 if (ReadPropertyValue(reader, propertyMap, templateNode, message, validateRequired, dtoObject) && validateRequired)
                     requiredCount++;
             }
 
             if (validateRequired && requiredCount < templateNode.CountRequiredNodes(message.Version))
                 throw XRoadException.MissingRequiredPropertyValues(GetMissingRequiredPropertyNames(dtoObject, templateNode, message));
+
+            ValidateRemainingProperties(existingPropertyNames, definition);
 
             return dtoObject;
         }
@@ -105,6 +119,22 @@ namespace XRoadLib.Serialization.Mapping
             var propertyName = propertyMap.Definition.MergeContent ? propertyMap.Definition.ArrayItemDefinition.Name.LocalName : propertyMap.Definition.Name.LocalName;
 
             deserializationPropertyMaps.Add(propertyName, propertyMap);
+        }
+
+        private void ValidateRemainingProperties(ISet<string> existingPropertyNames, IContentDefinition contentDefinition)
+        {
+            if (existingPropertyNames.Count == requiredPropertiesCount.Value)
+                return;
+
+            var typeName = Definition?.Name ?? (((contentDefinition as ArrayItemDefinition)?.WrapperDefinition) as PropertyDefinition)?.DeclaringTypeDefinition?.Name;
+            var missingProperties = deserializationPropertyMaps.Where(kv => !existingPropertyNames.Contains(kv.Key) && !kv.Value.Definition.IsOptional).Select(kv => $"`{kv.Key}`").ToList();
+
+            var propertyMessage = string.Join(", ", missingProperties);
+            var errorMessage = missingProperties.Count > 1
+                ? $"Elements {propertyMessage} are required by type `{typeName}` definition."
+                : $"Element {propertyMessage} is required by type `{typeName}` definition.";
+
+            throw XRoadException.InvalidQuery(errorMessage);
         }
     }
 }

@@ -34,5 +34,10 @@ namespace XRoadLib.Schema
         {
             return $"Return value of {PropertyInfo.DeclaringType?.FullName ?? "<null>"}.{RuntimeName} ({Name})";
         }
+
+        public string GetSerializedName()
+        {
+            return MergeContent ? ArrayItemDefinition.Name.LocalName : Name.LocalName;
+        }
     }
 }

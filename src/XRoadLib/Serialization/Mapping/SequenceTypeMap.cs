@@ -26,12 +26,16 @@ namespace XRoadLib.Serialization.Mapping
                 return entity;
             }
 
+            var properties = propertyMaps.GetEnumerator();
+
             if (reader.IsEmptyElement)
+            {
+                ValidateRemainingProperties(properties, definition);
                 return MoveNextAndReturn(reader, entity);
+            }
 
             var parentDepth = reader.Depth;
             var itemDepth = parentDepth + 1;
-            var properties = propertyMaps.GetEnumerator();
 
             reader.Read();
 
@@ -47,6 +51,8 @@ namespace XRoadLib.Serialization.Mapping
 
                 ReadPropertyValue(reader, properties.Current, propertyNode, message, validateRequired, entity);
             }
+
+            ValidateRemainingProperties(properties, definition);
 
             return entity;
         }
@@ -72,20 +78,38 @@ namespace XRoadLib.Serialization.Mapping
 
         private IXmlTemplateNode MoveToProperty(XmlReader reader, IEnumerator<IPropertyMap> properties, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)
         {
+            IPropertyMap propertyMap = null;
+
             while (properties.MoveNext())
             {
-                var propertyMap = properties.Current;
-                var propertyName = propertyMap.Definition.MergeContent ? propertyMap.Definition.ArrayItemDefinition.Name.LocalName : propertyMap.Definition.Name.LocalName;
+                propertyMap = properties.Current;
+                var propertyName = propertyMap.Definition.GetSerializedName();
                 var propertyNode = templateNode[properties.Current.Definition.TemplateName, message.Version];
 
                 if (reader.LocalName == propertyName)
                     return propertyNode;
 
+                if (!propertyMap.Definition.IsOptional)
+                    throw XRoadException.UnexpectedElementInQuery(Definition.Name, propertyName, reader.LocalName);
+
                 if (validateRequired && propertyNode != null && propertyNode.IsRequired)
                     throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(propertyName, 1));
             }
 
-            throw XRoadException.InvalidQuery($"Andmetüübil `{Definition.Name}` puudub element `{reader.LocalName}` või see on esitatud vales kohas.");
+            if (propertyMap == null)
+                throw XRoadException.InvalidQuery($"Element `{reader.LocalName}` was unexpected at given location while deserializing type `{Definition.Name}`.");
+            else
+                throw XRoadException.UnexpectedElementInQuery(Definition.Name, propertyMap.Definition.GetSerializedName(), reader.LocalName);
+        }
+
+        private void ValidateRemainingProperties(IEnumerator<IPropertyMap> properties, IContentDefinition contentDefinition)
+        {
+            while (properties.MoveNext())
+                if (!properties.Current.Definition.IsOptional)
+                {
+                    var typeName = Definition?.Name ?? (((contentDefinition as ArrayItemDefinition)?.WrapperDefinition) as PropertyDefinition)?.DeclaringTypeDefinition?.Name;
+                    throw XRoadException.InvalidQuery($"Element `{properties.Current.Definition.GetSerializedName()}` is required by type `{typeName}` definition.");
+                }
         }
     }
 }

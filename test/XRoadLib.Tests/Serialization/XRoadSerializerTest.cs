@@ -44,12 +44,12 @@ namespace XRoadLib.Tests.Serialization
                 var propType = typeof(X<>).MakeGenericType(typeof(T));
                 var paramInfo = propType.GetTypeInfo().GetMethod("Method").GetParameters()[0];
 
-                ArrayItemDefinition arrayItemDefinition = null;
+                var requestValueDefinition = new RequestValueDefinition(paramInfo, null);
                 if (typeof(T).IsArray)
-                    arrayItemDefinition = new ArrayItemDefinition { Name = XName.Get("item") };
+                    requestValueDefinition.ArrayItemDefinition = new ArrayItemDefinition(requestValueDefinition) { Name = XName.Get("item") };
 
                 var typeMap = Globals.XRoadProtocol20.GetSerializerCache(dtoVersion).GetTypeMap(typeof(T));
-                typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, new RequestValueDefinition(paramInfo, null) { ArrayItemDefinition = arrayItemDefinition }, message);
+                typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestValueDefinition, message);
 
                 writer.WriteEndElement();
 

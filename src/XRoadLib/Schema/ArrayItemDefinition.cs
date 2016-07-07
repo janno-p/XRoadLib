@@ -21,8 +21,15 @@ namespace XRoadLib.Schema
 
         public Type RuntimeType { get; set; }
 
+        public IContentDefinition WrapperDefinition { get; }
+
         bool IContentDefinition.MergeContent => false;
 
         ArrayItemDefinition IContentDefinition.ArrayItemDefinition { get { throw new NotImplementedException(); } }
+
+        public ArrayItemDefinition(IContentDefinition wrapperDefinition)
+        {
+            WrapperDefinition = wrapperDefinition;
+        }
     }
 }

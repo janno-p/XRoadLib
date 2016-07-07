@@ -9,9 +9,11 @@ namespace XRoadLib.Tests.Contract.Mapping
     public class WrapperType : XRoadSerializable
     {
         [XmlElement("Integer")]
+        [XRoadOptional]
         public int[] Integers { get; set; }
 
         [XmlElement("String")]
+        [XRoadOptional]
         public string[] Strings { get; set; }
     }
 

@@ -89,7 +89,7 @@ namespace XRoadLib.Schema
 
             MergeContent = MergeContent || elementAttribute != null;
 
-            ArrayItemDefinition = new ArrayItemDefinition
+            ArrayItemDefinition = new ArrayItemDefinition(this)
             {
                 Name = itemQualifiedName,
                 IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),

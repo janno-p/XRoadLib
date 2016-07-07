@@ -1,6 +1,6 @@
 #### 1.0.0-beta021 - Unreleased
 * Add .NET Core support.
-* ...
+* Validate presence of required elements inside sequences.
 
 #### 1.0.0-beta020 - 19.04.2016
 * Fix service description for rootless list type response element.

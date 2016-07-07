@@ -47,6 +47,11 @@ namespace XRoadLib
             return new XRoadException(new ClientFaultCode("ParameterRequired"), $"Service input is missing required parameters: {missingParameters}.");
         }
 
+        public static XRoadException UnexpectedElementInQuery(XName typeName, string expectedName, string actualName)
+        {
+            throw new XRoadException(new ClientFaultCode("UnexpectedElement"), $"Expected element `{expectedName}` while deserializing type `{typeName}`, but element `{actualName}` was found instead.");
+        }
+
         public static XRoadException TypeAttributeRequired(string typeName)
         {
             return new XRoadException(new ClientFaultCode("TypeAttributeRequired"), $"The type '{typeName}' is abstract, type attribute is required to specify target type.");
