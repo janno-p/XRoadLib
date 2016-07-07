@@ -1,8 +1,20 @@
 language: csharp
-sudo: false 
+
+sudo: required
+dist: trusty
+
+env:
+  matrix:
+    - FRAMEWORK=coreclr
+    - FRAMEWORK=desktop
 
 before_install:
-  - chmod +x build.sh
- 
-script: 
-  - ./build.sh RunTests
+  - sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
+  - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+  - sudo apt-get update
+  - sudo apt-get -y install dotnet-dev-1.0.0-preview2-003121
+
+script:
+  - dotnet --info
+  - dotnet restore src test
+  - ./build.sh RunTests Framework=$FRAMEWORK

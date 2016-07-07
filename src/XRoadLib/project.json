@@ -19,12 +19,17 @@
         "System.Xml.XPath.XDocument": "4.0.1"
       }
     },
-    "net46": {
+    "net40": {
       "frameworkAssemblies": {
-        "Microsoft.CSharp": "",
-        "System": "",
-        "System.Core": "",
-        "System.Data": "",
+        "System.Numerics": "",
+        "System.Web": "",
+        "System.Web.Services": "",
+        "System.Xml": "",
+        "System.Xml.Linq": ""
+      }
+    },
+    "net45": {
+      "frameworkAssemblies": {
         "System.Numerics": "",
         "System.Web": "",
         "System.Web.Services": "",

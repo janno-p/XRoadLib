@@ -58,7 +58,11 @@ namespace XRoadLib
 
                 requestMessage.SaveTo(request);
 
+#if NET40
+                using (var response = request.GetResponse())
+#else
                 using (var response = request.GetResponseAsync().Result)
+#endif
                 using (var responseStream = response.GetResponseStream())
                 using (var seekableStream = new MemoryStream())
                 using (var responseMessage = new XRoadMessage())

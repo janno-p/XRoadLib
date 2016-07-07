@@ -16,6 +16,23 @@ namespace XRoadLib.Extensions
 
     public static class TypeExtensions
     {
+#if NET40
+        public static Type GetTypeInfo(this Type type)
+        {
+            return type;
+        }
+
+        public static T GetCustomAttribute<T>(this Type type) where T : Attribute
+        {
+            return type.GetCustomAttributes(typeof(T), false).Cast<T>().SingleOrDefault();
+        }
+
+        public static InterfaceMapping GetRuntimeInterfaceMap(this Type type, Type iface)
+        {
+            return type.GetInterfaceMap(iface);
+        }
+#endif
+
         public static bool IsAnonymous(this Type type)
         {
             return (type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();

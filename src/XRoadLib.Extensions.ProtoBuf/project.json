@@ -9,7 +9,12 @@
         "Microsoft.NETCore.Platforms": "1.0.1"
       }
     },
-    "net46": {
+    "net40": {
+      "frameworkAssemblies": {
+
+      }
+    },
+    "net45": {
       "frameworkAssemblies": {
       }
     }
