@@ -7,11 +7,14 @@ namespace XRoadLib.Xml.Schema
 {
     public class XmlSchemaAnnotation : XmlSchemaObject
     {
+        protected override string ElementName { get; } = "annotation";
+
         public List<XmlSchemaObject> Items { get; } = new List<XmlSchemaObject>();
 
-        internal override void Write(XmlWriter writer)
+        protected override void WriteElements(XmlWriter writer)
         {
-
+            base.WriteElements(writer);
+            Items.ForEach(x => x.Write(writer));
         }
     }
 }

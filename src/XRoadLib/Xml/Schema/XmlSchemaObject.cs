@@ -8,9 +8,22 @@ namespace XRoadLib.Xml.Schema
 {
     public abstract class XmlSchemaObject
     {
+        protected abstract string ElementName { get; }
+
         public Dictionary<string, string> Namespaces { get; } = new Dictionary<string, string>();
 
-        internal abstract void Write(XmlWriter writer);
+        internal void Write(XmlWriter writer)
+        {
+            WriteStartElement(writer, ElementName);
+            WriteAttributes(writer);
+            WriteElements(writer);
+            writer.WriteEndElement();
+        }
+
+        protected virtual void WriteElements(XmlWriter writer)
+        {
+
+        }
 
         protected virtual void WriteAttributes(XmlWriter writer)
         {
@@ -19,7 +32,7 @@ namespace XRoadLib.Xml.Schema
                       .ForEach(ns => writer.WriteAttributeString("xmlns", ns.Key, NamespaceConstants.XMLNS, ns.Value));
         }
 
-        protected void WriteStartElement(XmlWriter writer, string name)
+        private void WriteStartElement(XmlWriter writer, string name)
         {
             var prefix = Namespaces.Where(kvp => kvp.Value == NamespaceConstants.WSDL)
                                    .Select(kvp => kvp.Key).SingleOrDefault() ?? writer.LookupPrefix(NamespaceConstants.XSD);

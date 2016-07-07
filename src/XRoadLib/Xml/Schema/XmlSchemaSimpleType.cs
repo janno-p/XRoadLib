@@ -6,11 +6,14 @@ namespace XRoadLib.Xml.Schema
 {
     public class XmlSchemaSimpleType : XmlSchemaType
     {
+        protected override string ElementName { get; } = "simpleType";
+
         public XmlSchemaSimpleTypeContent Content { get; set; }
 
-        internal override void Write(XmlWriter writer)
+        protected override void WriteElements(XmlWriter writer)
         {
-
+            base.WriteElements(writer);
+            Content?.Write(writer);
         }
     }
 }

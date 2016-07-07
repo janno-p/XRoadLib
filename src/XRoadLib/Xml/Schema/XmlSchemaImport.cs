@@ -6,14 +6,9 @@ namespace XRoadLib.Xml.Schema
 {
     public class XmlSchemaImport : XmlSchemaExternal
     {
-        public string Namespace { get; set; }
+        protected override string ElementName { get; } = "import";
 
-        internal override void Write(XmlWriter writer)
-        {
-            WriteStartElement(writer, "import");
-            WriteAttributes(writer);
-            writer.WriteEndElement();
-        }
+        public string Namespace { get; set; }
 
         protected override void WriteAttributes(XmlWriter writer)
         {

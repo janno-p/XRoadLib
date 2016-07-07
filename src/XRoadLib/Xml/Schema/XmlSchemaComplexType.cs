@@ -6,21 +6,11 @@ namespace XRoadLib.Xml.Schema
 {
     public class XmlSchemaComplexType : XmlSchemaType
     {
+        protected override string ElementName { get; } = "complexType";
+
         public XmlSchemaContentModel ContentModel { get; set; }
         public bool IsAbstract { get; set; }
         public XmlSchemaParticle Particle { get; set; }
-
-        internal override void Write(XmlWriter writer)
-        {
-            WriteStartElement(writer, "complexType");
-            WriteAttributes(writer);
-            base.Write(writer);
-
-            if (ContentModel != null) ContentModel.Write(writer);
-            else Particle?.Write(writer);
-
-            writer.WriteEndElement();
-        }
 
         protected override void WriteAttributes(XmlWriter writer)
         {
@@ -28,6 +18,14 @@ namespace XRoadLib.Xml.Schema
 
             if (IsAbstract)
                 writer.WriteAttributeString("abstract", XmlConvert.ToString(IsAbstract));
+        }
+
+        protected override void WriteElements(XmlWriter writer)
+        {
+            base.WriteElements(writer);
+
+            if (ContentModel != null) ContentModel.Write(writer);
+            else Particle?.Write(writer);
         }
     }
 }

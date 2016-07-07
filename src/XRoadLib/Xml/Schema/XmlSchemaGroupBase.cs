@@ -9,9 +9,9 @@ namespace XRoadLib.Xml.Schema
     {
         public List<XmlSchemaObject> Items { get; } = new List<XmlSchemaObject>();
 
-        internal override void Write(XmlWriter writer)
+        protected override void WriteElements(XmlWriter writer)
         {
-            base.Write(writer);
+            base.WriteElements(writer);
             Items.ForEach(x => x.Write(writer));
         }
     }
