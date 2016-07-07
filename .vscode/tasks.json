@@ -10,8 +10,8 @@
         "${workspaceRoot}/src/XRoadLib",
         "${workspaceRoot}/src/XRoadLib.Extensions.ProtoBuf",
         "${workspaceRoot}/src/XRoadLib.Tools",
-        "${workspaceRoot}/tests/XRoadLib.Tests",
-        "${workspaceRoot}/tests/XRoadLib.Tests.Contract"
+        "${workspaceRoot}/test/XRoadLib.Tests",
+        "${workspaceRoot}/test/XRoadLib.Tests.Contract"
       ],
       "isBuildCommand": true,
       "problemMatcher": "$msCompile"
