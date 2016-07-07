@@ -9,7 +9,7 @@ namespace System.Web.Services.Description
         public string Prefix { get; }
         public string Namespace { get; }
 
-        public string Producer { get; set; }
+        public string Producer { get; set; } = string.Empty;
 
         public XRoadAddressBinding(string prefix, string ns)
         {

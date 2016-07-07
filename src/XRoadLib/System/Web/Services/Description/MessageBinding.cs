@@ -2,7 +2,7 @@
 
 namespace System.Web.Services.Description
 {
-    public class MessageBinding : NamedItem
+    public abstract class MessageBinding : NamedItem
     {
 
     }

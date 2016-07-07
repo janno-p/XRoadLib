@@ -1,6 +1,7 @@
 #if NETSTANDARD1_5
 
 using System.Xml;
+using XRoadLib.Extensions;
 
 namespace XRoadLib.Xml.Schema
 {
@@ -13,13 +14,7 @@ namespace XRoadLib.Xml.Schema
         protected override void WriteAttributes(XmlWriter writer)
         {
             base.WriteAttributes(writer);
-
-            if (!RefName.IsEmpty)
-            {
-                writer.WriteStartAttribute("ref");
-                writer.WriteQualifiedName(RefName.Name, RefName.Namespace);
-                writer.WriteEndAttribute();
-            }
+            writer.WriteQualifiedAttribute("ref", RefName);
         }
     }
 }

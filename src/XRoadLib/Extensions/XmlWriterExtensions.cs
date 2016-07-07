@@ -7,6 +7,16 @@ namespace XRoadLib.Extensions
     {
         private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceConstants.XSI);
 
+        public static void WriteQualifiedAttribute(this XmlWriter writer, string name, XmlQualifiedName qualifiedName)
+        {
+            if (qualifiedName == null || qualifiedName.IsEmpty)
+                return;
+
+            writer.WriteStartAttribute(name);
+            writer.WriteQualifiedName(qualifiedName.Name, qualifiedName.Namespace);
+            writer.WriteEndAttribute();
+        }
+
         private static void WriteQualifiedAttribute(this XmlWriter writer, string attributeName, string attributeNamespace, string valueName, string valueNamespace)
         {
             writer.WriteStartAttribute(attributeName, attributeNamespace);

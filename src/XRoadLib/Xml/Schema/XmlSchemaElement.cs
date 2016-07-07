@@ -1,6 +1,7 @@
 #if NETSTANDARD1_5
 
 using System.Xml;
+using XRoadLib.Extensions;
 
 namespace XRoadLib.Xml.Schema
 {
@@ -23,12 +24,8 @@ namespace XRoadLib.Xml.Schema
             if (IsNillable)
                 writer.WriteAttributeString("nillable", XmlConvert.ToString(IsNillable));
 
-            if (SchemaType == null && !SchemaTypeName.IsEmpty)
-            {
-                writer.WriteStartAttribute("type");
-                writer.WriteQualifiedName(SchemaTypeName.Name, SchemaTypeName.Namespace);
-                writer.WriteEndAttribute();
-            }
+            if (SchemaType == null)
+                writer.WriteQualifiedAttribute("type", SchemaTypeName);
         }
 
         protected override void WriteElements(XmlWriter writer)
