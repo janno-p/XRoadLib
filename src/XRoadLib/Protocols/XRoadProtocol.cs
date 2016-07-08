@@ -155,6 +155,16 @@ namespace XRoadLib.Protocols
             return documentationElement;
         }
 
+        public void SetContractAssemblyOfType<TAssembly>()
+        {
+            SetContractAssembly(typeof(TAssembly).GetTypeInfo().Assembly);
+        }
+
+        public void SetContractAssembly(Assembly assembly, params uint[] supportedVersions)
+        {
+            SetContractAssembly(assembly, null, supportedVersions);
+        }
+
         public void SetContractAssembly(Assembly assembly, IList<string> availableFilters, params uint[] supportedVersions)
         {
             if (ContractAssembly != null)
