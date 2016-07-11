@@ -16,6 +16,23 @@ namespace System.Web.Services.Description
         public List<ServiceDescriptionFormatExtension> Extensions { get; } = new List<ServiceDescriptionFormatExtension>();
         public Dictionary<string, string> Namespaces { get; } = new Dictionary<string, string>();
 
+        public string Documentation
+        {
+            get { return DocumentationElement != null ? DocumentationElement.InnerText : ""; }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    DocumentationElement = null;
+                    return;
+                }
+
+                XmlDocument doc = new XmlDocument();
+                DocumentationElement = doc.CreateElement(PrefixConstants.WSDL, "documentation", NamespaceConstants.WSDL);
+                DocumentationElement.InnerText = value;
+            }
+        }
+
         internal void Write(XmlWriter writer)
         {
             WriteStartElement(writer, ElementName);

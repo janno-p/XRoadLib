@@ -135,7 +135,7 @@ namespace XRoadLib.Serialization
                 }
 
                 lastLine = ReadNextPart(targetStream, GetByteDecoder(partTransferEncoding), target.ContentEncoding, multipartBoundaryMarker);
-            } while (streamPosition < stream.Length && !BufferStartsWith(lastLine, multipartEndMarker));
+            } while (PeekByte() != -1 && !BufferStartsWith(lastLine, multipartEndMarker));
 
             target.ContentLength = streamPosition;
 
