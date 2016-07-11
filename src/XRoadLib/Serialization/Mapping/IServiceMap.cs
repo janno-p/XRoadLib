@@ -13,7 +13,7 @@ namespace XRoadLib.Serialization.Mapping
 
         object DeserializeResponse(XmlReader reader, XRoadMessage message);
 
-        void SerializeRequest(XmlWriter writer, object value, XRoadMessage message);
+        void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null);
 
         void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null);
     }
