@@ -11,7 +11,7 @@ namespace System.Web.Services.Description
 
         internal override void Write(XmlWriter writer)
         {
-            writer.WriteStartElement("address", NamespaceConstants.SOAP);
+            writer.WriteStartElement(PrefixConstants.SOAP, "address", NamespaceConstants.SOAP);
             writer.WriteAttributeString("location", Location);
             writer.WriteEndElement();
         }

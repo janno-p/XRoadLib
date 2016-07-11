@@ -1,6 +1,8 @@
 #### 1.0.0-beta021 - Unreleased
 * Add .NET Core support.
 * Validate presence of required elements inside sequences.
+* Optional namespace override for service root element.
+* Fixes for non-seekable input stream.
 
 #### 1.0.0-beta020 - 19.04.2016
 * Fix service description for rootless list type response element.

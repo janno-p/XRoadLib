@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Xml;
+using XRoadLib;
 
 namespace System.Web.Services.Description
 {
@@ -11,7 +12,9 @@ namespace System.Web.Services.Description
 
         internal override void Write(XmlWriter writer)
         {
-
+            writer.WriteStartElement(PrefixConstants.MIME, "multipartRelated", NamespaceConstants.MIME);
+            Parts.ForEach(x => x.Write(writer));
+            writer.WriteEndElement();
         }
     }
 }
