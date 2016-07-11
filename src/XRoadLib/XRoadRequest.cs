@@ -13,7 +13,7 @@ namespace XRoadLib
 {
     public interface IXRoadRequest
     {
-        TResult Execute<TResult>(object arg, IXRoadHeader xRoadHeader);
+        TResult Execute<TResult>(object arg, IXRoadHeader xRoadHeader, string requestNamespace = null);
     }
 
     public class XRoadRequest : IXRoadRequest
@@ -27,7 +27,7 @@ namespace XRoadLib
             this.uri = uri;
         }
 
-        public T Execute<T>(object arg, IXRoadHeader xRoadHeader)
+        public T Execute<T>(object arg, IXRoadHeader xRoadHeader, string requestNamespace = null)
         {
             using (var requestMessage = new XRoadMessage(protocol, xRoadHeader))
             {
@@ -36,6 +36,9 @@ namespace XRoadLib
                 writer.WriteStartDocument();
 
                 protocol.WriteSoapEnvelope(writer);
+                if (!string.IsNullOrEmpty(requestNamespace))
+                    writer.WriteAttributeString(PrefixConstants.XMLNS, "req", NamespaceConstants.XMLNS, requestNamespace);
+
                 protocol.WriteSoapHeader(writer, xRoadHeader);
 
                 writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
@@ -43,7 +46,7 @@ namespace XRoadLib
                 var serviceMap = requestMessage.GetSerializerCache()
                                                .GetServiceMap(XName.Get(xRoadHeader.Service.ServiceCode, protocol.ProducerNamespace));
 
-                serviceMap.SerializeRequest(writer, arg, requestMessage);
+                serviceMap.SerializeRequest(writer, arg, requestMessage, requestNamespace);
 
                 writer.WriteEndElement();
                 writer.WriteEndElement();

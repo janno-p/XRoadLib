@@ -31,7 +31,7 @@ namespace XRoadLib.Serialization.Mapping
             throw new System.NotImplementedException();
         }
 
-        public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message)
+        public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace)
         {
             throw new System.NotImplementedException();
         }

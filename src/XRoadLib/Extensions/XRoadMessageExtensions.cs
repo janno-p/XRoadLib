@@ -38,16 +38,7 @@ namespace XRoadLib.Extensions
 
         public static object DeserializeMessageContent(this XRoadMessage message, string operationName)
         {
-            message.ContentStream.Position = 0;
-            var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
-            var navigator = doc.CreateNavigator();
-
-            var pathRoot = "/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*";
-            if (message.Protocol.NonTechnicalFaultInResponseElement)
-                pathRoot = $"{pathRoot}/{message.Protocol.ResponsePartNameInResponse}";
-
-            if (navigator.SelectSingleNode($"{pathRoot}/faultCode | {pathRoot}/faultString") != null)
-                throw new XRoadFaultException(message.DeserializeXRoadFault());
+            ThrowIfXRoadFault(message);
 
             message.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(message.ContentStream))
@@ -65,6 +56,23 @@ namespace XRoadLib.Extensions
 
                 return serviceMap.DeserializeResponse(reader, message);
             }
+        }
+
+        private static void ThrowIfXRoadFault(XRoadMessage message)
+        {
+            if (message.Protocol == null)
+                return;
+
+            message.ContentStream.Position = 0;
+            var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
+            var navigator = doc.CreateNavigator();
+
+            var pathRoot = "/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*";
+            if (message.Protocol.NonTechnicalFaultInResponseElement)
+                pathRoot = $"{pathRoot}/{message.Protocol.ResponsePartNameInResponse}";
+
+            if (navigator.SelectSingleNode($"{pathRoot}/faultCode | {pathRoot}/faultString") != null)
+                throw new XRoadFaultException(message.DeserializeXRoadFault());
         }
     }
 }

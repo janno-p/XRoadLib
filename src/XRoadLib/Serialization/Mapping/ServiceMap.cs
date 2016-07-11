@@ -68,12 +68,13 @@ namespace XRoadLib.Serialization.Mapping
             return concreteTypeMap.Deserialize(reader, message.ResponseNode, responseValueDefinition, message);
         }
 
-        public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message)
+        public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null)
         {
-            var addPrefix = writer.LookupPrefix(Definition.Name.NamespaceName) == null;
+            var ns = string.IsNullOrEmpty(requestNamespace) ? Definition.Name.NamespaceName : requestNamespace;
+            var addPrefix = writer.LookupPrefix(ns) == null;
 
-            if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, Definition.Name.LocalName, Definition.Name.NamespaceName);
-            else writer.WriteStartElement(Definition.Name.LocalName, Definition.Name.NamespaceName);
+            if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, Definition.Name.LocalName, ns);
+            else writer.WriteStartElement(Definition.Name.LocalName, ns);
 
             if (!requestValueDefinition.MergeContent)
                 writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
