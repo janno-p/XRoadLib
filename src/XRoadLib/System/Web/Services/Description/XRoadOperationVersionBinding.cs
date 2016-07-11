@@ -19,7 +19,9 @@ namespace System.Web.Services.Description
 
         internal override void Write(XmlWriter writer)
         {
-
+            writer.WriteStartElement(Prefix, "version", Namespace);
+            writer.WriteString(Version);
+            writer.WriteEndElement();
         }
     }
 }
