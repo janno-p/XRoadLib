@@ -1,5 +1,3 @@
 ﻿#if DEBUG
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("XRoadLib.Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("XRoadLib.Tests")]
 #endif

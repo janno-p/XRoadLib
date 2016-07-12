@@ -27,7 +27,7 @@ let gitName = "XRoadLib"
 let gitRaw = environVarOrDefault "gitRaw" ("https://raw.github.com/" + gitOwner)
 
 // Strong name key file for assembly signing
-let keyFile = "src" @@ "XRoadLib.pfx"
+let keyFile = "src" @@ "XRoadLib.snk"
 
 // Read additional information from the release notes document
 let release = LoadReleaseNotes "RELEASE_NOTES.md"

@@ -9,6 +9,13 @@
     "warningsAsErrors": true,
     "xmlDoc": true
   },
+  "configurations": {
+    "Release": {
+      "buildOptions": {
+        "keyFile": "../XRoadLib.snk"
+      }
+    }
+  },
   "packOptions": {
     "owners": ["Janno Põldma"],
     "iconUrl": "https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png",

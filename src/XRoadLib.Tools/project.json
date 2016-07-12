@@ -5,6 +5,13 @@
     "warningsAsErrors": true,
     "xmlDoc": true
   },
+  "configurations": {
+    "Release": {
+      "buildOptions": {
+        "keyFile": "../XRoadLib.snk"
+      }
+    }
+  },
   "authors": ["Janno Põldma"],
   "description": "Command line tool to generate C# types from service description.",
   "packOptions": {

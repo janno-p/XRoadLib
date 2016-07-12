@@ -5,6 +5,13 @@
     "warningsAsErrors": true,
     "xmlDoc": true
   },
+  "configurations": {
+    "Release": {
+      "buildOptions": {
+        "keyFile": "../XRoadLib.snk"
+      }
+    }
+  },
   "frameworks": {
     "netstandard1.5": {
       "dependencies": {

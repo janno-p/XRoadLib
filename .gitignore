@@ -254,3 +254,9 @@ paket-files/
 
 NuGet.config
 packages
+
+**/*.snk
+release.cmd
+
+docs/content/*.md
+docs/output/**/*.*
