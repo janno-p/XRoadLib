@@ -24,3 +24,5 @@
 *.PDF diff=astextplain
 *.rtf diff=astextplain
 *.RTF diff=astextplain
+
+dotnet-test-xunit -text

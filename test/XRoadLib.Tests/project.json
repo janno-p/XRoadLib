@@ -2,6 +2,7 @@
   "version": "1.0.0-*",
   "testRunner": "xunit",
   "buildOptions": {
+    "copyToOutput": "dotnet-test-xunit",
     "warningsAsErrors": true
   },
   "dependencies": {

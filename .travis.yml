@@ -17,4 +17,4 @@ before_install:
 script:
   - dotnet --info
   - dotnet restore src test
-  - ./build.sh RunTests Framework=$FRAMEWORK
+  - dotnet test test\XRoadLib.Tests --framework %FRAMEWORK%

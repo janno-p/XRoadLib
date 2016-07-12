@@ -158,45 +158,11 @@ Target "Build" (fun _ ->
 // Run the unit tests using test runner
 
 Target "RunTests" (fun _ ->
-    let framework =
-        match getBuildParamOrDefault "Framework" "coreclr" with
-        | "coreclr" -> "netcoreapp1.0"
-        | "desktop" -> "net451"
-        | fw -> failwithf "Unexpected framework value `%s`" fw
-    let linuxVersion =
-        if framework = "net451" then
-            let result = ExecProcessAndReturnMessages (fun p ->
-                            p.FileName <- "dotnet"
-                            p.Arguments <- "--info"
-                            ) (TimeSpan.FromMinutes 1.0)
-            let values =
-                result.Messages
-                |> Seq.choose (fun x -> match x.Split([| ':' |], 2) |> Array.map (trim) with [| k; v |] -> Some(k, v) | _ -> None)
-                |> dict
-            match values.TryGetValue("OS Platform"), values.TryGetValue("RID") with
-            | (true, "Linux"), (true, os) -> Some(os)
-            | _ -> None
-        else None
-    match linuxVersion with
-    | Some(os) ->
-        ExecProcess (fun p ->
-            p.FileName <- "dotnet"
-            p.Arguments <- sprintf "build test/XRoadLib.Tests --framework %s" framework
-            ) (TimeSpan.FromMinutes 10.0)
-        |> ignore
-        let path = sprintf "test/XRoadLib.Tests/bin/Debug/%s" framework
-        ExecProcess (fun p ->
-            p.FileName <- "mono"
-            p.Arguments <- "dotnet-test-xunit.exe XRoadLib.Tests.dll"
-            p.WorkingDirectory <- sprintf "test/XRoadLib.Tests/bin/Debug/%s/%s" framework os
-            ) (TimeSpan.FromMinutes 10.0)
-        |> ignore
-    | None ->
-        ExecProcess (fun p ->
-            p.FileName <- "dotnet"
-            p.Arguments <- sprintf "test test/XRoadLib.Tests --framework %s" framework
-            ) (TimeSpan.FromMinutes 10.0)
-        |> ignore
+    ExecProcess(fun p ->
+        p.FileName <- "dotnet"
+        p.Arguments <- sprintf "test test/XRoadLib.Tests"
+        ) (TimeSpan.FromMinutes 10.0)
+    |> ignore
 )
 
 #if MONO
@@ -427,7 +393,7 @@ Target "All" DoNothing
 "Clean"
   ==> "AssemblyInfo"
   ==> "BuildDebug"
-//  ==> "RunTests"
+  ==> "RunTests"
   ==> "Build"
   ==> "CopyBinaries"
   ==> "GenerateReferenceDocs"
