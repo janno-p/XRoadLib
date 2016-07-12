@@ -1,7 +1,9 @@
 {
   "version": "1.0.0-*",
   "buildOptions": {
-    "warningsAsErrors": true
+    "nowarn": ["CS1591"],
+    "warningsAsErrors": true,
+    "xmlDoc": true
   },
   "frameworks": {
     "netstandard1.5": {

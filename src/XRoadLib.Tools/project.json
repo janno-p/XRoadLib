@@ -1,9 +1,9 @@
 {
   "version": "1.0.0-*",
   "buildOptions": {
-    "outputName": "dotnet-xroad-gen",
-    "emitEntryPoint": true,
-    "warningsAsErrors": true
+    "nowarn": ["CS1591"],
+    "warningsAsErrors": true,
+    "xmlDoc": true
   },
   "authors": ["Janno Põldma"],
   "description": "Command line tool to generate C# types from service description.",

@@ -1,8 +1,5 @@
-// --------------------------------------------------------------------------------------
-// FAKE build script
-// --------------------------------------------------------------------------------------
-
 #r @"packages/FAKE/tools/FakeLib.dll"
+
 open Fake
 open Fake.Git
 open Fake.AssemblyInfoFile
@@ -11,45 +8,12 @@ open Fake.Testing.NUnit3
 open Fake.UserInputHelper
 open System
 open System.IO
+
 #if MONO
 #else
 #load "packages/SourceLink.Fake/tools/Fake.fsx"
 open SourceLink
 #endif
-
-// --------------------------------------------------------------------------------------
-// START TODO: Provide project-specific details below
-// --------------------------------------------------------------------------------------
-
-// Information about the project are used
-//  - for version and project name in generated AssemblyInfo file
-//  - by the generated NuGet package
-//  - to run tests and to publish documentation on GitHub gh-pages
-//  - for documentation, you also need to edit info in "docs/tools/generate.fsx"
-
-// The name of the project
-// (used by attributes in AssemblyInfo, name of a NuGet package and directory in 'src')
-let project = "XRoadLib"
-
-// Short summary of the project
-// (used as description in AssemblyInfo and as a short summary for NuGet package)
-let summary = "A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach."
-
-// Longer description of the project
-// (used as a description for NuGet package; line breaks are automatically cleaned up)
-let description = "A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach."
-
-// List of author names (for NuGet package)
-let authors = [ "Janno Põldma" ]
-
-// Tags for your project (for NuGet package)
-let tags = "x-tee x-road xtee xroad"
-
-// File system information
-let solutionFile  = "XRoadLib.sln"
-
-// Pattern specifying assemblies to be tested using NUnit
-let testAssemblies = "test/**/bin/Debug/*Tests.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -65,66 +29,40 @@ let gitRaw = environVarOrDefault "gitRaw" ("https://raw.github.com/" + gitOwner)
 // Strong name key file for assembly signing
 let keyFile = "src" @@ "XRoadLib.pfx"
 
-// --------------------------------------------------------------------------------------
-// END TODO: The rest of the file includes standard build steps
-// --------------------------------------------------------------------------------------
-
 // Read additional information from the release notes document
 let release = LoadReleaseNotes "RELEASE_NOTES.md"
 
-// Helper active pattern for project types
-let (|Fsproj|Csproj|Vbproj|Shproj|) (projFileName:string) =
-    match projFileName with
-    | f when f.EndsWith("fsproj") -> Fsproj
-    | f when f.EndsWith("csproj") -> Csproj
-    | f when f.EndsWith("vbproj") -> Vbproj
-    | f when f.EndsWith("shproj") -> Shproj
-    | _                           -> failwith (sprintf "Project file %s not supported. Unknown project type." projFileName)
-
-// Generate assembly info files with the right version & up-to-date information
-Target "AssemblyInfo" (fun _ ->
-    let getAssemblyInfoAttributes projectName =
-        [ Attribute.Title (projectName)
-          Attribute.Product project
-          Attribute.Description summary
-          Attribute.Version release.AssemblyVersion
-          Attribute.FileVersion release.AssemblyVersion
-          Attribute.InformationalVersion release.NugetVersion ]
-
-    let getProjectDetails projectPath =
-        let projectName = System.IO.Path.GetFileNameWithoutExtension(projectPath)
-        ( projectPath,
-          projectName,
-          System.IO.Path.GetDirectoryName(projectPath),
-          (getAssemblyInfoAttributes projectName)
-        )
-
-    !! "src/**/*.??proj"
-    |> Seq.map getProjectDetails
-    |> Seq.iter (fun (projFileName, projectName, folderName, attributes) ->
-        match projFileName with
-        | Fsproj -> CreateFSharpAssemblyInfo (folderName </> "AssemblyInfo.fs") attributes
-        | Csproj -> CreateCSharpAssemblyInfo ((folderName </> "Properties") </> "AssemblyInfo.cs") attributes
-        | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName </> "My Project") </> "AssemblyInfo.vb") attributes
-        | Shproj -> ()
-        )
-)
-
-// Copies binaries from default VS location to expected bin folder
-// But keeps a subdirectory structure for each project in the
-// src folder to support multiple project outputs
-Target "CopyBinaries" (fun _ ->
-    !! "src/**/*.??proj"
-    -- "src/**/*.shproj"
-    |>  Seq.map (fun f -> ((System.IO.Path.GetDirectoryName f) </> "bin/Release", "bin" </> (System.IO.Path.GetFileNameWithoutExtension f)))
-    |>  Seq.iter (fun (fromDir, toDir) -> CopyDir toDir fromDir (fun _ -> true))
-)
+// Projects which will be included in release
+let productProjects =
+    !! "src/*/project.json"
+    -- "src/XRoadLib.Extensions.ProtoBuf/*"
+    -- "src/XRoadLib.Tools/*"
 
 // --------------------------------------------------------------------------------------
-// Clean build results
+// Helper functions for dotnet command
+
+let Dotnet command args =
+    ExecProcess (fun p ->
+        p.FileName <- "dotnet"
+        p.Arguments <- String.Join(" ", command::args)
+        ) TimeSpan.MaxValue
+    |> ignore
+
+let DotnetSingleArg command arg = Dotnet command [arg]
+let DotnetBuild = Dotnet "build"
+let DotnetPack = Dotnet "pack"
+let DotnetRestore = DotnetSingleArg "restore"
+let DotnetTest = DotnetSingleArg "test"
+
+// --------------------------------------------------------------------------------------
+// Remove files generated by previous build
 
 Target "Clean" (fun _ ->
-    CleanDirs ["bin"; "temp"]
+    !! "src/*/bin"
+    ++ "test/*/bin"
+    ++ "bin"
+    ++ "temp"
+    |> CleanDirs
 )
 
 Target "CleanDocs" (fun _ ->
@@ -132,37 +70,37 @@ Target "CleanDocs" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// Build library & test project
+// Builds product assemblies in release mode
 
-Target "BuildDebug" (fun _ ->
-    !! solutionFile
-#if MONO
-    |> MSBuild "" "Rebuild" [ ("Configuration", "Debug"); ("DefineConstants", "MONO"); ("DefineConstants", "DEBUG") ]
-#else
-    |> MSBuildDebug "" "Rebuild"
-#endif
-    |> ignore
-)
-
-Target "Build" (fun _ ->
-    !! solutionFile
-#if MONO
-    |> MSBuildReleaseExt "" [ ("DefineConstants", "MONO") ] "Rebuild"
-#else
-    |> MSBuildRelease "" "Rebuild"
-#endif
-    |> ignore
+Target "BuildRelease" (fun _ ->
+    productProjects
+    |> Seq.iter (fun proj ->
+        DotnetRestore proj
+        DotnetBuild [proj; "--configuration"; "Release"])
 )
 
 // --------------------------------------------------------------------------------------
-// Run the unit tests using test runner
+// Copies binaries from default location to expected bin folder
+// But keeps a subdirectory structure for each project in the
+// src folder to support multiple project outputs
+
+Target "CopyBinaries" (fun _ ->
+    productProjects
+    |> Seq.map (fun f -> Path.GetDirectoryName(f))
+    |> Seq.filter (fun d -> Directory.Exists(d </> "bin" </> "Release" </> "net45"))
+    |> Seq.map (fun d -> (d </> "bin" </> "Release" </> "net45", "bin" </> DirectoryInfo(d).Name))
+    |> Seq.iter (fun (fromDir, toDir) -> CopyDir toDir fromDir (fun _ -> true))
+)
+
+// --------------------------------------------------------------------------------------
+// Run tests for all target framework versions
 
 Target "RunTests" (fun _ ->
-    ExecProcess(fun p ->
-        p.FileName <- "dotnet"
-        p.Arguments <- sprintf "test test/XRoadLib.Tests"
-        ) (TimeSpan.FromMinutes 10.0)
-    |> ignore
+    !! "test/*/project.json"
+    -- "test/XRoadLib.Tests.Contract/project.json"
+    |> Seq.iter (fun proj ->
+        DotnetRestore proj
+        DotnetTest proj)
 )
 
 #if MONO
@@ -172,7 +110,7 @@ Target "RunTests" (fun _ ->
 // the ability to step through the source code of external libraries http://ctaggart.github.io/SourceLink/
 
 Target "SourceLink" (fun _ ->
-    let baseUrl = sprintf "%s/%s/{0}/%%var2%%" gitRaw project
+    let baseUrl = sprintf "%s/XRoadLib/{0}/%%var2%%" gitRaw
     !! "src/**/*.??proj"
     -- "src/**/*.shproj"
     |> Seq.iter (fun projFile ->
@@ -187,11 +125,10 @@ Target "SourceLink" (fun _ ->
 // Build a NuGet package
 
 Target "NuGet" (fun _ ->
-    Paket.Pack(fun p ->
-        { p with
-            OutputPath = "bin"
-            Version = release.NugetVersion
-            ReleaseNotes = toLines release.Notes})
+    productProjects
+    |> Seq.iter (fun proj ->
+        let versionSuffix = release.SemVer.PreRelease |> Option.fold (fun _ v -> ["--version-suffix"; v.Origin]) []
+        DotnetPack ([proj; "--output"; "bin"; "--configuration"; "Release"] @ versionSuffix))
 )
 
 Target "PublishNuget" (fun _ ->
@@ -205,7 +142,7 @@ Target "PublishNuget" (fun _ ->
 // Generate the documentation
 
 
-let fakePath = "packages" </> "build" </> "FAKE" </> "tools" </> "FAKE.exe"
+let fakePath = "packages" </> "FAKE" </> "tools" </> "FAKE.exe"
 let fakeStartInfo script workingDirectory args fsiargs environmentVars =
     (fun (info: System.Diagnostics.ProcessStartInfo) ->
         info.FileName <- System.IO.Path.GetFullPath fakePath
@@ -391,15 +328,19 @@ Target "BuildPackage" DoNothing
 Target "All" DoNothing
 
 "Clean"
-  ==> "AssemblyInfo"
-  ==> "BuildDebug"
   ==> "RunTests"
-  ==> "Build"
+  ==> "BuildRelease"
+#if MONO
+#else
   ==> "CopyBinaries"
   ==> "GenerateReferenceDocs"
   ==> "GenerateDocs"
+#endif
   ==> "All"
+#if MONO
+#else
   =?> ("ReleaseDocs",isLocalBuild)
+#endif
 
 "All"
 #if MONO
@@ -409,6 +350,8 @@ Target "All" DoNothing
   ==> "NuGet"
   ==> "BuildPackage"
 
+#if MONO
+#else
 "CleanDocs"
   ==> "GenerateHelp"
   ==> "GenerateReferenceDocs"
@@ -419,12 +362,16 @@ Target "All" DoNothing
 
 "GenerateHelpDebug"
   ==> "KeepRunning"
+#endif
 
 "CheckKeyFile"
   ==> "Release"
 
+#if MONO
+#else
 "ReleaseDocs"
   ==> "Release"
+#endif
 
 "BuildPackage"
   ==> "PublishNuget"

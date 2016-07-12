@@ -5,7 +5,9 @@
   "authors": ["Janno Põldma"],
   "copyright": "Copyright © 2016",
   "buildOptions": {
-    "warningsAsErrors": true
+    "nowarn": ["CS1591"],
+    "warningsAsErrors": true,
+    "xmlDoc": true
   },
   "packOptions": {
     "owners": ["Janno Põldma"],
