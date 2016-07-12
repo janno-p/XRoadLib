@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>SoapMessageHelper - XRoadLib</title>
+    <title>XRoadRequestExtensions - XRoadLib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Janno Põldma"/>
@@ -35,9 +35,9 @@
 
 
 
-<h1>SoapMessageHelper</h1>
+<h1>XRoadRequestExtensions</h1>
 <p>
-  <span>Namespace: XRoadLib.Soap</span><br />
+  <span>Namespace: XRoadLib.Extensions</span><br />
 </p>
 <div class="xmldoc">
 </div>
@@ -50,25 +50,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '620', 620)" onmouseover="showTip(event, '620', 620)">
-            DeserializeSoapFault(reader)
+          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
+            GetContentTypeHeader(headers)
           </code>
-          <div class="tip" id="620">
-            <strong>Signature:</strong> reader:XmlReader -&gt; ISoapFault<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '621', 621)" onmouseover="showTip(event, '621', 621)">
-            SerializeSoapFaultResponse(...)
-          </code>
-          <div class="tip" id="621">
-            <strong>Signature:</strong> (writer:XmlWriter * faultCode:FaultCode * message:string * faultActor:string * faultDetail:string * exception:exn) -&gt; unit<br />
+          <div class="tip" id="62">
+            <strong>Signature:</strong> headers:NameValueCollection -&gt; string<br />
                       </div>
         </td>
         <td class="xmldoc">

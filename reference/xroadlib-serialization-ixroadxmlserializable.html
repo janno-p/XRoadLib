@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>SoapMessageHelper - XRoadLib</title>
+    <title>IXRoadXmlSerializable - XRoadLib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Janno Põldma"/>
@@ -35,26 +35,27 @@
 
 
 
-<h1>SoapMessageHelper</h1>
+<h1>IXRoadXmlSerializable</h1>
 <p>
-  <span>Namespace: XRoadLib.Soap</span><br />
+  <span>Namespace: XRoadLib.Serialization</span><br />
 </p>
 <div class="xmldoc">
 </div>
-  <h3>Static members</h3>
+  <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Static member</td><td>Description</td></tr>
+      <tr><td>Instance member</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '620', 620)" onmouseover="showTip(event, '620', 620)">
-            DeserializeSoapFault(reader)
+          <code onmouseout="hideTip(event, '420', 420)" onmouseover="showTip(event, '420', 420)">
+            ReadXml(reader, message)
           </code>
-          <div class="tip" id="620">
-            <strong>Signature:</strong> reader:XmlReader -&gt; ISoapFault<br />
+          <div class="tip" id="420">
+            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -64,11 +65,12 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '621', 621)" onmouseover="showTip(event, '621', 621)">
-            SerializeSoapFaultResponse(...)
+          <code onmouseout="hideTip(event, '421', 421)" onmouseover="showTip(event, '421', 421)">
+            WriteXml(writer, message)
           </code>
-          <div class="tip" id="621">
-            <strong>Signature:</strong> (writer:XmlWriter * faultCode:FaultCode * message:string * faultActor:string * faultDetail:string * exception:exn) -&gt; unit<br />
+          <div class="tip" id="421">
+            <strong>Signature:</strong> (writer:XmlWriter * message:XRoadMessage) -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
