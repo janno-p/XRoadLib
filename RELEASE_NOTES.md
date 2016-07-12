@@ -1,4 +1,4 @@
-#### 1.0.0-beta021 - Unreleased
+#### 1.0.0-beta021 - 12.07.2016
 * Add .NET Core support.
 * Validate presence of required elements inside sequences.
 * Optional namespace override for service root element.
