@@ -1,3 +1,6 @@
+#### 1.0.0-beta022 - 17.07.2016
+* Make .NET Core features available for .NET 4.5.1.
+
 #### 1.0.0-beta021 - 12.07.2016
 * Add .NET Core support.
 * Validate presence of required elements inside sequences.
