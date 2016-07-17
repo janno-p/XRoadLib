@@ -12,10 +12,10 @@ using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
 using XRoadLib.Extensions;
 
-#if NETSTANDARD1_5
-using Microsoft.AspNetCore.Http;
-#else
+#if NET40
 using System.Web;
+#else
+using Microsoft.AspNetCore.Http;
 #endif
 
 namespace XRoadLib.Serialization
@@ -69,12 +69,19 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
+#if NET451
+        public void LoadRequest(System.Web.HttpContext httpContext, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        {
+            LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, supportedProtocols);
+        }
+#endif
+
         public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
         {
-#if NETSTANDARD1_5
-            var requestStream = httpContext.Request.Body;
-#else
+#if NET40
             var requestStream = httpContext.Request.InputStream;
+#else
+            var requestStream = httpContext.Request.Body;
 #endif
             LoadRequest(requestStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, supportedProtocols);
         }
@@ -91,14 +98,26 @@ namespace XRoadLib.Serialization
                 reader.Read(this, true);
         }
 
-        public void SaveTo(HttpContext httpContext)
+#if NET451
+        public void SaveTo(System.Web.HttpContext httpContext)
         {
-#if NETSTANDARD1_5
-            var outputStream = httpContext.Response.Body;
-            var appendHeader = new Action<string, string>((k, v) => httpContext.Response.Headers[k] = v);
-#else
+
             var outputStream = httpContext.Response.OutputStream;
             var appendHeader = new Action<string, string>(httpContext.Response.AppendHeader);
+
+            using (var writer = new XRoadMessageWriter(outputStream))
+                writer.Write(this, contentType => httpContext.Response.ContentType = contentType, appendHeader);
+        }
+#endif
+
+        public void SaveTo(HttpContext httpContext)
+        {
+#if NET40
+            var outputStream = httpContext.Response.OutputStream;
+            var appendHeader = new Action<string, string>(httpContext.Response.AppendHeader);
+#else
+            var outputStream = httpContext.Response.Body;
+            var appendHeader = new Action<string, string>((k, v) => httpContext.Response.Headers[k] = v);
 #endif
 
             using (var writer = new XRoadMessageWriter(outputStream))

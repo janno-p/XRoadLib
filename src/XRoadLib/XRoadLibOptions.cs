@@ -1,4 +1,4 @@
-#if NETSTANDARD1_5
+#if !NET40
 
 using System;
 using System.Collections.Generic;

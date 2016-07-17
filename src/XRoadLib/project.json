@@ -17,13 +17,16 @@
     }
   },
   "packOptions": {
-    "owners": ["Janno Põldma"],
+    "owners": [ "Janno Põldma" ],
     "iconUrl": "https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png",
     "licenseUrl": "http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt",
     "projectUrl": "http://github.com/janno-p/XRoadLib",
     "requireLicenseAcceptance": false,
-    "tags": ["x-tee", "x-road", "xtee", "xroad"],
+    "tags": [ "x-tee", "x-road", "xtee", "xroad" ],
     "summary": "A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach."
+  },
+  "dependencies": {
+
   },
   "frameworks": {
     "netstandard1.5": {
@@ -50,7 +53,11 @@
         "System.Xml.Linq": ""
       }
     },
-    "net45": {
+    "net451": {
+      "dependencies": {
+        "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0"
+      },
       "frameworkAssemblies": {
         "System.Numerics": "",
         "System.Web": "",
