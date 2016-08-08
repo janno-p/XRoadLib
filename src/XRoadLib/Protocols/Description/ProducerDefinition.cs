@@ -380,7 +380,7 @@ namespace XRoadLib.Protocols.Description
             var n = 1;
             foreach (var namespaceImport in namespaceImports)
             {
-                schema.Includes.Add(new XmlSchemaImport { Namespace = namespaceImport });
+                schema.Includes.Add(new XmlSchemaImport { Namespace = namespaceImport, SchemaLocation = namespaceImport });
                 if (customNamespaces.Contains(namespaceImport))
                     schema.Namespaces.Add($"ns{n++}", namespaceImport);
             }
