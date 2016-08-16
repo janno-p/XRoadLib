@@ -1,3 +1,6 @@
+#### 1.0.0-beta024 - Unreleased
+* Trim quotes from content type header charset.
+
 #### 1.0.0-beta023 - 08.08.2016
 * Add schemaLocation attribute to Xml Schema import element.
 

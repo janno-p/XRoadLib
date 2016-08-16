@@ -272,26 +272,23 @@ namespace XRoadLib.Serialization
 
         private Encoding GetContentEncoding()
         {
-            var contentType = ExtractValue("charset=", contentTypeHeader, ";");
+            var contentType = ExtractValue("charset=", contentTypeHeader, ";")?.Trim().Trim('"');
             return string.IsNullOrWhiteSpace(contentType) || contentType.ToUpper().Equals("UTF-8") ? XRoadEncoding.UTF8 : Encoding.GetEncoding(contentType);
         }
 
         private string GetMultipartContentType()
         {
-            var value = ExtractValue("type=", contentTypeHeader, ";");
-            return value?.Replace("\"", "");
+            return ExtractValue("type=", contentTypeHeader, ";")?.Trim().Trim('"');
         }
 
         private string GetMultipartStartContentID()
         {
-            var value = ExtractValue("start=", contentTypeHeader, ";");
-            return value?.Replace("\"", "");
+            return ExtractValue("start=", contentTypeHeader, ";")?.Trim().Trim('"');
         }
 
         private string GetMultipartBoundary()
         {
-            var value = ExtractValue("boundary=", contentTypeHeader, ";");
-            return value?.Replace("\"", "");
+            return ExtractValue("boundary=", contentTypeHeader, ";")?.Trim().Trim('"');
         }
 
         private static bool IsMultipartMsg(string contentType)
