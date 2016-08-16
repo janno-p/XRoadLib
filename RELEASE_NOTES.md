@@ -1,4 +1,4 @@
-#### 1.0.0-beta024 - Unreleased
+#### 1.0.0-beta024 - 16.08.2016
 * Trim quotes from content type header charset.
 
 #### 1.0.0-beta023 - 08.08.2016
