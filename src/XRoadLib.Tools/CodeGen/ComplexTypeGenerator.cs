@@ -2,6 +2,7 @@ using System;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using XRoadLib.Tools.CodeGen.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace XRoadLib.Tools.CodeGen
@@ -121,16 +122,10 @@ namespace XRoadLib.Tools.CodeGen
 
         private TypeSyntax GetPredefinedType(XElement element)
         {
-            var typeAttribute = element.Attribute("type");
-            if (typeAttribute == null)
-                return null;
+            var typeName = element.GetAttributeAsXName("type");
 
-            var parts = typeAttribute.Value.Split(new[] { ':' }, 2);
-            var ns = parts.Length == 1 ? element.GetNamespaceOfPrefix("") : element.GetNamespaceOfPrefix(parts[0]);
-            var name = parts.Length == 1 ? parts[0] : parts[1];
-
-            if (ns == NamespaceConstants.XSD)
-                switch (name)
+            if (typeName.NamespaceName == NamespaceConstants.XSD)
+                switch (typeName.LocalName)
                 {
                     case "base64Binary": return ParseTypeName("Stream");
                     case "date": return ParseTypeName("DateTime");
@@ -138,7 +133,7 @@ namespace XRoadLib.Tools.CodeGen
                     case "string": return PredefinedType(Token(SyntaxKind.StringKeyword));
                 }
 
-            throw new NotImplementedException(XName.Get(name, ns.NamespaceName).ToString());
+            throw new NotImplementedException(typeName.ToString());
         }
     }
 }

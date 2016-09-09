@@ -261,3 +261,5 @@ release.cmd
 docs/content/*.md
 docs/output/**/*.*
 temp/
+
+!lib/**/*.nupkg
