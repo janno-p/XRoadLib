@@ -8,8 +8,8 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
     public class IntFragment : SimpleTypeFragment
     {
-        public IntFragment(string elementName, bool isOptional)
-            : base(elementName, isOptional, PredefinedType(Token(SyntaxKind.IntKeyword)))
+        public IntFragment(string elementName, bool isNullable, bool isOptional)
+            : base(elementName, isOptional, isNullable, PredefinedType(Token(SyntaxKind.IntKeyword)))
         { }
 
         public override SyntaxList<StatementSyntax> BuildDeserializationStatements()

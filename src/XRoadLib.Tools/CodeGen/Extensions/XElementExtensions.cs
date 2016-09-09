@@ -9,6 +9,11 @@ namespace XRoadLib.Tools.CodeGen.Extensions
             return element.Attribute("name")?.Value;
         }
 
+        public static bool IsNullable(this XElement element)
+        {
+            return (element.Attribute("nillable")?.AsBoolean()).GetValueOrDefault(false);
+        }
+
         public static bool IsOptional(this XElement element)
         {
             return element.GetMinOccurs() == 0;
@@ -22,6 +27,11 @@ namespace XRoadLib.Tools.CodeGen.Extensions
         public static int GetMaxOccurs(this XElement element)
         {
             return (element.Attribute("maxOccurs")?.AsInt32()).GetValueOrDefault(1);
+        }
+
+        public static bool HasAttribute(this XElement element, string attributeName)
+        {
+            return element.Attribute(attributeName) != null;
         }
     }
 }

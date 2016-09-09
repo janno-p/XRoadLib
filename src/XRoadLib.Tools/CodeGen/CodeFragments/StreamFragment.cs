@@ -8,7 +8,7 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
     public class StreamFragment : SimpleTypeFragment
     {
         public StreamFragment(string elementName, bool isOptional)
-            : base(elementName, isOptional, ParseTypeName("Stream"))
+            : base(elementName, isOptional, false, ParseTypeName("Stream"))
         { }
 
         public override SyntaxList<StatementSyntax> BuildDeserializationStatements()

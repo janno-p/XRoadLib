@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Tools.CodeGen.Extensions;
 
@@ -7,18 +8,18 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
     public static class CodeFragmentFactory
     {
-        private static readonly IDictionary<string, Func<string, bool, ICodeFragment>> builders = new Dictionary<string, Func<string, bool, ICodeFragment>>
+        private static readonly IDictionary<string, Func<string, bool, bool, ICodeFragment>> builders = new Dictionary<string, Func<string, bool, bool, ICodeFragment>>
         {
-            { "string", (nm, nil) => new StringFragment(nm, nil) },
-            { "date", (nm, nil) => new DateFragment(nm, nil) },
-            { "dateTime", (nm, nil) => new DateTimeFragment(nm, nil) },
-            { "long", (nm, nil) => new LongFragment(nm, nil) },
-            { "base64Binary", (nm, nil) => new StreamFragment(nm, nil) },
-            { "int", (nm, nil) => new IntFragment(nm, nil) },
-            { "decimal", (nm, nil) => new DecimalFragment(nm, nil) },
+            { "string", (nm, nil, opt) => new StringFragment(nm, opt) },
+            { "date", (nm, nil, opt) => new DateFragment(nm, nil, opt) },
+            { "dateTime", (nm, nil, opt) => new DateTimeFragment(nm, nil, opt) },
+            { "long", (nm, nil, opt) => new LongFragment(nm, nil, opt) },
+            { "base64Binary", (nm, nil, opt) => new StreamFragment(nm, opt) },
+            { "int", (nm, nil, opt) => new IntFragment(nm, nil, opt) },
+            { "decimal", (nm, nil, opt) => new DecimalFragment(nm, nil, opt) },
         };
 
-        public static ICodeFragment GetElementFragment(XElement element)
+        public static ICodeFragment GetElementFragment(XElement element, IDictionary<XmlQualifiedName, bool> referencedTypes)
         {
             var typeAttribute = element.Attribute("type");
             if (typeAttribute == null)
@@ -26,29 +27,20 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 
             var typeName = typeAttribute.AsXName();
 
-            Func<string, bool, ICodeFragment> func;
+            Func<string, bool, bool, ICodeFragment> func;
             if (typeName.NamespaceName.Equals(NamespaceConstants.XSD) && builders.TryGetValue(typeName.LocalName, out func))
-                return func(element.Attribute("name").Value, element.IsOptional());
+                return func(element.GetName(), element.IsNullable(), element.IsOptional());
 
-            throw new NotImplementedException(element.ToString());
+            ReferenceType(referencedTypes, typeName);
+
+            return new ReferencedTypeFragment(element.GetName(), typeName.LocalName, element.IsOptional());
         }
 
-        /*
-        private TypeSyntax GetPredefinedType(XElement element)
+        public static void ReferenceType(IDictionary<XmlQualifiedName, bool> referencedTypes, XName typeName)
         {
-            var typeName = element.GetAttributeAsXName("type");
-
-            if (typeName.NamespaceName == NamespaceConstants.XSD)
-                switch (typeName.LocalName)
-                {
-                    case "base64Binary": return ParseTypeName("Stream");
-                    case "date": return ParseTypeName("DateTime");
-                    case "long": return PredefinedType(Token(SyntaxKind.LongKeyword));
-                    case "string": return PredefinedType(Token(SyntaxKind.StringKeyword));
-                }
-
-            throw new NotImplementedException(typeName.ToString());
+            var qualifiedName = new XmlQualifiedName(typeName.LocalName, typeName.NamespaceName);
+            if (!referencedTypes.ContainsKey(qualifiedName))
+                referencedTypes[qualifiedName] = false;
         }
-        */
     }
 }

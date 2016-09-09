@@ -8,8 +8,8 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
     public class LongFragment : SimpleTypeFragment
     {
-        public LongFragment(string elementName, bool isOptional)
-            : base(elementName, isOptional, PredefinedType(Token(SyntaxKind.LongKeyword)))
+        public LongFragment(string elementName, bool isNullable, bool isOptional)
+            : base(elementName, isOptional, isNullable, PredefinedType(Token(SyntaxKind.LongKeyword)))
         { }
 
         public override SyntaxList<StatementSyntax> BuildDeserializationStatements()

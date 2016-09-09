@@ -7,8 +7,8 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
     public class DateFragment : SimpleTypeFragment
     {
-        public DateFragment(string elementName, bool isOptional)
-            : base(elementName, isOptional, ParseTypeName("DateTime"))
+        public DateFragment(string elementName, bool isNullable, bool isOptional)
+            : base(elementName, isOptional, isNullable, ParseTypeName("DateTime"))
         { }
 
         public override SyntaxList<StatementSyntax> BuildDeserializationStatements()

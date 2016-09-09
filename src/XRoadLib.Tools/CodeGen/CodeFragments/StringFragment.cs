@@ -9,7 +9,7 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
     public class StringFragment : SimpleTypeFragment
     {
         public StringFragment(string elementName, bool isOptional)
-            : base(elementName, isOptional, PredefinedType(Token(SyntaxKind.StringKeyword)))
+            : base(elementName, isOptional, false, PredefinedType(Token(SyntaxKind.StringKeyword)))
         { }
 
         public override SyntaxList<StatementSyntax> BuildDeserializationStatements()

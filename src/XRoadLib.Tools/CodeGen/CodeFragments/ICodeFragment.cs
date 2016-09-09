@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Xml;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -5,9 +7,10 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
     public interface ICodeFragment
     {
-        PropertyDeclarationSyntax BuildPropertyDeclaration();
+        IPropertyFragment PropertyFragment { get; }
+
         SyntaxList<StatementSyntax> BuildSerializationStatements();
         SyntaxList<StatementSyntax> BuildDeserializationStatements();
-        ClassDeclarationSyntax BuildTypeDeclaration();
+        ClassDeclarationSyntax BuildTypeDeclaration(IDictionary<XmlQualifiedName, bool> referencedTypes);
     }
 }

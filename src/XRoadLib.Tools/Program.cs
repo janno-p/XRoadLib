@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
@@ -58,6 +60,8 @@ namespace XRoadLib.Tools
                     var serviceGenerator = new ServiceGenerator(definitionsElement.Element(XName.Get("service", NamespaceConstants.WSDL)));
                     serviceGenerator.Generate().SaveFile(Path.Combine(directory.FullName, $"{serviceGenerator.ServiceName}.cs"));
 
+                    var referencedTypes = new Dictionary<XmlQualifiedName, bool>();
+
                     definitionsElement.Elements(XName.Get("portType", NamespaceConstants.WSDL))
                                       .Select(e => new PortTypeGenerator(e))
                                       .ToList()
@@ -77,7 +81,7 @@ namespace XRoadLib.Tools
                                       .SelectMany(e => e.Elements(XName.Get("complexType", NamespaceConstants.XSD)))
                                       .Select(e => new ComplexTypeFragment(e.GetName(), e))
                                       .ToList()
-                                      .ForEach(f => f.BuildTypeDeclaration().SaveToFile(typesDirectory.FullName));
+                                      .ForEach(f => f.BuildTypeDeclaration(referencedTypes).SaveToFile(typesDirectory.FullName));
 
                     return 0;
                 });

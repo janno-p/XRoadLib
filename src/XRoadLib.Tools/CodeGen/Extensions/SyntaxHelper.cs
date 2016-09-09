@@ -20,16 +20,5 @@ namespace XRoadLib.Tools.CodeGen.Extensions
                 name = name.Substring(0, name.IndexOf("`"));
             return name;
         }
-
-        public static PropertyDeclarationSyntax BuildProperty(TypeSyntax typeSyntax, bool isOptional, SyntaxToken propertyNameToken)
-        {
-            return PropertyDeclaration(isOptional ? typeSyntax.AsOptionalType() : typeSyntax, propertyNameToken)
-                .AddModifiers(Token(SyntaxKind.PublicKeyword))
-                .AddAccessorListAccessors(
-                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
-        }
     }
 }

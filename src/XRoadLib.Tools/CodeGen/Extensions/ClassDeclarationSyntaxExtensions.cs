@@ -9,7 +9,8 @@ namespace XRoadLib.Tools.CodeGen.Extensions
         public static CompilationUnitSyntax ToCompilationUnit(this ClassDeclarationSyntax classDeclarationSyntax)
         {
             return CompilationUnit()
-                     .AddUsings(UsingDirective(IdentifierName("System")),
+                     .AddUsings(UsingDirective(IdentifierName("Optional")),
+                                UsingDirective(IdentifierName("System")),
                                 UsingDirective(IdentifierName("System.IO")),
                                 UsingDirective(IdentifierName("System.Xml")),
                                 UsingDirective(IdentifierName("XRoadLib.Serialization")))

@@ -8,8 +8,8 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
     public class DecimalFragment : SimpleTypeFragment
     {
-        public DecimalFragment(string elementName, bool isOptional)
-            : base(elementName, isOptional, PredefinedType(Token(SyntaxKind.DecimalKeyword)))
+        public DecimalFragment(string elementName, bool isNullable, bool isOptional)
+            : base(elementName, isOptional, isNullable, PredefinedType(Token(SyntaxKind.DecimalKeyword)))
         { }
 
         public override SyntaxList<StatementSyntax> BuildDeserializationStatements()

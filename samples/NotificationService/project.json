@@ -11,6 +11,7 @@
           "type": "platform",
           "version": "1.0.0"
         },
+        "Optional": "3.1.0",
         "XRoadLib": "1.0.0-*"
       }
     }
