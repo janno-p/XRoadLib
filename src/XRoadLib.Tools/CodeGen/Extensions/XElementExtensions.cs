@@ -4,17 +4,24 @@ namespace XRoadLib.Tools.CodeGen.Extensions
 {
     public static class XElementExtensions
     {
-        public static XName GetAttributeAsXName(this XElement element, XName attributeName)
+        public static string GetName(this XElement element)
         {
-            var typeAttribute = element.Attribute(attributeName);
-            if (typeAttribute == null)
-                return null;
+            return element.Attribute("name")?.Value;
+        }
 
-            var parts = typeAttribute.Value.Split(new[] { ':' }, 2);
-            var ns = parts.Length == 1 ? element.GetNamespaceOfPrefix("") : element.GetNamespaceOfPrefix(parts[0]);
-            var name = parts.Length == 1 ? parts[0] : parts[1];
+        public static bool IsOptional(this XElement element)
+        {
+            return element.GetMinOccurs() == 0;
+        }
 
-            return XName.Get(name, ns.NamespaceName);
+        public static int GetMinOccurs(this XElement element)
+        {
+            return (element.Attribute("minOccurs")?.AsInt32()).GetValueOrDefault(1);
+        }
+
+        public static int GetMaxOccurs(this XElement element)
+        {
+            return (element.Attribute("maxOccurs")?.AsInt32()).GetValueOrDefault(1);
         }
     }
 }

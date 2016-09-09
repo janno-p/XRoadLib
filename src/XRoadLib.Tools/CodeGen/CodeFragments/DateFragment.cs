@@ -1,15 +1,14 @@
 using System;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
-    public class StringFragment : SimpleTypeFragment
+    public class DateFragment : SimpleTypeFragment
     {
-        public StringFragment(string elementName, bool isOptional)
-            : base(elementName, isOptional, PredefinedType(Token(SyntaxKind.StringKeyword)))
+        public DateFragment(string elementName, bool isOptional)
+            : base(elementName, isOptional, ParseTypeName("DateTime"))
         { }
 
         public override SyntaxList<StatementSyntax> BuildDeserializationStatements()

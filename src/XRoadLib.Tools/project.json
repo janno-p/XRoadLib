@@ -1,7 +1,9 @@
 {
   "version": "1.0.0-*",
   "buildOptions": {
+    "emitEntryPoint": true,
     "nowarn": ["CS1591"],
+    "outputName": "dotnet-xroad-gen",
     "warningsAsErrors": true
   },
   "configurations": {

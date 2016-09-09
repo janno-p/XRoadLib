@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using XRoadLib.Tools.CodeGen;
+using XRoadLib.Tools.CodeGen.CodeFragments;
 using XRoadLib.Tools.CodeGen.Extensions;
 
 namespace XRoadLib.Tools
@@ -39,13 +42,12 @@ namespace XRoadLib.Tools
 
                 var wsdlArgument = app.Argument("[wsdl]", "Url of service description file");
 
-                app.OnExecute(() =>
+                app.OnExecute(async () =>
                 {
                     if (string.IsNullOrEmpty(wsdlArgument.Value))
                         throw new ArgumentNullException("WSDL location url is required.");
 
-                    var fileLocation = ResolveUri(wsdlArgument.Value);
-                    var doc = XDocument.Load(fileLocation);
+                    var doc = await LoadServiceDescriptionAsync(wsdlArgument.Value);
 
                     var directory = new DirectoryInfo(optOutput.HasValue() ? optOutput.Value() : "Output");
                     if (!directory.Exists)
@@ -73,11 +75,10 @@ namespace XRoadLib.Tools
                     definitionsElement.Elements(XName.Get("types", NamespaceConstants.WSDL))
                                       .SelectMany(e => e.Elements(XName.Get("schema", NamespaceConstants.XSD)))
                                       .SelectMany(e => e.Elements(XName.Get("complexType", NamespaceConstants.XSD)))
-                                      .Select(e => new ComplexTypeGenerator(e))
+                                      .Select(e => new ComplexTypeFragment(e.GetName(), e))
                                       .ToList()
-                                      .ForEach(g => g.Generate().SaveFile(Path.Combine(typesDirectory.FullName, $"{g.TypeName}.cs")));
+                                      .ForEach(f => f.BuildTypeDeclaration().SaveToFile(typesDirectory.FullName));
 
-                    logger.LogInformation(fileLocation);
                     return 0;
                 });
 
@@ -85,9 +86,29 @@ namespace XRoadLib.Tools
             }
             catch (Exception exception)
             {
-                logger.LogCritical($"Command failed: {exception.Message}");
+                logger.LogCritical($"Command failed: {exception}");
                 return 1;
             }
+        }
+
+        private async Task<XDocument> LoadServiceDescriptionAsync(string uri)
+        {
+            if (Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+            {
+                logger.LogInformation($"Requesting service description from network location: {uri}.");
+                using (var client = new HttpClient())
+                using (var stream = await client.GetStreamAsync(uri))
+                    return XDocument.Load(stream);
+            }
+
+            var fileInfo = new FileInfo(uri);
+            if (fileInfo.Exists)
+            {
+                logger.LogInformation($"Requesting service description from file: {fileInfo.FullName}.");
+                return XDocument.Load(fileInfo.FullName);
+            }
+
+            throw new FileNotFoundException($"Cannot resolve wsdl location `{uri}`.");
         }
 
         private static string GetInformationalVersion()
@@ -95,18 +116,6 @@ namespace XRoadLib.Tools
             var assembly = typeof(Program).GetTypeInfo().Assembly;
             var attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             return attribute == null ? assembly.GetName().Version.ToString() : attribute.InformationalVersion;
-        }
-
-        private static string ResolveUri(string uri)
-        {
-            if (Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-                return uri;
-
-            var fileInfo = new FileInfo(uri);
-            if (fileInfo.Exists)
-                return fileInfo.FullName;
-
-            throw new FileNotFoundException($"Cannot resolve wsdl location `{uri}`.");
         }
 
         public static int Main(string[] args)

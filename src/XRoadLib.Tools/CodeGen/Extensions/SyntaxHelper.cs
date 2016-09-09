@@ -1,4 +1,6 @@
 using System;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -19,9 +21,15 @@ namespace XRoadLib.Tools.CodeGen.Extensions
             return name;
         }
 
-        public static TypeSyntax GetOptionalType(TypeSyntax type)
+        public static PropertyDeclarationSyntax BuildProperty(TypeSyntax typeSyntax, bool isOptional, SyntaxToken propertyNameToken)
         {
-            return GenericName(Identifier("Option"), TypeArgumentList(SeparatedList(new[] { type })));
+            return PropertyDeclaration(isOptional ? typeSyntax.AsOptionalType() : typeSyntax, propertyNameToken)
+                .AddModifiers(Token(SyntaxKind.PublicKeyword))
+                .AddAccessorListAccessors(
+                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
         }
     }
 }

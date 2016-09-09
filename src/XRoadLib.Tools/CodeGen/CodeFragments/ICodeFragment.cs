@@ -8,5 +8,6 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
         PropertyDeclarationSyntax BuildPropertyDeclaration();
         SyntaxList<StatementSyntax> BuildSerializationStatements();
         SyntaxList<StatementSyntax> BuildDeserializationStatements();
+        ClassDeclarationSyntax BuildTypeDeclaration();
     }
 }

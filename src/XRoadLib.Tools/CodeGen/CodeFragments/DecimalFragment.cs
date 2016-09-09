@@ -6,10 +6,10 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
-    public class StringFragment : SimpleTypeFragment
+    public class DecimalFragment : SimpleTypeFragment
     {
-        public StringFragment(string elementName, bool isOptional)
-            : base(elementName, isOptional, PredefinedType(Token(SyntaxKind.StringKeyword)))
+        public DecimalFragment(string elementName, bool isOptional)
+            : base(elementName, isOptional, PredefinedType(Token(SyntaxKind.DecimalKeyword)))
         { }
 
         public override SyntaxList<StatementSyntax> BuildDeserializationStatements()
