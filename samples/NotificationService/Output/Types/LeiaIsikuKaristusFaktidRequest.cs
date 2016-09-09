@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -15,7 +17,7 @@ namespace MyNamespace
 
         public class KvalifikatsiooniPeatykiNimetusKLType : IXRoadXmlSerializable
         {
-            public Option<string> item { get; set; }
+            public IList<string> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -30,7 +32,7 @@ namespace MyNamespace
 
         public class KvalifikatsiooniObjektIDType : IXRoadXmlSerializable
         {
-            public Option<string> item { get; set; }
+            public IList<string> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -44,7 +46,7 @@ namespace MyNamespace
         public Option<KvalifikatsiooniObjektIDType> KvalifikatsiooniObjektID { get; set; }
         public boolean OtsiArhiivist { get; set; }
         public Option<boolean> OnPiiratudParing { get; set; }
-        public Option<long> ParinguID { get; set; }
+        public Option<long?> ParinguID { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

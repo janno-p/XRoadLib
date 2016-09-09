@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -11,7 +13,7 @@ namespace MyNamespace
 
         public class SeisundKLFilterType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -26,7 +28,7 @@ namespace MyNamespace
 
         public class TyypKLFilterType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -41,7 +43,7 @@ namespace MyNamespace
 
         public class LiikKLFilterType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

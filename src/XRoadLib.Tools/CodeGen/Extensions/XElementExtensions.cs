@@ -14,9 +14,14 @@ namespace XRoadLib.Tools.CodeGen.Extensions
             return (element.Attribute("nillable")?.AsBoolean()).GetValueOrDefault(false);
         }
 
+        public static bool IsCollection(this XElement element)
+        {
+            return element.GetMaxOccurs() > 1;
+        }
+
         public static bool IsOptional(this XElement element)
         {
-            return element.GetMinOccurs() == 0;
+            return element.GetMinOccurs() == 0 && !element.IsCollection();
         }
 
         public static int GetMinOccurs(this XElement element)

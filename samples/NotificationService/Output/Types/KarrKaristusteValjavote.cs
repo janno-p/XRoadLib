@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -9,7 +11,7 @@ namespace MyNamespace
     {
         public class ArhiveeritudOtsusedType : IXRoadXmlSerializable
         {
-            public Option<KarrOtsus> item { get; set; }
+            public IList<KarrOtsus> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -24,7 +26,7 @@ namespace MyNamespace
 
         public class KehtivadOtsusedType : IXRoadXmlSerializable
         {
-            public Option<KarrOtsus> item { get; set; }
+            public IList<KarrOtsus> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

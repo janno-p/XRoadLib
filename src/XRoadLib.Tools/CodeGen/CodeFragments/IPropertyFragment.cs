@@ -4,6 +4,6 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
     public interface IPropertyFragment
     {
-        PropertyDeclarationSyntax BuildPropertyDeclaration();
+        PropertyDeclarationSyntax BuildPropertyDeclaration(bool isCollection);
     }
 }

@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -9,7 +11,7 @@ namespace MyNamespace
     {
         public class JareleparimisedType : IXRoadXmlSerializable
         {
-            public Option<KarrJareleparimine> item { get; set; }
+            public IList<KarrJareleparimine> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -21,8 +23,8 @@ namespace MyNamespace
         }
 
         public Option<JareleparimisedType> Jareleparimised { get; set; }
-        public Option<DateTime> VahemikuAlgusKP { get; set; }
-        public Option<DateTime> VahemikuLoppKP { get; set; }
+        public Option<DateTime?> VahemikuAlgusKP { get; set; }
+        public Option<DateTime?> VahemikuLoppKP { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

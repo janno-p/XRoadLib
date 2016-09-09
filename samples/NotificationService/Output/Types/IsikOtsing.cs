@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -14,7 +16,7 @@ namespace MyNamespace
 
         public class MenetlusSubjektiLiikKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -32,7 +34,7 @@ namespace MyNamespace
 
         public class OsalineKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

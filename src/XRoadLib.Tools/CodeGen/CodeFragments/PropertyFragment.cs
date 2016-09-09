@@ -20,7 +20,7 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
             this.propertyType = propertyType;
         }
 
-        public PropertyDeclarationSyntax BuildPropertyDeclaration()
+        public PropertyDeclarationSyntax BuildPropertyDeclaration(bool isCollection)
         {
             var typeSyntax = propertyType;
 
@@ -29,6 +29,9 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 
             if (isOptional)
                 typeSyntax = typeSyntax.AsOptionalType();
+
+            if (isCollection)
+                typeSyntax = GenericName(Identifier("IList"), TypeArgumentList(SingletonSeparatedList(typeSyntax)));
 
             var propertyDeclaration = PropertyDeclaration(typeSyntax, Identifier(propertyName))
                 .AddModifiers(Token(SyntaxKind.PublicKeyword));

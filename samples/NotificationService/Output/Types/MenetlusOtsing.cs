@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -7,14 +9,14 @@ namespace MyNamespace
 {
     public class MenetlusOtsing : IXRoadXmlSerializable
     {
-        public Option<DateTime> AlgusKP { get; set; }
-        public Option<DateTime> AlgusKPVahemikuLoppKP { get; set; }
-        public Option<DateTime> AsjaAlgusKP { get; set; }
-        public Option<DateTime> AsjaAlgusKPVahemikuLoppKP { get; set; }
+        public Option<DateTime?> AlgusKP { get; set; }
+        public Option<DateTime?> AlgusKPVahemikuLoppKP { get; set; }
+        public Option<DateTime?> AsjaAlgusKP { get; set; }
+        public Option<DateTime?> AsjaAlgusKPVahemikuLoppKP { get; set; }
 
         public class AsjaLiikKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -26,16 +28,16 @@ namespace MyNamespace
         }
 
         public Option<AsjaLiikKLType> AsjaLiikKL { get; set; }
-        public Option<long> AsjaMenetlevRiikKL { get; set; }
+        public Option<long?> AsjaMenetlevRiikKL { get; set; }
         public Option<string> AsjaNR { get; set; }
-        public Option<long> AsjaObjektID { get; set; }
-        public Option<long> AsjaSeisundKL { get; set; }
-        public Option<DateTime> AsjaSeisundKP { get; set; }
-        public Option<DateTime> AsjaSeisundKPVahemikuLoppKP { get; set; }
+        public Option<long?> AsjaObjektID { get; set; }
+        public Option<long?> AsjaSeisundKL { get; set; }
+        public Option<DateTime?> AsjaSeisundKP { get; set; }
+        public Option<DateTime?> AsjaSeisundKPVahemikuLoppKP { get; set; }
 
         public class AsjaStaadiumKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -47,13 +49,13 @@ namespace MyNamespace
         }
 
         public Option<AsjaStaadiumKLType> AsjaStaadiumKL { get; set; }
-        public Option<DateTime> AsjaStaadiumKP { get; set; }
+        public Option<DateTime?> AsjaStaadiumKP { get; set; }
         public Option<boolean> EXCLUDE { get; set; }
-        public Option<long> JrkNr { get; set; }
+        public Option<long?> JrkNr { get; set; }
 
         public class KehtivadKohustisedType : IXRoadXmlSerializable
         {
-            public Option<KohustisOtsing> item { get; set; }
+            public IList<KohustisOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -65,15 +67,15 @@ namespace MyNamespace
         }
 
         public Option<KehtivadKohustisedType> KehtivadKohustised { get; set; }
-        public Option<DateTime> KohtuasjaAlgusKP { get; set; }
-        public Option<DateTime> KohtuasjaAlgusKPVahemikuLoppKP { get; set; }
+        public Option<DateTime?> KohtuasjaAlgusKP { get; set; }
+        public Option<DateTime?> KohtuasjaAlgusKPVahemikuLoppKP { get; set; }
         public Option<string> KohtuasjaPealkiri { get; set; }
         public Option<string> KOLANR { get; set; }
         public Option<string> KvalifikatsioonidCSV { get; set; }
 
         public class LubatudObjektIDdType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -91,7 +93,7 @@ namespace MyNamespace
 
         public class MenetlevadAsutusedType : IXRoadXmlSerializable
         {
-            public Option<JuriidilineIsikOtsing> item { get; set; }
+            public IList<JuriidilineIsikOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -109,7 +111,7 @@ namespace MyNamespace
 
         public class MenetluseSisulineLiigitusType : IXRoadXmlSerializable
         {
-            public Option<MenetluseSisulineLiigitusOtsing> item { get; set; }
+            public IList<MenetluseSisulineLiigitusOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -124,7 +126,7 @@ namespace MyNamespace
 
         public class MenetlusLiigiAlaLiikKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -139,7 +141,7 @@ namespace MyNamespace
 
         public class MenetlusLiikKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -152,11 +154,11 @@ namespace MyNamespace
 
         public Option<MenetlusLiikKLType> MenetlusLiikKL { get; set; }
         public Option<string> Nimetus { get; set; }
-        public Option<long> ObjektID { get; set; }
+        public Option<long?> ObjektID { get; set; }
 
         public class OsalisedType : IXRoadXmlSerializable
         {
-            public Option<OsalineOtsing> item { get; set; }
+            public IList<OsalineOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -169,13 +171,13 @@ namespace MyNamespace
 
         public Option<OsalisedType> Osalised { get; set; }
         public Option<boolean> PuudutabAlaealisi { get; set; }
-        public Option<DateTime> RegistreerimiseKP { get; set; }
-        public Option<DateTime> RegistreerimiseKPVahemikuLoppKP { get; set; }
-        public Option<long> SalastatuseTaseKL { get; set; }
+        public Option<DateTime?> RegistreerimiseKP { get; set; }
+        public Option<DateTime?> RegistreerimiseKPVahemikuLoppKP { get; set; }
+        public Option<long?> SalastatuseTaseKL { get; set; }
 
         public class SeisundKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -187,12 +189,12 @@ namespace MyNamespace
         }
 
         public Option<SeisundKLType> SeisundKL { get; set; }
-        public Option<DateTime> SeisundKP { get; set; }
-        public Option<DateTime> SeisundKPVahemikuLoppKP { get; set; }
+        public Option<DateTime?> SeisundKP { get; set; }
+        public Option<DateTime?> SeisundKPVahemikuLoppKP { get; set; }
 
         public class SyyteosyndmusedType : IXRoadXmlSerializable
         {
-            public Option<SyyteosyndmusOtsing> item { get; set; }
+            public IList<SyyteosyndmusOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -207,7 +209,7 @@ namespace MyNamespace
 
         public class ToimingudType : IXRoadXmlSerializable
         {
-            public Option<ToimingOtsing> item { get; set; }
+            public IList<ToimingOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -222,7 +224,7 @@ namespace MyNamespace
 
         public class TyypKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -234,8 +236,8 @@ namespace MyNamespace
         }
 
         public Option<TyypKLType> TyypKL { get; set; }
-        public Option<DateTime> ViimaseToiminguAlgusKP { get; set; }
-        public Option<DateTime> ViimaseToiminguAlgusKPVahemikuLoppKP { get; set; }
+        public Option<DateTime?> ViimaseToiminguAlgusKP { get; set; }
+        public Option<DateTime?> ViimaseToiminguAlgusKPVahemikuLoppKP { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

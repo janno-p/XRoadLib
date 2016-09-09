@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -7,12 +9,12 @@ namespace MyNamespace
 {
     public class AsiOtsing : IXRoadXmlSerializable
     {
-        public Option<DateTime> AsjaAlgusKP { get; set; }
-        public Option<DateTime> AsjaAlgusKPVahemikuLoppKP { get; set; }
+        public Option<DateTime?> AsjaAlgusKP { get; set; }
+        public Option<DateTime?> AsjaAlgusKPVahemikuLoppKP { get; set; }
 
         public class AsjaLiikKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -25,12 +27,12 @@ namespace MyNamespace
 
         public Option<AsjaLiikKLType> AsjaLiikKL { get; set; }
         public Option<string> AsjaNR { get; set; }
-        public Option<long> AsjaObjektID { get; set; }
-        public Option<long> AsjaSeisundKL { get; set; }
+        public Option<long?> AsjaObjektID { get; set; }
+        public Option<long?> AsjaSeisundKL { get; set; }
 
         public class ByrooOsalisedType : IXRoadXmlSerializable
         {
-            public Option<OsalineOtsing> item { get; set; }
+            public IList<OsalineOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -46,7 +48,7 @@ namespace MyNamespace
 
         public class MenetlusedType : IXRoadXmlSerializable
         {
-            public Option<MenetlusOtsing> item { get; set; }
+            public IList<MenetlusOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -61,7 +63,7 @@ namespace MyNamespace
 
         public class OsalisedType : IXRoadXmlSerializable
         {
-            public Option<OsalineOtsing> item { get; set; }
+            public IList<OsalineOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

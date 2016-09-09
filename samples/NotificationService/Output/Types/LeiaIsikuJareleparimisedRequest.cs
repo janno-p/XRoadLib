@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -12,8 +14,8 @@ namespace MyNamespace
         public Isik KontrollitavIsik { get; set; }
         public Option<Maksekorraldus> Maksekorraldus { get; set; }
         public Option<KARRParinguAndmed> ParinguAndmed { get; set; }
-        public Option<DateTime> VahemikuAlgusKP { get; set; }
-        public Option<DateTime> VahemikuLoppKP { get; set; }
+        public Option<DateTime?> VahemikuAlgusKP { get; set; }
+        public Option<DateTime?> VahemikuLoppKP { get; set; }
         public Option<string> AvalduseNR { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

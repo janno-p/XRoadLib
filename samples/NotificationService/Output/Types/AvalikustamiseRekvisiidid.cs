@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -7,11 +9,11 @@ namespace MyNamespace
 {
     public class AvalikustamiseRekvisiidid : Ymbrik
     {
-        public Option<long> AvalikustamiseMargeKL { get; set; }
+        public Option<long?> AvalikustamiseMargeKL { get; set; }
 
         public class FailidType : IXRoadXmlSerializable
         {
-            public Option<Fail> item { get; set; }
+            public IList<Fail> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -26,7 +28,7 @@ namespace MyNamespace
 
         public class HoiatusedType : IXRoadXmlSerializable
         {
-            public Option<ETHoiatus> item { get; set; }
+            public IList<ETHoiatus> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

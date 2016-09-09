@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -7,13 +9,13 @@ namespace MyNamespace
 {
     public class Olek : IXRoadXmlSerializable
     {
-        public Option<DateTime> AlgusKP { get; set; }
-        public Option<DateTime> LoppKP { get; set; }
-        public Option<long> OlekKL { get; set; }
+        public Option<DateTime?> AlgusKP { get; set; }
+        public Option<DateTime?> LoppKP { get; set; }
+        public Option<long?> OlekKL { get; set; }
 
         public class OlekuMargeKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

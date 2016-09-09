@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -9,7 +11,7 @@ namespace MyNamespace
     {
         public class AnnotatsioonidType : IXRoadXmlSerializable
         {
-            public Option<Annotatsioon> item { get; set; }
+            public IList<Annotatsioon> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -21,11 +23,11 @@ namespace MyNamespace
         }
 
         public Option<AnnotatsioonidType> Annotatsioonid { get; set; }
-        public Option<int> IstungiNumber { get; set; }
+        public Option<int?> IstungiNumber { get; set; }
 
         public class IstungisaalidType : IXRoadXmlSerializable
         {
-            public Option<Istungisaal> item { get; set; }
+            public IList<Istungisaal> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -40,7 +42,7 @@ namespace MyNamespace
 
         public class KinniseksKuulutamiseAlusKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -53,12 +55,12 @@ namespace MyNamespace
 
         public Option<KinniseksKuulutamiseAlusKLType> KinniseksKuulutamiseAlusKL { get; set; }
         public Option<string> KinniseksKuulutamisePohjus { get; set; }
-        public Option<long> KolleegiumiKoosseisKL { get; set; }
-        public Option<long> KorraldavMaarusKL { get; set; }
+        public Option<long?> KolleegiumiKoosseisKL { get; set; }
+        public Option<long?> KorraldavMaarusKL { get; set; }
 
         public class MojutatavadToimingudType : IXRoadXmlSerializable
         {
-            public Option<Toiming> item { get; set; }
+            public IList<Toiming> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -73,7 +75,7 @@ namespace MyNamespace
 
         public class OigusaktidType : IXRoadXmlSerializable
         {
-            public Option<Oigusakt> item { get; set; }
+            public IList<Oigusakt> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

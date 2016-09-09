@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -11,7 +13,7 @@ namespace MyNamespace
 
         public class AnnotatsioonidType : IXRoadXmlSerializable
         {
-            public Option<Annotatsioon> item { get; set; }
+            public IList<Annotatsioon> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

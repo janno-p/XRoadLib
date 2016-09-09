@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -9,7 +11,7 @@ namespace MyNamespace
     {
         public class ToiminguteTeavitusedType : IXRoadXmlSerializable
         {
-            public Option<ToiminguTeavitusAET> item { get; set; }
+            public IList<ToiminguTeavitusAET> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

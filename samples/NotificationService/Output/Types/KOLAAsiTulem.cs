@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -9,7 +11,7 @@ namespace MyNamespace
     {
         public class AsiType : IXRoadXmlSerializable
         {
-            public Option<KOLAAsi> item { get; set; }
+            public IList<KOLAAsi> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -25,7 +27,7 @@ namespace MyNamespace
 
         public class XmlType : IXRoadXmlSerializable
         {
-            public Option<KOLAXml> item { get; set; }
+            public IList<KOLAXml> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

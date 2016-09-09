@@ -114,9 +114,6 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
             var modifiedType = type;
             var fragment = CodeFragmentFactory.GetElementFragment(element, referencedTypes);
 
-            if (element.GetMaxOccurs() > 1)
-                throw new NotImplementedException("Collection of elements");
-
             if ((element.Attribute("abstract")?.AsBoolean()).GetValueOrDefault(false))
                 modifiedType = modifiedType.AddModifiers(Token(SyntaxKind.AbstractKeyword));
 
@@ -152,7 +149,7 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
             { }
 
             if (fragment != null)
-                modifiedType = modifiedType.AddMembers(fragment.PropertyFragment.BuildPropertyDeclaration());
+                modifiedType = modifiedType.AddMembers(fragment.PropertyFragment.BuildPropertyDeclaration(element.IsCollection()));
 
             type = modifiedType;
         }

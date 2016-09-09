@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -11,7 +13,7 @@ namespace MyNamespace
 
         public class KontaktidType : IXRoadXmlSerializable
         {
-            public Option<KontaktOtsing> item { get; set; }
+            public IList<KontaktOtsing> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -26,12 +28,12 @@ namespace MyNamespace
         public Option<boolean> OnKehtiv { get; set; }
         public Option<boolean> OnSysteemne { get; set; }
         public Option<boolean> OtsiIlmaAlamasutusteta { get; set; }
-        public Option<DateTime> TegevusAlgusKP { get; set; }
-        public Option<DateTime> TegevusLoppKP { get; set; }
+        public Option<DateTime?> TegevusAlgusKP { get; set; }
+        public Option<DateTime?> TegevusLoppKP { get; set; }
 
         public class VormKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

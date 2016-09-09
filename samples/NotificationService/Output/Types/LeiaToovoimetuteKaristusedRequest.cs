@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -12,7 +14,7 @@ namespace MyNamespace
 
         public class KontrollitavIsikType : IXRoadXmlSerializable
         {
-            public Option<Isik> item { get; set; }
+            public IList<Isik> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -25,9 +27,9 @@ namespace MyNamespace
 
         public KontrollitavIsikType KontrollitavIsik { get; set; }
         public KARRParinguAndmed ParinguAndmed { get; set; }
-        public Option<long> AsjaLiikKL { get; set; }
-        public DateTime KohustiseRakendumiseAlgusKP { get; set; }
-        public DateTime KohustiseRakendumiseAlgusKPVahemikuLoppKP { get; set; }
+        public Option<long?> AsjaLiikKL { get; set; }
+        public DateTime? KohustiseRakendumiseAlgusKP { get; set; }
+        public DateTime? KohustiseRakendumiseAlgusKPVahemikuLoppKP { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

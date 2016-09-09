@@ -11,6 +11,7 @@ namespace XRoadLib.Tools.CodeGen.Extensions
             return CompilationUnit()
                      .AddUsings(UsingDirective(IdentifierName("Optional")),
                                 UsingDirective(IdentifierName("System")),
+                                UsingDirective(IdentifierName("System.Collections.Generic")),
                                 UsingDirective(IdentifierName("System.IO")),
                                 UsingDirective(IdentifierName("System.Xml")),
                                 UsingDirective(IdentifierName("XRoadLib.Serialization")))

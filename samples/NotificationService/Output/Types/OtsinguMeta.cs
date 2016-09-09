@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -7,13 +9,13 @@ namespace MyNamespace
 {
     public class OtsinguMeta : IXRoadXmlSerializable
     {
-        public Option<long> OtsinguTulemiKujuKL { get; set; }
+        public Option<long?> OtsinguTulemiKujuKL { get; set; }
         public Option<int> PageNum { get; set; }
         public Option<int> PageSize { get; set; }
 
         public class SorditavadValjadType : IXRoadXmlSerializable
         {
-            public Option<SorditavVali> item { get; set; }
+            public IList<SorditavVali> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {

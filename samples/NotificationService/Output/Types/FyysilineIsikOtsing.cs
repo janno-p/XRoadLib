@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -20,7 +22,7 @@ namespace MyNamespace
 
         public class MitmikKodakondsusKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -33,9 +35,9 @@ namespace MyNamespace
 
         public Option<MitmikKodakondsusKLType> MitmikKodakondsusKL { get; set; }
         public Option<long> SuguKL { get; set; }
-        public Option<DateTime> SurmaKP { get; set; }
-        public Option<DateTime> SynniKP { get; set; }
-        public Option<DateTime> SynniKPVahemikuLoppKP { get; set; }
+        public Option<DateTime?> SurmaKP { get; set; }
+        public Option<DateTime?> SynniKP { get; set; }
+        public Option<DateTime?> SynniKPVahemikuLoppKP { get; set; }
         public Option<string> TeisedNimed { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

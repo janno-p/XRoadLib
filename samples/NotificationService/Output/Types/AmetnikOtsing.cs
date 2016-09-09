@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -9,7 +11,7 @@ namespace MyNamespace
     {
         public class AmetKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -24,7 +26,7 @@ namespace MyNamespace
         public Option<string> Eesnimi { get; set; }
         public Option<JuriidilineIsikOtsing> Organisatsiooniyksus { get; set; }
         public Option<string> OrganisatsiooniyksusCSV { get; set; }
-        public Option<long> TootamiseObjektID { get; set; }
+        public Option<long?> TootamiseObjektID { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

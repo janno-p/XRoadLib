@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -9,8 +11,8 @@ namespace MyNamespace
     {
         public Option<string> MenetlejadCSV { get; set; }
         public Option<boolean> Peaasi { get; set; }
-        public Option<long> SidumiseAlusKL { get; set; }
-        public Option<DateTime> SidumiseKP { get; set; }
+        public Option<long?> SidumiseAlusKL { get; set; }
+        public Option<DateTime?> SidumiseKP { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

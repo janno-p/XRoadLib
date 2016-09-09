@@ -1,4 +1,6 @@
+using Optional;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
@@ -11,7 +13,7 @@ namespace MyNamespace
 
         public class KaebuseProtestiLiikKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -26,7 +28,7 @@ namespace MyNamespace
 
         public class KategooriaKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -39,13 +41,13 @@ namespace MyNamespace
 
         public Option<KategooriaKLType> KategooriaKL { get; set; }
         public Option<string> LahenduseKirjeldus { get; set; }
-        public Option<long> LahenduseLisainfoKL { get; set; }
-        public Option<long> LahenduseMaaranudToimingObjektID { get; set; }
-        public Option<long> LahendusKL { get; set; }
+        public Option<long?> LahenduseLisainfoKL { get; set; }
+        public Option<long?> LahenduseMaaranudToimingObjektID { get; set; }
+        public Option<long?> LahendusKL { get; set; }
 
         public class MenetluseTaiendavaLiigiAlaliikKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -60,7 +62,7 @@ namespace MyNamespace
 
         public class MenetluseTaiendavLiikKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
@@ -72,13 +74,13 @@ namespace MyNamespace
         }
 
         public Option<MenetluseTaiendavLiikKLType> MenetluseTaiendavLiikKL { get; set; }
-        public Option<long> ObjektID { get; set; }
+        public Option<long?> ObjektID { get; set; }
         public Option<boolean> PeamineMaaramiseAlus { get; set; }
         public Option<string> Sisu { get; set; }
 
         public class SisulineLiigitusKLType : IXRoadXmlSerializable
         {
-            public Option<long> item { get; set; }
+            public IList<long> item { get; set; }
 
             void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
             {
