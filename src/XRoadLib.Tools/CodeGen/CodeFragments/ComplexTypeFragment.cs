@@ -13,6 +13,7 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 {
     public class ComplexTypeFragment : ICodeFragment
     {
+        private readonly string targetNamespace;
         private readonly string elementName;
         private readonly bool isOptional;
         private readonly TypeSyntax typeSyntax;
@@ -21,9 +22,11 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 
         public IPropertyFragment PropertyFragment { get; }
 
-        public ComplexTypeFragment(string typeName, XElement definition)
+        public ComplexTypeFragment(string targetNamespace, string typeName, XElement definition)
             : this(null, typeName, false, definition)
-        { }
+        {
+            this.targetNamespace = targetNamespace;
+        }
 
         public ComplexTypeFragment(string elementName, string typeName, bool isOptional, XElement definition)
         {
@@ -48,6 +51,9 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 
         public ClassDeclarationSyntax BuildTypeDeclaration(IDictionary<XmlQualifiedName, bool> referencedTypes)
         {
+            if (!string.IsNullOrEmpty(targetNamespace))
+                referencedTypes[new XmlQualifiedName(typeName, targetNamespace)] = true;
+
             var type = ClassDeclaration(typeName);
 
             var readXml = MethodDeclaration(ParseTypeName("void"), "ReadXml")

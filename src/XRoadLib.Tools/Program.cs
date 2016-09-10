@@ -55,33 +55,7 @@ namespace XRoadLib.Tools
                     if (!directory.Exists)
                         directory.Create();
 
-                    var definitionsElement = doc.Element(XName.Get("definitions", NamespaceConstants.WSDL));
-
-                    var serviceGenerator = new ServiceGenerator(definitionsElement.Element(XName.Get("service", NamespaceConstants.WSDL)));
-                    serviceGenerator.Generate().SaveFile(Path.Combine(directory.FullName, $"{serviceGenerator.ServiceName}.cs"));
-
-                    var referencedTypes = new Dictionary<XmlQualifiedName, bool>();
-
-                    definitionsElement.Elements(XName.Get("portType", NamespaceConstants.WSDL))
-                                      .Select(e => new PortTypeGenerator(e))
-                                      .ToList()
-                                      .ForEach(g => g.Generate().SaveFile(Path.Combine(directory.FullName, $"{g.PortTypeName}.cs")));
-
-                    definitionsElement.Elements(XName.Get("binding", NamespaceConstants.WSDL))
-                                      .Select(e => new BindingGenerator(e))
-                                      .ToList()
-                                      .ForEach(g => g.Generate().SaveFile(Path.Combine(directory.FullName, $"{g.BindingName}.cs")));
-
-                    var typesDirectory = new DirectoryInfo(Path.Combine(directory.FullName, "Types"));
-                    if (!typesDirectory.Exists)
-                        typesDirectory.Create();
-
-                    definitionsElement.Elements(XName.Get("types", NamespaceConstants.WSDL))
-                                      .SelectMany(e => e.Elements(XName.Get("schema", NamespaceConstants.XSD)))
-                                      .SelectMany(e => e.Elements(XName.Get("complexType", NamespaceConstants.XSD)))
-                                      .Select(e => new ComplexTypeFragment(e.GetName(), e))
-                                      .ToList()
-                                      .ForEach(f => f.BuildTypeDeclaration(referencedTypes).SaveToFile(typesDirectory.FullName));
+                    new Generator(doc, directory).Generate();
 
                     return 0;
                 });
