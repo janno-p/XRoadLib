@@ -11,21 +11,7 @@ namespace MyNamespace
     {
         public Option<DateTime?> AlgusKP { get; set; }
         public Option<string> Alustaja { get; set; }
-
-        public class HoiatusedType : IXRoadXmlSerializable
-        {
-            public IList<ETHoiatus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<HoiatusedType> Hoiatused { get; set; }
+        public Option<IList<ETHoiatus>> Hoiatused { get; set; }
         public Option<Kohustis> Kohustis { get; set; }
         public Option<int?> MoistetudPaevamaaradeArv { get; set; }
         public Option<decimal?> MoistetudSumma { get; set; }
@@ -39,7 +25,7 @@ namespace MyNamespace
         public Option<long?> SissenoutavSummaValuutaKL { get; set; }
         public Option<DateTime?> SulgemiseKP { get; set; }
         public Option<long?> SundtaitmiseSeisundKL { get; set; }
-        public Option<boolean> Taidetud { get; set; }
+        public Option<bool?> Taidetud { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

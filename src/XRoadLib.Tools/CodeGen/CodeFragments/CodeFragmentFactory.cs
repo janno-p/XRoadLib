@@ -17,6 +17,7 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
             { "base64Binary", (nm, nil, opt) => new StreamFragment(nm, opt) },
             { "int", (nm, nil, opt) => new IntFragment(nm, nil, opt) },
             { "decimal", (nm, nil, opt) => new DecimalFragment(nm, nil, opt) },
+            { "boolean", (nm, nil, opt) => new BooleanFragment(nm, nil, opt) },
         };
 
         public static ICodeFragment GetElementFragment(XElement element, IDictionary<XmlQualifiedName, bool> referencedTypes)
@@ -28,8 +29,12 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
             var typeName = typeAttribute.AsXName();
 
             Func<string, bool, bool, ICodeFragment> func;
-            if (typeName.NamespaceName.Equals(NamespaceConstants.XSD) && builders.TryGetValue(typeName.LocalName, out func))
-                return func(element.GetName(), element.IsNullable(), element.IsOptional());
+            if (typeName.NamespaceName.Equals(NamespaceConstants.XSD))
+            {
+                if (builders.TryGetValue(typeName.LocalName, out func))
+                    return func(element.GetName(), element.IsNullable(), element.IsOptional());
+                throw new NotImplementedException(typeName.ToString());
+            }
 
             ReferenceType(referencedTypes, typeName);
 

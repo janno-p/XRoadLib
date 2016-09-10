@@ -14,8 +14,8 @@ namespace MyNamespace
         public Option<string> Infosysteem { get; set; }
         public Option<string> Kommentaar { get; set; }
         public Option<DateTime?> ParinguTegemiseValitudAeg { get; set; }
-        public Option<boolean> Salastatud { get; set; }
-        public Option<boolean> Tasuline { get; set; }
+        public Option<bool> Salastatud { get; set; }
+        public Option<bool> Tasuline { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

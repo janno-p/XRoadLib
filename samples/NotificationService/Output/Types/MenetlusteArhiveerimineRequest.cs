@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class MenetlusteArhiveerimineRequest : IXRoadXmlSerializable
     {
-        public class MenetlusedType : IXRoadXmlSerializable
-        {
-            public IList<Menetlus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public MenetlusedType Menetlused { get; set; }
+        public IList<Menetlus> Menetlused { get; set; }
         public Isik Kasutaja { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

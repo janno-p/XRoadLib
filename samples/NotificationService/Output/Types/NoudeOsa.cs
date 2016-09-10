@@ -15,21 +15,7 @@ namespace MyNamespace
         public Option<DateTime?> LoppKP { get; set; }
         public Option<Noue> Noue { get; set; }
         public Option<long> ObjektID { get; set; }
-
-        public class OsaNoudedType : IXRoadXmlSerializable
-        {
-            public IList<OsaNoue> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<OsaNoudedType> OsaNouded { get; set; }
+        public Option<IList<OsaNoue>> OsaNouded { get; set; }
         public Option<DateTime?> SulgemiseKP { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

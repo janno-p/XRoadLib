@@ -11,66 +11,10 @@ namespace MyNamespace
     {
         public Option<long?> AlaLiikKL { get; set; }
         public Option<DateTime?> AlgusKP { get; set; }
-
-        public class AluseksOlevadNoudedType : IXRoadXmlSerializable
-        {
-            public IList<Noue> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AluseksOlevadNoudedType> AluseksOlevadNouded { get; set; }
-
-        public class AluselTekkinudNoudedType : IXRoadXmlSerializable
-        {
-            public IList<Noue> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AluselTekkinudNoudedType> AluselTekkinudNouded { get; set; }
-
-        public class HoiatusedType : IXRoadXmlSerializable
-        {
-            public IList<ETHoiatus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<HoiatusedType> Hoiatused { get; set; }
-
-        public class KandmiseOsadType : IXRoadXmlSerializable
-        {
-            public IList<KuluOsa> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KandmiseOsadType> KandmiseOsad { get; set; }
+        public Option<IList<Noue>> AluseksOlevadNouded { get; set; }
+        public Option<IList<Noue>> AluselTekkinudNouded { get; set; }
+        public Option<IList<ETHoiatus>> Hoiatused { get; set; }
+        public Option<IList<KuluOsa>> KandmiseOsad { get; set; }
         public Option<string> KlientsysteemiID { get; set; }
         public Option<Isik> KuluSaajaIsik { get; set; }
         public Option<long?> LiikKL { get; set; }
@@ -80,21 +24,7 @@ namespace MyNamespace
         public Option<DateTime?> MuutmiseKP { get; set; }
         public Option<long> ObjektID { get; set; }
         public Option<long?> PohjustamiseJagamiseViisKL { get; set; }
-
-        public class PohjustamiseOsadType : IXRoadXmlSerializable
-        {
-            public IList<KuluOsa> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<PohjustamiseOsadType> PohjustamiseOsad { get; set; }
+        public Option<IList<KuluOsa>> PohjustamiseOsad { get; set; }
         public Option<string> Selgitus { get; set; }
         public Option<string> Sisestaja { get; set; }
         public Option<DateTime?> SisestamiseKP { get; set; }

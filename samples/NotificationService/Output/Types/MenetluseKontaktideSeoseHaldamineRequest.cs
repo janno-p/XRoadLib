@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class MenetluseKontaktideSeoseHaldamineRequest : IXRoadXmlSerializable
     {
-        public class MenetlusedType : IXRoadXmlSerializable
-        {
-            public IList<Menetlus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public MenetlusedType Menetlused { get; set; }
+        public IList<Menetlus> Menetlused { get; set; }
         public Option<MenetluseKontakt> MenetluseKontakt { get; set; }
         public Isik Kasutaja { get; set; }
 

@@ -12,7 +12,7 @@ namespace MyNamespace
         public Option<string> Maksmiseinfo { get; set; }
         public Option<string> MoistetudMurdosa { get; set; }
         public Option<NoudeOsa> Noudeosa { get; set; }
-        public Option<boolean> OnRiigiOsaNoue { get; set; }
+        public Option<bool?> OnRiigiOsaNoue { get; set; }
         public Option<string> TaodeldudMurdosa { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

@@ -12,21 +12,7 @@ namespace MyNamespace
         public Option<DateTime?> AlgusKP { get; set; }
         public Option<DateTime?> LoppKP { get; set; }
         public Option<long?> OlekKL { get; set; }
-
-        public class OlekuMargeKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<OlekuMargeKLType> OlekuMargeKL { get; set; }
+        public Option<IList<long>> OlekuMargeKL { get; set; }
         public Option<string> Selgitus { get; set; }
         public Option<string> ToiminguNR { get; set; }
         public Option<long> ToiminguObjektID { get; set; }

@@ -14,8 +14,8 @@ namespace MyNamespace
         public Isik KontrollitavIsik { get; set; }
         public Option<Maksekorraldus> Maksekorraldus { get; set; }
         public Option<KARRParinguAndmed> ParinguAndmed { get; set; }
-        public boolean OnPiiratudParing { get; set; }
-        public boolean OtsiArhiivist { get; set; }
+        public bool? OnPiiratudParing { get; set; }
+        public bool? OtsiArhiivist { get; set; }
         public Option<long?> AsjaLiikKL { get; set; }
         public Option<long?> ParinguID { get; set; }
 

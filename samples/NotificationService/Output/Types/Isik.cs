@@ -7,74 +7,18 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class Isik : IXRoadXmlSerializable
+    public abstract class Isik : IXRoadXmlSerializable
     {
-        public Option<boolean> AinultPohiandmed { get; set; }
+        public Option<bool?> AinultPohiandmed { get; set; }
         public Option<DateTime?> AlgusKP { get; set; }
         public Option<string> Alustaja { get; set; }
         public Option<string> EelnevadKoosnimedCSV { get; set; }
-
-        public class HoiatusedType : IXRoadXmlSerializable
-        {
-            public IList<ETHoiatus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<HoiatusedType> Hoiatused { get; set; }
+        public Option<IList<ETHoiatus>> Hoiatused { get; set; }
         public Option<DateTime?> KaristusteYlevaatamiseKP { get; set; }
         public Option<string> KlientsysteemiID { get; set; }
-
-        public class KohustisedType : IXRoadXmlSerializable
-        {
-            public IList<Kohustis> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KohustisedType> Kohustised { get; set; }
-
-        public class KontaktidType : IXRoadXmlSerializable
-        {
-            public IList<Kontakt> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KontaktidType> Kontaktid { get; set; }
-
-        public class KontodType : IXRoadXmlSerializable
-        {
-            public IList<Konto> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KontodType> Kontod { get; set; }
+        public Option<IList<Kohustis>> Kohustised { get; set; }
+        public Option<IList<Kontakt>> Kontaktid { get; set; }
+        public Option<IList<Konto>> Kontod { get; set; }
         public Option<string> Kood { get; set; }
         public Option<string> Koosnimi { get; set; }
         public Option<DateTime?> KoostamiseKP { get; set; }
@@ -86,26 +30,12 @@ namespace MyNamespace
         public Option<DateTime?> MuutmiseKP { get; set; }
         public Option<string> Nimi { get; set; }
         public Option<long> ObjektID { get; set; }
-        public Option<boolean> OnValideeritudAktuaalneVersioon { get; set; }
+        public Option<bool> OnValideeritudAktuaalneVersioon { get; set; }
         public Option<long?> SeisundKL { get; set; }
         public Option<string> Sisestaja { get; set; }
         public Option<DateTime?> SisestamiseKP { get; set; }
         public Option<DateTime?> SulgemiseKP { get; set; }
-
-        public class TegevusalaKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<TegevusalaKLType> TegevusalaKL { get; set; }
+        public Option<IList<long>> TegevusalaKL { get; set; }
         public Option<DateTime?> VerAlgusKP { get; set; }
         public Option<DateTime?> VerLoppKP { get; set; }
         public Option<long> VersID { get; set; }

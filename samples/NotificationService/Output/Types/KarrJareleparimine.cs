@@ -12,7 +12,7 @@ namespace MyNamespace
         public Option<long?> FailiObjektID { get; set; }
         public Option<string> Infosysteem { get; set; }
         public Option<Isik> Jareleparija { get; set; }
-        public Option<boolean> OnValideeritud { get; set; }
+        public Option<bool?> OnValideeritud { get; set; }
         public Option<long?> ParinguEesmarkKL { get; set; }
         public Option<int?> ParinguID { get; set; }
         public Option<long?> ParinguLiikKL { get; set; }

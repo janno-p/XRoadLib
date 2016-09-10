@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class AnnaIsikuKaristusteValjavoteRequest : IXRoadXmlSerializable
     {
-        public class KontrollitavIsikType : IXRoadXmlSerializable
-        {
-            public IList<Isik> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public KontrollitavIsikType KontrollitavIsik { get; set; }
+        public IList<Isik> KontrollitavIsik { get; set; }
         public Isik Jareleparija { get; set; }
         public Isik Kasutaja { get; set; }
         public Maksekorraldus Maksekorraldus { get; set; }

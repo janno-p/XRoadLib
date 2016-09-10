@@ -10,21 +10,7 @@ namespace MyNamespace
     public class MarksonastamineRequest : IXRoadXmlSerializable
     {
         public Toiming Toiming { get; set; }
-
-        public class AnnotatsioonidType : IXRoadXmlSerializable
-        {
-            public IList<Annotatsioon> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AnnotatsioonidType> Annotatsioonid { get; set; }
+        public Option<IList<Annotatsioon>> Annotatsioonid { get; set; }
         public Isik Kasutaja { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

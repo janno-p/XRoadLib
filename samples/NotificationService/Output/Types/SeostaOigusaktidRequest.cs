@@ -10,21 +10,7 @@ namespace MyNamespace
     public class SeostaOigusaktidRequest : IXRoadXmlSerializable
     {
         public long ToiminguObjektID { get; set; }
-
-        public class OigusaktidType : IXRoadXmlSerializable
-        {
-            public IList<Oigusakt> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<OigusaktidType> Oigusaktid { get; set; }
+        public Option<IList<Oigusakt>> Oigusaktid { get; set; }
         public Isik Kasutaja { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

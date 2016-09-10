@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class KontrolliIsikuTaustaRequest : IXRoadXmlSerializable
     {
-        public class MenetlusedType : IXRoadXmlSerializable
-        {
-            public IList<MenetlusOtsing> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public MenetlusedType Menetlused { get; set; }
+        public IList<MenetlusOtsing> Menetlused { get; set; }
         public Isik Kasutaja { get; set; }
         public Option<OtsinguMeta> OtsinguMeta { get; set; }
 

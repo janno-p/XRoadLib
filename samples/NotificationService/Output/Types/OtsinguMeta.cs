@@ -12,21 +12,7 @@ namespace MyNamespace
         public Option<long?> OtsinguTulemiKujuKL { get; set; }
         public Option<int> PageNum { get; set; }
         public Option<int> PageSize { get; set; }
-
-        public class SorditavadValjadType : IXRoadXmlSerializable
-        {
-            public IList<SorditavVali> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<SorditavadValjadType> SorditavadValjad { get; set; }
+        public Option<IList<SorditavVali>> SorditavadValjad { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

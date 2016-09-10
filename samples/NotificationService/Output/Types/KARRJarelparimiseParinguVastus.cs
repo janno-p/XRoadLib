@@ -10,21 +10,7 @@ namespace MyNamespace
     public class KARRJarelparimiseParinguVastus : IXRoadXmlSerializable
     {
         public Option<Isik> KaristatudIsik { get; set; }
-
-        public class ParingudType : IXRoadXmlSerializable
-        {
-            public IList<KARRParing> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<ParingudType> Paringud { get; set; }
+        public Option<IList<KARRParing>> Paringud { get; set; }
         public Option<DateTime> ParinguTegemiseAeg { get; set; }
         public Option<DateTime?> ParinguTegemiseValitudAeg { get; set; }
         public Option<long> PdfFailiObjektID { get; set; }

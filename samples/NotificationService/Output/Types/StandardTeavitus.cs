@@ -14,21 +14,7 @@ namespace MyNamespace
         public Option<long?> AsutusObjektID { get; set; }
         public Option<string> IsikCSV { get; set; }
         public Option<long?> IsikObjektID { get; set; }
-
-        public class MenetlusedType : IXRoadXmlSerializable
-        {
-            public IList<Menetlus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<MenetlusedType> Menetlused { get; set; }
+        public Option<IList<Menetlus>> Menetlused { get; set; }
         public Option<long> ObjektID { get; set; }
         public Option<long?> TeavitamiseEesmarkKL { get; set; }
 

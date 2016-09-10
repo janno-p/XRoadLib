@@ -11,21 +11,7 @@ namespace MyNamespace
     {
         public Isik Jareleparija { get; set; }
         public Isik Kasutaja { get; set; }
-
-        public class KontrollitavIsikType : IXRoadXmlSerializable
-        {
-            public IList<Isik> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public KontrollitavIsikType KontrollitavIsik { get; set; }
+        public IList<Isik> KontrollitavIsik { get; set; }
         public KARRParinguAndmed ParinguAndmed { get; set; }
         public Option<long?> AsjaLiikKL { get; set; }
         public DateTime? KohustiseRakendumiseAlgusKP { get; set; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
@@ -61,10 +62,20 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
                              .WithExplicitInterfaceSpecifier(ExplicitInterfaceSpecifier(IdentifierName("IXRoadXmlSerializable")))
                              .WithBody(Block());
 
+            var isMixed = (definition.Attribute("mixed")?.AsBoolean()).GetValueOrDefault(false);
+            if (isMixed)
+                throw new NotImplementedException("ComplexType with mixed content is not supported.");
+
             var parser = new XElementParser(definition);
+
+            parser.AttributeNotImplemented("block");
+            parser.AttributeNotImplemented("final");
 
             if (!parser.IgnoreElement("annotation"))
                 type = type.AddModifiers(Token(SyntaxKind.PublicKeyword));
+
+            if ((definition.Attribute("abstract")?.AsBoolean()).GetValueOrDefault(false))
+                type = type.AddModifiers(Token(SyntaxKind.AbstractKeyword));
 
             if (!parser.ParseElement("simpleContent")
                 && !parser.ParseElement("complexContent", x => ParseComplexContent(x, referencedTypes, ref type)))
@@ -114,32 +125,37 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
             var modifiedType = type;
             var fragment = CodeFragmentFactory.GetElementFragment(element, referencedTypes);
 
-            if ((element.Attribute("abstract")?.AsBoolean()).GetValueOrDefault(false))
-                modifiedType = modifiedType.AddModifiers(Token(SyntaxKind.AbstractKeyword));
-
-            if (element.HasAttribute("block") ||
-                element.HasAttribute("final") ||
-                element.HasAttribute("form") ||
-                element.HasAttribute("fixed") ||
-                element.HasAttribute("default") ||
-                element.HasAttribute("substitutionGroup") ||
-                element.HasAttribute("ref"))
-            {
-                throw new NotImplementedException("Element attributes `block, final, form, fixed, default, substitutionGroup, ref` are not implemented.");
-            }
-
             var p = new XElementParser(element);
+
+            p.AttributeNotImplemented("abstract");
+            p.AttributeNotImplemented("block");
+            p.AttributeNotImplemented("final");
+            p.AttributeNotImplemented("form");
+            p.AttributeNotImplemented("fixed");
+            p.AttributeNotImplemented("default");
+            p.AttributeNotImplemented("substitutionGroup");
+            p.AttributeNotImplemented("ref");
+
             p.IgnoreElement("annotation");
 
             if (p.ParseElement("simpleType") ||
                 p.ParseElement("complexType", x =>
                 {
                     var complexTypeName = $"{element.Attribute("name").Value}Type";
-                    fragment = new ComplexTypeFragment(element.Attribute("name").Value, complexTypeName, element.IsOptional(), x);
 
-                    var newType = fragment.BuildTypeDeclaration(referencedTypes);
-                    if (newType != null)
+                    var newFragment = new ComplexTypeFragment(element.GetName(), complexTypeName, element.IsOptional(), x);
+                    var newType = newFragment.BuildTypeDeclaration(referencedTypes);
+                    var properties = newType.Members.OfType<PropertyDeclarationSyntax>().ToList();
+
+                    if (properties.Count == 1)
+                    {
+                        fragment = new ShortcutFragment(element.GetName(), properties.Single().Type, element.IsOptional());
+                    }
+                    else
+                    {
+                        fragment = newFragment;
                         modifiedType = modifiedType.AddMembers(newType);
+                    }
                 }))
             { }
 

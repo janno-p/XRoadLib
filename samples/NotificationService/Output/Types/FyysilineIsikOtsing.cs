@@ -17,23 +17,9 @@ namespace MyNamespace
         public Option<string> ElukohtCSV { get; set; }
         public Option<string> EmaNimi { get; set; }
         public Option<string> IsaNimi { get; set; }
-        public Option<boolean> KaristatudIsik { get; set; }
+        public Option<bool?> KaristatudIsik { get; set; }
         public Option<long> KodakondsusKL { get; set; }
-
-        public class MitmikKodakondsusKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<MitmikKodakondsusKLType> MitmikKodakondsusKL { get; set; }
+        public Option<IList<long>> MitmikKodakondsusKL { get; set; }
         public Option<long> SuguKL { get; set; }
         public Option<DateTime?> SurmaKP { get; set; }
         public Option<DateTime?> SynniKP { get; set; }

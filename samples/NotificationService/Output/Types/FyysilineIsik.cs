@@ -22,21 +22,7 @@ namespace MyNamespace
         public Option<long?> KIRArvelolekKL { get; set; }
         public Option<DateTime?> KIRArvelolekLoppKP { get; set; }
         public Option<long?> KodakondsusKL { get; set; }
-
-        public class MitmikKodakondsusKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<MitmikKodakondsusKLType> MitmikKodakondsusKL { get; set; }
+        public Option<IList<long>> MitmikKodakondsusKL { get; set; }
         public Option<long?> PerekonnaseisKL { get; set; }
         public Option<long?> SuguKL { get; set; }
         public Option<long?> SuhtluskeelKL { get; set; }
@@ -44,21 +30,7 @@ namespace MyNamespace
         public Option<string> Synnikoht { get; set; }
         public Option<DateTime?> SynniKP { get; set; }
         public Option<string> TeisedNimed { get; set; }
-
-        public class TookohtvOppeasutusType : IXRoadXmlSerializable
-        {
-            public IList<Ametikoht> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<TookohtvOppeasutusType> TookohtvOppeasutus { get; set; }
+        public Option<IList<Ametikoht>> TookohtvOppeasutus { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

@@ -9,66 +9,11 @@ namespace MyNamespace
 {
     public class LeiaMenetlusedRequest : IXRoadXmlSerializable
     {
-        public class MenetlusedType : IXRoadXmlSerializable
-        {
-            public IList<MenetlusOtsing> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public MenetlusedType Menetlused { get; set; }
-
-        public class OsalisedType : IXRoadXmlSerializable
-        {
-            public IList<OsalineOtsing> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public OsalisedType Osalised { get; set; }
-
-        public class ToimingudType : IXRoadXmlSerializable
-        {
-            public IList<ToimingOtsing> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public ToimingudType Toimingud { get; set; }
-
-        public class SyyteosyndmusedType : IXRoadXmlSerializable
-        {
-            public IList<SyyteosyndmusOtsing> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public SyyteosyndmusedType Syyteosyndmused { get; set; }
-        public Option<boolean> OtsiArhiveerimataMenetlusi { get; set; }
+        public IList<MenetlusOtsing> Menetlused { get; set; }
+        public IList<OsalineOtsing> Osalised { get; set; }
+        public IList<ToimingOtsing> Toimingud { get; set; }
+        public IList<SyyteosyndmusOtsing> Syyteosyndmused { get; set; }
+        public Option<bool> OtsiArhiveerimataMenetlusi { get; set; }
         public Isik Kasutaja { get; set; }
         public Option<OtsinguMeta> OtsinguMeta { get; set; }
 

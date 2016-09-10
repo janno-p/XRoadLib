@@ -10,21 +10,7 @@ namespace MyNamespace
     public class AsiOtsingTulem : IXRoadXmlSerializable
     {
         public Option<int?> Kogus { get; set; }
-
-        public class LoendType : IXRoadXmlSerializable
-        {
-            public IList<AsiOtsing> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<LoendType> Loend { get; set; }
+        public Option<IList<AsiOtsing>> Loend { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

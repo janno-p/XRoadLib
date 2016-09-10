@@ -11,21 +11,7 @@ namespace MyNamespace
     {
         public Option<DateTime?> AlgusKP { get; set; }
         public Option<string> Kirjeldus { get; set; }
-
-        public class KLVaartusedType : IXRoadXmlSerializable
-        {
-            public IList<KLVaartus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KLVaartusedType> KLVaartused { get; set; }
+        public Option<IList<KLVaartus>> KLVaartused { get; set; }
         public Option<DateTime?> LoppKP { get; set; }
         public Option<string> Objekt { get; set; }
         public Option<long> ObjektID { get; set; }

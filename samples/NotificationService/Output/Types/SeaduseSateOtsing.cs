@@ -9,7 +9,7 @@ namespace MyNamespace
 {
     public class SeaduseSateOtsing : IXRoadXmlSerializable
     {
-        public Option<boolean> EXCLUDE { get; set; }
+        public Option<bool> EXCLUDE { get; set; }
         public Option<long> LiikKL { get; set; }
         public Option<string> Loige { get; set; }
         public Option<string> LoigePrimm { get; set; }

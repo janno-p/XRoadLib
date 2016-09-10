@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class FailiTeavitus : StandardTeavitus
     {
-        public class FailidType : IXRoadXmlSerializable
-        {
-            public IList<Fail> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<FailidType> Failid { get; set; }
+        public Option<IList<Fail>> Failid { get; set; }
         public Option<Fail> PohiFail { get; set; }
         public Option<long> ToiminguObjektID { get; set; }
 

@@ -11,203 +11,35 @@ namespace MyNamespace
     {
         public Option<DateTime?> AlgusKP { get; set; }
         public Option<string> Alustaja { get; set; }
-
-        public class AvaldusedType : IXRoadXmlSerializable
-        {
-            public IList<Toiming> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AvaldusedType> Avaldused { get; set; }
+        public Option<IList<Toiming>> Avaldused { get; set; }
         public Option<string> Faabula { get; set; }
-
-        public class HoiatusedType : IXRoadXmlSerializable
-        {
-            public IList<ETHoiatus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<HoiatusedType> Hoiatused { get; set; }
-
-        public class KahtlTookohtadToimepAjalKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KahtlTookohtadToimepAjalKLType> KahtlTookohtadToimepAjalKL { get; set; }
+        public Option<IList<ETHoiatus>> Hoiatused { get; set; }
+        public Option<IList<long>> KahtlTookohtadToimepAjalKL { get; set; }
         public Option<string> KannatanuCSV { get; set; }
-
-        public class KannatanuJooveKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KannatanuJooveKLType> KannatanuJooveKL { get; set; }
+        public Option<IList<long>> KannatanuJooveKL { get; set; }
         public Option<long?> KannatanuSuheKahtlvSyydistKL { get; set; }
         public Option<string> KlientsysteemiID { get; set; }
-
-        public class KohaliikKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KohaliikKLType> KohaliikKL { get; set; }
+        public Option<IList<long>> KohaliikKL { get; set; }
         public Option<DateTime?> KoostamiseKP { get; set; }
-
-        public class KvalifikatsioonType : IXRoadXmlSerializable
-        {
-            public IList<KvalifikatsiooniParagrahv> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KvalifikatsioonType> Kvalifikatsioon { get; set; }
+        public Option<IList<KvalifikatsiooniParagrahv>> Kvalifikatsioon { get; set; }
         public Option<string> KvalifikatsioonCSV { get; set; }
-
-        public class LiigitusTunnusedKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<LiigitusTunnusedKLType> LiigitusTunnusedKL { get; set; }
+        public Option<IList<long>> LiigitusTunnusedKL { get; set; }
         public Option<string> Lopetaja { get; set; }
         public Option<DateTime?> LoppKP { get; set; }
-
-        public class MenetlusedType : IXRoadXmlSerializable
-        {
-            public IList<Menetlus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<MenetlusedType> Menetlused { get; set; }
+        public Option<IList<Menetlus>> Menetlused { get; set; }
         public Option<long?> MotiivKL { get; set; }
         public Option<int?> MuuTervisekahjustuseSaanuteArv { get; set; }
         public Option<string> Muutja { get; set; }
         public Option<DateTime?> MuutmiseKP { get; set; }
-
-        public class ObjektidType : IXRoadXmlSerializable
-        {
-            public IList<Objekt> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<ObjektidType> Objektid { get; set; }
+        public Option<IList<Objekt>> Objektid { get; set; }
         public Option<long> ObjektID { get; set; }
         public Option<string> ObjektideLoetelu { get; set; }
-
-        public class OsalisedType : IXRoadXmlSerializable
-        {
-            public IList<Osaline> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<OsalisedType> Osalised { get; set; }
+        public Option<IList<Osaline>> Osalised { get; set; }
         public Option<decimal?> RahaliseKahjuSuurus { get; set; }
         public Option<long?> RahaliseKahjuValuutaKL { get; set; }
         public Option<int?> RaskeTervisekahjustuseSaanuteArv { get; set; }
-
-        public class RelvaliikJaKasutamineKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<RelvaliikJaKasutamineKLType> RelvaliikJaKasutamineKL { get; set; }
-
-        public class RikutudOigusnormType : IXRoadXmlSerializable
-        {
-            public IList<KvalifikatsiooniParagrahv> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<RikutudOigusnormType> RikutudOigusnorm { get; set; }
+        public Option<IList<long>> RelvaliikJaKasutamineKL { get; set; }
+        public Option<IList<KvalifikatsiooniParagrahv>> RikutudOigusnorm { get; set; }
         public Option<string> RikutudOigusnormCSV { get; set; }
         public Option<long?> SeisundKL { get; set; }
         public Option<DateTime?> SeisundKP { get; set; }
@@ -218,21 +50,7 @@ namespace MyNamespace
         public Option<string> SyystatavCSV { get; set; }
         public Option<string> SyyteoNR { get; set; }
         public Option<long> SyyteoObjektID { get; set; }
-
-        public class TaideviijaJooveKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<TaideviijaJooveKLType> TaideviijaJooveKL { get; set; }
+        public Option<IList<long>> TaideviijaJooveKL { get; set; }
         public Option<DateTime?> ToimumiseAlgusKP { get; set; }
         public Option<Aadress> ToimumiseKoht { get; set; }
         public Option<string> ToimumiseKohtCSV { get; set; }

@@ -12,7 +12,7 @@ namespace MyNamespace
         public Toiming Toiming { get; set; }
         public KLVaartus StaatusKL { get; set; }
         public Isik Kasutaja { get; set; }
-        public Option<boolean> RakendaLisadele { get; set; }
+        public Option<bool> RakendaLisadele { get; set; }
         public Option<string> Selgitus { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

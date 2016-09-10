@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class MenetluseSisulineLiigitus : IXRoadXmlSerializable
     {
-        public class AlamLiigitusedType : IXRoadXmlSerializable
-        {
-            public IList<MenetluseSisulineLiigitus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AlamLiigitusedType> AlamLiigitused { get; set; }
+        public Option<IList<MenetluseSisulineLiigitus>> AlamLiigitused { get; set; }
         public Option<DateTime?> AlgusKP { get; set; }
         public Option<long?> KaebuseProtestiLiikKL { get; set; }
         public Option<long?> KategooriaKL { get; set; }
@@ -37,7 +24,7 @@ namespace MyNamespace
         public Option<string> Muutja { get; set; }
         public Option<DateTime?> MuutmiseKP { get; set; }
         public Option<long> ObjektID { get; set; }
-        public Option<boolean> PeamineMaaramiseAlus { get; set; }
+        public Option<bool?> PeamineMaaramiseAlus { get; set; }
         public Option<string> Sisestaja { get; set; }
         public Option<DateTime?> SisestamiseKP { get; set; }
         public Option<string> Sisu { get; set; }

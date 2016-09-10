@@ -11,55 +11,13 @@ namespace MyNamespace
     {
         public Isik Jareleparija { get; set; }
         public Isik Kasutaja { get; set; }
-
-        public class KontrollitavIsikType : IXRoadXmlSerializable
-        {
-            public IList<Isik> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public KontrollitavIsikType KontrollitavIsik { get; set; }
+        public IList<Isik> KontrollitavIsik { get; set; }
         public Option<Maksekorraldus> Maksekorraldus { get; set; }
         public Option<KARRParinguAndmed> ParinguAndmed { get; set; }
-
-        public class KvalifikatsiooniPeatykiNimetusKLType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KvalifikatsiooniPeatykiNimetusKLType> KvalifikatsiooniPeatykiNimetusKL { get; set; }
-
-        public class KvalifikatsiooniObjektIDType : IXRoadXmlSerializable
-        {
-            public IList<long> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KvalifikatsiooniObjektIDType> KvalifikatsiooniObjektID { get; set; }
-        public boolean OtsiArhiivist { get; set; }
-        public Option<boolean> OnPiiratudParing { get; set; }
+        public Option<IList<long>> KvalifikatsiooniPeatykiNimetusKL { get; set; }
+        public Option<IList<long>> KvalifikatsiooniObjektID { get; set; }
+        public bool OtsiArhiivist { get; set; }
+        public Option<bool> OnPiiratudParing { get; set; }
         public Option<long?> ParinguID { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

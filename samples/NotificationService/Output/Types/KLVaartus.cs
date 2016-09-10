@@ -14,21 +14,7 @@ namespace MyNamespace
         public Option<DateTime?> LoppKP { get; set; }
         public Option<string> LyhiVaartus { get; set; }
         public Option<long> ObjektID { get; set; }
-
-        public class SeaduseSattedType : IXRoadXmlSerializable
-        {
-            public IList<SeaduseSate> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<SeaduseSattedType> SeaduseSatted { get; set; }
+        public Option<IList<SeaduseSate>> SeaduseSatted { get; set; }
         public Option<string> Tunnus { get; set; }
         public Option<string> Vaartus { get; set; }
 

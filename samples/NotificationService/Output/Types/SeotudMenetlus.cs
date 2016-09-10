@@ -10,7 +10,7 @@ namespace MyNamespace
     public class SeotudMenetlus : Menetlus
     {
         public Option<string> MenetlejadCSV { get; set; }
-        public Option<boolean> Peaasi { get; set; }
+        public Option<bool?> Peaasi { get; set; }
         public Option<long?> SidumiseAlusKL { get; set; }
         public Option<DateTime?> SidumiseKP { get; set; }
 

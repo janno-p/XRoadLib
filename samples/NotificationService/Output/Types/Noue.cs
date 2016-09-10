@@ -11,54 +11,12 @@ namespace MyNamespace
     {
         public Option<long?> AlaLiikKL { get; set; }
         public Option<DateTime?> AlgusKP { get; set; }
-
-        public class AluseksOlevadKuludType : IXRoadXmlSerializable
-        {
-            public IList<Kulu> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AluseksOlevadKuludType> AluseksOlevadKulud { get; set; }
-
-        public class AluseksOlevadSyyteosyndmusedType : IXRoadXmlSerializable
-        {
-            public IList<Syyteosyndmus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AluseksOlevadSyyteosyndmusedType> AluseksOlevadSyyteosyndmused { get; set; }
-
-        public class AluselTekkinudKuludType : IXRoadXmlSerializable
-        {
-            public IList<Kulu> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AluselTekkinudKuludType> AluselTekkinudKulud { get; set; }
+        public Option<IList<Kulu>> AluseksOlevadKulud { get; set; }
+        public Option<IList<Syyteosyndmus>> AluseksOlevadSyyteosyndmused { get; set; }
+        public Option<IList<Kulu>> AluselTekkinudKulud { get; set; }
         public Option<string> Alustaja { get; set; }
         public Option<string> KlientsysteemiID { get; set; }
-        public Option<boolean> KohustuslikNoue { get; set; }
+        public Option<bool?> KohustuslikNoue { get; set; }
         public Option<DateTime?> KoostamiseKP { get; set; }
         public Option<long?> LiikKL { get; set; }
         public Option<string> Lopetaja { get; set; }
@@ -66,21 +24,7 @@ namespace MyNamespace
         public Option<string> Muutja { get; set; }
         public Option<DateTime?> MuutmiseKP { get; set; }
         public Option<string> NoudeEse { get; set; }
-
-        public class NoudeosadType : IXRoadXmlSerializable
-        {
-            public IList<NoudeOsa> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<NoudeosadType> Noudeosad { get; set; }
+        public Option<IList<NoudeOsa>> Noudeosad { get; set; }
         public Option<decimal?> NoudeSumma { get; set; }
         public Option<long?> NoudeSummaValuutaKL { get; set; }
         public Option<long> ObjektID { get; set; }

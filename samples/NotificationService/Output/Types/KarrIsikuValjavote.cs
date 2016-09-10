@@ -12,7 +12,7 @@ namespace MyNamespace
         public Option<Isik> Isik { get; set; }
         public Option<long> ParinguID { get; set; }
         public Option<long> PdfFailiObjektID { get; set; }
-        public Option<boolean> Valideeritud { get; set; }
+        public Option<bool?> Valideeritud { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

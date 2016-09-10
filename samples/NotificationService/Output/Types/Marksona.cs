@@ -9,37 +9,10 @@ namespace MyNamespace
 {
     public class Marksona : IXRoadXmlSerializable
     {
-        public class AlamMarksonadType : IXRoadXmlSerializable
-        {
-            public IList<Marksona> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AlamMarksonadType> AlamMarksonad { get; set; }
+        public Option<IList<Marksona>> AlamMarksonad { get; set; }
         public Option<DateTime?> AlgusKP { get; set; }
         public Option<string> Alustaja { get; set; }
-
-        public class AsendatavadMarksonadType : IXRoadXmlSerializable
-        {
-            public IList<Marksona> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AsendatavadMarksonadType> AsendatavadMarksonad { get; set; }
+        public Option<IList<Marksona>> AsendatavadMarksonad { get; set; }
         public Option<int> JrkNrHarus { get; set; }
         public Option<string> Lopetaja { get; set; }
         public Option<DateTime?> LoppKP { get; set; }

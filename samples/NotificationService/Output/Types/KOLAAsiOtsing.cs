@@ -12,7 +12,7 @@ namespace MyNamespace
         public Option<string> AsjaKategooria { get; set; }
         public Option<string> AsjaLiik { get; set; }
         public Option<string> AsjaNumber { get; set; }
-        public Option<boolean> KasAvalik { get; set; }
+        public Option<bool?> KasAvalik { get; set; }
         public Option<string> Kohtunik { get; set; }
         public Option<string> Kohus { get; set; }
         public Option<DateTime?> LahendiKPAlates { get; set; }

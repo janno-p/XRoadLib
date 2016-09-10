@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class KarrJareleparimisteValjavote : KarrValjavote
     {
-        public class JareleparimisedType : IXRoadXmlSerializable
-        {
-            public IList<KarrJareleparimine> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<JareleparimisedType> Jareleparimised { get; set; }
+        public Option<IList<KarrJareleparimine>> Jareleparimised { get; set; }
         public Option<DateTime?> VahemikuAlgusKP { get; set; }
         public Option<DateTime?> VahemikuLoppKP { get; set; }
 

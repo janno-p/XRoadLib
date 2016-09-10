@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class Ymbrik : IXRoadXmlSerializable
+    public abstract class Ymbrik : IXRoadXmlSerializable
     {
         public Option<DateTime?> AlgusKP { get; set; }
         public Option<string> KlientsysteemiID { get; set; }

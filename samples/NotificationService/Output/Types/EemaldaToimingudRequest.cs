@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class EemaldaToimingudRequest : IXRoadXmlSerializable
     {
-        public class ToimingudType : IXRoadXmlSerializable
-        {
-            public IList<Toiming> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public ToimingudType Toimingud { get; set; }
+        public IList<Toiming> Toimingud { get; set; }
         public Isik Kasutaja { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

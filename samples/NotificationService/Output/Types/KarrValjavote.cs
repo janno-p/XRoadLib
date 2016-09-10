@@ -7,13 +7,13 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class KarrValjavote : IXRoadXmlSerializable
+    public abstract class KarrValjavote : IXRoadXmlSerializable
     {
-        public Option<boolean> Arhiivist { get; set; }
+        public Option<bool?> Arhiivist { get; set; }
         public Option<long?> AsjaLiikKL { get; set; }
         public Option<Isik> Isik { get; set; }
         public Option<KarrJareleparimine> Jareleparimine { get; set; }
-        public Option<boolean> PiiratudParing { get; set; }
+        public Option<bool?> PiiratudParing { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

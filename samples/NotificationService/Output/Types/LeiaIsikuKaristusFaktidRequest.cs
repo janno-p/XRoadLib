@@ -14,38 +14,10 @@ namespace MyNamespace
         public Isik KontrollitavIsik { get; set; }
         public Option<Maksekorraldus> Maksekorraldus { get; set; }
         public Option<KARRParinguAndmed> ParinguAndmed { get; set; }
-
-        public class KvalifikatsiooniPeatykiNimetusKLType : IXRoadXmlSerializable
-        {
-            public IList<string> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KvalifikatsiooniPeatykiNimetusKLType> KvalifikatsiooniPeatykiNimetusKL { get; set; }
-
-        public class KvalifikatsiooniObjektIDType : IXRoadXmlSerializable
-        {
-            public IList<string> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<KvalifikatsiooniObjektIDType> KvalifikatsiooniObjektID { get; set; }
-        public boolean OtsiArhiivist { get; set; }
-        public Option<boolean> OnPiiratudParing { get; set; }
+        public Option<IList<string>> KvalifikatsiooniPeatykiNimetusKL { get; set; }
+        public Option<IList<string>> KvalifikatsiooniObjektID { get; set; }
+        public bool OtsiArhiivist { get; set; }
+        public Option<bool?> OnPiiratudParing { get; set; }
         public Option<long?> ParinguID { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)

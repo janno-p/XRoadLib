@@ -9,20 +9,7 @@ namespace MyNamespace
 {
     public class LeiaIsikudRequest : IXRoadXmlSerializable
     {
-        public class IsikudType : IXRoadXmlSerializable
-        {
-            public IList<IsikOtsing> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public IsikudType Isikud { get; set; }
+        public IList<IsikOtsing> Isikud { get; set; }
         public Isik Kasutaja { get; set; }
         public Option<OtsinguMeta> OtsinguMeta { get; set; }
 

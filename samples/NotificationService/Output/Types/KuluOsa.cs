@@ -10,7 +10,7 @@ namespace MyNamespace
     public class KuluOsa : IXRoadXmlSerializable
     {
         public Option<DateTime?> AlgusKP { get; set; }
-        public Option<boolean> OnRiigiOsa { get; set; }
+        public Option<bool?> OnRiigiOsa { get; set; }
         public Option<Osaline> Osaline { get; set; }
         public Option<decimal?> OsaSumma { get; set; }
         public Option<DateTime?> SulgemiseKP { get; set; }

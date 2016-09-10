@@ -1,17 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using XRoadLib.Tools.CodeGen.Extensions;
 
 namespace XRoadLib.Tools.CodeGen
 {
     public class XElementParser
     {
+        private readonly XElement element;
         private readonly IEnumerator<XElement> enumerator;
-        private bool isDone = true;
+
+        public bool IsDone { get; private set; } = true;
 
         public XElementParser(XElement element)
         {
+            this.element = element;
             this.enumerator = element.Elements().GetEnumerator();
+        }
+
+        public void AttributeNotImplemented(string attributeName)
+        {
+            if (element.HasAttribute(attributeName))
+                throw new NotImplementedException(attributeName);
         }
 
         public bool IgnoreElement(string name)
@@ -21,7 +31,7 @@ namespace XRoadLib.Tools.CodeGen
 
         public bool ParseElement(string name, Action<XElement> action = null)
         {
-            if (isDone && !LoadNext())
+            if (IsDone && !LoadNext())
                 return false;
 
             if (enumerator.Current != null && enumerator.Current.Name == XName.Get(name, NamespaceConstants.XSD))
@@ -30,7 +40,7 @@ namespace XRoadLib.Tools.CodeGen
                     throw new NotImplementedException(enumerator.Current.Name.ToString());
 
                 action(enumerator.Current);
-                isDone = true;
+                IsDone = true;
 
                 return true;
             }
@@ -40,7 +50,7 @@ namespace XRoadLib.Tools.CodeGen
 
         public void ThrowIfNotDone()
         {
-            if (!isDone)
+            if (!IsDone)
                 throw new NotImplementedException(enumerator.Current.Name.ToString());
         }
 
@@ -49,7 +59,7 @@ namespace XRoadLib.Tools.CodeGen
             if (!enumerator.MoveNext())
                 return false;
 
-            isDone = false;
+            IsDone = false;
 
             return true;
         }

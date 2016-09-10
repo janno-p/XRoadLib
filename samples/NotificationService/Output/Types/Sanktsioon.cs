@@ -10,53 +10,11 @@ namespace MyNamespace
     public class Sanktsioon : Kohustis
     {
         public Option<long?> AlaLiikKL { get; set; }
-        public Option<boolean> AllutadaKaitumiskontrollile { get; set; }
-
-        public class AluseksOlevadSeaduseSattedType : IXRoadXmlSerializable
-        {
-            public IList<SeaduseSate> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AluseksOlevadSeaduseSattedType> AluseksOlevadSeaduseSatted { get; set; }
-
-        public class AluseksOlevadSyydistusPunktidType : IXRoadXmlSerializable
-        {
-            public IList<SyydistusPunkt> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AluseksOlevadSyydistusPunktidType> AluseksOlevadSyydistusPunktid { get; set; }
+        public Option<bool?> AllutadaKaitumiskontrollile { get; set; }
+        public Option<IList<SeaduseSate>> AluseksOlevadSeaduseSatted { get; set; }
+        public Option<IList<SyydistusPunkt>> AluseksOlevadSyydistusPunktid { get; set; }
         public Option<string> AluseksOlevadSyydistusPunktidCSV { get; set; }
-
-        public class AluseksOlevadSyyteosyndmusedType : IXRoadXmlSerializable
-        {
-            public IList<Syyteosyndmus> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<AluseksOlevadSyyteosyndmusedType> AluseksOlevadSyyteosyndmused { get; set; }
+        public Option<IList<Syyteosyndmus>> AluseksOlevadSyyteosyndmused { get; set; }
         public Option<DateTime?> ArhiveerimiseKP { get; set; }
         public Option<int?> EelvangistusesViibitudPaevadeArv { get; set; }
         public Option<DateTime?> EnnetahtaegseVabanemiseAlgusKP { get; set; }
@@ -71,7 +29,7 @@ namespace MyNamespace
         public Option<int?> MoistetudPaevamaaradeArv { get; set; }
         public Option<int?> MoistetudPaevi { get; set; }
         public Option<int?> MoistetudTunde { get; set; }
-        public Option<boolean> OnArhiveeritud { get; set; }
+        public Option<bool?> OnArhiveeritud { get; set; }
         public Option<Sanktsioon> PohiKaristus { get; set; }
         public Option<int?> TaodeldavaidAastaid { get; set; }
         public Option<int?> TaodeldavaidKuid { get; set; }
@@ -83,21 +41,7 @@ namespace MyNamespace
         public Option<int?> TaodeldudKatseajaPaevi { get; set; }
         public Option<DateTime?> TegelikKandmiseAlgusKP { get; set; }
         public Option<long?> TekeKL { get; set; }
-
-        public class ToimingudType : IXRoadXmlSerializable
-        {
-            public IList<Toiming> item { get; set; }
-
-            void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
-            {
-            }
-
-            void IXRoadXmlSerializable.WriteXml(XmlWriter writer, XRoadMessage message)
-            {
-            }
-        }
-
-        public Option<ToimingudType> Toimingud { get; set; }
+        public Option<IList<Toiming>> Toimingud { get; set; }
         public Option<long?> TyypKL { get; set; }
 
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
