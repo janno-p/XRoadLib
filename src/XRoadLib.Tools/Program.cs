@@ -17,11 +17,12 @@ namespace XRoadLib.Tools
 {
     public class Program
     {
+        private readonly ILoggerFactory loggerFactory;
         private readonly ILogger logger;
 
         private Program()
         {
-            var loggerFactory = new LoggerFactory();
+            loggerFactory = new LoggerFactory();
             loggerFactory.AddProvider(new CommandOutputProvider());
             logger = loggerFactory.CreateLogger<Program>();
         }
@@ -55,7 +56,7 @@ namespace XRoadLib.Tools
                     if (!directory.Exists)
                         directory.Create();
 
-                    new Generator(doc, directory).Generate();
+                    new Generator(loggerFactory, doc, directory).Generate();
 
                     return 0;
                 });

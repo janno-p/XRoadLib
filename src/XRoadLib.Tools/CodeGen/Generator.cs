@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using Microsoft.Extensions.Logging;
 using XRoadLib.Tools.CodeGen.CodeFragments;
 using XRoadLib.Tools.CodeGen.Extensions;
 
@@ -11,11 +12,13 @@ namespace XRoadLib.Tools.CodeGen
 {
     public class Generator
     {
+        private readonly ILogger logger;
         private readonly XDocument document;
         private readonly DirectoryInfo directory;
 
-        public Generator(XDocument document, DirectoryInfo directory)
+        public Generator(ILoggerFactory loggerFactory, XDocument document, DirectoryInfo directory)
         {
+            this.logger = loggerFactory.CreateLogger<Generator>();
             this.document = document;
             this.directory = directory;
         }
@@ -45,13 +48,13 @@ namespace XRoadLib.Tools.CodeGen
                 .Elements(XName.Get("types", NamespaceConstants.WSDL))
                 .SelectMany(e => e.Elements(XName.Get("schema", NamespaceConstants.XSD)))
                 .ToList()
-                .ForEach(x => GenerateSchema(x, referencedTypes));
+                .ForEach(x => ParseSchema(x, referencedTypes));
 
             if (referencedTypes.Any(kvp => !kvp.Value))
                 throw new Exception($"Types not defined: `{(string.Join(", ", referencedTypes.Where(x => !x.Value).Select(x => x.Key)))}`.");
         }
 
-        private void GenerateSchema(XElement schemaElement, IDictionary<XmlQualifiedName, bool> referencedTypes)
+        private void ParseSchema(XElement schemaElement, IDictionary<XmlQualifiedName, bool> referencedTypes)
         {
             var typesDirectory = new DirectoryInfo(Path.Combine(directory.FullName, "Types"));
             if (!typesDirectory.Exists)
@@ -69,7 +72,7 @@ namespace XRoadLib.Tools.CodeGen
             var targetNamespace = schemaElement.Attribute("targetNamespace").Value;
 
             while (p.ParseElement("include") ||
-                   p.ParseElement("import") ||
+                   p.ParseElement("import", x => ParseImport(x)) ||
                    p.ParseElement("redefine") ||
                    p.IgnoreElement("annotation"))
             { }
@@ -78,7 +81,7 @@ namespace XRoadLib.Tools.CodeGen
                    p.ParseElement("complexType", x => ParseComplexType(x, targetNamespace, referencedTypes, typesDirectory)) ||
                    p.ParseElement("group") ||
                    p.ParseElement("attributeGroup") ||
-                   p.ParseElement("element") ||
+                   p.ParseElement("element", x => ParseElement(x)) ||
                    p.ParseElement("attribute") ||
                    p.ParseElement("notation") ||
                    p.ParseElement("annotation"))
@@ -92,6 +95,29 @@ namespace XRoadLib.Tools.CodeGen
             new ComplexTypeFragment(targetNamespace, element.GetName(), element)
                 .BuildTypeDeclaration(referencedTypes)
                 .SaveToFile(typesDirectory.FullName);
+        }
+
+        private void ParseElement(XElement element)
+        {
+            logger.LogWarning("Skipping `element` element.");
+        }
+
+        private void ParseImport(XElement element)
+        {
+            logger.LogWarning("Skipping `import` element.");
+            // return;
+
+            // var p = new XElementParser(element);
+
+            // //p.AttributeNotImplemented("namespace");
+            // if (element.HasAttribute("namespace"))
+            //     logger.LogWarning("Not implemented `namespace` attribute.");
+
+            // //p.AttributeNotImplemented("schemaLocation");
+            // if (element.HasAttribute("schemaLocation"))
+            //     logger.LogWarning("Not implemented `schemaLocation` attribute.");
+
+            // p.IgnoreElement("annotation");
         }
     }
 }

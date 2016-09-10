@@ -22,7 +22,8 @@ namespace XRoadLib.Tools.CodeGen
         {
             var type = InterfaceDeclaration(PortTypeName).AddModifiers(Token(SyntaxKind.PublicKeyword));
 
-            var methods = portTypeElement.Elements(XName.Get("operation", NamespaceConstants.WSDL))
+            var methods = portTypeElement
+                .Elements(XName.Get("operation", NamespaceConstants.WSDL))
                 .Select(operation =>
                 {
                     var methodName = operation.Attribute("name").Value;
