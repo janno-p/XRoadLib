@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class KarrJareleparimisteValjavote : KarrValjavote
+    public class KarrJareleparimisteValjavote : KarrValjavote, IXRoadXmlSerializable
     {
         public Option<IList<KarrJareleparimine>> Jareleparimised { get; set; }
         public Option<DateTime?> VahemikuAlgusKP { get; set; }

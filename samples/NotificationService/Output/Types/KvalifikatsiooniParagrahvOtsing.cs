@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class KvalifikatsiooniParagrahvOtsing : SeaduseSateOtsing
+    public class KvalifikatsiooniParagrahvOtsing : SeaduseSateOtsing, IXRoadXmlSerializable
     {
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

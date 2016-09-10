@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class OsaNoueOtsing : KohustisOtsing
+    public class OsaNoueOtsing : KohustisOtsing, IXRoadXmlSerializable
     {
         void IXRoadXmlSerializable.ReadXml(XmlReader reader, XRoadMessage message)
         {

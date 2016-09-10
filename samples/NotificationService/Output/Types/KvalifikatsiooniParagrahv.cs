@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class KvalifikatsiooniParagrahv : SeaduseSate
+    public class KvalifikatsiooniParagrahv : SeaduseSate, IXRoadXmlSerializable
     {
         public Option<string> KlientsysteemiID { get; set; }
         public Option<DateTime?> SulgemiseKP { get; set; }

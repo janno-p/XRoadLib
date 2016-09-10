@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class ToiminguteTeavitus : StandardTeavitus
+    public class ToiminguteTeavitus : StandardTeavitus, IXRoadXmlSerializable
     {
         public Option<IList<Toiming>> Toimingud { get; set; }
 

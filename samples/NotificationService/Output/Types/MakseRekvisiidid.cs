@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class MakseRekvisiidid : Konto
+    public class MakseRekvisiidid : Konto, IXRoadXmlSerializable
     {
         public Option<string> MakseSaaja { get; set; }
         public Option<string> MakseSaajaKood { get; set; }

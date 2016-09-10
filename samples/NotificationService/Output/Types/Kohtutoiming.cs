@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class Kohtutoiming : Toiming
+    public class Kohtutoiming : Toiming, IXRoadXmlSerializable
     {
         public Option<IList<Annotatsioon>> Annotatsioonid { get; set; }
         public Option<int?> IstungiNumber { get; set; }

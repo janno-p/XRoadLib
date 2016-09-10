@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class KohustiseTeavitus : StandardTeavitus
+    public class KohustiseTeavitus : StandardTeavitus, IXRoadXmlSerializable
     {
         public Option<Kohustis> Kohustis { get; set; }
         public Option<long> KohustiseObjektID { get; set; }

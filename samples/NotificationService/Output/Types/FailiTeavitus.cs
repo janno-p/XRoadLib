@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class FailiTeavitus : StandardTeavitus
+    public class FailiTeavitus : StandardTeavitus, IXRoadXmlSerializable
     {
         public Option<IList<Fail>> Failid { get; set; }
         public Option<Fail> PohiFail { get; set; }

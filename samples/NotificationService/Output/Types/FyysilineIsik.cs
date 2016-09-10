@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class FyysilineIsik : Isik
+    public class FyysilineIsik : Isik, IXRoadXmlSerializable
     {
         public Option<string> DokumendiNimetus { get; set; }
         public Option<string> DokumendiNR { get; set; }

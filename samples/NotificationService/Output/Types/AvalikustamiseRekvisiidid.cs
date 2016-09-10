@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class AvalikustamiseRekvisiidid : Ymbrik
+    public class AvalikustamiseRekvisiidid : Ymbrik, IXRoadXmlSerializable
     {
         public Option<long?> AvalikustamiseMargeKL { get; set; }
         public Option<IList<Fail>> Failid { get; set; }

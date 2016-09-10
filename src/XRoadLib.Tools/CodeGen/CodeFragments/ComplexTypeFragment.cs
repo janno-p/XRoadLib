@@ -95,8 +95,7 @@ namespace XRoadLib.Tools.CodeGen.CodeFragments
 
             parser.ThrowIfNotDone();
 
-            if (type.BaseList == null || !type.BaseList.Types.Any())
-                type = type.AddBaseListTypes(SimpleBaseType(ParseTypeName("IXRoadXmlSerializable")));
+            type = type.AddBaseListTypes(SimpleBaseType(ParseTypeName("IXRoadXmlSerializable")));
 
             return type.AddMembers(readXml, writeXml);
         }

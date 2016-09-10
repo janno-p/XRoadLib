@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class JuriidilineIsik : Isik
+    public class JuriidilineIsik : Isik, IXRoadXmlSerializable
     {
         public Option<IList<JuriidilineIsik>> OrganisatsiooniYksused { get; set; }
         public Option<DateTime?> TegevusAlgusKP { get; set; }

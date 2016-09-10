@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class SeotudMenetlus : Menetlus
+    public class SeotudMenetlus : Menetlus, IXRoadXmlSerializable
     {
         public Option<string> MenetlejadCSV { get; set; }
         public Option<bool?> Peaasi { get; set; }

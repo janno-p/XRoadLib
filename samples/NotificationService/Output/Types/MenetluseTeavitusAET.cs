@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class MenetluseTeavitusAET : StandardTeavitus
+    public class MenetluseTeavitusAET : StandardTeavitus, IXRoadXmlSerializable
     {
         public Option<Menetlus> Menetlus { get; set; }
         public Option<IList<Isik>> MenetlustNagevadIsikud { get; set; }

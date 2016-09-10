@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class OsaNoue : Kohustis
+    public class OsaNoue : Kohustis, IXRoadXmlSerializable
     {
         public Option<string> Maksmiseinfo { get; set; }
         public Option<string> MoistetudMurdosa { get; set; }

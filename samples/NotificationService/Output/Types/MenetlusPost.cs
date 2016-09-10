@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class MenetlusPost : Ymbrik
+    public class MenetlusPost : Ymbrik, IXRoadXmlSerializable
     {
         public Option<Isik> Adressaat { get; set; }
         public Option<DateTime?> EdasikaebamiseKP { get; set; }

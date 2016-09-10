@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class TegevuseKoht : Aadress
+    public class TegevuseKoht : Aadress, IXRoadXmlSerializable
     {
         public Option<string> Selgitus { get; set; }
         public Option<DateTime?> TegevuseAlgusKP { get; set; }

@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class ToiminguOsalineOtsing : OsalineOtsing
+    public class ToiminguOsalineOtsing : OsalineOtsing, IXRoadXmlSerializable
     {
         public Option<DateTime?> AllkirjastamiseKP { get; set; }
         public Option<long?> AmetKL { get; set; }

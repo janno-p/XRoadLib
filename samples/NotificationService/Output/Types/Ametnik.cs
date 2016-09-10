@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class Ametnik : Isik
+    public class Ametnik : Isik, IXRoadXmlSerializable
     {
         public Option<long?> AmetKL { get; set; }
         public Option<string> Eesnimi { get; set; }

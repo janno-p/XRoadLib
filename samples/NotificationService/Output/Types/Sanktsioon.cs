@@ -7,7 +7,7 @@ using XRoadLib.Serialization;
 
 namespace MyNamespace
 {
-    public class Sanktsioon : Kohustis
+    public class Sanktsioon : Kohustis, IXRoadXmlSerializable
     {
         public Option<long?> AlaLiikKL { get; set; }
         public Option<bool?> AllutadaKaitumiskontrollile { get; set; }
