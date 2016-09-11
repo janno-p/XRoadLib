@@ -1,30 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using XRoadLib.Tools.CodeGen;
-using XRoadLib.Tools.CodeGen.CodeFragments;
-using XRoadLib.Tools.CodeGen.Extensions;
 
 namespace XRoadLib.Tools
 {
     public class Program
     {
-        private readonly ILoggerFactory loggerFactory;
+        private readonly IGenerator generator;
         private readonly ILogger logger;
 
-        private Program()
+        public Program(IGenerator generator, ILoggerFactory loggerFactory)
         {
-            loggerFactory = new LoggerFactory();
-            loggerFactory.AddProvider(new CommandOutputProvider());
-            logger = loggerFactory.CreateLogger<Program>();
+            this.generator = generator;
+            this.logger = loggerFactory.CreateLogger<ILogger<Program>>();
         }
 
         private int Run(string[] args)
@@ -56,7 +51,7 @@ namespace XRoadLib.Tools
                     if (!directory.Exists)
                         directory.Create();
 
-                    new Generator(loggerFactory, doc, directory).Generate();
+                    generator.Generate(doc, directory);
 
                     return 0;
                 });
@@ -99,7 +94,21 @@ namespace XRoadLib.Tools
 
         public static int Main(string[] args)
         {
-            return new Program().Run(args);
+            return ConfigureServices().GetRequiredService<Program>().Run(args);
+        }
+
+        private static IServiceProvider ConfigureServices()
+        {
+            var services = new ServiceCollection();
+
+            var loggerFactory = new LoggerFactory();
+            loggerFactory.AddProvider(new CommandOutputProvider());
+
+            services.AddSingleton<ILoggerFactory>(loggerFactory);
+            services.AddSingleton<IGenerator, Generator>();
+            services.AddSingleton<Program>();
+
+            return services.BuildServiceProvider();
         }
     }
 }

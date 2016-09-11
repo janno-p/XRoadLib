@@ -10,25 +10,26 @@ using XRoadLib.Tools.CodeGen.Extensions;
 
 namespace XRoadLib.Tools.CodeGen
 {
-    public class Generator
+    public interface IGenerator
+    {
+        void Generate(XDocument document, DirectoryInfo directoryInfo);
+    }
+
+    public class Generator : IGenerator
     {
         private readonly ILogger logger;
-        private readonly XDocument document;
-        private readonly DirectoryInfo directory;
 
-        public Generator(ILoggerFactory loggerFactory, XDocument document, DirectoryInfo directory)
+        public Generator(ILoggerFactory loggerFactory)
         {
             this.logger = loggerFactory.CreateLogger<Generator>();
-            this.document = document;
-            this.directory = directory;
         }
 
-        public void Generate()
+        public void Generate(XDocument document, DirectoryInfo directoryInfo)
         {
             var definitionsElement = document.Element(XName.Get("definitions", NamespaceConstants.WSDL));
 
             var serviceGenerator = new ServiceGenerator(definitionsElement.Element(XName.Get("service", NamespaceConstants.WSDL)));
-            serviceGenerator.Generate().SaveFile(Path.Combine(directory.FullName, $"{serviceGenerator.ServiceName}.cs"));
+            serviceGenerator.Generate().SaveFile(Path.Combine(directoryInfo.FullName, $"{serviceGenerator.ServiceName}.cs"));
 
             var referencedTypes = new Dictionary<XmlQualifiedName, bool>();
 
@@ -36,27 +37,27 @@ namespace XRoadLib.Tools.CodeGen
                 .Elements(XName.Get("portType", NamespaceConstants.WSDL))
                 .Select(e => new PortTypeGenerator(e))
                 .ToList()
-                .ForEach(g => g.Generate().SaveFile(Path.Combine(directory.FullName, $"{g.PortTypeName}.cs")));
+                .ForEach(g => g.Generate().SaveFile(Path.Combine(directoryInfo.FullName, $"{g.PortTypeName}.cs")));
 
             definitionsElement
                 .Elements(XName.Get("binding", NamespaceConstants.WSDL))
                 .Select(e => new BindingGenerator(e))
                 .ToList()
-                .ForEach(g => g.Generate().SaveFile(Path.Combine(directory.FullName, $"{g.BindingName}.cs")));
+                .ForEach(g => g.Generate().SaveFile(Path.Combine(directoryInfo.FullName, $"{g.BindingName}.cs")));
 
             definitionsElement
                 .Elements(XName.Get("types", NamespaceConstants.WSDL))
                 .SelectMany(e => e.Elements(XName.Get("schema", NamespaceConstants.XSD)))
                 .ToList()
-                .ForEach(x => ParseSchema(x, referencedTypes));
+                .ForEach(x => ParseSchema(x, referencedTypes, directoryInfo));
 
             if (referencedTypes.Any(kvp => !kvp.Value))
                 throw new Exception($"Types not defined: `{(string.Join(", ", referencedTypes.Where(x => !x.Value).Select(x => x.Key)))}`.");
         }
 
-        private void ParseSchema(XElement schemaElement, IDictionary<XmlQualifiedName, bool> referencedTypes)
+        private void ParseSchema(XElement schemaElement, IDictionary<XmlQualifiedName, bool> referencedTypes, DirectoryInfo directoryInfo)
         {
-            var typesDirectory = new DirectoryInfo(Path.Combine(directory.FullName, "Types"));
+            var typesDirectory = new DirectoryInfo(Path.Combine(directoryInfo.FullName, "Types"));
             if (!typesDirectory.Exists)
                 typesDirectory.Create();
 

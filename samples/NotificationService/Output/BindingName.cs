@@ -1,6 +1,6 @@
 namespace MyNamespace
 {
-    public class BindingName : PortTypeName
+    public class BindingName : IPortTypeName
     {
         public BindingName(string producerName)
         {
