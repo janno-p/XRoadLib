@@ -14,7 +14,7 @@ namespace XRoadLib
 {
     public interface IXRoadRequest
     {
-        TResult Execute<TResult>(object arg, IXRoadHeader xRoadHeader, string requestNamespace = null);
+        TResult Execute<TResult>(object arg, IXRoadHeader xRoadHeader, IServiceMap serviceMap = null);
     }
 
     public class XRoadRequest : IXRoadRequest
