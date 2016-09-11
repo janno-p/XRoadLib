@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using XRoadLib.Tools.CodeGen.CodeFragments;
 using XRoadLib.Tools.CodeGen.Extensions;
 
@@ -12,24 +15,33 @@ namespace XRoadLib.Tools.CodeGen
 {
     public interface IGenerator
     {
-        void Generate(XDocument document, DirectoryInfo directoryInfo);
+        Task GenerateAsync();
     }
 
     public class Generator : IGenerator
     {
         private readonly ILogger logger;
+        private readonly IOptions<GeneratorOptions> optionsAccessor;
 
-        public Generator(ILoggerFactory loggerFactory)
+        private GeneratorOptions Options => optionsAccessor.Value;
+
+        public Generator(ILoggerFactory loggerFactory, IOptions<GeneratorOptions> optionsAccessor)
         {
             this.logger = loggerFactory.CreateLogger<Generator>();
+            this.optionsAccessor = optionsAccessor;
         }
 
-        public void Generate(XDocument document, DirectoryInfo directoryInfo)
+        public async Task GenerateAsync()
         {
+            var document = await LoadServiceDescriptionAsync(Options.WsdlUri);
+
+            if (!Options.OutputPath.Exists)
+                Options.OutputPath.Create();
+
             var definitionsElement = document.Element(XName.Get("definitions", NamespaceConstants.WSDL));
 
             var serviceGenerator = new ServiceGenerator(definitionsElement.Element(XName.Get("service", NamespaceConstants.WSDL)));
-            serviceGenerator.Generate().SaveFile(Path.Combine(directoryInfo.FullName, $"{serviceGenerator.ServiceName}.cs"));
+            serviceGenerator.Generate().SaveFile(Path.Combine(Options.OutputPath.FullName, $"{serviceGenerator.ServiceName}.cs"));
 
             var referencedTypes = new Dictionary<XmlQualifiedName, bool>();
 
@@ -37,27 +49,47 @@ namespace XRoadLib.Tools.CodeGen
                 .Elements(XName.Get("portType", NamespaceConstants.WSDL))
                 .Select(e => new PortTypeGenerator(e))
                 .ToList()
-                .ForEach(g => g.Generate().SaveFile(Path.Combine(directoryInfo.FullName, $"{g.PortTypeName}.cs")));
+                .ForEach(g => g.Generate().SaveFile(Path.Combine(Options.OutputPath.FullName, $"{g.PortTypeName}.cs")));
 
             definitionsElement
                 .Elements(XName.Get("binding", NamespaceConstants.WSDL))
                 .Select(e => new BindingGenerator(e))
                 .ToList()
-                .ForEach(g => g.Generate().SaveFile(Path.Combine(directoryInfo.FullName, $"{g.BindingName}.cs")));
+                .ForEach(g => g.Generate().SaveFile(Path.Combine(Options.OutputPath.FullName, $"{g.BindingName}.cs")));
 
             definitionsElement
                 .Elements(XName.Get("types", NamespaceConstants.WSDL))
                 .SelectMany(e => e.Elements(XName.Get("schema", NamespaceConstants.XSD)))
                 .ToList()
-                .ForEach(x => ParseSchema(x, referencedTypes, directoryInfo));
+                .ForEach(x => ParseSchema(x, referencedTypes));
 
             if (referencedTypes.Any(kvp => !kvp.Value))
                 throw new Exception($"Types not defined: `{(string.Join(", ", referencedTypes.Where(x => !x.Value).Select(x => x.Key)))}`.");
         }
 
-        private void ParseSchema(XElement schemaElement, IDictionary<XmlQualifiedName, bool> referencedTypes, DirectoryInfo directoryInfo)
+        private async Task<XDocument> LoadServiceDescriptionAsync(string uri)
         {
-            var typesDirectory = new DirectoryInfo(Path.Combine(directoryInfo.FullName, "Types"));
+            if (Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+            {
+                logger.LogInformation($"Requesting service description from network location: {uri}.");
+                using (var client = new HttpClient())
+                using (var stream = await client.GetStreamAsync(uri))
+                    return XDocument.Load(stream);
+            }
+
+            var fileInfo = new FileInfo(uri);
+            if (fileInfo.Exists)
+            {
+                logger.LogInformation($"Requesting service description from file: {fileInfo.FullName}.");
+                return XDocument.Load(fileInfo.FullName);
+            }
+
+            throw new FileNotFoundException($"Cannot resolve wsdl location `{uri}`.");
+        }
+
+        private void ParseSchema(XElement schemaElement, IDictionary<XmlQualifiedName, bool> referencedTypes)
+        {
+            var typesDirectory = new DirectoryInfo(Path.Combine(Options.OutputPath.FullName, "Types"));
             if (!typesDirectory.Exists)
                 typesDirectory.Create();
 

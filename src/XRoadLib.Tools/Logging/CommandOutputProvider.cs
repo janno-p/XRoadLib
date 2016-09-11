@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 
-namespace XRoadLib.Tools
+namespace XRoadLib.Tools.Logging
 {
     public class CommandOutputProvider : ILoggerProvider
     {

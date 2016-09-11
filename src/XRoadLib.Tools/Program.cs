@@ -1,25 +1,24 @@
 ﻿using System;
 using System.IO;
-using System.Net.Http;
 using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using XRoadLib.Tools.CodeGen;
+using XRoadLib.Tools.Logging;
 
 namespace XRoadLib.Tools
 {
     public class Program
     {
-        private readonly IGenerator generator;
+        private readonly ILoggerFactory loggerFactory;
         private readonly ILogger logger;
 
-        public Program(IGenerator generator, ILoggerFactory loggerFactory)
+        public Program()
         {
-            this.generator = generator;
-            this.logger = loggerFactory.CreateLogger<ILogger<Program>>();
+            loggerFactory = new LoggerFactory();
+            loggerFactory.AddProvider(new CommandOutputProvider());
+            logger = loggerFactory.CreateLogger<ILogger<Program>>();
         }
 
         private int Run(string[] args)
@@ -42,16 +41,20 @@ namespace XRoadLib.Tools
 
                 app.OnExecute(async () =>
                 {
+                    var serviceProvider = ConfigureServices(opt =>
+                    {
+                        opt.WsdlUri = wsdlArgument.Value;
+                        opt.IsCodeOutput = optCode.HasValue();
+                        opt.IsVerbose = optVerbose.HasValue();
+                        opt.MappingPath = optMapping.HasValue() ? new FileInfo(optMapping.Value()) : null;
+                        opt.OutputPath = new DirectoryInfo(optOutput.HasValue() ? optOutput.Value() : "Output");
+                    });
+
                     if (string.IsNullOrEmpty(wsdlArgument.Value))
                         throw new ArgumentNullException("WSDL location url is required.");
 
-                    var doc = await LoadServiceDescriptionAsync(wsdlArgument.Value);
-
-                    var directory = new DirectoryInfo(optOutput.HasValue() ? optOutput.Value() : "Output");
-                    if (!directory.Exists)
-                        directory.Create();
-
-                    generator.Generate(doc, directory);
+                    var generator = serviceProvider.GetRequiredService<IGenerator>();
+                    await generator.GenerateAsync();
 
                     return 0;
                 });
@@ -65,24 +68,19 @@ namespace XRoadLib.Tools
             }
         }
 
-        private async Task<XDocument> LoadServiceDescriptionAsync(string uri)
+        private IServiceProvider ConfigureServices(Action<GeneratorOptions> optionsAction)
         {
-            if (Uri.IsWellFormedUriString(uri, UriKind.Absolute))
-            {
-                logger.LogInformation($"Requesting service description from network location: {uri}.");
-                using (var client = new HttpClient())
-                using (var stream = await client.GetStreamAsync(uri))
-                    return XDocument.Load(stream);
-            }
+            var services = new ServiceCollection();
 
-            var fileInfo = new FileInfo(uri);
-            if (fileInfo.Exists)
-            {
-                logger.LogInformation($"Requesting service description from file: {fileInfo.FullName}.");
-                return XDocument.Load(fileInfo.FullName);
-            }
+            services.AddOptions();
 
-            throw new FileNotFoundException($"Cannot resolve wsdl location `{uri}`.");
+            services.Configure<GeneratorOptions>(optionsAction);
+
+            services.AddSingleton<ILoggerFactory>(loggerFactory);
+            services.AddSingleton<IGenerator, Generator>();
+            services.AddSingleton<Program>();
+
+            return services.BuildServiceProvider();
         }
 
         private static string GetInformationalVersion()
@@ -94,21 +92,7 @@ namespace XRoadLib.Tools
 
         public static int Main(string[] args)
         {
-            return ConfigureServices().GetRequiredService<Program>().Run(args);
-        }
-
-        private static IServiceProvider ConfigureServices()
-        {
-            var services = new ServiceCollection();
-
-            var loggerFactory = new LoggerFactory();
-            loggerFactory.AddProvider(new CommandOutputProvider());
-
-            services.AddSingleton<ILoggerFactory>(loggerFactory);
-            services.AddSingleton<IGenerator, Generator>();
-            services.AddSingleton<Program>();
-
-            return services.BuildServiceProvider();
+            return new Program().Run(args);
         }
     }
 }

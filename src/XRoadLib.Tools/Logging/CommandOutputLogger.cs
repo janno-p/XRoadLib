@@ -2,7 +2,7 @@ using System;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
-namespace XRoadLib.Tools
+namespace XRoadLib.Tools.Logging
 {
     public class CommandOutputLogger : ILogger
     {
