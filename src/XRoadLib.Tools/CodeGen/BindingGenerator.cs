@@ -22,7 +22,7 @@ namespace XRoadLib.Tools.CodeGen
         {
             var type = ClassDeclaration(BindingName)
                 .AddModifiers(Token(SyntaxKind.PublicKeyword))
-                .AddBaseListTypes(SimpleBaseType(ParseTypeName($"{bindingElement.Attribute("type").Value}")));
+                .AddBaseListTypes(SimpleBaseType(ParseTypeName($"I{bindingElement.Attribute("type").Value}")));
 
             var methods = bindingElement.Elements(XName.Get("operation", NamespaceConstants.WSDL))
                 .Select(operation =>

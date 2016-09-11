@@ -23,7 +23,7 @@ namespace XRoadLib
         private readonly Uri uri;
         private readonly string requestNamespace;
 
-        public XRoadRequest(Uri uri, XRoadProtocol protocol, string requestNamespace)
+        public XRoadRequest(Uri uri, XRoadProtocol protocol, string requestNamespace = null)
         {
             this.protocol = protocol;
             this.uri = uri;

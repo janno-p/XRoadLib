@@ -15,7 +15,7 @@ namespace XRoadLib.Tools.CodeGen
         public PortTypeGenerator(XElement portTypeElement)
         {
             this.portTypeElement = portTypeElement;
-            PortTypeName = portTypeElement.Attribute("name").Value;
+            PortTypeName = $"I{portTypeElement.Attribute("name").Value}";
         }
 
         public CompilationUnitSyntax Generate()
