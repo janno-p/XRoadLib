@@ -1,10 +1,20 @@
 {
   "version": "1.0.0-*",
   "buildOptions": {
+    "compilerName": "fsc",
     "emitEntryPoint": true,
-    "nowarn": ["CS1591"],
     "outputName": "dotnet-xroad-gen",
-    "warningsAsErrors": true
+    "warningsAsErrors": true,
+    "compile": {
+      "includeFiles": [
+        "Common.fs",
+        "Parsing.fs",
+        "Syntax.fs",
+        "CodeGen.fs",
+        "Program.fs"
+      ]
+    },
+    "preserveCompilationContext": true
   },
   "configurations": {
     "Release": {
@@ -22,9 +32,12 @@
     "summary": "XRoadLib code generator"
   },
   "dependencies": {
+    "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160831",
     "Microsoft.CodeAnalysis": "1.3.2",
+    "Microsoft.CodeAnalysis.CSharp": "1.3.2",
     "Microsoft.Extensions.CommandLineUtils": "1.0.0",
     "Microsoft.Extensions.Logging": "1.0.0",
+    "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "XRoadLib": {
       "target": "project",
@@ -39,7 +52,20 @@
           "version": "1.0.0"
         }
       },
-      "imports": "portable-net45+win8+wp8+wpa81"
+      "imports": [
+        "portable-net45+win8",
+        "dnxcore50"
+      ]
+    }
+  },
+  "tools": {
+    "dotnet-compile-fsc": {
+      "version": "1.0.0-preview2-*",
+      "imports": [
+        "dnxcore50",
+        "portable-net45+win81",
+        "netstandard1.3"
+      ]
     }
   }
 }

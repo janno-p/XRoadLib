@@ -1,3 +1,9 @@
+using System;
+using System.Xml;
+using XRoadLib.Schema;
+using XRoadLib.Serialization;
+using XRoadLib.Serialization.Mapping;
+
 namespace MyNamespace
 {
     public class BindingName : IPortTypeName
@@ -1292,6 +1298,32 @@ namespace MyNamespace
 
         public void YtlusteJaOlustikuSeostamiseProtokollTegemine()
         {
+        }
+
+        private class ServiceMap : IServiceMap
+        {
+            public OperationDefinition Definition { get { throw new NotImplementedException(); } }
+            public bool HasParameters { get { throw new NotImplementedException(); } }
+
+            public object DeserializeRequest(XmlReader reader, XRoadMessage message)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object DeserializeResponse(XmlReader reader, XRoadMessage message)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
