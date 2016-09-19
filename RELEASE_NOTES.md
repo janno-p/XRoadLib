@@ -1,4 +1,4 @@
-#### 1.0.0-beta025 - Unreleased
+#### 1.0.0-beta025 - 19.09.2016
 * Separate explicit type attribute serialization logic for request elements.
 
 #### 1.0.0-beta024 - 16.08.2016
