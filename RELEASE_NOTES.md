@@ -1,3 +1,6 @@
+#### 1.0.0-beta026 - 19.09.2016
+* Fix request serialization/deserialization issues for inherited types.
+
 #### 1.0.0-beta025 - 19.09.2016
 * Separate explicit type attribute serialization logic for request elements.
 
