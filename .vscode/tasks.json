@@ -9,7 +9,6 @@
       "args": [
         "${workspaceRoot}/src/XRoadLib",
         "${workspaceRoot}/src/XRoadLib.Extensions.ProtoBuf",
-        "${workspaceRoot}/src/XRoadLib.Tools",
         "${workspaceRoot}/test/XRoadLib.Tests",
         "${workspaceRoot}/test/XRoadLib.Tests.Contract"
       ],

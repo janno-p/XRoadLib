@@ -36,7 +36,6 @@ let release = LoadReleaseNotes "RELEASE_NOTES.md"
 let productProjects =
     !! "src/*/project.json"
     -- "src/XRoadLib.Extensions.ProtoBuf/*"
-    -- "src/XRoadLib.Tools/*"
 
 // --------------------------------------------------------------------------------------
 // Helper functions for dotnet command
