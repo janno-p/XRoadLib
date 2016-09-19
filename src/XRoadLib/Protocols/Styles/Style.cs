@@ -23,7 +23,7 @@ namespace XRoadLib.Protocols.Styles
         public virtual void WriteExplicitArrayType(XmlWriter writer, XName itemQualifiedName, int arraySize)
         { }
 
-        public virtual void WriteType(XmlWriter writer, TypeDefinition typeDefinition, Type expectedType)
+        public virtual void WriteType(XmlWriter writer, TypeDefinition typeDefinition, Type expectedType, bool disableExplicitType)
         {
             if (typeDefinition.IsAnonymous)
                 return;
@@ -34,7 +34,8 @@ namespace XRoadLib.Protocols.Styles
                 return;
             }
 
-            WriteExplicitType(writer, typeDefinition.Name);
+            if (!disableExplicitType)
+                WriteExplicitType(writer, typeDefinition.Name);
         }
 
         public abstract SoapOperationBinding CreateSoapOperationBinding();

@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Protocols;
 using XRoadLib.Schema;
+using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -37,7 +38,7 @@ namespace XRoadLib.Serialization.Mapping
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
             if (requestValueDefinition.ParameterInfo != null)
-                return inputTypeMap.Deserialize(reader, message.RequestNode, requestValueDefinition, message);
+                return DeserializeValue(reader, inputTypeMap, message.RequestNode, requestValueDefinition, message);
 
             return null;
         }
@@ -53,6 +54,11 @@ namespace XRoadLib.Serialization.Mapping
             if (hasWrapperElement && !reader.MoveToElement(4, responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName))
                 throw XRoadException.InvalidQuery($"Expected result wrapper element `{responseValueDefinition.Name}` was not found in SOAP message.");
 
+            return DeserializeValue(reader, outputTypeMap, message.ResponseNode, responseValueDefinition, message);
+        }
+
+        private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, IContentDefinition contentDefinition, XRoadMessage message)
+        {
             if (reader.IsNilElement())
             {
                 reader.ReadToEndElement();
@@ -60,12 +66,12 @@ namespace XRoadLib.Serialization.Mapping
             }
 
             string typeAttribute;
-            if (outputTypeMap.Definition.IsAnonymous && !(outputTypeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
+            if (typeMap.Definition.IsAnonymous && !(typeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
                 throw XRoadException.InvalidQuery($"Expected anonymous type, but `{typeAttribute}` was given.");
 
-            var concreteTypeMap = (outputTypeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? outputTypeMap;
+            var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 
-            return concreteTypeMap.Deserialize(reader, message.ResponseNode, responseValueDefinition, message);
+            return concreteTypeMap.Deserialize(reader, templateNode, contentDefinition, message);
         }
 
         public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null)
@@ -80,7 +86,7 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
 
             if (requestValueDefinition.ParameterInfo != null)
-                inputTypeMap.Serialize(writer, message.RequestNode, value, requestValueDefinition, message);
+                SerializeValue(writer, value, inputTypeMap, message.RequestNode, message);
 
             if (!requestValueDefinition.MergeContent)
                 writer.WriteEndElement();
@@ -119,14 +125,7 @@ namespace XRoadLib.Serialization.Mapping
                     if (addWrapperElement)
                         writer.WriteStartElement(responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName);
 
-                    if (value == null)
-                        writer.WriteNilAttribute();
-                    else
-                    {
-                        var concreteTypeMap = outputTypeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : outputTypeMap;
-
-                        concreteTypeMap.Serialize(writer, message.ResponseNode, value, responseValueDefinition, message);
-                    }
+                    SerializeValue(writer, value, outputTypeMap, message.ResponseNode, message);
 
                     if (addWrapperElement)
                         writer.WriteEndElement();
@@ -138,6 +137,19 @@ namespace XRoadLib.Serialization.Mapping
             }
 
             writer.WriteEndElement();
+        }
+
+        private void SerializeValue(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message)
+        {
+            if (value == null)
+            {
+                writer.WriteNilAttribute();
+                return;
+            }
+
+            var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : typeMap;
+
+            concreteTypeMap.Serialize(writer, templateNode, value, responseValueDefinition, message);
         }
 
         private bool HasWrapperResultElement(XRoadMessage message)

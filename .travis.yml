@@ -12,9 +12,13 @@ before_install:
   - sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
   - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
   - sudo apt-get update
-  - sudo apt-get -y install dotnet-dev-1.0.0-preview2-003121 dotnet-hostfxr-1.0.2
+  - sudo apt-get -y install dotnet-dev-1.0.0-preview2-003131
 
 script:
   - dotnet --info
+  - dotnet restore src/XRoadLib
+  - dotnet pack src/XRoadLib
+  - dotnet restore src/XRoadLib.Tools
+  - dotnet pack src/XRoadLib.Tools
   - dotnet restore src test
   - dotnet test test/XRoadLib.Tests --framework $FRAMEWORK
