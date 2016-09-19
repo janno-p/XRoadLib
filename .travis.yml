@@ -16,5 +16,9 @@ before_install:
 
 script:
   - dotnet --info
+  - dotnet restore src/XRoadLib
+  - dotnet pack src/XRoadLib
+  - dotnet restore src/XRoadLib.Tools
+  - dotnet pack src/XRoadLib.Tools
   - dotnet restore src test
   - dotnet test test/XRoadLib.Tests --framework $FRAMEWORK
