@@ -1,3 +1,6 @@
+#### 1.0.0-beta025 - Unreleased
+* Separate explicit type attribute serialization logic for request elements.
+
 #### 1.0.0-beta024 - 16.08.2016
 * Trim quotes from content type header charset.
 
