@@ -201,11 +201,10 @@ namespace XRoadLib.Serialization
 
         private Tuple<ITypeMap, ITypeMap> AddTypeMap(XName qualifiedName)
         {
-            var runtimeType = GetRuntimeType(qualifiedName);
-            if (runtimeType == null)
+            var typeDefinition = GetRuntimeTypeDefinition(qualifiedName);
+            if (typeDefinition == null)
                 return null;
 
-            var typeDefinition = schemaDefinitionReader.GetTypeDefinition(runtimeType);
             if (qualifiedName.NamespaceName != typeDefinition.Name.NamespaceName)
                 throw XRoadException.UnknownType(qualifiedName.ToString());
 
@@ -243,20 +242,21 @@ namespace XRoadLib.Serialization
             return xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
         }
 
-        private Type GetRuntimeType(XName qualifiedName)
+        private TypeDefinition GetRuntimeTypeDefinition(XName qualifiedName)
         {
             if (!qualifiedName.NamespaceName.StartsWith("http://"))
             {
                 var type = contractAssembly.GetType($"{qualifiedName.Namespace}.{qualifiedName.LocalName}");
-                return type != null && type.IsXRoadSerializable() ? type : null;
+                return type != null && type.IsXRoadSerializable() ? schemaDefinitionReader.GetTypeDefinition(type) : null;
             }
 
-            var runtimeType = contractAssembly.GetTypes()
-                                              .Where(type => type.Name.Equals(qualifiedName.LocalName))
-                                              .Where(type => !Version.HasValue || type.GetTypeInfo().ExistsInVersion(Version.Value))
-                                              .SingleOrDefault(type => type.IsXRoadSerializable());
-            if (runtimeType != null)
-                return runtimeType;
+            var typeDefinition = contractAssembly.GetTypes()
+                                                 .Where(type => type.IsXRoadSerializable())
+                                                 .Where(type => !Version.HasValue || type.GetTypeInfo().ExistsInVersion(Version.Value))
+                                                 .Select(type => schemaDefinitionReader.GetTypeDefinition(type))
+                                                 .SingleOrDefault(definition => definition.Name == qualifiedName);
+            if (typeDefinition != null)
+                return typeDefinition;
 
             throw XRoadException.UnknownType(qualifiedName.ToString());
         }
