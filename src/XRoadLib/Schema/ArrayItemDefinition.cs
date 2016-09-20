@@ -11,6 +11,8 @@ namespace XRoadLib.Schema
 
         public bool AcceptAnyName { get; set; }
 
+        public bool IgnoreExplicitType { get; set; }
+
         public bool IsNullable { get; set; }
 
         public bool IsOptional { get; set; }
