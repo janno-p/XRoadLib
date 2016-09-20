@@ -1,3 +1,6 @@
+#### 1.0.0-beta028 - 20.09.2016
+* Use customized type name when searching runtime types from contract assembly.
+
 #### 1.0.0-beta027 - 20.09.2016
 * Configuration option to ignore type attributes in content definitions.
 
