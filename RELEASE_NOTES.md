@@ -1,3 +1,6 @@
+#### 1.0.0-beta027 - 20.09.2016
+* Configuration option to ignore type attributes in content definitions.
+
 #### 1.0.0-beta026 - 19.09.2016
 * Fix request serialization/deserialization issues for inherited types.
 
