@@ -28,5 +28,8 @@ namespace XRoadLib.Tests.Contract.Configuration
 
         public void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition)
         { }
+
+        public void ExportFaultDefinition(FaultDefinition faultDefinition)
+        { }
     }
 }

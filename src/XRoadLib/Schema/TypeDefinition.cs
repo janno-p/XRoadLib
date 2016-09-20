@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using XRoadLib.Extensions;
+
+#if !NET40
+using System.Reflection;
+#endif
 
 namespace XRoadLib.Schema
 {
