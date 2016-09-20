@@ -11,6 +11,8 @@ namespace XRoadLib.Schema
 {
     public abstract class ContentDefinition : Definition, IContentDefinition
     {
+        public bool IgnoreExplicitType { get; set; }
+
         public bool MergeContent { get; set; }
 
         public bool IsNullable { get; set; }

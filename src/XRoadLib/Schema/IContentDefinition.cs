@@ -5,6 +5,8 @@ namespace XRoadLib.Schema
 {
     public interface IContentDefinition
     {
+        bool IgnoreExplicitType { get; }
+
         bool MergeContent { get; }
 
         bool UseXop { get; }
