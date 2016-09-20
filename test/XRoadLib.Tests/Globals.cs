@@ -29,6 +29,7 @@ namespace XRoadLib.Tests
         private class TestDefinition : IContentDefinition
         {
             public bool UseXop { get; }
+            public bool IgnoreExplicitType { get; }
             public Type RuntimeType { get; }
             public XName TypeName { get; }
             public ArrayItemDefinition ArrayItemDefinition { get; }
