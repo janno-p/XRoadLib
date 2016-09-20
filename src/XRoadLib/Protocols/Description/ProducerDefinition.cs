@@ -22,6 +22,10 @@ using System.Xml.Schema;
 
 namespace XRoadLib.Protocols.Description
 {
+    /// <summary>
+    /// Extracts contract information from given assembly and presents it as
+    /// service description XML document.
+    /// </summary>
     public sealed class ProducerDefinition
     {
         private const string STANDARD_HEADER_NAME = "RequiredHeaders";
@@ -42,6 +46,13 @@ namespace XRoadLib.Protocols.Description
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
         private readonly ISet<Tuple<string, string>> requiredImports = new SortedSet<Tuple<string, string>>();
 
+        /// <summary>
+        /// Initialize builder with contract details.
+        /// <param name="protocol">X-Road protocol to use when generating service description.</param>
+        /// <param name="schemaDefinitionReader">Provides overrides for default presentation format.</param>
+        /// <param name="contractAssembly">Source of types and operations that define service description content.</param>
+        /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
+        /// </summary>
         public ProducerDefinition(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
         {
             if (contractAssembly == null)
@@ -78,6 +89,9 @@ namespace XRoadLib.Protocols.Description
             CollectTypes();
         }
 
+        /// <summary>
+        /// Outputs service description to specified stream.
+        /// </summary>
         public void SaveTo(Stream stream)
         {
             using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Indent = true, IndentChars = "  ", NewLineChars = "\r\n" }))
@@ -295,6 +309,14 @@ namespace XRoadLib.Protocols.Description
                 }
             } while (initialCount != referencedTypes.Count);
 
+            var faultDefinition = schemaDefinitionReader.GetFaultDefinition();
+            if (!protocol.NonTechnicalFaultInResponseElement && faultDefinition.State == DefinitionState.Default)
+            {
+                var faultType = new XmlSchemaComplexType { Name = faultDefinition.Name.LocalName, Particle = CreateFaultSequence() };
+                faultType.Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition);
+                schemaTypes.Add(Tuple.Create(faultDefinition.Name.NamespaceName, (XmlSchemaType)faultType));
+            }
+
             var allNamespaces = schemaTypes.Select(x => x.Item1).Where(x => x != NamespaceConstants.XSD).Distinct().ToList();
             var externalNamespaces = allNamespaces.Where(x => x != targetNamespace).ToList();
 
@@ -328,19 +350,19 @@ namespace XRoadLib.Protocols.Description
                 };
             else responseElement.Name = "response";
 
-            var particle = new XmlSchemaSequence { Items = { requestElement, responseElement } };;
+            XmlSchemaParticle responseParticle = null;
 
             switch (definition.XRoadFaultPresentation)
             {
                 case XRoadFaultPresentation.Choice:
-                    particle = new XmlSchemaSequence { Items = { new XmlSchemaChoice { Items = { particle, CreateFaultSequence() } } } };
+                    responseParticle = new XmlSchemaSequence { Items = { new XmlSchemaChoice { Items = { responseElement, CreateFaultSequence() } } } };
                     break;
 
                 case XRoadFaultPresentation.Explicit:
-                    particle.MinOccurs = 0;
+                    responseElement.MinOccurs = 0;
                     var faultSequence = CreateFaultSequence();
                     faultSequence.MinOccurs = 0;
-                    particle = new XmlSchemaSequence { Items = { particle, faultSequence } };
+                    responseParticle = new XmlSchemaSequence { Items = { responseElement, faultSequence } };
                     break;
 
                 case XRoadFaultPresentation.Implicit:
@@ -350,7 +372,10 @@ namespace XRoadLib.Protocols.Description
                     throw new ArgumentOutOfRangeException();
             }
 
-            return new XmlSchemaComplexType { Particle = particle };
+            if (!definition.DeclaringOperationDefinition.ProhibitRequestPartInResponse)
+                responseParticle = new XmlSchemaSequence { Items = { requestElement, responseParticle } };
+
+            return new XmlSchemaComplexType { Particle = responseParticle };
         }
 
         private XmlSchemaSequence CreateFaultSequence()
@@ -359,7 +384,8 @@ namespace XRoadLib.Protocols.Description
             {
                 Items =
                 {
-                    new XmlSchemaElement { Name = "faultCode", SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) }, new XmlSchemaElement { Name = "faultString", SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) }
+                    new XmlSchemaElement { Name = "faultCode", SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) },
+                    new XmlSchemaElement { Name = "faultString", SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) }
                 }
             };
         }

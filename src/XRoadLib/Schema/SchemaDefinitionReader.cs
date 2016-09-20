@@ -9,18 +9,33 @@ using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Schema
 {
+    /// <summary>
+    /// Extracts serialization/definition details from runtime types and methods.
+    /// </summary>
     public class SchemaDefinitionReader
     {
+        /// <summary>
+        /// Service description target namespace.
+        /// </summary>
         public string ProducerNamespace { get; }
 
+        /// <summary>
+        /// Customizations provider.
+        /// </summary>
         public ISchemaExporter SchemaExporter { get; }
 
+        /// <summary>
+        /// Initializes definition builder.
+        /// </summary>
         public SchemaDefinitionReader(string producerNamespace, ISchemaExporter schemaExporter = null)
         {
             ProducerNamespace = producerNamespace;
             SchemaExporter = schemaExporter;
         }
 
+        /// <summary>
+        /// Initializes default simple type definition and applies customizations (if any).
+        /// </summary>
         public TypeDefinition GetSimpleTypeDefinition<T>(string typeName)
         {
             var typeDefinition = new TypeDefinition(typeof(T))
@@ -34,6 +49,9 @@ namespace XRoadLib.Schema
             return typeDefinition;
         }
 
+        /// <summary>
+        /// Initializes default collection type definition and applies customizations (if any).
+        /// </summary>
         public CollectionDefinition GetCollectionDefinition(TypeDefinition typeDefinition)
         {
             var collectionDefinition = new CollectionDefinition(typeDefinition.Type.MakeArrayType())
@@ -48,6 +66,9 @@ namespace XRoadLib.Schema
             return collectionDefinition;
         }
 
+        /// <summary>
+        /// Initializes default type definition and applies customizations (if any).
+        /// </summary>
         public TypeDefinition GetTypeDefinition(Type type, string typeName = null)
         {
             XName qualifiedName = null;
@@ -95,6 +116,9 @@ namespace XRoadLib.Schema
             return typeDefinition;
         }
 
+        /// <summary>
+        /// Initializes default property definition and applies customizations (if any).
+        /// </summary>
         public PropertyDefinition GetPropertyDefinition(PropertyInfo propertyInfo, TypeDefinition typeDefinition)
         {
             var propertyDefinition = new PropertyDefinition(propertyInfo, typeDefinition);
@@ -104,6 +128,9 @@ namespace XRoadLib.Schema
             return propertyDefinition;
         }
 
+        /// <summary>
+        /// Initializes default response element definition and applies customizations (if any).
+        /// </summary>
         public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
             var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
@@ -120,6 +147,9 @@ namespace XRoadLib.Schema
                 : serializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray);
         }
 
+        /// <summary>
+        /// Initializes default opeartion definition and applies customizations (if any).
+        /// </summary>
         public OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XName qualifiedName, uint? version)
         {
             var operationDefinition = new OperationDefinition(qualifiedName, version, methodInfo);
@@ -127,6 +157,18 @@ namespace XRoadLib.Schema
             SchemaExporter?.ExportOperationDefinition(operationDefinition);
 
             return operationDefinition;
+        }
+
+        /// <summary>
+        /// Initializes default fault definition and applies customizations (if any).
+        /// </summary>
+        public FaultDefinition GetFaultDefinition()
+        {
+            var faultDefinition = new FaultDefinition { Name = XName.Get("fault", ProducerNamespace) };
+
+            SchemaExporter?.ExportFaultDefinition(faultDefinition);
+
+            return faultDefinition;
         }
     }
 }
