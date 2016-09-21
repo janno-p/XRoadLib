@@ -7,6 +7,9 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
+    /// <summary>
+    /// Provides serialization/deserialization interface for X-Road operations.
+    /// </summary>
     public class ServiceMap : IServiceMap
     {
         private readonly ISerializerCache serializerCache;
@@ -15,10 +18,26 @@ namespace XRoadLib.Serialization.Mapping
         private readonly RequestValueDefinition requestValueDefinition;
         private readonly ResponseValueDefinition responseValueDefinition;
 
+        /// <summary>
+        /// Configuration settings of the operation that the ServiceMap implements.
+        /// </summary>
         public OperationDefinition Definition { get; }
 
+        /// <summary>
+        /// Provides information whether this ServiceMap has any input parameters defined
+        /// or has an empty request element.
+        /// </summary>
         public bool HasParameters => requestValueDefinition.ParameterInfo != null;
 
+        /// <summary>
+        /// Initializes new ServiceMap entity using settings specified in operationDefinition.
+        /// <param name="serializerCache">Provides TypeMap lookup.</param>
+        /// <param name="operationDefinition">Operation which this ServiceMap represents.</param>
+        /// <param name="requestValueDefinition">Defines operation request message.</param>
+        /// <param name="responseValueDefinition">Defines operation response message.</param>
+        /// <param name="inputTypeMap">Default TypeMap of the operation request root element.</param>
+        /// <param name="outputTypeMap"> Default TypeMap of the operation response root element.</param>
+        /// </summary>
         public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestValueDefinition requestValueDefinition, ResponseValueDefinition responseValueDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
         {
             this.serializerCache = serializerCache;
@@ -30,6 +49,9 @@ namespace XRoadLib.Serialization.Mapping
             Definition = operationDefinition;
         }
 
+        /// <summary>
+        /// Deserializes X-Road message protocol requests according to operation definitions.
+        /// </summary>
         public object DeserializeRequest(XmlReader reader, XRoadMessage message)
         {
             var requestName = message.Protocol.RequestPartNameInRequest;
@@ -43,6 +65,9 @@ namespace XRoadLib.Serialization.Mapping
             return null;
         }
 
+        /// <summary>
+        /// Deserializes X-Road message protocol responses according to operation definitions.
+        /// </summary>
         public object DeserializeResponse(XmlReader reader, XRoadMessage message)
         {
             var responseName = message.Protocol.ResponsePartNameInResponse;
@@ -76,6 +101,9 @@ namespace XRoadLib.Serialization.Mapping
             return concreteTypeMap.Deserialize(reader, templateNode, contentDefinition, message);
         }
 
+        /// <summary>
+        /// Serializes X-Road message protocol requests according to operation definitions.
+        /// </summary>
         public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null)
         {
             var ns = string.IsNullOrEmpty(requestNamespace) ? Definition.Name.NamespaceName : requestNamespace;
@@ -96,6 +124,9 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
+        /// <summary>
+        /// Serializes X-Road message protocol responses according to operation definitions.
+        /// </summary>
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization)
         {
             var containsRequest = requestReader.MoveToElement(2, Definition.Name.LocalName, Definition.Name.NamespaceName);
@@ -107,11 +138,15 @@ namespace XRoadLib.Serialization.Mapping
             var fault = value as IXRoadFault;
             var namespaceInContext = requestReader.NamespaceURI;
 
-            if (containsRequest && !Definition.ProhibitRequestPartInResponse && (message.Protocol.NonTechnicalFaultInResponseElement || fault == null))
+            if (containsRequest && !Definition.ProhibitRequestPartInResponse)
                 CopyRequestToResponse(writer, requestReader, message, out namespaceInContext);
 
             if (!message.Protocol.NonTechnicalFaultInResponseElement && fault != null)
+            {
+                writer.WriteStartElement(responseValueDefinition.FaultName);
                 SerializeFault(writer, fault, message.Protocol);
+                writer.WriteEndElement();
+            }
             else if (outputTypeMap != null)
             {
                 if (Equals(namespaceInContext, ""))

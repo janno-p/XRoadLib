@@ -294,7 +294,7 @@ namespace XRoadLib.Protocols.Description
                     }
 
                     schemaType.Name = typeDefinition.Name.LocalName;
-                    schemaType.Annotation = CreateSchemaAnnotation(targetNamespace, typeDefinition);
+                    schemaType.Annotation = CreateSchemaAnnotation(typeDefinition.Name.NamespaceName, typeDefinition);
 
                     schemaTypes.Add(Tuple.Create(typeDefinition.Name.NamespaceName, schemaType));
 
