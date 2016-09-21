@@ -17,12 +17,29 @@ using XRoadLib.Serialization;
 
 namespace XRoadLib.Protocols
 {
+    /// <summary>
+    /// X-Road message protocol implementation details.
+    /// </summary>
     public abstract class XRoadProtocol
     {
+        /// <summary>
+        /// Qualified name of string type.
+        /// </summary>
         protected static readonly XName stringTypeName = XName.Get("string", NamespaceConstants.XSD);
+
+        /// <summary>
+        /// Qualified name of boolean type.
+        /// </summary>
         protected static readonly XName booleanTypeName = XName.Get("boolean", NamespaceConstants.XSD);
+
+        /// <summary>
+        /// Qualified name of binary type.
+        /// </summary>
         protected static readonly XName base64TypeName = XName.Get("base64", NamespaceConstants.XSD);
 
+        /// <summary>
+        /// <see>XmlDocument</see> instance for building element and attribute nodes.
+        /// </summary>
         protected readonly XmlDocument document = new XmlDocument();
 
         private readonly SchemaDefinitionReader schemaDefinitionReader;
@@ -30,28 +47,81 @@ namespace XRoadLib.Protocols
         private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
         private ISerializerCache serializerCache;
 
+        /// <summary>
+        /// Preferred X-Road namespace prefix of the message protocol version.
+        /// </summary>
         protected abstract string XRoadPrefix { get; }
+
+        /// <summary>
+        /// X-Road specification namespace of the message protocol version.
+        /// </summary>
         protected abstract string XRoadNamespace { get; }
 
         internal ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>(new XNameComparer());
 
+        /// <summary>
+        /// String form of message protocol version.
+        /// </summary>
         public abstract string Name { get; }
 
+        /// <summary>
+        /// String serialization mode used by protocol instance.
+        /// </summary>
+        public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
+
+        /// <summary>
+        /// Should technical fault fields be returned inside response element.
+        /// </summary>
         public virtual bool NonTechnicalFaultInResponseElement => false;
+
+        /// <summary>
+        /// Add other not target namespace schemas to service description.
+        /// </summary>
         public virtual bool IncludeExternalSchemas => false;
 
+        /// <summary>
+        /// Request element name in request message.
+        /// </summary>
         public virtual string RequestPartNameInRequest => "request";
+
+        /// <summary>
+        /// Request element name in response message.
+        /// </summary>
         public virtual string RequestPartNameInResponse => "request";
+
+        /// <summary>
+        /// Response element name in response message.
+        /// </summary>
         public virtual string ResponsePartNameInResponse => "response";
 
+        /// <summary>
+        /// Global versions supported by this X-Road message protocol instance.
+        /// </summary>
         public IEnumerable<uint> SupportedVersions => versioningSerializerCaches?.Keys ?? Enumerable.Empty<uint>();
 
+        /// <summary>
+        /// XML document style of messages (RPC/Encoded or Document/Literal).
+        /// </summary>
         public Style Style { get; }
+
+        /// <summary>
+        /// Main namespace which defines current producer operations and types.
+        /// </summary>
         public string ProducerNamespace { get; }
+
+        /// <summary>
+        /// Assembly which provides runtime types for operations and types.
+        /// </summary>
         public Assembly ContractAssembly { get; private set; }
 
+        /// <summary>
+        /// Defines X-Road header elements which are required by specification.
+        /// </summary>
         protected abstract void DefineMandatoryHeaderElements();
 
+        /// <summary>
+        /// Initializes new X-Road message protocol instance.
+        /// </summary>
         protected XRoadProtocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
         {
             if (style == null)
@@ -72,6 +142,10 @@ namespace XRoadLib.Protocols
             return false;
         }
 
+        /// <summary>
+        /// Allows each message protocol implementation to customize service description document
+        /// before publishing.
+        /// </summary>
         public virtual void ExportServiceDescription(ServiceDescription serviceDescription)
         {
             serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
@@ -88,8 +162,14 @@ namespace XRoadLib.Protocols
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, ProducerNamespace);
         }
 
+        /// <summary>
+        /// Serializes X-Road message protocol header elements.
+        /// </summary>
         protected abstract void WriteXRoadHeader(XmlWriter writer, IXRoadHeader header);
 
+        /// <summary>
+        /// Serializes header of SOAP message.
+        /// </summary>
         public void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null)
         {
             writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
@@ -102,6 +182,9 @@ namespace XRoadLib.Protocols
             writer.WriteEndElement();
         }
 
+        /// <summary>
+        /// Generates new service description for current message protocol instance.
+        /// </summary>
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
             new ProducerDefinition(this, schemaDefinitionReader, ContractAssembly, version).SaveTo(outputStream);
@@ -155,16 +238,25 @@ namespace XRoadLib.Protocols
             return documentationElement;
         }
 
+        /// <summary>
+        /// Associate runtime types with current message protocol instance.
+        /// </summary>
         public void SetContractAssemblyOfType<TAssembly>()
         {
             SetContractAssembly(typeof(TAssembly).GetTypeInfo().Assembly);
         }
 
+        /// <summary>
+        /// Associate runtime types with current message protocol instance.
+        /// </summary>
         public void SetContractAssembly(Assembly assembly, params uint[] supportedVersions)
         {
             SetContractAssembly(assembly, null, supportedVersions);
         }
 
+        /// <summary>
+        /// Associate runtime types with current message protocol instance.
+        /// </summary>
         public void SetContractAssembly(Assembly assembly, IList<string> availableFilters, params uint[] supportedVersions)
         {
             if (ContractAssembly != null)
@@ -184,6 +276,9 @@ namespace XRoadLib.Protocols
                 versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionReader, assembly, dtoVersion) { AvailableFilters = availableFilters });
         }
 
+        /// <summary>
+        /// Get runtime types lookup object.
+        /// </summary>
         public ISerializerCache GetSerializerCache(uint? version = null)
         {
             if (serializerCache == null && versioningSerializerCaches == null)
@@ -202,6 +297,9 @@ namespace XRoadLib.Protocols
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
         }
 
+        /// <summary>
+        /// Configure required SOAP header elements.
+        /// </summary>
         protected void AddMandatoryHeaderElement<THeader, T>(Expression<Func<THeader, T>> expression) where THeader : IXRoadHeader
         {
             var memberExpression = expression.Body as MemberExpression;
@@ -247,6 +345,9 @@ namespace XRoadLib.Protocols
             return null;
         }
 
+        /// <summary>
+        /// Writes single SOAP header element.
+        /// </summary>
         protected void WriteHeaderElement(XmlWriter writer, string name, object value, XName typeName)
         {
             if (!MandatoryHeaders.Contains(name) && value == null)
@@ -258,7 +359,7 @@ namespace XRoadLib.Protocols
 
             var stringValue = value as string;
             if (stringValue != null)
-                writer.WriteCDataEscape(stringValue);
+                writer.WriteStringWithMode(stringValue, StringSerializationMode);
             else writer.WriteValue(value);
 
             writer.WriteEndElement();
