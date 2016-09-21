@@ -73,8 +73,12 @@ namespace XRoadLib.Serialization.Mapping
             var requestName = message.Protocol.RequestPartNameInResponse;
             var responseName = message.Protocol.ResponsePartNameInResponse;
 
-            if (!Definition.ProhibitRequestPartInResponse && !reader.MoveToElement(3, requestName))
-                throw XRoadException.InvalidQuery($"Expected payload element `{requestName}` was not found in SOAP message.");
+            if (!Definition.ProhibitRequestPartInResponse)
+            {
+                if (!reader.MoveToElement(3, requestName))
+                    throw XRoadException.InvalidQuery($"Expected payload element `{requestName}` was not found in SOAP message.");
+                reader.Read();
+            }
 
             var hasResponseElement = reader.MoveToElement(3);
 
@@ -82,7 +86,7 @@ namespace XRoadLib.Serialization.Mapping
                 return reader.ReadXRoadFault(4);
 
             if (!hasResponseElement || reader.LocalName != responseName)
-                throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` was not found in SOAP message.");
+                throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
 
             var hasWrapperElement = HasWrapperResultElement(message);
             if (hasWrapperElement && !reader.MoveToElement(4, responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName))
