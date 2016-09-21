@@ -129,7 +129,7 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
 
             if (requestValueDefinition.ParameterInfo != null)
-                SerializeValue(writer, value, inputTypeMap, message.RequestNode, message);
+                SerializeValue(writer, value, inputTypeMap, message.RequestNode, message, requestValueDefinition);
 
             if (!requestValueDefinition.MergeContent)
                 writer.WriteEndElement();
@@ -175,7 +175,7 @@ namespace XRoadLib.Serialization.Mapping
                     if (addWrapperElement)
                         writer.WriteStartElement(responseValueDefinition.Name.LocalName, responseValueDefinition.Name.NamespaceName);
 
-                    SerializeValue(writer, value, outputTypeMap, message.ResponseNode, message);
+                    SerializeValue(writer, value, outputTypeMap, message.ResponseNode, message, responseValueDefinition);
 
                     if (addWrapperElement)
                         writer.WriteEndElement();
@@ -189,7 +189,7 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
-        private void SerializeValue(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message)
+        private void SerializeValue(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message, IContentDefinition contentDefinition)
         {
             if (value == null)
             {
@@ -199,7 +199,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : typeMap;
 
-            concreteTypeMap.Serialize(writer, templateNode, value, responseValueDefinition, message);
+            concreteTypeMap.Serialize(writer, templateNode, value, contentDefinition, message);
         }
 
         private bool HasWrapperResultElement(XRoadMessage message)
