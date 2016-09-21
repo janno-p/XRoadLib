@@ -165,6 +165,8 @@ namespace XRoadLib.Protocols.Description
             var schemaElements = new List<XmlSchemaElement>();
             var referencedTypes = new Dictionary<XmlQualifiedName, XmlSchemaType>();
 
+            var faultDefinition = schemaDefinitionReader.GetFaultDefinition();
+
             foreach (var operationDefinition in GetOperationDefinitions(targetNamespace))
             {
                 var methodParameters = operationDefinition.MethodInfo.GetParameters();
@@ -221,7 +223,7 @@ namespace XRoadLib.Protocols.Description
                     schemaElements.Add(new XmlSchemaElement
                     {
                         Name = $"{operationDefinition.Name.LocalName}Response",
-                        SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, requestElement, responseElement)
+                        SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, requestElement, responseElement, faultDefinition)
                     });
 
                 if (operationDefinition.IsAbstract)
@@ -309,7 +311,6 @@ namespace XRoadLib.Protocols.Description
                 }
             } while (initialCount != referencedTypes.Count);
 
-            var faultDefinition = schemaDefinitionReader.GetFaultDefinition();
             if (!protocol.NonTechnicalFaultInResponseElement && faultDefinition.State == DefinitionState.Default)
             {
                 var faultType = new XmlSchemaComplexType { Name = faultDefinition.Name.LocalName, Particle = CreateFaultSequence() };
@@ -337,7 +338,7 @@ namespace XRoadLib.Protocols.Description
             return schemas;
         }
 
-        private XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseValueDefinition definition, XmlSchemaElement requestElement, XmlSchemaElement responseElement)
+        private XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseValueDefinition definition, XmlSchemaElement requestElement, XmlSchemaElement responseElement, FaultDefinition faultDefinition)
         {
             if (protocol.NonTechnicalFaultInResponseElement)
                 return new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } };
@@ -350,32 +351,43 @@ namespace XRoadLib.Protocols.Description
                 };
             else responseElement.Name = "response";
 
-            XmlSchemaParticle responseParticle = null;
+            var complexTypeSequence = new XmlSchemaSequence();
+
+            if (!definition.DeclaringOperationDefinition.ProhibitRequestPartInResponse)
+                complexTypeSequence.Items.Add(requestElement);
 
             switch (definition.XRoadFaultPresentation)
             {
                 case XRoadFaultPresentation.Choice:
-                    responseParticle = new XmlSchemaSequence { Items = { new XmlSchemaChoice { Items = { responseElement, CreateFaultSequence() } } } };
+                    complexTypeSequence.Items.Add(new XmlSchemaChoice { Items = { responseElement, CreateFaultElement(definition, faultDefinition) } });
                     break;
 
                 case XRoadFaultPresentation.Explicit:
                     responseElement.MinOccurs = 0;
-                    var faultSequence = CreateFaultSequence();
-                    faultSequence.MinOccurs = 0;
-                    responseParticle = new XmlSchemaSequence { Items = { responseElement, faultSequence } };
+                    var faultElement = CreateFaultElement(definition, faultDefinition);
+                    faultElement.MinOccurs = 0;
+                    complexTypeSequence.Items.Add(responseElement);
+                    complexTypeSequence.Items.Add(faultElement);
                     break;
 
                 case XRoadFaultPresentation.Implicit:
+                    complexTypeSequence.Items.Add(responseElement);
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (!definition.DeclaringOperationDefinition.ProhibitRequestPartInResponse)
-                responseParticle = new XmlSchemaSequence { Items = { requestElement, responseParticle } };
+            return new XmlSchemaComplexType { Particle = complexTypeSequence };
+        }
 
-            return new XmlSchemaComplexType { Particle = responseParticle };
+        private static XmlSchemaElement CreateFaultElement(ResponseValueDefinition responseValueDefinition, FaultDefinition faultDefinition)
+        {
+            return new XmlSchemaElement
+            {
+                Name = responseValueDefinition.FaultName,
+                SchemaTypeName = new XmlQualifiedName(faultDefinition.Name.LocalName, faultDefinition.Name.NamespaceName)
+            };
         }
 
         private XmlSchemaSequence CreateFaultSequence()
