@@ -2,22 +2,31 @@
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions
 {
+    /// <summary>
+    /// Extension methods for XmlReader class.
+    /// </summary>
     public static class XmlReaderExtensions
     {
+        private static readonly ICollection<string> headerNamespaces = new[]
+        {
+            NamespaceConstants.XTEE,
+            NamespaceConstants.XROAD,
+            NamespaceConstants.XROAD_V4,
+            NamespaceConstants.XROAD_V4_REPR
+        };
+
         private static readonly XName qnXsiNil = XName.Get("nil", NamespaceConstants.XSI);
         private static readonly XName qnXsiType = XName.Get("type", NamespaceConstants.XSI);
         private static readonly XName qnSoapEncArray = XName.Get("Array", NamespaceConstants.SOAP_ENC);
         private static readonly XName qnSoapEncArrayType = XName.Get("arrayType", NamespaceConstants.SOAP_ENC);
 
-        public static bool ReadToElement(this XmlReader reader, string localName)
-        {
-            while (reader.LocalName != localName && reader.Read()) { }
-            return reader.LocalName == localName;
-        }
-
+        /// <summary>
+        /// Test if current element is marked as nil with xsi attribute.
+        /// </summary>
         public static bool IsNilElement(this XmlReader reader)
         {
             var value = reader.GetAttribute(qnXsiNil.LocalName, qnXsiNil.NamespaceName);
@@ -65,6 +74,9 @@ namespace XRoadLib.Extensions
             return qualifiedName != qnSoapEncArray ? Tuple.Create(qualifiedName, isArrayType) : GetTypeAttributeValue(reader, qnSoapEncArrayType, true);
         }
 
+        /// <summary>
+        /// Reposition XML reader to matching end element of the current element.
+        /// </summary>
         public static void ReadToEndElement(this XmlReader reader)
         {
             if (reader.IsEmptyElement)
@@ -76,6 +88,9 @@ namespace XRoadLib.Extensions
             { }
         }
 
+        /// <summary>
+        /// Reposition XML reader to the next element if it's currently at nil element.
+        /// </summary>
         public static void ConsumeNilElement(this XmlReader reader, bool isNil)
         {
             if (!isNil)
@@ -94,17 +109,26 @@ namespace XRoadLib.Extensions
             reader.ReadToEndElement();
         }
 
+        /// <summary>
+        /// Reposition reader at location where next Read() call will navigate to next node.
+        /// </summary>
         public static void ConsumeUnusedElement(this XmlReader reader)
         {
             if (reader.IsEmptyElement) reader.Read();
             else reader.ReadToEndElement();
         }
 
+        /// <summary>
+        /// Check if XML reader is currently positioned at the specified element.
+        /// </summary>
         public static bool IsCurrentElement(this XmlReader reader, int depth, string name, string @namespace = "")
         {
             return reader.NodeType == XmlNodeType.Element && reader.Depth == depth && reader.LocalName == name && reader.NamespaceURI == @namespace;
         }
 
+        /// <summary>
+        /// Move XML reader current position to next element which matches the given arguments.
+        /// </summary>
         public static bool MoveToElement(this XmlReader reader, int depth, string name = null, string @namespace = "")
         {
             while (true)
@@ -117,19 +141,17 @@ namespace XRoadLib.Extensions
             }
         }
 
-        private static readonly ICollection<string> headerNamespaces = new[]
-        {
-            NamespaceConstants.XTEE,
-            NamespaceConstants.XROAD,
-            NamespaceConstants.XROAD_V4,
-            NamespaceConstants.XROAD_V4_REPR
-        };
-
+        /// <summary>
+        /// Check if current XML reader node is defined in one of the X-Road schema namespaces.
+        /// </summary>
         public static bool IsHeaderNamespace(this XmlReader reader)
         {
             return headerNamespaces.Contains(reader.NamespaceURI);
         }
 
+        /// <summary>
+        /// Fast-forward XML reader position to SOAP Body element.
+        /// </summary>
         public static void MoveToBody(this XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
@@ -139,6 +161,9 @@ namespace XRoadLib.Extensions
                 throw XRoadException.InvalidQuery($"Element `{NamespaceConstants.SOAP}:Body` is missing from request content.");
         }
 
+        /// <summary>
+        /// Fast-forward XML reader position to payload element.
+        /// </summary>
         public static void MoveToPayload(this XmlReader reader, XName rootElementName)
         {
             reader.MoveToBody();
@@ -147,9 +172,34 @@ namespace XRoadLib.Extensions
                 throw XRoadException.InvalidQuery("Payload is missing from request content.");
         }
 
+        /// <summary>
+        /// Get current reader node name as XName.
+        /// </summary>
         public static XName GetXName(this XmlReader reader)
         {
             return XName.Get(reader.LocalName, reader.NamespaceURI);
+        }
+
+        /// <summary>
+        /// Deserialize current node as XRoadFault entity.
+        /// </summary>
+        public static IXRoadFault ReadXRoadFault(this XmlReader reader, int depth)
+        {
+            var fault = new XRoadFault();
+
+            while (reader.Read() && reader.MoveToElement(depth))
+            {
+                if (reader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (string.IsNullOrWhiteSpace(reader.NamespaceURI) && reader.LocalName == "faultCode")
+                    fault.FaultCode = reader.ReadElementContentAsString();
+
+                if (string.IsNullOrWhiteSpace(reader.NamespaceURI) && reader.LocalName == "faultString")
+                    fault.FaultString = reader.ReadElementContentAsString();
+            }
+
+            return fault;
         }
     }
 }

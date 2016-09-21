@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Xml;
 using System.Xml.Linq;
@@ -12,17 +11,32 @@ using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib
 {
+    /// <summary>
+    /// X-Road request object which wraps single X-Road web request.
+    /// </summary>
     public interface IXRoadRequest
     {
+        /// <summary>
+        /// Executes specified X-Road operations with given arguments.
+        /// </summary>
         TResult Execute<TResult>(object arg, IXRoadHeader xRoadHeader, IServiceMap serviceMap = null);
     }
 
+    /// <summary>
+    /// X-Road request object which wraps single X-Road web request.
+    /// </summary>
     public class XRoadRequest : IXRoadRequest
     {
         private readonly XRoadProtocol protocol;
         private readonly Uri uri;
         private readonly string requestNamespace;
 
+        /// <summary>
+        /// Initialize new request object.
+        /// <param name="uri">Network location of the adapter or X-Road server.</param>
+        /// <param name="protocol">X-Road message protocol version.</param>
+        /// <param name="requestNamespace">Overrides default producer namespace for operation payload element.</param>
+        /// </summary>
         public XRoadRequest(Uri uri, XRoadProtocol protocol, string requestNamespace = null)
         {
             this.protocol = protocol;
@@ -30,8 +44,13 @@ namespace XRoadLib
             this.requestNamespace = requestNamespace;
         }
 
+        /// <summary>
+        /// Executes specified X-Road operations with given arguments.
+        /// </summary>
         public T Execute<T>(object arg, IXRoadHeader xRoadHeader, IServiceMap serviceMap = null)
         {
+            IServiceMap operationServiceMap = null;
+
             using (var requestMessage = new XRoadMessage(protocol, xRoadHeader))
             {
                 using (var writer = XmlWriter.Create(requestMessage.ContentStream))
@@ -46,8 +65,8 @@ namespace XRoadLib
 
                     writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
 
-                    serviceMap = serviceMap ?? requestMessage.GetSerializerCache().GetServiceMap(XName.Get(xRoadHeader.Service.ServiceCode, protocol.ProducerNamespace));
-                    serviceMap.SerializeRequest(writer, arg, requestMessage, requestNamespace);
+                    operationServiceMap = serviceMap ?? requestMessage.GetSerializerCache().GetServiceMap(XName.Get(xRoadHeader.Service.ServiceCode, protocol.ProducerNamespace));
+                    operationServiceMap.SerializeRequest(writer, arg, requestMessage, requestNamespace);
 
                     writer.WriteEndElement();
                     writer.WriteEndElement();
@@ -73,8 +92,8 @@ namespace XRoadLib
                 using (var responseMessage = new XRoadMessage())
                 {
                     responseStream?.CopyTo(seekableStream);
-                    responseMessage.LoadResponse(seekableStream, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), Enumerable.Repeat(protocol, 1));
-                    return (T)responseMessage.DeserializeMessageContent(xRoadHeader.Service.ServiceCode);
+                    responseMessage.LoadResponse(seekableStream, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), protocol);
+                    return (T)responseMessage.DeserializeMessageContent(operationServiceMap);
                 }
             }
         }

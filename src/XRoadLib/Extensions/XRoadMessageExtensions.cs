@@ -1,12 +1,19 @@
 ﻿using System.Xml;
 using System.Xml.XPath;
 using XRoadLib.Serialization;
+using XRoadLib.Serialization.Mapping;
 using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions
 {
+    /// <summary>
+    /// Extension methods for <see>XRoadMessage</see> class.
+    /// </summary>
     public static class XRoadMessageExtensions
     {
+        /// <summary>
+        /// Deserializes X-Road fault from message which is known to contain fault.
+        /// </summary>
         public static IXRoadFault DeserializeXRoadFault(this XRoadMessage message)
         {
             message.ContentStream.Position = 0;
@@ -18,27 +25,18 @@ namespace XRoadLib.Extensions
                 if (!reader.MoveToElement(3, responseName))
                     throw XRoadException.InvalidQuery($"X-Road fault should be wrapped inside `{responseName}` element.");
 
-                var fault = new XRoadFault();
-
-                while (reader.Read() && reader.MoveToElement(4))
-                {
-                    if (reader.NodeType != XmlNodeType.Element)
-                        continue;
-
-                    if (string.IsNullOrWhiteSpace(reader.NamespaceURI) && reader.LocalName == "faultCode")
-                        fault.FaultCode = reader.ReadElementContentAsString();
-
-                    if (string.IsNullOrWhiteSpace(reader.NamespaceURI) && reader.LocalName == "faultString")
-                        fault.FaultString = reader.ReadElementContentAsString();
-                }
-
-                return fault;
+                return reader.ReadXRoadFault(4);
             }
         }
 
-        public static object DeserializeMessageContent(this XRoadMessage message, string operationName)
+        /// <summary>
+        /// Deserializes X-Road message response or throws <see>XRoadFaultException</see> when
+        /// X-Road fault is parsed from the message instead of expected result value.
+        /// </summary>
+        public static object DeserializeMessageContent(this XRoadMessage message, IServiceMap serviceMap)
         {
-            ThrowIfXRoadFault(message);
+            if (message.Protocol.NonTechnicalFaultInResponseElement)
+                ThrowIfXRoadFault(message);
 
             message.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(message.ContentStream))
@@ -52,9 +50,14 @@ namespace XRoadLib.Extensions
                     throw new SoapFaultException(SoapMessageHelper.DeserializeSoapFault(reader));
 
                 var serializerCache = message.GetSerializerCache();
-                var serviceMap = serializerCache.GetServiceMap(operationName);
 
-                return serviceMap.DeserializeResponse(reader, message);
+                var result = serviceMap.DeserializeResponse(reader, message);
+
+                var fault = result as XRoadFault;
+                if (fault != null)
+                    throw new XRoadFaultException(fault);
+
+                return result;
             }
         }
 
@@ -64,12 +67,11 @@ namespace XRoadLib.Extensions
                 return;
 
             message.ContentStream.Position = 0;
+
+            var pathRoot = "/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/{message.Protocol.ResponsePartNameInResponse}";
+
             var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
             var navigator = doc.CreateNavigator();
-
-            var pathRoot = "/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*";
-            if (message.Protocol.NonTechnicalFaultInResponseElement)
-                pathRoot = $"{pathRoot}/{message.Protocol.ResponsePartNameInResponse}";
 
             if (navigator.SelectSingleNode($"{pathRoot}/faultCode | {pathRoot}/faultString") != null)
                 throw new XRoadFaultException(message.DeserializeXRoadFault());
