@@ -1,15 +1,13 @@
 ﻿using System;
-using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using Xunit;
 
 namespace XRoadLib.Tests.Serialization.Mapping
 {
-    public class DateTest
+    public class DateTypeMapTest : TypeMapTestBase
     {
-        private static readonly SchemaDefinitionReader schemaDefinitionReader = new SchemaDefinitionReader("");
         private static readonly DateTypeMap dateTypeMap = new DateTypeMap(schemaDefinitionReader.GetSimpleTypeDefinition<DateTime>("date"));
-        private static readonly Func<string, object> deserializeValue = x => MappingTestHelper.DeserializeValue(dateTypeMap, x);
+        private static readonly Func<string, object> deserializeValue = x => DeserializeValue(dateTypeMap, x);
 
         [Fact]
         public void CanDeserializePlainDate()

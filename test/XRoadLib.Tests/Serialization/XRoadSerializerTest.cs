@@ -233,16 +233,6 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeStringValueWithSpecialCharacters()
-        {
-            SerializeWithContext("keha", "&<>", 2u, false, false, (msg, xml) =>
-            {
-                Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha><![CDATA[&<>]]></keha>", xml);
-                Assert.Equal(0, msg.AllAttachments.Count);
-            });
-        }
-
-        [Fact]
         public void CanSerializeStructValue()
         {
             var value = new TestDto

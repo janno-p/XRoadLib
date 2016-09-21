@@ -9,7 +9,7 @@ using XRoadLib.Serialization;
 using XRoadLib.Tests.Contract.Mapping;
 using Xunit;
 
-namespace XRoadLib.Tests.Serialization.Mapping
+namespace XRoadLib.Tests.Serialization
 {
     public class ArrayTest
     {

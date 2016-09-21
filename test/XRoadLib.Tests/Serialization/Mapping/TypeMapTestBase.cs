@@ -1,14 +1,17 @@
-using System.IO;
+﻿using System.IO;
 using System.Xml;
 using XRoadLib.Protocols.Headers;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Tests.Serialization.Mapping
 {
-    public static class MappingTestHelper
+    public abstract class TypeMapTestBase
     {
-        public static object DeserializeValue(ITypeMap typeMap, object value)
+        protected static readonly SchemaDefinitionReader schemaDefinitionReader = new SchemaDefinitionReader("");
+
+        protected static object DeserializeValue(ITypeMap typeMap, object value)
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream))

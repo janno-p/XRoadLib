@@ -82,7 +82,7 @@ namespace XRoadLib.Extensions
             var startIndex = 0;
             while (true)
             {
-                var endIndex = value.IndexOf("]]>");
+                var endIndex = value.IndexOf("]]>", startIndex);
                 if (endIndex < 0)
                 {
                     writer.WriteCData(value.Substring(startIndex));
@@ -94,8 +94,6 @@ namespace XRoadLib.Extensions
 
                 startIndex = endIndex + 2;
             }
-
-            writer.WriteCData(value);
         }
 
         /// <summary>

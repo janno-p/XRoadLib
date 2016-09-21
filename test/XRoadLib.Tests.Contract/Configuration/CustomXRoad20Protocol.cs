@@ -2,14 +2,19 @@
 using System.Web.Services.Description;
 using System.Xml;
 using XRoadLib.Protocols;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {
     public class CustomXRoad20Protocol : XRoad20Protocol
     {
+        private StringSerializationMode stringSerializationMode;
+
         public static XRoadProtocol Instance { get; } = new CustomXRoad20Protocol();
 
-        private CustomXRoad20Protocol()
+        public override StringSerializationMode StringSerializationMode => stringSerializationMode;
+
+        public CustomXRoad20Protocol()
             : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer", null, new SchemaExporter())
         {
             Titles.Add("", "Ilma keeleta palun");
@@ -37,6 +42,11 @@ namespace XRoadLib.Tests.Contract.Configuration
 
             // Customize service name:
             serviceDescription.Services[0].Name = "TestService";
+        }
+
+        public void SetStringSerializationMode(StringSerializationMode stringSerializationMode)
+        {
+            this.stringSerializationMode = stringSerializationMode;
         }
     }
 }
