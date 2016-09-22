@@ -20,17 +20,17 @@ namespace XRoadLib.Soap
             var faultMessage = !string.IsNullOrWhiteSpace(message) ? message : (exception?.Message ?? string.Empty);
 
             writer.WriteStartElement("faultcode");
-            writer.WriteValue(faultFaultCode.Value);
+            writer.WriteString(faultFaultCode.Value);
             writer.WriteEndElement();
 
             writer.WriteStartElement("faultstring");
-            writer.WriteCData(faultMessage);
+            writer.WriteString(faultMessage);
             writer.WriteEndElement();
 
             if (!string.IsNullOrWhiteSpace(faultActor))
             {
                 writer.WriteStartElement("faultactor");
-                writer.WriteValue(faultActor);
+                writer.WriteString(faultActor);
                 writer.WriteEndElement();
             }
 
@@ -71,7 +71,7 @@ namespace XRoadLib.Soap
 
             if (success && reader.LocalName == "detail" && reader.NamespaceURI == "")
             {
-                fault.Details = reader.ReadElementContentAsString();
+                fault.Details = reader.ReadInnerXml();
                 success = reader.MoveToElement(depth);
             }
 
