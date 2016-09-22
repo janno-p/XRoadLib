@@ -86,7 +86,7 @@ namespace XRoadLib.Serialization.Mapping
             {
                 writer.WriteStartElement("item");
                 style.WriteExplicitType(writer, typeName);
-                writer.WriteStringWithMode(methodName, message.Protocol.StringSerializationMode);
+                writer.WriteString(methodName);
                 writer.WriteEndElement();
             }
 
