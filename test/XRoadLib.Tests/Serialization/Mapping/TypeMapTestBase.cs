@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
@@ -13,22 +14,16 @@ namespace XRoadLib.Tests.Serialization.Mapping
 
         protected static object DeserializeValue(ITypeMap typeMap, object value)
         {
-            using (var stream = new MemoryStream())
-            using (var writer = new StreamWriter(stream))
+            var writer = new StringBuilder();
+            writer.AppendLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
+            writer.AppendLine($"<value>{value}</value>");
+
+            using (var textReader = new StringReader(writer.ToString()))
+            using (var reader = XmlReader.Create(textReader))
             {
-                writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
-                writer.WriteLine($"<value>{value}</value>");
-                writer.Flush();
-
-                stream.Position = 0;
-                using (var reader = XmlReader.Create(stream))
-                {
-                    while (reader.Read() && reader.NodeType != XmlNodeType.Element)
-                    { }
-
-                    using (var message = new XRoadMessage(Globals.XRoadProtocol20, new XRoadHeader20()))
-                        return typeMap.Deserialize(reader, null, Globals.GetTestDefinition(typeMap.Definition.Type), message);
-                }
+                while (reader.Read() && reader.NodeType != XmlNodeType.Element) { }
+                using (var message = new XRoadMessage(Globals.XRoadProtocol20, new XRoadHeader20()))
+                    return typeMap.Deserialize(reader, null, Globals.GetTestDefinition(typeMap.Definition.Type), message);
             }
         }
     }
