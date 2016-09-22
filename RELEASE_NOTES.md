@@ -1,7 +1,8 @@
-#### 1.0.0-beta029 - Unreleased
+#### 1.0.0-beta029 - 22.09.2016
 * New X-Road fault structure for message protocol version 4.0.
 * Fix regression: remove type attribute from RPC/Encoded root element.
 * Deprecate custom CData-based escaping in preference to HTML encoded special characters.
+* Fix SOAP Fault parsing when details contains XML.
 
 #### 1.0.0-beta028 - 20.09.2016
 * Use customized type name when searching runtime types from contract assembly.
