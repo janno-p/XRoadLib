@@ -35,7 +35,7 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static object DeserializeMessageContent(this XRoadMessage message, IServiceMap serviceMap)
         {
-            if (message.Protocol.NonTechnicalFaultInResponseElement)
+            if (message.Protocol != null && message.Protocol.NonTechnicalFaultInResponseElement)
                 ThrowIfXRoadFault(message);
 
             message.ContentStream.Position = 0;
@@ -49,8 +49,6 @@ namespace XRoadLib.Extensions
                 if (reader.NamespaceURI == NamespaceConstants.SOAP_ENV && reader.LocalName == "Fault")
                     throw new SoapFaultException(SoapMessageHelper.DeserializeSoapFault(reader));
 
-                var serializerCache = message.GetSerializerCache();
-
                 var result = serviceMap.DeserializeResponse(reader, message);
 
                 var fault = result as XRoadFault;
@@ -63,9 +61,6 @@ namespace XRoadLib.Extensions
 
         private static void ThrowIfXRoadFault(XRoadMessage message)
         {
-            if (message.Protocol == null)
-                return;
-
             message.ContentStream.Position = 0;
 
             var pathRoot = $"/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/{message.Protocol.ResponsePartNameInResponse}";

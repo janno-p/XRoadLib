@@ -12,10 +12,35 @@ using XRoadLib.Serialization.Mapping;
 namespace XRoadLib
 {
     /// <summary>
+    /// Wraps WebRequest object to be used in event handler.
+    /// </summary>
+    public class XRoadRequestEventArgs : EventArgs
+    {
+        /// <summary>
+        /// WebRequest object which is used to invoke X-Road request.
+        /// </summary>
+        public WebRequest WebRequest { get; }
+
+        /// <summary>
+        /// Initialize event argument class.
+        /// </summary>
+        public XRoadRequestEventArgs(WebRequest webRequest)
+        {
+            WebRequest = webRequest;
+        }
+    }
+
+    /// <summary>
     /// X-Road request object which wraps single X-Road web request.
     /// </summary>
     public interface IXRoadRequest
     {
+        /// <summary>
+        /// Event is called before invoking WebRequest which allows to
+        /// customize request options.
+        /// </summary>
+        event EventHandler<XRoadRequestEventArgs> BeforeBeginRequest;
+
         /// <summary>
         /// Executes specified X-Road operations with given arguments.
         /// </summary>
@@ -30,6 +55,12 @@ namespace XRoadLib
         private readonly XRoadProtocol protocol;
         private readonly Uri uri;
         private readonly string requestNamespace;
+
+        /// <summary>
+        /// Event is called before invoking WebRequest which allows to
+        /// customize request options.
+        /// </summary>
+        public event EventHandler<XRoadRequestEventArgs> BeforeBeginRequest;
 
         /// <summary>
         /// Initialize new request object.
@@ -79,6 +110,8 @@ namespace XRoadLib
                 request.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
                 request.Headers["SOAPAction"] = string.Empty;
                 request.Method = "POST";
+
+                BeforeBeginRequest?.Invoke(this, new XRoadRequestEventArgs(request));
 
                 requestMessage.SaveTo(request);
 
