@@ -1,3 +1,6 @@
+#### 1.0.0-beta030 - 22.09.2016
+* Fix regression in listMethods service.
+
 #### 1.0.0-beta029 - 22.09.2016
 * New X-Road fault structure for message protocol version 4.0.
 * Fix regression: remove type attribute from RPC/Encoded root element.
