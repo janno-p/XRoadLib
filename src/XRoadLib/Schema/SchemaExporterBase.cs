@@ -17,5 +17,12 @@
         /// Provide your own override to alter default behavior.
         /// </summary>
         public virtual void ExportFaultDefinition(FaultDefinition faultDefinition) { }
+
+        /// <summary>
+        /// Provide schema location of specified schema. When no location is provided, system schemas
+        /// will be assigned to default location and other schemas will be explicitly defined
+        /// in service description.
+        /// </summary>
+        public virtual string ExportSchemaLocation(string namespaceName) => null;
     }
 }

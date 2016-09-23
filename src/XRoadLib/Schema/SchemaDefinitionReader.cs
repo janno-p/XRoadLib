@@ -170,5 +170,13 @@ namespace XRoadLib.Schema
 
             return faultDefinition;
         }
+
+        /// <summary>
+        /// Get schema location of specified schema namespace.
+        /// </summary>
+        public string GetSchemaLocation(string namespaceName)
+        {
+            return SchemaExporter?.ExportSchemaLocation(namespaceName) ?? NamespaceConstants.GetSchemaLocation(namespaceName);
+        }
     }
 }

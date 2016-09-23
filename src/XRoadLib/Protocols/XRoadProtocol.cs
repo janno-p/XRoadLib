@@ -75,11 +75,6 @@ namespace XRoadLib.Protocols
         public virtual bool NonTechnicalFaultInResponseElement => false;
 
         /// <summary>
-        /// Add other not target namespace schemas to service description.
-        /// </summary>
-        public virtual bool IncludeExternalSchemas => false;
-
-        /// <summary>
         /// Request element name in request message.
         /// </summary>
         public virtual string RequestPartNameInRequest => "request";

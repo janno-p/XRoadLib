@@ -35,5 +35,10 @@
         /// Configuration hook for overriding default non-technical fault settings.
         /// </summary>
         void ExportFaultDefinition(FaultDefinition faultDefinition);
+
+        /// <summary>
+        /// Provide custom schema locations.
+        /// </summary>
+        string ExportSchemaLocation(string namespaceName);
     }
 }

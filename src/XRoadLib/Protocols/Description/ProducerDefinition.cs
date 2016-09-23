@@ -44,7 +44,10 @@ namespace XRoadLib.Protocols.Description
         private readonly IDictionary<Type, XmlQualifiedName> additionalTypeDefinitions = new Dictionary<Type, XmlQualifiedName>();
         private readonly IDictionary<XName, TypeDefinition> schemaTypeDefinitions = new Dictionary<XName, TypeDefinition>();
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
-        private readonly ISet<Tuple<string, string>> requiredImports = new SortedSet<Tuple<string, string>>();
+        private readonly IDictionary<string, string> schemaLocations = new Dictionary<string, string>();
+
+        private readonly Action<string, string> addRequiredImport;
+        private readonly Func<string, IList<string>> getRequiredImports;
 
         /// <summary>
         /// Initialize builder with contract details.
@@ -87,6 +90,21 @@ namespace XRoadLib.Protocols.Description
             };
 
             CollectTypes();
+
+            var requiredImports = new SortedSet<Tuple<string, string>>();
+
+            addRequiredImport = (schemaNamespace, typeNamespace) =>
+            {
+                if (typeNamespace == NamespaceConstants.XSD || typeNamespace == schemaNamespace)
+                    return;
+
+                if (!schemaLocations.ContainsKey(typeNamespace))
+                    schemaLocations.Add(typeNamespace, schemaDefinitionReader.GetSchemaLocation(typeNamespace));
+
+                requiredImports.Add(Tuple.Create(schemaNamespace, typeNamespace));
+            };
+
+            getRequiredImports = ns => requiredImports.Where(x => x.Item1 == ns).Select(x => x.Item2).ToList();
         }
 
         /// <summary>
@@ -298,7 +316,7 @@ namespace XRoadLib.Protocols.Description
                     schemaType.Name = typeDefinition.Name.LocalName;
                     schemaType.Annotation = CreateSchemaAnnotation(typeDefinition.Name.NamespaceName, typeDefinition);
 
-                    schemaTypes.Add(Tuple.Create(typeDefinition.Name.NamespaceName, schemaType));
+                    AddSchemaType(schemaTypes, typeDefinition.Name.NamespaceName, schemaType);
 
                     referencedTypes[kvp.Key] = schemaType;
 
@@ -315,27 +333,17 @@ namespace XRoadLib.Protocols.Description
             {
                 var faultType = new XmlSchemaComplexType { Name = faultDefinition.Name.LocalName, Particle = CreateFaultSequence() };
                 faultType.Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition);
-                schemaTypes.Add(Tuple.Create(faultDefinition.Name.NamespaceName, (XmlSchemaType)faultType));
+                AddSchemaType(schemaTypes, faultDefinition.Name.NamespaceName, faultType);
             }
 
-            var allNamespaces = schemaTypes.Select(x => x.Item1).Where(x => x != NamespaceConstants.XSD).Distinct().ToList();
-            var externalNamespaces = allNamespaces.Where(x => x != targetNamespace).ToList();
-
-            var schemas = new List<XmlSchema>();
-
-            if (protocol.IncludeExternalSchemas)
-            {
-                var elements = new List<XmlSchemaElement>();
-                foreach (var schema in externalNamespaces.Select(externalNamespace => BuildSchemaForNamespace(externalNamespace, schemaTypes, elements, allNamespaces)))
-                {
-                    schema.Namespaces.Add("ns0", schema.TargetNamespace);
-                    schemas.Add(schema);
-                }
-            }
-
-            schemas.Add(BuildSchemaForNamespace(targetNamespace, schemaTypes, schemaElements, allNamespaces));
-
-            return schemas;
+            return schemaTypes
+                .Select(x => x.Item1)
+                .Where(x => x != NamespaceConstants.XSD && x != targetNamespace)
+                .Distinct()
+                .Where(ns => schemaLocations[ns] == null)
+                .Select(x => BuildSchemaForNamespace(x, schemaTypes, null))
+                .Concat(new [] { BuildSchemaForNamespace(targetNamespace, schemaTypes, schemaElements) })
+                .ToList();
         }
 
         private XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseValueDefinition definition, XmlSchemaElement requestElement, XmlSchemaElement responseElement, FaultDefinition faultDefinition)
@@ -402,25 +410,24 @@ namespace XRoadLib.Protocols.Description
             };
         }
 
-        private XmlSchema BuildSchemaForNamespace(string schemaNamespace, IList<Tuple<string, XmlSchemaType>> schemaTypes, IList<XmlSchemaElement> schemaElements, IList<string> customNamespaces)
+        private XmlSchema BuildSchemaForNamespace(string schemaNamespace, IList<Tuple<string, XmlSchemaType>> schemaTypes, IList<XmlSchemaElement> schemaElements)
         {
             var namespaceTypes = schemaTypes.Where(x => x.Item1 == schemaNamespace).Select(x => x.Item2).ToList();
-            var namespaceImports = requiredImports.Where(x => x.Item1 == schemaNamespace).Select(x => x.Item2).ToList();
 
             var schema = new XmlSchema { TargetNamespace = schemaNamespace };
 
             foreach (var namespaceType in namespaceTypes.OrderBy(x => x.Name.ToLower()))
                 schema.Items.Add(namespaceType);
 
-            foreach (var schemaElement in schemaElements.OrderBy(x => x.Name.ToLower()))
-                schema.Items.Add(schemaElement);
+            if (schemaElements != null)
+                foreach (var schemaElement in schemaElements.OrderBy(x => x.Name.ToLower()))
+                    schema.Items.Add(schemaElement);
 
             var n = 1;
-            foreach (var namespaceImport in namespaceImports)
+            foreach (var namespaceImport in getRequiredImports(schema.TargetNamespace))
             {
-                schema.Includes.Add(new XmlSchemaImport { Namespace = namespaceImport, SchemaLocation = namespaceImport });
-                if (customNamespaces.Contains(namespaceImport))
-                    schema.Namespaces.Add($"ns{n++}", namespaceImport);
+                schema.Includes.Add(new XmlSchemaImport { Namespace = namespaceImport, SchemaLocation = schemaLocations[namespaceImport] });
+                schema.Namespaces.Add($"ns{n++}", namespaceImport);
             }
 
             return schema;
@@ -440,7 +447,7 @@ namespace XRoadLib.Protocols.Description
             additionalTypeDefinitions.Add(type, qualifiedName);
 
             var schemaType = new XmlSchemaComplexType { Name = qualifiedName.Name };
-            schemaTypes.Add(Tuple.Create(qualifiedName.Namespace, (XmlSchemaType)schemaType));
+            AddSchemaType(schemaTypes, qualifiedName.Namespace, schemaType);
 
             if (schemaElement == null)
                 return qualifiedName;
@@ -593,7 +600,7 @@ namespace XRoadLib.Protocols.Description
             if (!runtimeTypeDefinitions.TryGetValue(type, out typeDefinition))
                 throw new Exception($"Unrecognized type `{type.FullName}`.");
 
-            AddRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName);
+            addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName);
 
             return new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
         }
@@ -604,7 +611,7 @@ namespace XRoadLib.Protocols.Description
                 return null;
 
             var markup = definition.Documentation
-                                   .Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2, ns => requiredImports.Add(Tuple.Create(schemaNamespace, ns))))
+                                   .Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2, ns => addRequiredImport(schemaNamespace, ns)))
                                    .Cast<XmlNode>();
 
 #if NETSTANDARD1_5
@@ -619,7 +626,7 @@ namespace XRoadLib.Protocols.Description
 
         private void AddBinaryAttribute(string schemaNamespace, XmlSchemaAnnotated schemaElement)
         {
-            requiredImports.Add(Tuple.Create(schemaNamespace, NamespaceConstants.XMIME));
+            addRequiredImport(schemaNamespace, NamespaceConstants.XMIME);
 
 #if NETSTANDARD1_5
             schemaElement.UnhandledAttributes.Add(protocol.Style.CreateExpectedContentType("application/octet-stream"));
@@ -639,12 +646,6 @@ namespace XRoadLib.Protocols.Description
             return schemaDefinitionReader.GetTypeDefinition(contentDefinition.RuntimeType);
         }
 
-        private void AddRequiredImport(string schemaNamespace, string typeNamespace)
-        {
-            if (typeNamespace != NamespaceConstants.XSD && typeNamespace != schemaNamespace)
-                requiredImports.Add(Tuple.Create(schemaNamespace, typeNamespace));
-        }
-
         private void SetSchemaElementType(XmlSchemaElement schemaElement, string schemaNamespace, IContentDefinition contentDefinition, IDictionary<XmlQualifiedName, XmlSchemaType> referencedTypes)
         {
             if (typeof(Stream).GetTypeInfo().IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
@@ -653,7 +654,7 @@ namespace XRoadLib.Protocols.Description
             var typeDefinition = GetContentTypeDefinition(contentDefinition);
             if (!typeDefinition.IsAnonymous)
             {
-                AddRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName);
+                addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName);
                 schemaElement.SchemaTypeName = new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
                 if (!referencedTypes.ContainsKey(schemaElement.SchemaTypeName))
                     referencedTypes.Add(schemaElement.SchemaTypeName, null);
@@ -749,7 +750,7 @@ namespace XRoadLib.Protocols.Description
 
             SetSchemaElementType(itemElement, schemaNamespace, propertyDefinition.ArrayItemDefinition, referencedTypes);
 
-            protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, ns => requiredImports.Add(Tuple.Create(schemaNamespace, ns)));
+            protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, ns => addRequiredImport(schemaNamespace, ns));
 
             return schemaElement;
         }
@@ -811,6 +812,14 @@ namespace XRoadLib.Protocols.Description
 
             if (typeDefinition.Name != null && !schemaTypeDefinitions.ContainsKey(typeDefinition.Name))
                 schemaTypeDefinitions.Add(typeDefinition.Name, typeDefinition);
+        }
+
+        private void AddSchemaType(ICollection<Tuple<string, XmlSchemaType>> schemaTypes, string namespaceName, XmlSchemaType schemaType)
+        {
+            if (!schemaLocations.ContainsKey(namespaceName))
+                schemaLocations.Add(namespaceName, schemaDefinitionReader.GetSchemaLocation(namespaceName));
+
+            schemaTypes.Add(Tuple.Create(namespaceName, schemaType));
         }
     }
 }

@@ -31,5 +31,7 @@ namespace XRoadLib.Tests.Contract.Configuration
 
         public void ExportFaultDefinition(FaultDefinition faultDefinition)
         { }
+
+        public string ExportSchemaLocation(string namespaceName) => null;
     }
 }
