@@ -1,4 +1,4 @@
-#### 1.0.0-beta031 - Unreleased
+#### 1.0.0-beta031 - 23.09.2016
 * Improve namespace dependency management in service descriptions.
 * Fix parsing of X-Road message protocol version 4.0 response headers.
 
