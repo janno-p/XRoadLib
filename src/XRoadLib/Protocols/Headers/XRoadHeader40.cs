@@ -4,18 +4,59 @@ using XRoadLib.Extensions;
 
 namespace XRoadLib.Protocols.Headers
 {
+    /// <summary>
+    /// Implements default X-Road message protocol version 4.0 SOAP header.
+    /// </summary>
     public class XRoadHeader40 : IXRoadHeader, IXRoadHeader40
     {
+        /// <summary>
+        /// Client identity.
+        /// </summary>
         public XRoadClientIdentifier Client { get; set; }
+
+        /// <summary>
+        /// Service identity.
+        /// </summary>
         public XRoadServiceIdentifier Service { get; set; }
+
+        /// <summary>
+        /// User identity code.
+        /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Received application, issue or document.
+        /// </summary>
         public string Issue { get; set; }
+
+        /// <summary>
+        /// Unique identity of the request.
+        /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// X-Road message protocol version.
+        /// </summary>
         public string ProtocolVersion { get; set; }
 
+        /// <summary>
+        /// Central service identity.
+        /// </summary>
         public XRoadCentralServiceIdentifier CentralService { get; set; }
+
+        /// <summary>
+        /// Represented party details.
+        /// </summary>
         public XRoadRepresentedParty RepresentedParty { get; set; }
 
+        /// <summary>
+        /// Request hash of the X-Road message.
+        /// </summary>
+        public XRoadRequestHash RequestHash { get; set; }
+
+        /// <summary>
+        /// Check for presence of mandatory parts.
+        /// </summary>
         public void Validate()
         {
             if (Client == null)
@@ -28,6 +69,9 @@ namespace XRoadLib.Protocols.Headers
                 throw XRoadException.InvalidQuery("X-Road header `protocolVersion` element is mandatory.");
         }
 
+        /// <summary>
+        /// Read next header value from the XML reader object.
+        /// </summary>
         public void SetHeaderValue(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.XROAD_V4_REPR && reader.LocalName == "representedParty")
@@ -66,6 +110,10 @@ namespace XRoadLib.Protocols.Headers
 
                     case "protocolVersion":
                         ProtocolVersion = reader.ReadElementContentAsString();
+                        return;
+
+                    case "requestHash":
+                        RequestHash = ReadRequestHash(reader);
                         return;
                 }
             }
@@ -226,6 +274,13 @@ namespace XRoadLib.Protocols.Headers
                 throw XRoadException.InvalidQuery($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
 
             return centralService;
+        }
+
+        private static XRoadRequestHash ReadRequestHash(XmlReader reader)
+        {
+            var algorithm = reader.GetAttribute("requestHash");
+            var value = reader.ReadElementContentAsString();
+            return new XRoadRequestHash(value, algorithm);
         }
 
         private static XRoadObjectType GetObjectType(string value)

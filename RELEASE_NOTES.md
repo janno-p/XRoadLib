@@ -1,3 +1,7 @@
+#### 1.0.0-beta031 - Unreleased
+* Improve namespace dependency management in service descriptions.
+* Fix parsing of X-Road message protocol version 4.0 response headers.
+
 #### 1.0.0-beta030 - 22.09.2016
 * Fix regression in listMethods service.
 

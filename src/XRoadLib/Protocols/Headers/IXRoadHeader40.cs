@@ -2,6 +2,9 @@
 
 namespace XRoadLib.Protocols.Headers
 {
+    /// <summary>
+    /// X-Road message protocol version 4.0 SOAP header elements.
+    /// </summary>
     public interface IXRoadHeader40
     {
         /// <summary>
@@ -48,6 +51,12 @@ namespace XRoadLib.Protocols.Headers
         /// </summary>
         [XmlElement("protocolVersion", Namespace = NamespaceConstants.XROAD_V4)]
         string ProtocolVersion { get; }
+
+        /// <summary>
+        /// Base64 encoded hash of the SOAP request message
+        /// </summary>
+        [XmlElement("requestHash", Namespace = NamespaceConstants.XROAD_V4)]
+        XRoadRequestHash RequestHash { get; } // For responses only
 
         /// <summary>
         /// Identifies a party that is being represented in a service request.
