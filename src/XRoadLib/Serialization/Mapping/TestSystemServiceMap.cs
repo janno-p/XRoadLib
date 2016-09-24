@@ -11,6 +11,7 @@ namespace XRoadLib.Serialization.Mapping
         public OperationDefinition Definition { get; }
 
         public bool HasParameters => false;
+        public bool HasXRoadFaultInResponse => true;
 
         public TestSystemServiceMap(XName operationName)
         {

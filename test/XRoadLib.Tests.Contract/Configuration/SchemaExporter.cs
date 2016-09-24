@@ -2,36 +2,25 @@
 
 namespace XRoadLib.Tests.Contract.Configuration
 {
-    public class SchemaExporter : ISchemaExporter
+    public class SchemaExporter : SchemaExporterXRoad20
     {
-        public void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition)
-        { }
-
-        public void ExportOperationDefinition(OperationDefinition operationDefinition)
+        public override void ExportOperationDefinition(OperationDefinition operationDefinition)
         {
             // Customize operation message names:
             operationDefinition.InputMessageName = operationDefinition.Name.LocalName;
             operationDefinition.OutputMessageName = $"{operationDefinition.Name.LocalName}Response";
         }
 
-        public void ExportTypeDefinition(TypeDefinition typeDefinition)
+        public override void ExportTypeDefinition(TypeDefinition typeDefinition)
         {
             // Customize type content model:
             if (typeDefinition.Type == typeof(ParamType1))
                 typeDefinition.HasStrictContentOrder = false;
         }
 
-        public void ExportPropertyDefinition(PropertyDefinition propertyDefinition)
+        public override void ExportPropertyDefinition(PropertyDefinition propertyDefinition)
         {
             propertyDefinition.UseXop = false;
         }
-
-        public void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition)
-        { }
-
-        public void ExportFaultDefinition(FaultDefinition faultDefinition)
-        { }
-
-        public string ExportSchemaLocation(string namespaceName) => null;
     }
 }

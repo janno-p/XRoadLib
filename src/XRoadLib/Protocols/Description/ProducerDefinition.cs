@@ -184,6 +184,7 @@ namespace XRoadLib.Protocols.Description
             var referencedTypes = new Dictionary<XmlQualifiedName, XmlSchemaType>();
 
             var faultDefinition = schemaDefinitionReader.GetFaultDefinition();
+            var addFaultType = false;
 
             foreach (var operationDefinition in GetOperationDefinitions(targetNamespace))
             {
@@ -204,11 +205,13 @@ namespace XRoadLib.Protocols.Description
                     });
 
                 var responseValueDefinition = schemaDefinitionReader.GetResponseValueDefinition(operationDefinition);
+                if (!responseValueDefinition.ContainsNonTechnicalFault)
+                    addFaultType = true;
 
                 XmlSchemaElement responseElement;
                 XmlSchemaElement resultElement = null;
 
-                if (responseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit && protocol.NonTechnicalFaultInResponseElement)
+                if (responseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit && responseValueDefinition.ContainsNonTechnicalFault)
                 {
                     var outputParticle = new XmlSchemaSequence();
                     responseElement = new XmlSchemaElement { Name = "response", SchemaType = new XmlSchemaComplexType { Particle = outputParticle } };
@@ -329,7 +332,7 @@ namespace XRoadLib.Protocols.Description
                 }
             } while (initialCount != referencedTypes.Count);
 
-            if (!protocol.NonTechnicalFaultInResponseElement && faultDefinition.State == DefinitionState.Default)
+            if (addFaultType && faultDefinition.State == DefinitionState.Default)
             {
                 var faultType = new XmlSchemaComplexType { Name = faultDefinition.Name.LocalName, Particle = CreateFaultSequence() };
                 faultType.Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition);
@@ -348,7 +351,7 @@ namespace XRoadLib.Protocols.Description
 
         private XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseValueDefinition definition, XmlSchemaElement requestElement, XmlSchemaElement responseElement, FaultDefinition faultDefinition)
         {
-            if (protocol.NonTechnicalFaultInResponseElement)
+            if (definition.ContainsNonTechnicalFault)
                 return new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } };
 
             if ("unbounded".Equals(responseElement.MaxOccursString) || responseElement.MaxOccurs > 1)

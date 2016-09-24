@@ -70,11 +70,6 @@ namespace XRoadLib.Protocols
         public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
 
         /// <summary>
-        /// Should technical fault fields be returned inside response element.
-        /// </summary>
-        public virtual bool NonTechnicalFaultInResponseElement => false;
-
-        /// <summary>
         /// Request element name in request message.
         /// </summary>
         public virtual string RequestPartNameInRequest => "request";

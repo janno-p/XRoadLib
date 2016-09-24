@@ -33,6 +33,11 @@ namespace XRoadLib.Schema
         public string FaultName { get; set; } = "fault";
 
         /// <summary>
+        /// Should technical fault fields be returned inside response element.
+        /// </summary>
+        public virtual bool ContainsNonTechnicalFault { get; set; } = false;
+
+        /// <summary>
         /// Initializes new response definition using default values extracted from
         /// operation definition entity.
         /// </summary>

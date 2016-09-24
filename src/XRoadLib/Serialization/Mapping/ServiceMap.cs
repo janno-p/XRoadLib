@@ -30,6 +30,12 @@ namespace XRoadLib.Serialization.Mapping
         public bool HasParameters => requestValueDefinition.ParameterInfo != null;
 
         /// <summary>
+        /// Specifies if X-Road fault is returned wrapped inside operation response element
+        /// or separately as its own element.
+        /// </summary>
+        public bool HasXRoadFaultInResponse => responseValueDefinition.ContainsNonTechnicalFault;
+
+        /// <summary>
         /// Initializes new ServiceMap entity using settings specified in operationDefinition.
         /// <param name="serializerCache">Provides TypeMap lookup.</param>
         /// <param name="operationDefinition">Operation which this ServiceMap represents.</param>
@@ -82,7 +88,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var hasResponseElement = reader.MoveToElement(3);
 
-            if (hasResponseElement && !message.Protocol.NonTechnicalFaultInResponseElement && reader.LocalName == responseValueDefinition.FaultName)
+            if (hasResponseElement && !HasXRoadFaultInResponse && reader.LocalName == responseValueDefinition.FaultName)
                 return reader.ReadXRoadFault(4);
 
             if (!hasResponseElement || reader.LocalName != responseName)
@@ -154,7 +160,7 @@ namespace XRoadLib.Serialization.Mapping
             if (containsRequest && !Definition.ProhibitRequestPartInResponse)
                 CopyRequestToResponse(writer, requestReader, message, out namespaceInContext);
 
-            if (!message.Protocol.NonTechnicalFaultInResponseElement && fault != null)
+            if (!HasXRoadFaultInResponse && fault != null)
             {
                 writer.WriteStartElement(responseValueDefinition.FaultName);
                 SerializeFault(writer, fault, message.Protocol);
@@ -206,7 +212,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             return !responseValueDefinition.MergeContent
                    && responseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit
-                   && message.Protocol.NonTechnicalFaultInResponseElement;
+                   && HasXRoadFaultInResponse;
         }
 
         private static void SerializeFault(XmlWriter writer, IXRoadFault fault, XRoadProtocol protocol)

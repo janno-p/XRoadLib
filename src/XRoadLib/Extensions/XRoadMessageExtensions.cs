@@ -35,7 +35,7 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static object DeserializeMessageContent(this XRoadMessage message, IServiceMap serviceMap)
         {
-            if (message.Protocol != null && message.Protocol.NonTechnicalFaultInResponseElement)
+            if (message.Protocol != null && serviceMap.HasXRoadFaultInResponse)
                 ThrowIfXRoadFault(message);
 
             message.ContentStream.Position = 0;

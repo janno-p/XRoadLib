@@ -24,6 +24,12 @@ namespace XRoadLib.Serialization.Mapping
         public bool HasParameters => false;
 
         /// <summary>
+        /// Specifies if X-Road fault is returned wrapped inside operation response element
+        /// or separately as its own element.
+        /// </summary>
+        public bool HasXRoadFaultInResponse => true;
+
+        /// <summary>
         /// Initialize new `listMethods` service map.
         /// </summary>
         public ListMethodsServiceMap(XName operationName)
