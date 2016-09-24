@@ -1,10 +1,26 @@
+using System.Web.Services.Description;
+
 namespace XRoadLib.Schema
 {
     /// <summary>
     /// Schema exporter for X-Road message protocol version 2.0.
     /// </summary>
-    public class SchemaExporterXRoad20 : SchemaExporterBase
+    public class SchemaExporterXRoad20 : SchemaExporterXRoadLegacy
     {
+        /// <summary>
+        /// X-Road standard compliant producer namespace.
+        /// </summary>
+        public override string ProducerNamespace { get; }
+
+        /// <summary>
+        /// Initializes schema exporter for X-Road message protocol version 2.0.
+        /// </summary>
+        public SchemaExporterXRoad20(string producerName)
+            : base(producerName, PrefixConstants.XTEE, NamespaceConstants.XTEE)
+        {
+            ProducerNamespace = $"http://producers.{producerName}.xtee.riik.ee/producer/{producerName}";
+        }
+
         /// <summary>
         /// Configure request elements of X-Road message protocol version 2.0 messages.
         /// </summary>
@@ -22,9 +38,19 @@ namespace XRoadLib.Schema
         {
             base.ExportResponseValueDefinition(responseValueDefinition);
 
-            responseValueDefinition.ContainsNonTechnicalFault = true;
             responseValueDefinition.RequestElementName = "paring";
             responseValueDefinition.ResponseElementName = "keha";
+        }
+
+        /// <summary>
+        /// Allows each message protocol implementation to customize service description document
+        /// before publishing.
+        /// </summary>
+        public override void ExportServiceDescription(ServiceDescription serviceDescription)
+        {
+            base.ExportServiceDescription(serviceDescription);
+
+            serviceDescription.Namespaces.Add(PrefixConstants.SOAP_ENC, NamespaceConstants.SOAP_ENC);
         }
     }
 }

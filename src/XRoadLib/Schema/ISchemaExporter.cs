@@ -1,4 +1,6 @@
-﻿namespace XRoadLib.Schema
+﻿using System.Web.Services.Description;
+
+namespace XRoadLib.Schema
 {
     /// <summary>
     /// Provides configuration hooks for customizing contract serialization
@@ -40,5 +42,11 @@
         /// Provide custom schema locations.
         /// </summary>
         string ExportSchemaLocation(string namespaceName);
+
+        /// <summary>
+        /// Allows each message protocol implementation to customize service description document
+        /// before publishing.
+        /// </summary>
+        void ExportServiceDescription(ServiceDescription serviceDescription);
     }
 }

@@ -117,15 +117,6 @@ namespace XRoadLib.Protocols
             return false;
         }
 
-        /// <summary>
-        /// Allows each message protocol implementation to customize service description document
-        /// before publishing.
-        /// </summary>
-        public virtual void ExportServiceDescription(ServiceDescription serviceDescription)
-        {
-            serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
-        }
-
         internal abstract IXRoadHeader CreateHeader();
 
         internal virtual void WriteSoapEnvelope(XmlWriter writer)

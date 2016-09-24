@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Web.Services.Description;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
@@ -189,6 +190,14 @@ namespace XRoadLib.Schema
         public string GetSchemaLocation(string namespaceName)
         {
             return SchemaExporter?.ExportSchemaLocation(namespaceName) ?? NamespaceConstants.GetSchemaLocation(namespaceName);
+        }
+
+        /// <summary>
+        /// Customize service description before presentation.
+        /// </summary>
+        public void ExportServiceDescription(ServiceDescription serviceDescription)
+        {
+            SchemaExporter?.ExportServiceDescription(serviceDescription);
         }
     }
 }

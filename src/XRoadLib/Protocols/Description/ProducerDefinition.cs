@@ -785,11 +785,11 @@ namespace XRoadLib.Protocols.Description
             binding.Extensions.Add(protocol.Style.CreateSoapBinding());
             serviceDescription.Bindings.Add(binding);
 
-            servicePort.Extensions.Add(new SoapAddressBinding { Location = "" });
+            servicePort.Extensions.Add(new SoapAddressBinding { Location = "http://INSERT_CORRECT_SERVICE_URL" });
 
             serviceDescription.Services.Add(service);
 
-            protocol.ExportServiceDescription(serviceDescription);
+            schemaDefinitionReader.ExportServiceDescription(serviceDescription);
 
             writer.WriteStartDocument();
             serviceDescription.Write(writer);

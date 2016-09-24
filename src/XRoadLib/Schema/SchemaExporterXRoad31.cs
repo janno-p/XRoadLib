@@ -1,18 +1,33 @@
+using System.Web.Services.Description;
+
 namespace XRoadLib.Schema
 {
     /// <summary>
     /// Schema exporter for X-Road message protocol version 3.1.
     /// </summary>
-    public class SchemaExporterXRoad31 : SchemaExporterBase
+    public class SchemaExporterXRoad31 : SchemaExporterXRoadLegacy
     {
         /// <summary>
-        /// Configure response elements of X-Road message protocol version 3.1 messages.
+        /// X-Road standard compliant producer namespace.
         /// </summary>
-        public override void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition)
-        {
-            base.ExportResponseValueDefinition(responseValueDefinition);
+        public override string ProducerNamespace { get; }
 
-            responseValueDefinition.ContainsNonTechnicalFault = true;
+        /// <summary>
+        /// Initializes schema exporter for X-Road message protocol version 3.1.
+        /// </summary>
+        public SchemaExporterXRoad31(string producerName)
+            : base(producerName, PrefixConstants.XROAD, NamespaceConstants.XROAD)
+        {
+            ProducerNamespace = $"http://{producerName}.x-road.ee/producer/";
+        }
+
+        /// <summary>
+        /// Allows each message protocol implementation to customize service description document
+        /// before publishing.
+        /// </summary>
+        public override void ExportServiceDescription(ServiceDescription serviceDescription)
+        {
+            base.ExportServiceDescription(serviceDescription);
         }
     }
 }

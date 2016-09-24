@@ -1,4 +1,6 @@
-﻿namespace XRoadLib.Schema
+﻿using System.Web.Services.Description;
+
+namespace XRoadLib.Schema
 {
     public abstract class SchemaExporterBase : ISchemaExporter
     {
@@ -24,5 +26,11 @@
         /// in service description.
         /// </summary>
         public virtual string ExportSchemaLocation(string namespaceName) => null;
+
+        /// <summary>
+        /// Allows each message protocol implementation to customize service description document
+        /// before publishing.
+        /// </summary>
+        public virtual void ExportServiceDescription(ServiceDescription serviceDescription) { }
     }
 }

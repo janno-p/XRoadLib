@@ -79,13 +79,6 @@ namespace XRoadLib.Protocols
             return NamespaceConstants.SOAP_ENC.Equals(attributeValue);
         }
 
-        public override void ExportServiceDescription(ServiceDescription serviceDescription)
-        {
-            base.ExportServiceDescription(serviceDescription);
-
-            serviceDescription.Namespaces.Add(PrefixConstants.SOAP_ENC, NamespaceConstants.SOAP_ENC);
-        }
-
         internal override void WriteSoapEnvelope(XmlWriter writer)
         {
             base.WriteSoapEnvelope(writer);

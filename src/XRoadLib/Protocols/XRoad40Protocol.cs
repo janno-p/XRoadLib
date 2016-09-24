@@ -93,17 +93,6 @@ namespace XRoadLib.Protocols
             return new XRoadHeader40();
         }
 
-        public override void ExportServiceDescription(ServiceDescription serviceDescription)
-        {
-            base.ExportServiceDescription(serviceDescription);
-
-            var servicePort = serviceDescription.Services[0].Ports[0];
-
-            var soapAddressBinding = (SoapAddressBinding)servicePort.Extensions[0];
-            if (string.IsNullOrWhiteSpace(soapAddressBinding.Location))
-                soapAddressBinding.Location = "http://INSERT_CORRECT_SERVICE_URL";
-        }
-
         internal override bool IsHeaderNamespace(string ns)
         {
             return NamespaceConstants.XROAD_V4.Equals(ns) || NamespaceConstants.XROAD_V4_REPR.Equals(ns);
