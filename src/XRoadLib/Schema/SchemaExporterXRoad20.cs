@@ -6,6 +6,16 @@ namespace XRoadLib.Schema
     public class SchemaExporterXRoad20 : SchemaExporterBase
     {
         /// <summary>
+        /// Configure request elements of X-Road message protocol version 2.0 messages.
+        /// </summary>
+        public override void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition)
+        {
+            base.ExportRequestValueDefinition(requestValueDefinition);
+
+            requestValueDefinition.RequestElementName = "keha";
+        }
+
+        /// <summary>
         /// Configure response elements of X-Road message protocol version 2.0 messages.
         /// </summary>
         public override void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition)

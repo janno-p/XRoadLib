@@ -129,6 +129,18 @@ namespace XRoadLib.Schema
         }
 
         /// <summary>
+        /// Initializes default request element definition and applies customizations (if any).
+        /// </summary>
+        public RequestValueDefinition GetRequestValueDefinition(OperationDefinition operationDefinition)
+        {
+            var requestValueDefinition = new RequestValueDefinition(operationDefinition);
+
+            SchemaExporter?.ExportRequestValueDefinition(requestValueDefinition);
+
+            return requestValueDefinition;
+        }
+
+        /// <summary>
         /// Initializes default response element definition and applies customizations (if any).
         /// </summary>
         public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)

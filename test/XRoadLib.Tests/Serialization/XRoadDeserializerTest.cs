@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
 using XRoadLib.Extensions;
+using XRoadLib.Protocols;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
@@ -17,8 +19,10 @@ namespace XRoadLib.Tests.Serialization
     {
         private const uint DTO_VERSION = 3;
 
-        private static readonly ISerializerCache serializerCache = Globals.XRoadProtocol31.GetSerializerCache(DTO_VERSION);
-        private static readonly IServiceMap serviceMap = serializerCache.GetServiceMap("Service1");
+        private static readonly ISerializerCache serializerCache20 = Globals.XRoadProtocol20.GetSerializerCache(DTO_VERSION);
+        private static readonly ISerializerCache serializerCache31 = Globals.XRoadProtocol31.GetSerializerCache(DTO_VERSION);
+        private static readonly IServiceMap serviceMap20 = serializerCache20.GetServiceMap("Service1");
+        private static readonly IServiceMap serviceMap31 = serializerCache31.GetServiceMap("Service1");
 
         [Fact]
         public void CanHandleOptionalParameters()
@@ -38,7 +42,7 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param1>"
                            + "</keha>";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest20(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -76,7 +80,7 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param1>"
                            + "</keha>";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest20(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -117,7 +121,7 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param1>"
                            + "</keha>";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest20(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -154,7 +158,7 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param1>"
                            + "</keha>";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest20(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -195,7 +199,7 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param1>"
                            + "</keha>";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest20(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -235,7 +239,7 @@ namespace XRoadLib.Tests.Serialization
                             + "  </Param3>"
                             + "</keha>";
 
-            var contentXml = "<keha xmlns:tns=\"http://test-producer.x-road.ee/producer/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+            var contentXml = "<request xmlns:tns=\"http://test-producer.x-road.ee/producer/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
                            + "  <Param1>"
                            + "    <Property1>123</Property1>"
                            + "    <Property3>some value</Property3>"
@@ -249,9 +253,9 @@ namespace XRoadLib.Tests.Serialization
                            + "      <Name>Vello</Name>"
                            + "    </Subject>"
                            + "  </Param3>"
-                           + "</keha>";
+                           + "</request>";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest31(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -294,8 +298,8 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param3>"
                            + "</keha>";
 
-            var exception = Assert.Throws<XRoadException>(() => DeserializeRequest(templateXml, contentXml));
-            Assert.Equal("The type '{http://test-producer.x-road.ee/producer/}Subject' is abstract, type attribute is required to specify target type.", exception.Message);
+            var exception = Assert.Throws<XRoadException>(() => DeserializeRequest20(templateXml, contentXml));
+            Assert.Equal("The type '{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Subject' is abstract, type attribute is required to specify target type.", exception.Message);
         }
 
         [Fact]
@@ -316,7 +320,7 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param3>"
                            + "</keha>";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest20(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -342,14 +346,14 @@ namespace XRoadLib.Tests.Serialization
                             + "  <Param3 />"
                             + "</keha>";
 
-            var contentXml = "<keha xmlns:tns=\"http://test-producer.x-road.ee/producer/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+            var contentXml = "<request xmlns:tns=\"http://test-producer.x-road.ee/producer/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
                            + "  <Param1 xsi:type=\"tns:InheritsParamType1\">"
                            + "    <Property1>467</Property1>"
                            + "    <Property3>hello</Property3>"
                            + "  </Param1>"
-                           + "</keha>";
+                           + "</request>";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest31(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -378,7 +382,7 @@ namespace XRoadLib.Tests.Serialization
 
             var contentXml = "<keha />";
 
-            var inputObject = DeserializeRequest(templateXml, contentXml);
+            var inputObject = DeserializeRequest20(templateXml, contentXml);
             Assert.IsType<Service1Request>(inputObject);
 
             var request = (Service1Request)inputObject;
@@ -412,7 +416,7 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param1>"
                            + "</keha>";
 
-            var exception = Assert.Throws<XRoadException>(() => DeserializeRequest(templateXml, contentXml));
+            var exception = Assert.Throws<XRoadException>(() => DeserializeRequest20(templateXml, contentXml));
             Assert.Equal("MIME multipart message does not contain content with ID `cid:KcGPT5EOP0BC0DXQ5wmEFA==`.", exception.Message);
         }
 
@@ -438,7 +442,7 @@ namespace XRoadLib.Tests.Serialization
                 {
                     Assert.True(reader.MoveToElement(0));
 
-                    var typeMap = serializerCache.GetTypeMap(typeof(ContainerType));
+                    var typeMap = serializerCache31.GetTypeMap(typeof(ContainerType));
                     using (var message = new XRoadMessage())
                     {
                         var entity = typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message);
@@ -477,7 +481,7 @@ namespace XRoadLib.Tests.Serialization
                 using (var reader = XmlReader.Create(stream))
                 {
                     Assert.True(reader.MoveToElement(0));
-                    var typeMap = serializerCache.GetTypeMap(typeof(ContainerType));
+                    var typeMap = serializerCache31.GetTypeMap(typeof(ContainerType));
                     using (var message = new XRoadMessage())
                     {
                         var exception = Assert.Throws<XRoadException>(() => typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message));
@@ -487,16 +491,43 @@ namespace XRoadLib.Tests.Serialization
             }
         }
 
-        private object DeserializeRequest(string templateXml, string contentXml)
+        private object DeserializeRequest20(string templateXml, string contentXml)
         {
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
+            return DeserializeRequest(templateXml, contentXml, Globals.XRoadProtocol20, (msgr, xmlr) =>
+            {
+                using (var message = new XRoadMessage(Globals.XRoadProtocol20, new XRoadHeader20()) { XmlTemplate = template })
+                {
+                    msgr.Read(message, false);
+                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol20.ProducerNamespace));
+                    return serviceMap20.DeserializeRequest(xmlr, message);
+                }
+            });
+        }
+
+        private object DeserializeRequest31(string templateXml, string contentXml)
+        {
+            var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
+            return DeserializeRequest(templateXml, contentXml, Globals.XRoadProtocol31, (msgr, xmlr) =>
+            {
+                using (var message = new XRoadMessage(Globals.XRoadProtocol31, new XRoadHeader31()) { XmlTemplate = template })
+                {
+                    msgr.Read(message, false);
+                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol31.ProducerNamespace));
+                    return serviceMap31.DeserializeRequest(xmlr, message);
+                }
+            });
+        }
+
+        private object DeserializeRequest(string templateXml, string contentXml, XRoadProtocol protocol, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
+        {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream))
             {
                 writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
                 writer.WriteLine($"<soapenv:Envelope xmlns:soapenv=\"{NamespaceConstants.SOAP_ENV}\" soapenv:encodingStyle=\"{NamespaceConstants.SOAP_ENC}\">");
                 writer.WriteLine(@"<soapenv:Body>");
-                writer.WriteLine($"<tns:Service1 xmlns:tns=\"{Globals.XRoadProtocol20.ProducerNamespace}\">");
+                writer.WriteLine($"<tns:Service1 xmlns:tns=\"{protocol.ProducerNamespace}\">");
                 writer.WriteLine(contentXml);
                 writer.WriteLine("@</tns:Service1>");
                 writer.WriteLine("@</soapenv:Body>");
@@ -505,13 +536,8 @@ namespace XRoadLib.Tests.Serialization
 
                 stream.Position = 0;
                 using (var reader = XmlReader.Create(stream))
-                using (var messageReader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", null, new[] { Globals.XRoadProtocol20 }))
-                using (var message = new XRoadMessage(Globals.XRoadProtocol20, new XRoadHeader20()) { XmlTemplate = template })
-                {
-                    messageReader.Read(message, false);
-                    reader.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol20.ProducerNamespace));
-                    return serviceMap.DeserializeRequest(reader, message);
-                }
+                using (var messageReader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", null, new[] { protocol }))
+                return deserializeMessage(messageReader, reader);
             }
         }
     }

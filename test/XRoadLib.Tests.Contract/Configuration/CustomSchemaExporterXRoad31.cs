@@ -1,8 +1,8 @@
-﻿using XRoadLib.Schema;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {
-    public class SchemaExporter : SchemaExporterXRoad20
+    public class CustomSchemaExporterXRoad31 : SchemaExporterXRoad31
     {
         public override void ExportOperationDefinition(OperationDefinition operationDefinition)
         {

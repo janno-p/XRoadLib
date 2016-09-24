@@ -188,13 +188,10 @@ namespace XRoadLib.Protocols.Description
 
             foreach (var operationDefinition in GetOperationDefinitions(targetNamespace))
             {
-                var methodParameters = operationDefinition.MethodInfo.GetParameters();
-                if (methodParameters.Length > 1)
-                    throw new Exception($"Invalid X-Road operation contract `{operationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
+                var requestValueDefinition = schemaDefinitionReader.GetRequestValueDefinition(operationDefinition);
 
-                var parameterInfo = methodParameters.SingleOrDefault();
-                var requestElement = parameterInfo != null
-                    ? CreateContentElement(new RequestValueDefinition(parameterInfo, operationDefinition), targetNamespace, referencedTypes)
+                var requestElement = requestValueDefinition.ParameterInfo != null
+                    ? CreateContentElement(requestValueDefinition, targetNamespace, referencedTypes)
                     : new XmlSchemaElement { Name = "request", SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() } };
 
                 if (protocol.Style.UseElementInMessagePart)
@@ -257,7 +254,7 @@ namespace XRoadLib.Protocols.Description
                 else
                 {
                     var requestTypeName = requestElement?.SchemaTypeName;
-                    inputMessage.Parts.Add(new MessagePart { Name = protocol.RequestPartNameInRequest, Type = requestTypeName });
+                    inputMessage.Parts.Add(new MessagePart { Name = requestValueDefinition.RequestElementName, Type = requestTypeName });
                 }
 
                 if (operationDefinition.InputBinaryMode == BinaryMode.Attachment)

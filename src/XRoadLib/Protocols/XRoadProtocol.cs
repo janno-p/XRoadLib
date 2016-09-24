@@ -70,11 +70,6 @@ namespace XRoadLib.Protocols
         public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
 
         /// <summary>
-        /// Request element name in request message.
-        /// </summary>
-        public virtual string RequestPartNameInRequest => "request";
-
-        /// <summary>
         /// Request element name in response message.
         /// </summary>
         public virtual string RequestPartNameInResponse => "request";

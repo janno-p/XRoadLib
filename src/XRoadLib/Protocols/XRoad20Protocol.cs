@@ -14,7 +14,6 @@ namespace XRoadLib.Protocols
         protected override string XRoadNamespace => NamespaceConstants.XTEE;
 
         public override string Name => "2.0";
-        public override string RequestPartNameInRequest => "keha";
         public override string RequestPartNameInResponse => "paring";
         public override string ResponsePartNameInResponse => "keha";
 

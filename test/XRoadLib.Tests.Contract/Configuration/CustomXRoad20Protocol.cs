@@ -15,7 +15,7 @@ namespace XRoadLib.Tests.Contract.Configuration
         public override StringSerializationMode StringSerializationMode => stringSerializationMode;
 
         public CustomXRoad20Protocol()
-            : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer", null, new SchemaExporter())
+            : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer", null, new CustomSchemaExporterXRoad20())
         {
             Titles.Add("", "Ilma keeleta palun");
             Titles.Add("en", "XRoadLib test producer");

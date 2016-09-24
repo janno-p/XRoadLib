@@ -10,7 +10,7 @@ namespace XRoadLib.Tests.Contract.Configuration
         public static XRoadProtocol Instance { get; } = new CustomXRoad31Protocol();
 
         private CustomXRoad31Protocol()
-            : base("test-producer", "http://test-producer.x-road.ee/producer/", null, new SchemaExporter())
+            : base("test-producer", "http://test-producer.x-road.ee/producer/", null, new CustomSchemaExporterXRoad31())
         {
             Titles.Add("", "Ilma keeleta palun");
             Titles.Add("en", "XRoadLib test producer");

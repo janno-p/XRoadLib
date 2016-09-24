@@ -42,9 +42,11 @@ namespace XRoadLib.Tests.Serialization
                 writer.WriteStartElement(elementName);
 
                 var propType = typeof(X<>).MakeGenericType(typeof(T));
-                var paramInfo = propType.GetTypeInfo().GetMethod("Method").GetParameters()[0];
+                var methodInfo = propType.GetTypeInfo().GetMethod("Method");
 
-                var requestValueDefinition = new RequestValueDefinition(paramInfo, null);
+                var operationDefinition = new OperationDefinition("Method", null, methodInfo);
+
+                var requestValueDefinition = new RequestValueDefinition(operationDefinition);
                 if (typeof(T).IsArray)
                     requestValueDefinition.ArrayItemDefinition = new ArrayItemDefinition(requestValueDefinition) { Name = XName.Get("item") };
 

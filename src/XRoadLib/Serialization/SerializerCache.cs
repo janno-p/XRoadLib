@@ -84,16 +84,10 @@ namespace XRoadLib.Serialization
             if (operationDefinition == null || qualifiedName.NamespaceName != operationDefinition.Name.NamespaceName)
                 throw XRoadException.UnknownOperation(qualifiedName);
 
-            var methodParameters = operationDefinition.MethodInfo.GetParameters();
-            if (methodParameters.Length > 1)
-                throw new Exception($"Invalid X-Road operation contract `{operationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
+            var requestValueDefinition = schemaDefinitionReader.GetRequestValueDefinition(operationDefinition);
 
-            var parameterInfo = methodParameters.SingleOrDefault();
-            var inputTypeMap = GetTypeMap(parameterInfo?.ParameterType);
+            var inputTypeMap = GetTypeMap(requestValueDefinition.ParameterInfo?.ParameterType);
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
-
-            var requestValueDefinition = new RequestValueDefinition(parameterInfo, operationDefinition);
-            schemaDefinitionReader.SchemaExporter?.ExportRequestValueDefinition(requestValueDefinition);
 
             return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(this, operationDefinition, requestValueDefinition, outputTuple.Item1, inputTypeMap, outputTuple.Item2));
         }

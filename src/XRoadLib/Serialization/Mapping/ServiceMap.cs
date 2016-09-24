@@ -60,7 +60,7 @@ namespace XRoadLib.Serialization.Mapping
         /// </summary>
         public object DeserializeRequest(XmlReader reader, XRoadMessage message)
         {
-            var requestName = message.Protocol.RequestPartNameInRequest;
+            var requestName = requestValueDefinition.RequestElementName;
 
             if (!requestValueDefinition.MergeContent && !reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
@@ -132,7 +132,7 @@ namespace XRoadLib.Serialization.Mapping
             else writer.WriteStartElement(Definition.Name.LocalName, ns);
 
             if (!requestValueDefinition.MergeContent)
-                writer.WriteStartElement(message.Protocol.RequestPartNameInRequest);
+                writer.WriteStartElement(requestValueDefinition.RequestElementName);
 
             if (requestValueDefinition.ParameterInfo != null)
                 SerializeValue(writer, value, inputTypeMap, message.RequestNode, message, requestValueDefinition);
@@ -158,7 +158,7 @@ namespace XRoadLib.Serialization.Mapping
             var namespaceInContext = requestReader.NamespaceURI;
 
             if (containsRequest && !Definition.ProhibitRequestPartInResponse)
-                CopyRequestToResponse(writer, requestReader, message, out namespaceInContext);
+                CopyRequestToResponse(writer, requestReader, message);
 
             if (!HasXRoadFaultInResponse && fault != null)
             {
@@ -228,16 +228,14 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
-        private static void CopyRequestToResponse(XmlWriter writer, XmlReader reader, XRoadMessage message, out string namespaceInContext)
+        private void CopyRequestToResponse(XmlWriter writer, XmlReader reader, XRoadMessage message)
         {
-            namespaceInContext = reader.NamespaceURI;
-
             writer.WriteAttributes(reader, true);
 
-            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, message.Protocol.RequestPartNameInRequest))
+            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, requestValueDefinition.RequestElementName))
                 return;
 
-            if (message.Protocol.RequestPartNameInRequest != message.Protocol.RequestPartNameInResponse)
+            if (requestValueDefinition.RequestElementName != message.Protocol.RequestPartNameInResponse)
             {
                 writer.WriteStartElement(message.Protocol.RequestPartNameInResponse);
                 writer.WriteAttributes(reader, true);
