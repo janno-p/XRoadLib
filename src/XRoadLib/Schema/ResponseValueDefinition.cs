@@ -35,7 +35,17 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Should technical fault fields be returned inside response element.
         /// </summary>
-        public virtual bool ContainsNonTechnicalFault { get; set; } = false;
+        public bool ContainsNonTechnicalFault { get; set; } = false;
+
+        /// <summary>
+        /// Request element name in response message.
+        /// </summary>
+        public string RequestElementName { get; set; } = "request";
+
+        /// <summary>
+        /// Response element name in response message.
+        /// </summary>
+        public string ResponseElementName { get; set; } = "response";
 
         /// <summary>
         /// Initializes new response definition using default values extracted from

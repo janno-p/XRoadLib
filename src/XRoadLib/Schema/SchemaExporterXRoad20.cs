@@ -23,6 +23,8 @@ namespace XRoadLib.Schema
             base.ExportResponseValueDefinition(responseValueDefinition);
 
             responseValueDefinition.ContainsNonTechnicalFault = true;
+            responseValueDefinition.RequestElementName = "paring";
+            responseValueDefinition.ResponseElementName = "keha";
         }
     }
 }

@@ -21,6 +21,11 @@ namespace XRoadLib.Serialization.Mapping
         bool HasXRoadFaultInResponse { get; }
 
         /// <summary>
+        /// Response part name of the operation.
+        /// </summary>
+        string ResponsePartName { get; }
+
+        /// <summary>
         /// Configuration settings of the operation that the ServiceMap implements.
         /// </summary>
         OperationDefinition Definition { get; }

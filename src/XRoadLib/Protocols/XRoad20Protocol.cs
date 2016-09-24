@@ -14,8 +14,6 @@ namespace XRoadLib.Protocols
         protected override string XRoadNamespace => NamespaceConstants.XTEE;
 
         public override string Name => "2.0";
-        public override string RequestPartNameInResponse => "paring";
-        public override string ResponsePartNameInResponse => "keha";
 
         public XRoad20Protocol(string producerName, string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
             : base(producerName, producerNamespace, style ?? new RpcEncodedStyle(), schemaExporter)

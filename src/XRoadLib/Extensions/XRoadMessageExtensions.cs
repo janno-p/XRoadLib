@@ -12,31 +12,13 @@ namespace XRoadLib.Extensions
     public static class XRoadMessageExtensions
     {
         /// <summary>
-        /// Deserializes X-Road fault from message which is known to contain fault.
-        /// </summary>
-        public static IXRoadFault DeserializeXRoadFault(this XRoadMessage message)
-        {
-            message.ContentStream.Position = 0;
-            using (var reader = XmlReader.Create(message.ContentStream))
-            {
-                reader.MoveToPayload(message.RootElementName);
-
-                var responseName = message.Protocol.ResponsePartNameInResponse;
-                if (!reader.MoveToElement(3, responseName))
-                    throw XRoadException.InvalidQuery($"X-Road fault should be wrapped inside `{responseName}` element.");
-
-                return reader.ReadXRoadFault(4);
-            }
-        }
-
-        /// <summary>
         /// Deserializes X-Road message response or throws <see>XRoadFaultException</see> when
         /// X-Road fault is parsed from the message instead of expected result value.
         /// </summary>
         public static object DeserializeMessageContent(this XRoadMessage message, IServiceMap serviceMap)
         {
-            if (message.Protocol != null && serviceMap.HasXRoadFaultInResponse)
-                ThrowIfXRoadFault(message);
+            if (serviceMap.HasXRoadFaultInResponse)
+                ThrowIfXRoadFault(message, serviceMap);
 
             message.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(message.ContentStream))
@@ -59,17 +41,17 @@ namespace XRoadLib.Extensions
             }
         }
 
-        private static void ThrowIfXRoadFault(XRoadMessage message)
+        private static void ThrowIfXRoadFault(XRoadMessage message, IServiceMap serviceMap)
         {
             message.ContentStream.Position = 0;
 
-            var pathRoot = $"/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/{message.Protocol.ResponsePartNameInResponse}";
+            var pathRoot = $"/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/{serviceMap.ResponsePartName}";
 
             var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
             var navigator = doc.CreateNavigator();
 
             if (navigator.SelectSingleNode($"{pathRoot}/faultCode | {pathRoot}/faultString") != null)
-                throw new XRoadFaultException(message.DeserializeXRoadFault());
+                throw new XRoadFaultException(serviceMap.DeserializeXRoadFault(message));
         }
     }
 }

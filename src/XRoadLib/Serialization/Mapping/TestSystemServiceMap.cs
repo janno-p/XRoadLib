@@ -1,8 +1,11 @@
-﻿using System.Reflection;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
+
+#if !NET40
+using System.Reflection;
+#endif
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -12,6 +15,8 @@ namespace XRoadLib.Serialization.Mapping
 
         public bool HasParameters => false;
         public bool HasXRoadFaultInResponse => true;
+
+        public string ResponsePartName { get { throw new System.NotImplementedException(); } }
 
         public TestSystemServiceMap(XName operationName)
         {

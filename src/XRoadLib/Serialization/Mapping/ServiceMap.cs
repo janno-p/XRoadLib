@@ -36,6 +36,11 @@ namespace XRoadLib.Serialization.Mapping
         public bool HasXRoadFaultInResponse => responseValueDefinition.ContainsNonTechnicalFault;
 
         /// <summary>
+        /// Response part name of the operation.
+        /// </summary>
+        public string ResponsePartName => responseValueDefinition.ResponseElementName;
+
+        /// <summary>
         /// Initializes new ServiceMap entity using settings specified in operationDefinition.
         /// <param name="serializerCache">Provides TypeMap lookup.</param>
         /// <param name="operationDefinition">Operation which this ServiceMap represents.</param>
@@ -76,8 +81,8 @@ namespace XRoadLib.Serialization.Mapping
         /// </summary>
         public object DeserializeResponse(XmlReader reader, XRoadMessage message)
         {
-            var requestName = message.Protocol.RequestPartNameInResponse;
-            var responseName = message.Protocol.ResponsePartNameInResponse;
+            var requestName = responseValueDefinition.RequestElementName;
+            var responseName = responseValueDefinition.ResponseElementName;
 
             if (!Definition.ProhibitRequestPartInResponse)
             {
@@ -158,7 +163,7 @@ namespace XRoadLib.Serialization.Mapping
             var namespaceInContext = requestReader.NamespaceURI;
 
             if (containsRequest && !Definition.ProhibitRequestPartInResponse)
-                CopyRequestToResponse(writer, requestReader, message);
+                CopyRequestToResponse(writer, requestReader);
 
             if (!HasXRoadFaultInResponse && fault != null)
             {
@@ -169,8 +174,8 @@ namespace XRoadLib.Serialization.Mapping
             else if (outputTypeMap != null)
             {
                 if (Equals(namespaceInContext, ""))
-                    writer.WriteStartElement(message.Protocol.ResponsePartNameInResponse);
-                else writer.WriteStartElement(message.Protocol.ResponsePartNameInResponse, "");
+                    writer.WriteStartElement(responseValueDefinition.ResponseElementName);
+                else writer.WriteStartElement(responseValueDefinition.ResponseElementName, "");
 
                 if (fault != null)
                     SerializeFault(writer, fault, message.Protocol);
@@ -228,16 +233,16 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
-        private void CopyRequestToResponse(XmlWriter writer, XmlReader reader, XRoadMessage message)
+        private void CopyRequestToResponse(XmlWriter writer, XmlReader reader)
         {
             writer.WriteAttributes(reader, true);
 
             if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, requestValueDefinition.RequestElementName))
                 return;
 
-            if (requestValueDefinition.RequestElementName != message.Protocol.RequestPartNameInResponse)
+            if (requestValueDefinition.RequestElementName != responseValueDefinition.RequestElementName)
             {
-                writer.WriteStartElement(message.Protocol.RequestPartNameInResponse);
+                writer.WriteStartElement(responseValueDefinition.RequestElementName);
                 writer.WriteAttributes(reader, true);
 
                 while (reader.MoveToElement(4))

@@ -30,6 +30,11 @@ namespace XRoadLib.Serialization.Mapping
         public bool HasXRoadFaultInResponse => true;
 
         /// <summary>
+        /// Response part name of the operation.
+        /// </summary>
+        public string ResponsePartName { get; }
+
+        /// <summary>
         /// Initialize new `listMethods` service map.
         /// </summary>
         public ListMethodsServiceMap(XName operationName)
@@ -37,6 +42,7 @@ namespace XRoadLib.Serialization.Mapping
             var methodInfo = typeof(Implementation).GetTypeInfo().GetMethod("Execute");
 
             Definition = new OperationDefinition(operationName, null, methodInfo);
+            ResponsePartName = operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response";
         }
 
         /// <summary>

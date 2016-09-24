@@ -190,9 +190,11 @@ namespace XRoadLib.Protocols.Description
             {
                 var requestValueDefinition = schemaDefinitionReader.GetRequestValueDefinition(operationDefinition);
 
-                var requestElement = requestValueDefinition.ParameterInfo != null
+                Func<XmlSchemaElement> createRequestElement = () => requestValueDefinition.ParameterInfo != null
                     ? CreateContentElement(requestValueDefinition, targetNamespace, referencedTypes)
-                    : new XmlSchemaElement { Name = "request", SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() } };
+                    : new XmlSchemaElement { Name = requestValueDefinition.RequestElementName, SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() } };
+
+                var requestElement = createRequestElement();
 
                 if (protocol.Style.UseElementInMessagePart)
                     schemaElements.Add(new XmlSchemaElement
@@ -211,7 +213,7 @@ namespace XRoadLib.Protocols.Description
                 if (responseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit && responseValueDefinition.ContainsNonTechnicalFault)
                 {
                     var outputParticle = new XmlSchemaSequence();
-                    responseElement = new XmlSchemaElement { Name = "response", SchemaType = new XmlSchemaComplexType { Particle = outputParticle } };
+                    responseElement = new XmlSchemaElement { Name = responseValueDefinition.ResponseElementName, SchemaType = new XmlSchemaComplexType { Particle = outputParticle } };
 
                     var faultSequence = CreateFaultSequence();
 
@@ -238,11 +240,19 @@ namespace XRoadLib.Protocols.Description
                 else responseElement = resultElement = CreateContentElement(responseValueDefinition, targetNamespace, referencedTypes);
 
                 if (protocol.Style.UseElementInMessagePart)
+                {
+                    var responseRequestElement = requestElement;
+                    if (requestValueDefinition.RequestElementName != responseValueDefinition.RequestElementName)
+                    {
+                        responseRequestElement = createRequestElement();
+                        responseRequestElement.Name = responseValueDefinition.RequestElementName;
+                    }
                     schemaElements.Add(new XmlSchemaElement
                     {
                         Name = $"{operationDefinition.Name.LocalName}Response",
-                        SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, requestElement, responseElement, faultDefinition)
+                        SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, responseRequestElement, responseElement, faultDefinition)
                     });
+                }
 
                 if (operationDefinition.IsAbstract)
                     continue;
@@ -270,8 +280,8 @@ namespace XRoadLib.Protocols.Description
                 {
                     var requestTypeName = requestElement?.SchemaTypeName;
                     var responseTypeName = GetOutputMessageTypeName(resultElement, operationDefinition.MethodInfo.ReturnType, schemaTypes);
-                    outputMessage.Parts.Add(new MessagePart { Name = protocol.RequestPartNameInResponse, Type = requestTypeName });
-                    outputMessage.Parts.Add(new MessagePart { Name = protocol.ResponsePartNameInResponse, Type = responseTypeName });
+                    outputMessage.Parts.Add(new MessagePart { Name = responseValueDefinition.RequestElementName, Type = requestTypeName });
+                    outputMessage.Parts.Add(new MessagePart { Name = responseValueDefinition.ResponseElementName, Type = responseTypeName });
                 }
 
                 if (operationDefinition.OutputBinaryMode == BinaryMode.Attachment)
@@ -354,10 +364,10 @@ namespace XRoadLib.Protocols.Description
             if ("unbounded".Equals(responseElement.MaxOccursString) || responseElement.MaxOccurs > 1)
                 responseElement = new XmlSchemaElement
                 {
-                    Name = "response",
+                    Name = definition.ResponseElementName,
                     SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { responseElement } } }
                 };
-            else responseElement.Name = "response";
+            else responseElement.Name = definition.ResponseElementName;
 
             var complexTypeSequence = new XmlSchemaSequence();
 
