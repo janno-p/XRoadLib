@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Protocols.Description;
 using XRoadLib.Protocols.Headers;
@@ -41,8 +39,6 @@ namespace XRoadLib.Protocols
         private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
         private ISerializerCache serializerCache;
 
-        internal ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>(new XNameComparer());
-
         /// <summary>
         /// String form of message protocol version.
         /// </summary>
@@ -74,14 +70,14 @@ namespace XRoadLib.Protocols
         public Assembly ContractAssembly { get; private set; }
 
         /// <summary>
-        /// Defines X-Road header elements which are required by specification.
+        /// Header specification for current schema.
         /// </summary>
-        protected abstract void DefineMandatoryHeaderElements();
+        protected readonly HeaderDefinition headerDefinition;
 
         /// <summary>
         /// Initialize new X-Road message header.
         /// </summary>
-        public Func<IXRoadHeader> CreateHeader { get; }
+        public Func<IXRoadHeader> CreateHeader => headerDefinition.Initializer;
 
         /// <summary>
         /// Initializes new X-Road message protocol instance.
@@ -98,8 +94,7 @@ namespace XRoadLib.Protocols
 
             schemaDefinitionReader = new SchemaDefinitionReader(producerNamespace, schemaExporter);
 
-            var headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
-            CreateHeader = headerDefinition.Initializer;
+            headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
         }
 
         internal abstract bool IsHeaderNamespace(string ns);
@@ -171,7 +166,6 @@ namespace XRoadLib.Protocols
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) already has contract configured.");
 
             ContractAssembly = assembly;
-            DefineMandatoryHeaderElements();
 
             if (supportedVersions == null || supportedVersions.Length == 0)
             {
@@ -206,59 +200,11 @@ namespace XRoadLib.Protocols
         }
 
         /// <summary>
-        /// Configure required SOAP header elements.
-        /// </summary>
-        protected void AddMandatoryHeaderElement<THeader, T>(Expression<Func<THeader, T>> expression) where THeader : IXRoadHeader
-        {
-            var memberExpression = expression.Body as MemberExpression;
-            if (memberExpression == null)
-                throw new ArgumentException($"Only MemberExpression is allowed to use for SOAP header definition, but was {expression.Body.GetType().Name} ({GetType().Name}).", nameof(expression));
-
-            var attribute = memberExpression.Member.GetSingleAttribute<XmlElementAttribute>() ?? GetElementAttributeFromInterface(memberExpression.Member.DeclaringType, memberExpression.Member as PropertyInfo);
-            if (string.IsNullOrWhiteSpace(attribute?.ElementName))
-                throw new ArgumentException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.", nameof(expression));
-
-            MandatoryHeaders.Add(XName.Get(attribute.ElementName, attribute.Namespace));
-        }
-
-        private static XmlElementAttribute GetElementAttributeFromInterface(Type declaringType, PropertyInfo propertyInfo)
-        {
-            if (propertyInfo == null)
-                return null;
-
-            var getMethod = propertyInfo.GetGetMethod();
-
-            foreach (var iface in declaringType.GetTypeInfo().GetInterfaces())
-            {
-                var map = declaringType.GetTypeInfo().GetRuntimeInterfaceMap(iface);
-
-                var index = -1;
-                for (var i = 0; i < map.TargetMethods.Length; i++)
-                    if (map.TargetMethods[i] == getMethod)
-                    {
-                        index = i;
-                        break;
-                    }
-
-                if (index < 0)
-                    continue;
-
-                var ifaceProperty = iface.GetTypeInfo().GetProperties().SingleOrDefault(p => p.GetGetMethod() == map.InterfaceMethods[index]);
-
-                var attribute = ifaceProperty.GetSingleAttribute<XmlElementAttribute>();
-                if (attribute != null)
-                    return attribute;
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Writes single SOAP header element.
         /// </summary>
         protected void WriteHeaderElement(XmlWriter writer, string name, object value, XName typeName)
         {
-            if (!MandatoryHeaders.Contains(name) && value == null)
+            if (!headerDefinition.RequiredHeaders.Contains(name) && value == null)
                 return;
 
             writer.WriteStartElement(name, schemaDefinitionReader.GetXRoadNamespace());
@@ -271,15 +217,6 @@ namespace XRoadLib.Protocols
             else writer.WriteValue(value);
 
             writer.WriteEndElement();
-        }
-
-        private class XNameComparer : IComparer<XName>
-        {
-            public int Compare(XName x, XName y)
-            {
-                var ns = string.Compare(x.NamespaceName, y.NamespaceName);
-                return ns != 0 ? ns : string.Compare(x.LocalName, y.LocalName);
-            }
         }
     }
 }

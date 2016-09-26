@@ -71,7 +71,13 @@ namespace XRoadLib.Schema
         {
             base.ExportHeaderDefinition(headerDefinition);
 
-            headerDefinition.Use<XRoadHeader20>(() => new XRoadHeader20());
+            headerDefinition.Use<XRoadHeader20>(() => new XRoadHeader20())
+                            .WithRequiredHeader(x => x.Asutus)
+                            .WithRequiredHeader(x => x.Andmekogu)
+                            .WithRequiredHeader(x => x.Nimi)
+                            .WithRequiredHeader(x => x.Isikukood)
+                            .WithRequiredHeader(x => x.Id)
+                            .WithRequiredHeader(x => x.AmetnikNimi);
         }
     }
 }

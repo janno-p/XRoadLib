@@ -48,7 +48,13 @@ namespace XRoadLib.Schema
         {
             base.ExportHeaderDefinition(headerDefinition);
 
-            headerDefinition.Use<XRoadHeader31>(() => new XRoadHeader31());
+            headerDefinition.Use<XRoadHeader31>(() => new XRoadHeader31())
+                            .WithRequiredHeader(x => x.Consumer)
+                            .WithRequiredHeader(x => x.Producer)
+                            .WithRequiredHeader(x => ((IXRoadHeader31)x).Service)
+                            .WithRequiredHeader(x => x.UserId)
+                            .WithRequiredHeader(x => x.Id)
+                            .WithRequiredHeader(x => x.UserName);
         }
     }
 }

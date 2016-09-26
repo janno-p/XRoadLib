@@ -51,6 +51,7 @@ namespace XRoadLib.Protocols.Description
 
         private readonly string xRoadPrefix;
         private readonly string xRoadNamespace;
+        private readonly HeaderDefinition headerDefinition;
 
         private readonly XmlDocument document = new XmlDocument();
 
@@ -113,6 +114,7 @@ namespace XRoadLib.Protocols.Description
 
             xRoadPrefix = schemaDefinitionReader.GetXRoadPrefix();
             xRoadNamespace = schemaDefinitionReader.GetXRoadNamespace();
+            headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
         }
 
         /// <summary>
@@ -555,7 +557,7 @@ namespace XRoadLib.Protocols.Description
 #endif
         {
             extensions.Add(protocol.Style.CreateSoapBodyBinding(protocol.ProducerNamespace));
-            foreach (var headerBinding in protocol.MandatoryHeaders.Select(name => protocol.Style.CreateSoapHeaderBinding(name, STANDARD_HEADER_NAME, protocol.ProducerNamespace)).Select(projectionFunc))
+            foreach (var headerBinding in headerDefinition.RequiredHeaders.Select(name => protocol.Style.CreateSoapHeaderBinding(name, STANDARD_HEADER_NAME, protocol.ProducerNamespace)).Select(projectionFunc))
                 extensions.Add(headerBinding);
         }
 
@@ -780,7 +782,7 @@ namespace XRoadLib.Protocols.Description
 
             var standardHeader = new Message { Name = STANDARD_HEADER_NAME };
 
-            foreach (var requiredHeader in protocol.MandatoryHeaders)
+            foreach (var requiredHeader in headerDefinition.RequiredHeaders)
                 standardHeader.Parts.Add(new MessagePart { Name = requiredHeader.LocalName, Element = new XmlQualifiedName(requiredHeader.LocalName, requiredHeader.NamespaceName) });
 
             serviceDescription.Messages.Add(standardHeader);

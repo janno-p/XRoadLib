@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Xml;
+﻿using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
@@ -14,21 +12,6 @@ namespace XRoadLib.Protocols
         public XRoad20Protocol(string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
             : base(producerNamespace, style ?? new RpcEncodedStyle(), schemaExporter)
         { }
-
-        protected override void DefineMandatoryHeaderElements()
-        {
-            AddHeaderElement(x => x.Asutus);
-            AddHeaderElement(x => x.Andmekogu);
-            AddHeaderElement(x => x.Nimi);
-            AddHeaderElement(x => x.Isikukood);
-            AddHeaderElement(x => x.Id);
-            AddHeaderElement(x => x.AmetnikNimi);
-        }
-
-        protected void AddHeaderElement<T>(Expression<Func<XRoadHeader20, T>> headerFunc)
-        {
-            AddMandatoryHeaderElement(headerFunc);
-        }
 
         protected override void WriteXRoadHeader(XmlWriter writer, IXRoadHeader header)
         {

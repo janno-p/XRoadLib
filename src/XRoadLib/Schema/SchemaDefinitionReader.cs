@@ -222,7 +222,13 @@ namespace XRoadLib.Schema
         {
             var headerDefinition = new HeaderDefinition();
 
-            headerDefinition.Use<XRoadHeader40>(() => new XRoadHeader40());
+            headerDefinition.Use<XRoadHeader40>(() => new XRoadHeader40())
+                            .WithRequiredHeader(x => x.Client)
+                            .WithRequiredHeader(x => x.Client)
+                            .WithRequiredHeader(x => x.Service)
+                            .WithRequiredHeader(x => x.UserId)
+                            .WithRequiredHeader(x => x.Id)
+                            .WithRequiredHeader(x => x.Issue);
 
             SchemaExporter?.ExportHeaderDefinition(headerDefinition);
 

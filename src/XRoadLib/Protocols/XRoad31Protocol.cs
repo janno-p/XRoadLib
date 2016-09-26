@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Xml;
+﻿using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
@@ -14,21 +12,6 @@ namespace XRoadLib.Protocols
         public XRoad31Protocol(string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
             : base(producerNamespace, style ?? new DocLiteralStyle(), schemaExporter)
         { }
-
-        protected override void DefineMandatoryHeaderElements()
-        {
-            AddHeaderElement(x => x.Consumer);
-            AddHeaderElement(x => x.Producer);
-            AddHeaderElement(x => ((IXRoadHeader31)x).Service);
-            AddHeaderElement(x => x.UserId);
-            AddHeaderElement(x => x.Id);
-            AddHeaderElement(x => x.UserName);
-        }
-
-        protected void AddHeaderElement<T>(Expression<Func<XRoadHeader31, T>> headerFunc)
-        {
-            AddMandatoryHeaderElement(headerFunc);
-        }
 
         protected override void WriteXRoadHeader(XmlWriter writer, IXRoadHeader header)
         {

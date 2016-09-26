@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
@@ -16,20 +14,6 @@ namespace XRoadLib.Protocols
             : base(producerNamespace, style ?? new DocLiteralStyle(), schemaExporter)
         { }
 
-        protected override void DefineMandatoryHeaderElements()
-        {
-            AddHeaderElement(x => x.Client);
-            AddHeaderElement(x => x.Service);
-            AddHeaderElement(x => x.UserId);
-            AddHeaderElement(x => x.Id);
-            AddHeaderElement(x => x.Issue);
-        }
-
-        protected void AddHeaderElement<T>(Expression<Func<XRoadHeader40, T>> headerFunc)
-        {
-            AddMandatoryHeaderElement(headerFunc);
-        }
-
         protected override void WriteXRoadHeader(XmlWriter writer, IXRoadHeader header)
         {
             var header40 = header as IXRoadHeader40;
@@ -42,7 +26,7 @@ namespace XRoadLib.Protocols
             if (writer.LookupPrefix(NamespaceConstants.XROAD_V4_ID) == null)
                 writer.WriteAttributeString("xmlns", PrefixConstants.ID, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4_ID);
 
-            if (MandatoryHeaders.Contains("client") || header40.Client != null)
+            if (headerDefinition.RequiredHeaders.Contains("client") || header40.Client != null)
             {
                 var element = new XElement(XName.Get("client", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), string.IsNullOrWhiteSpace(header40.Client.SubsystemCode) ? "MEMBER" : "SUBSYSTEM"),
@@ -54,7 +38,7 @@ namespace XRoadLib.Protocols
                 element.WriteTo(writer);
             }
 
-            if (MandatoryHeaders.Contains("service") || header40.Service != null)
+            if (headerDefinition.RequiredHeaders.Contains("service") || header40.Service != null)
             {
                 var element = new XElement(XName.Get("service", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), "SERVICE"),
@@ -69,7 +53,7 @@ namespace XRoadLib.Protocols
                 element.WriteTo(writer);
             }
 
-            if (MandatoryHeaders.Contains("centralService") || header40.CentralService != null)
+            if (headerDefinition.RequiredHeaders.Contains("centralService") || header40.CentralService != null)
             {
                 var element = new XElement(XName.Get("centralService", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), "CENTRALSERVICE"),

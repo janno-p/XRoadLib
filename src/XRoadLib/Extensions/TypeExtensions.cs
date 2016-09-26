@@ -213,5 +213,37 @@ namespace XRoadLib.Extensions
         {
             return GetQualifiedDataType(provider.GetSingleAttribute<XmlElementAttribute>()?.DataType);
         }
+
+        internal static XmlElementAttribute GetElementAttributeFromInterface(this Type declaringType, PropertyInfo propertyInfo)
+        {
+            if (propertyInfo == null)
+                return null;
+
+            var getMethod = propertyInfo.GetGetMethod();
+
+            foreach (var iface in declaringType.GetTypeInfo().GetInterfaces())
+            {
+                var map = declaringType.GetTypeInfo().GetRuntimeInterfaceMap(iface);
+
+                var index = -1;
+                for (var i = 0; i < map.TargetMethods.Length; i++)
+                    if (map.TargetMethods[i] == getMethod)
+                    {
+                        index = i;
+                        break;
+                    }
+
+                if (index < 0)
+                    continue;
+
+                var ifaceProperty = iface.GetTypeInfo().GetProperties().SingleOrDefault(p => p.GetGetMethod() == map.InterfaceMethods[index]);
+
+                var attribute = ifaceProperty.GetSingleAttribute<XmlElementAttribute>();
+                if (attribute != null)
+                    return attribute;
+            }
+
+            return null;
+        }
     }
 }
