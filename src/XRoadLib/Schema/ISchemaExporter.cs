@@ -63,5 +63,10 @@ namespace XRoadLib.Schema
         /// Customize X-Road message header elements.
         /// </summary>
         void ExportHeaderDefinition(HeaderDefinition headerDefinition);
+
+        /// <summary>
+        /// Configure protocol global settings.
+        /// </summary>
+        void ExportProtocolDefinition(ProtocolDefinition protocolDefinition);
     }
 }

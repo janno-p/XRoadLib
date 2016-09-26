@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
-using XRoadLib.Protocols.Headers;
+using XRoadLib.Protocols;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Tests.Contract.Configuration;
@@ -76,8 +77,8 @@ namespace XRoadLib.Tests.Serialization.Mapping
         {
             var stream = new StringBuilder();
 
-            var protocol = new CustomXRoad20Protocol();
-            protocol.SetStringSerializationMode(mode);
+            var protocol = new XRoadProtocol("2.0", new CustomSchemaExporterXRoad20(mode));
+            protocol.SetContractAssembly(typeof(Globals).GetTypeInfo().Assembly, null, 1u, 2u, 3u);
 
             using (var textWriter = new StringWriter(stream))
             using (var writer = XmlWriter.Create(textWriter))

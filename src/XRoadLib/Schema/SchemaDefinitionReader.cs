@@ -10,10 +10,6 @@ using XRoadLib.Protocols.Styles;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
-#if !NETSTANDARD1_5
-using System.Xml;
-#endif
-
 namespace XRoadLib.Schema
 {
     /// <summary>
@@ -21,23 +17,30 @@ namespace XRoadLib.Schema
     /// </summary>
     public class SchemaDefinitionReader
     {
-        /// <summary>
-        /// Service description target namespace.
-        /// </summary>
-        public string ProducerNamespace { get; }
+        private readonly ISchemaExporter schemaExporter;
+        private readonly string producerNamespace;
 
         /// <summary>
-        /// Customizations provider.
+        /// Global settings for protocol instance.
         /// </summary>
-        public ISchemaExporter SchemaExporter { get; }
+        public ProtocolDefinition ProtocolDefinition { get; }
 
         /// <summary>
         /// Initializes definition builder.
         /// </summary>
-        public SchemaDefinitionReader(string producerNamespace, ISchemaExporter schemaExporter = null)
+        public SchemaDefinitionReader(ISchemaExporter schemaExporter)
         {
-            ProducerNamespace = producerNamespace;
-            SchemaExporter = schemaExporter;
+            this.schemaExporter = schemaExporter;
+            ProtocolDefinition = GetProtocolDefinition();
+        }
+
+        /// <summary>
+        /// Initializes definition builder.
+        /// </summary>
+        public SchemaDefinitionReader(string producerNamespace)
+            : this((ISchemaExporter)null)
+        {
+            this.producerNamespace = producerNamespace;
         }
 
         /// <summary>
@@ -51,7 +54,7 @@ namespace XRoadLib.Schema
                 IsSimpleType = true
             };
 
-            SchemaExporter?.ExportTypeDefinition(typeDefinition);
+            schemaExporter?.ExportTypeDefinition(typeDefinition);
 
             return typeDefinition;
         }
@@ -68,7 +71,7 @@ namespace XRoadLib.Schema
                 IsAnonymous = true
             };
 
-            SchemaExporter?.ExportTypeDefinition(collectionDefinition);
+            schemaExporter?.ExportTypeDefinition(collectionDefinition);
 
             return collectionDefinition;
         }
@@ -83,7 +86,7 @@ namespace XRoadLib.Schema
             if (type.IsArray)
             {
                 if (!string.IsNullOrWhiteSpace(typeName))
-                    qualifiedName = XName.Get(typeName, ProducerNamespace);
+                    qualifiedName = XName.Get(typeName, ProtocolDefinition.ProducerNamespace);
 
                 var collectionDefinition = new CollectionDefinition(type)
                 {
@@ -93,7 +96,7 @@ namespace XRoadLib.Schema
                     CanHoldNullValues = true
                 };
 
-                SchemaExporter?.ExportTypeDefinition(collectionDefinition);
+                schemaExporter?.ExportTypeDefinition(collectionDefinition);
 
                 return collectionDefinition;
             }
@@ -106,7 +109,7 @@ namespace XRoadLib.Schema
 
             if (!isAnonymous)
                 qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(typeName ?? normalizedType.Name),
-                                          typeAttribute?.Namespace ?? ProducerNamespace);
+                                          typeAttribute?.Namespace ?? ProtocolDefinition.ProducerNamespace);
 
             var typeDefinition = new TypeDefinition(normalizedType)
             {
@@ -118,7 +121,7 @@ namespace XRoadLib.Schema
                 CanHoldNullValues = typeInfo.IsClass || normalizedType != type
             };
 
-            SchemaExporter?.ExportTypeDefinition(typeDefinition);
+            schemaExporter?.ExportTypeDefinition(typeDefinition);
 
             return typeDefinition;
         }
@@ -130,7 +133,7 @@ namespace XRoadLib.Schema
         {
             var propertyDefinition = new PropertyDefinition(propertyInfo, typeDefinition);
 
-            SchemaExporter?.ExportPropertyDefinition(propertyDefinition);
+            schemaExporter?.ExportPropertyDefinition(propertyDefinition);
 
             return propertyDefinition;
         }
@@ -142,7 +145,7 @@ namespace XRoadLib.Schema
         {
             var requestValueDefinition = new RequestValueDefinition(operationDefinition);
 
-            SchemaExporter?.ExportRequestValueDefinition(requestValueDefinition);
+            schemaExporter?.ExportRequestValueDefinition(requestValueDefinition);
 
             return requestValueDefinition;
         }
@@ -154,7 +157,7 @@ namespace XRoadLib.Schema
         {
             var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
 
-            SchemaExporter?.ExportResponseValueDefinition(responseValueDefinition);
+            schemaExporter?.ExportResponseValueDefinition(responseValueDefinition);
 
             return responseValueDefinition;
         }
@@ -173,7 +176,7 @@ namespace XRoadLib.Schema
         {
             var operationDefinition = new OperationDefinition(qualifiedName, version, methodInfo);
 
-            SchemaExporter?.ExportOperationDefinition(operationDefinition);
+            schemaExporter?.ExportOperationDefinition(operationDefinition);
 
             return operationDefinition;
         }
@@ -183,9 +186,9 @@ namespace XRoadLib.Schema
         /// </summary>
         public FaultDefinition GetFaultDefinition()
         {
-            var faultDefinition = new FaultDefinition { Name = XName.Get("fault", ProducerNamespace) };
+            var faultDefinition = new FaultDefinition { Name = XName.Get("fault", ProtocolDefinition.ProducerNamespace) };
 
-            SchemaExporter?.ExportFaultDefinition(faultDefinition);
+            schemaExporter?.ExportFaultDefinition(faultDefinition);
 
             return faultDefinition;
         }
@@ -195,7 +198,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public string GetSchemaLocation(string namespaceName)
         {
-            return SchemaExporter?.ExportSchemaLocation(namespaceName) ?? NamespaceConstants.GetSchemaLocation(namespaceName);
+            return schemaExporter?.ExportSchemaLocation(namespaceName) ?? NamespaceConstants.GetSchemaLocation(namespaceName);
         }
 
         /// <summary>
@@ -203,18 +206,18 @@ namespace XRoadLib.Schema
         /// </summary>
         public void ExportServiceDescription(ServiceDescription serviceDescription)
         {
-            SchemaExporter?.ExportServiceDescription(serviceDescription);
+            schemaExporter?.ExportServiceDescription(serviceDescription);
         }
 
         /// <summary>
         /// Get preferred X-Road namespace prefix for service description.
         /// </summary>
-        public string GetXRoadPrefix() => SchemaExporter != null ? SchemaExporter.XRoadPrefix : PrefixConstants.XROAD;
+        public string GetXRoadPrefix() => schemaExporter?.XRoadPrefix ?? PrefixConstants.XROAD;
 
         /// <summary>
         /// Get main namespace which defines X-Road message protocol specifics.
         /// </summary>
-        public string GetXRoadNamespace() => SchemaExporter != null ? SchemaExporter.XRoadNamespace : NamespaceConstants.XROAD_V4;
+        public string GetXRoadNamespace() => schemaExporter?.XRoadNamespace ?? NamespaceConstants.XROAD_V4;
 
         /// <summary>
         /// Customize X-Road message header elements.
@@ -233,9 +236,22 @@ namespace XRoadLib.Schema
                             .WithHeaderNamespace(NamespaceConstants.XROAD_V4)
                             .WithHeaderNamespace(NamespaceConstants.XROAD_V4_REPR);
 
-            SchemaExporter?.ExportHeaderDefinition(headerDefinition);
+            schemaExporter?.ExportHeaderDefinition(headerDefinition);
 
             return headerDefinition;
+        }
+
+        private ProtocolDefinition GetProtocolDefinition()
+        {
+            var protocolDefinition = new ProtocolDefinition
+            {
+                Style = new DocLiteralStyle(),
+                ProducerNamespace = producerNamespace
+            };
+
+            schemaExporter?.ExportProtocolDefinition(protocolDefinition);
+
+            return protocolDefinition;
         }
     }
 }

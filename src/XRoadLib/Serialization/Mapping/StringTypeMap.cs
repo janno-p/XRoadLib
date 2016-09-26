@@ -38,7 +38,7 @@ namespace XRoadLib.Serialization.Mapping
             if (!(definition is RequestValueDefinition))
                 message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
-            writer.WriteStringWithMode(value.ToString(), message.Protocol.StringSerializationMode);
+            writer.WriteStringWithMode(value.ToString(), message.Protocol.Style.StringSerializationMode);
         }
     }
 }

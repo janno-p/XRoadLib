@@ -65,5 +65,10 @@ namespace XRoadLib.Schema
         /// Configure SOAP header of the messages.
         /// </summary>
         public virtual void ExportHeaderDefinition(HeaderDefinition headerDefinition) { }
+
+        /// <summary>
+        /// Configure protocol global settings.
+        /// </summary>
+        public virtual void ExportProtocolDefinition(ProtocolDefinition protocolDefinition) { }
     }
 }

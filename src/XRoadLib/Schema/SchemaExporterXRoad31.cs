@@ -58,5 +58,15 @@ namespace XRoadLib.Schema
                             .WithRequiredHeader(x => x.UserName)
                             .WithHeaderNamespace(NamespaceConstants.XROAD);
         }
+
+        /// <summary>
+        /// Configure protocol global settings.
+        /// </summary>
+        public override void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)
+        {
+            base.ExportProtocolDefinition(protocolDefinition);
+
+            protocolDefinition.ProducerNamespace = ProducerNamespace;
+        }
     }
 }

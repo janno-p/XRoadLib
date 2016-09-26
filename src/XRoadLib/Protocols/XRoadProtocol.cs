@@ -19,9 +19,11 @@ namespace XRoadLib.Protocols
     /// <summary>
     /// X-Road message protocol implementation details.
     /// </summary>
-    public abstract class XRoadProtocol
+    public class XRoadProtocol
     {
         private readonly SchemaDefinitionReader schemaDefinitionReader;
+        private readonly ProtocolDefinition protocolDefinition;
+        private readonly HeaderDefinition headerDefinition;
 
         private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
         private ISerializerCache serializerCache;
@@ -29,12 +31,7 @@ namespace XRoadLib.Protocols
         /// <summary>
         /// String form of message protocol version.
         /// </summary>
-        public abstract string Name { get; }
-
-        /// <summary>
-        /// String serialization mode used by protocol instance.
-        /// </summary>
-        public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
+        public string Name { get; }
 
         /// <summary>
         /// Global versions supported by this X-Road message protocol instance.
@@ -44,22 +41,17 @@ namespace XRoadLib.Protocols
         /// <summary>
         /// XML document style of messages (RPC/Encoded or Document/Literal).
         /// </summary>
-        public Style Style { get; }
+        public Style Style => protocolDefinition.Style;
 
         /// <summary>
         /// Main namespace which defines current producer operations and types.
         /// </summary>
-        public string ProducerNamespace { get; }
+        public string ProducerNamespace => protocolDefinition.ProducerNamespace;
 
         /// <summary>
         /// Assembly which provides runtime types for operations and types.
         /// </summary>
         public Assembly ContractAssembly { get; private set; }
-
-        /// <summary>
-        /// Header specification for current schema.
-        /// </summary>
-        protected readonly HeaderDefinition headerDefinition;
 
         /// <summary>
         /// Initialize new X-Road message header.
@@ -68,25 +60,40 @@ namespace XRoadLib.Protocols
 
         /// <summary>
         /// Initializes new X-Road message protocol instance.
+        /// <param name="name">Identifies protocol instance.</param>
+        /// <param name="schemaExporter">Schema customization provider.</param>
         /// </summary>
-        protected XRoadProtocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
+        public XRoadProtocol(string name, ISchemaExporter schemaExporter)
         {
-            if (style == null)
-                throw new ArgumentNullException(nameof(style));
-            Style = style;
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(nameof(name));
 
-            if (string.IsNullOrWhiteSpace(producerNamespace))
-                throw new ArgumentNullException(nameof(producerNamespace));
-            ProducerNamespace = producerNamespace;
+            if (schemaExporter == null)
+                throw new ArgumentNullException(nameof(schemaExporter));
 
-            schemaDefinitionReader = new SchemaDefinitionReader(producerNamespace, schemaExporter);
+            schemaDefinitionReader = new SchemaDefinitionReader(schemaExporter);
 
             headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
+            protocolDefinition = schemaDefinitionReader.ProtocolDefinition;
         }
 
-        internal virtual bool IsDefinedByEnvelope(XmlReader reader)
+        /// <summary>
+        /// Initializes new X-Road message protocol instance.
+        /// <param name="name">Identifies protocol instance.</param>
+        /// <param name="producerNamespace">Producer namespace of this protocol instance.</param>
+        /// </summary>
+        public XRoadProtocol(string name, string producerNamespace)
         {
-            return false;
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(nameof(name));
+
+            if (string.IsNullOrEmpty(producerNamespace))
+                throw new ArgumentNullException(nameof(producerNamespace));
+
+            schemaDefinitionReader = new SchemaDefinitionReader(producerNamespace);
+
+            headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
+            protocolDefinition = schemaDefinitionReader.ProtocolDefinition;
         }
 
         /// <summary>
@@ -159,6 +166,11 @@ namespace XRoadLib.Protocols
         /// Test if given namespace is defined as SOAP header element namespace.
         /// </summary>
         public bool IsHeaderNamespace(string namespaceName) => headerDefinition.IsHeaderNamespace(namespaceName);
+
+        /// <summary>
+        /// Check if envelope defines given protocol schema.
+        /// </summary>
+        public bool IsDefinedByEnvelope(XmlReader reader) => protocolDefinition.DetectEnvelope?.Invoke(reader) ?? false;
 
         /// <summary>
         /// Initialize new X-Road message of this X-Road message protocol instance.

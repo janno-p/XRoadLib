@@ -1,9 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using System.Xml;
-using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
-using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Tests.Serialization.Mapping

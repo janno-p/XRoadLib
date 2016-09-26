@@ -1,12 +1,20 @@
 ﻿using System.Web.Services.Description;
 using System.Xml;
+using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {
     public class CustomSchemaExporterXRoad20 : SchemaExporterXRoad20
     {
-        public CustomSchemaExporterXRoad20() : base("test-producer") { }
+        private readonly StringSerializationMode stringSerializationMode;
+
+        public CustomSchemaExporterXRoad20(StringSerializationMode stringSerializationMode = StringSerializationMode.HtmlEncoded)
+            : base("test-producer")
+        {
+            this.stringSerializationMode = stringSerializationMode;
+        }
 
         public override void ExportOperationDefinition(OperationDefinition operationDefinition)
         {
@@ -50,6 +58,19 @@ namespace XRoadLib.Tests.Contract.Configuration
             AddXRoadTitle(servicePort, "en", "XRoadLib test producer");
             AddXRoadTitle(servicePort, "et", "XRoadLib test andmekogu");
             AddXRoadTitle(servicePort, "pt", "Portugalikeelne loba ...");
+        }
+
+        public override void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)
+        {
+            base.ExportProtocolDefinition(protocolDefinition);
+
+            if (stringSerializationMode == StringSerializationMode.WrappedInCData)
+                protocolDefinition.Style = new CDataRpcEncodedStyle();
+        }
+
+        private class CDataRpcEncodedStyle : RpcEncodedStyle
+        {
+            public override StringSerializationMode StringSerializationMode => StringSerializationMode.WrappedInCData;
         }
     }
 }
