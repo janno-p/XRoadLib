@@ -8,7 +8,6 @@ using System.Xml;
 using Microsoft.AspNetCore.Http;
 using XRoadLib.Extensions;
 using XRoadLib.Handler.Events;
-using XRoadLib.Protocols;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 

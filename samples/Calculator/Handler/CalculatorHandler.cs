@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using XRoadLib;
 using XRoadLib.Handler;
-using XRoadLib.Protocols;
 using XRoadLib.Serialization.Mapping;
 
 namespace Calculator.Handler

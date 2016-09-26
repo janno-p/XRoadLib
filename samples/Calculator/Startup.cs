@@ -5,8 +5,9 @@ using Calculator.WebService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using XRoadLib;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols;
+using XRoadLib.Schema;
 
 namespace Calculator
 {
@@ -16,8 +17,8 @@ namespace Calculator
 
         public Startup()
         {
-            protocol = new XRoad31Protocol("calculator", "http://calculator.x-road.eu/producer/");
-            protocol.SetContractAssembly(typeof(Startup).GetTypeInfo().Assembly, null);
+            protocol = new XRoadProtocol("3.1", new SchemaExporterXRoad31("producer"));
+            protocol.SetContractAssemblyOfType<Startup>();
         }
 
         public void ConfigureServices(IServiceCollection services)

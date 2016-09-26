@@ -8,7 +8,6 @@ using System.Xml;
 using System.Web;
 using XRoadLib.Extensions;
 using XRoadLib.Handler.Events;
-using XRoadLib.Protocols;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 

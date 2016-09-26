@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using XRoadLib.Protocols;
 using XRoadLib.Serialization;
 using Xunit;
 using static XRoadLib.Serialization.XRoadMessageReader;
