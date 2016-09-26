@@ -5,8 +5,13 @@ namespace XRoadLib.Schema
     /// <summary>
     /// Helper base class for various schema exporters.
     /// </summary>
-    public abstract class SchemaExporterBase : ISchemaExporter
+    public abstract class AbstractSchemaExporter : ISchemaExporter
     {
+        /// <summary>
+        /// Producer namespace of exported X-Road schema.
+        /// </summary>
+        protected readonly string producerNamespace;
+
         /// <summary>
         /// Preferred X-Road namespace prefix of the message protocol version.
         /// </summary>
@@ -16,6 +21,14 @@ namespace XRoadLib.Schema
         /// X-Road specification namespace of the message protocol version.
         /// </summary>
         public abstract string XRoadNamespace { get; }
+
+        /// <summary>
+        /// Initializes abstract schema exporter with producer namespace.
+        /// </summary>
+        protected AbstractSchemaExporter(string producerNamespace)
+        {
+            this.producerNamespace = producerNamespace;
+        }
 
         /// <summary>
         /// Configuration hook for overriding default operation settings.
@@ -69,6 +82,9 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Configure protocol global settings.
         /// </summary>
-        public virtual void ExportProtocolDefinition(ProtocolDefinition protocolDefinition) { }
+        public virtual void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)
+        {
+            protocolDefinition.ProducerNamespace = producerNamespace;
+        }
     }
 }

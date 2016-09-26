@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Xml;
 using XRoadLib.Styles;
 
@@ -23,5 +25,20 @@ namespace XRoadLib.Schema
         /// Callback function to be used to detect protocol from SOAP envelope element.
         /// </summary>
         public Func<XmlReader, bool> DetectEnvelope { get; set; }
+
+        /// <summary>
+        /// Assembly that defines types for serialization.
+        /// </summary>
+        public Assembly ContractAssembly { get; set; }
+
+        /// <summary>
+        /// Defines list of supported DTO versions (for DTO based versioning).
+        /// </summary>
+        public ISet<uint> SupportedVersions { get; } = new HashSet<uint>();
+
+        /// <summary>
+        /// Define list of content filters of X-Road message elements.
+        /// </summary>
+        public ISet<string> EnabledFilters { get; } = new HashSet<string>();
     }
 }

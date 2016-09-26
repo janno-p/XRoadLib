@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Web.Services.Description;
 using XRoadLib.Headers;
 using XRoadLib.Styles;
@@ -20,18 +21,11 @@ namespace XRoadLib.Schema
         public override string XRoadNamespace => NamespaceConstants.XTEE;
 
         /// <summary>
-        /// X-Road standard compliant producer namespace.
-        /// </summary>
-        public override string ProducerNamespace { get; }
-
-        /// <summary>
         /// Initializes schema exporter for X-Road message protocol version 2.0.
         /// </summary>
-        public SchemaExporterXRoad20(string producerName)
-            : base(producerName)
-        {
-            ProducerNamespace = $"http://producers.{producerName}.xtee.riik.ee/producer/{producerName}";
-        }
+        public SchemaExporterXRoad20(string producerName, Assembly contractAssembly, string producerNamespace = null)
+            : base(producerName, contractAssembly, producerNamespace ?? $"http://producers.{producerName}.xtee.riik.ee/producer/{producerName}")
+        { }
 
         /// <summary>
         /// Configure request elements of X-Road message protocol version 2.0 messages.
@@ -91,7 +85,6 @@ namespace XRoadLib.Schema
 
             protocolDefinition.DetectEnvelope = reader => NamespaceConstants.SOAP_ENC.Equals(reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV));
             protocolDefinition.Style = new RpcEncodedStyle();
-            protocolDefinition.ProducerNamespace = ProducerNamespace;
         }
     }
 }

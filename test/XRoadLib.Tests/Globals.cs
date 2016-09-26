@@ -9,24 +9,9 @@ namespace XRoadLib.Tests
 {
     public static class Globals
     {
-        public static XRoadProtocol XRoadProtocol20 { get; }
-        public static XRoadProtocol XRoadProtocol31 { get; }
-        public static XRoadProtocol XRoadProtocol40 { get; }
-
-        static Globals()
-        {
-            var protocol20 = new XRoadProtocol("2.0", new CustomSchemaExporterXRoad20());
-            protocol20.SetContractAssembly(typeof(Class1).GetTypeInfo().Assembly, null, 1u, 2u, 3u);
-            XRoadProtocol20 = protocol20;
-
-            var protocol31 = new XRoadProtocol("3.1", new CustomSchemaExporterXRoad31());
-            protocol31.SetContractAssembly(typeof(Class1).GetTypeInfo().Assembly, null, 1u, 2u, 3u);
-            XRoadProtocol31 = protocol31;
-
-            var protocol = new XRoadProtocol("4.0", "http://test-producer.x-road.eu/");
-            protocol.SetContractAssembly(typeof(Class1).GetTypeInfo().Assembly, null, 1u, 2u);
-            XRoadProtocol40 = protocol;
-        }
+        public static XRoadProtocol XRoadProtocol20 { get; } = new XRoadProtocol("2.0", new CustomSchemaExporterXRoad20());
+        public static XRoadProtocol XRoadProtocol31 { get; } = new XRoadProtocol("3.1", new CustomSchemaExporterXRoad31());
+        public static XRoadProtocol XRoadProtocol40 { get; } = new XRoadProtocol("4.0", new DefaultSchemaExporter("http://test-producer.x-road.eu/", typeof(Class1).GetTypeInfo().Assembly) { SupportedVersions = { 1u, 2u } });
 
         public static IContentDefinition GetTestDefinition(Type type)
         {

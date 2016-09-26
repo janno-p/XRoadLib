@@ -57,21 +57,20 @@ namespace XRoadLib
         /// Initialize builder with contract details.
         /// <param name="protocol">X-Road protocol to use when generating service description.</param>
         /// <param name="schemaDefinitionReader">Provides overrides for default presentation format.</param>
-        /// <param name="contractAssembly">Source of types and operations that define service description content.</param>
         /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
         /// </summary>
-        public ProducerDefinition(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
+        public ProducerDefinition(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, uint? version = null)
         {
-            if (contractAssembly == null)
-                throw new ArgumentNullException(nameof(contractAssembly));
-            this.contractAssembly = contractAssembly;
-
             if (protocol == null)
                 throw new ArgumentNullException(nameof(protocol));
             this.protocol = protocol;
 
+            if (schemaDefinitionReader == null)
+                throw new ArgumentNullException(nameof(schemaDefinitionReader));
             this.schemaDefinitionReader = schemaDefinitionReader;
+
             this.version = version;
+            contractAssembly = schemaDefinitionReader.ProtocolDefinition.ContractAssembly;
 
             portType = new PortType { Name = "PortTypeName" };
 

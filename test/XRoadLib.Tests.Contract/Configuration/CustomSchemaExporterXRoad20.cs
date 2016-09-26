@@ -1,4 +1,6 @@
-﻿using System.Web.Services.Description;
+﻿using System.Linq;
+using System.Reflection;
+using System.Web.Services.Description;
 using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
@@ -11,7 +13,7 @@ namespace XRoadLib.Tests.Contract.Configuration
         private readonly StringSerializationMode stringSerializationMode;
 
         public CustomSchemaExporterXRoad20(StringSerializationMode stringSerializationMode = StringSerializationMode.HtmlEncoded)
-            : base("test-producer")
+            : base("test-producer", typeof(Class1).GetTypeInfo().Assembly)
         {
             this.stringSerializationMode = stringSerializationMode;
         }
@@ -41,11 +43,11 @@ namespace XRoadLib.Tests.Contract.Configuration
 
             // Customize port type name:
             serviceDescription.PortTypes[0].Name = "TestProducerPortType";
-            serviceDescription.Bindings[0].Type = new XmlQualifiedName("TestProducerPortType", ProducerNamespace);
+            serviceDescription.Bindings[0].Type = new XmlQualifiedName("TestProducerPortType", producerNamespace);
 
             // Customize binding name:
             serviceDescription.Bindings[0].Name = "TestBinding";
-            serviceDescription.Services[0].Ports[0].Binding = new XmlQualifiedName("TestBinding", ProducerNamespace);
+            serviceDescription.Services[0].Ports[0].Binding = new XmlQualifiedName("TestBinding", producerNamespace);
 
             // Customize service port name:
             var servicePort = serviceDescription.Services[0].Ports[0];
@@ -66,6 +68,9 @@ namespace XRoadLib.Tests.Contract.Configuration
 
             if (stringSerializationMode == StringSerializationMode.WrappedInCData)
                 protocolDefinition.Style = new CDataRpcEncodedStyle();
+
+            foreach (var version in Enumerable.Range(1, 3))
+                protocolDefinition.SupportedVersions.Add((uint)version);
         }
 
         private class CDataRpcEncodedStyle : RpcEncodedStyle

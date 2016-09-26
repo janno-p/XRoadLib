@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using XRoadLib.Schema;
@@ -6,7 +8,9 @@ namespace XRoadLib.Tests.Contract.Configuration
 {
     public class CustomSchemaExporterXRoad31 : SchemaExporterXRoad31
     {
-        public CustomSchemaExporterXRoad31() : base("test-producer") { }
+        public CustomSchemaExporterXRoad31()
+            : base("test-producer", typeof(Class1).GetTypeInfo().Assembly)
+        { }
 
         public override void ExportOperationDefinition(OperationDefinition operationDefinition)
         {
@@ -33,11 +37,11 @@ namespace XRoadLib.Tests.Contract.Configuration
 
             // Customize port type name:
             serviceDescription.PortTypes[0].Name = "TestProducerPortType";
-            serviceDescription.Bindings[0].Type = new XmlQualifiedName("TestProducerPortType", ProducerNamespace);
+            serviceDescription.Bindings[0].Type = new XmlQualifiedName("TestProducerPortType", producerNamespace);
 
             // Customize binding name:
             serviceDescription.Bindings[0].Name = "TestBinding";
-            serviceDescription.Services[0].Ports[0].Binding = new XmlQualifiedName("TestBinding", ProducerNamespace);
+            serviceDescription.Services[0].Ports[0].Binding = new XmlQualifiedName("TestBinding", producerNamespace);
 
             // Customize service port name:
             var servicePort = serviceDescription.Services[0].Ports[0];
@@ -50,6 +54,14 @@ namespace XRoadLib.Tests.Contract.Configuration
             AddXRoadTitle(servicePort, "en", "XRoadLib test producer");
             AddXRoadTitle(servicePort, "et", "XRoadLib test andmekogu");
             AddXRoadTitle(servicePort, "pt", "Portugalikeelne loba ...");
+        }
+
+        public override void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)
+        {
+            base.ExportProtocolDefinition(protocolDefinition);
+
+            foreach (var version in Enumerable.Range(1, 3))
+                protocolDefinition.SupportedVersions.Add((uint)version);
         }
     }
 }

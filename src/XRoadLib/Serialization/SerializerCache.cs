@@ -17,23 +17,24 @@ namespace XRoadLib.Serialization
     {
         private readonly Assembly contractAssembly;
         private readonly SchemaDefinitionReader schemaDefinitionReader;
+        private readonly ICollection<string> availableFilters;
 
         private readonly ConcurrentDictionary<Type, ITypeMap> customTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
         private readonly ConcurrentDictionary<XName, IServiceMap> serviceMaps = new ConcurrentDictionary<XName, IServiceMap>();
         private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
         private readonly ConcurrentDictionary<Type, ITypeMap> runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
-        private ICollection<string> availableFilters;
-
         public XRoadProtocol Protocol { get; }
         public uint? Version { get; }
 
-        public IEnumerable<string> AvailableFilters { get { return availableFilters; } set { availableFilters = value != null ? new List<string>(value) : null; } }
+        // public IEnumerable<string> AvailableFilters { get { return availableFilters; } set { availableFilters = value != null ? new List<string>(value) : null; } }
 
-        public SerializerCache(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, Assembly contractAssembly, uint? version = null)
+        public SerializerCache(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, uint? version = null)
         {
             this.schemaDefinitionReader = schemaDefinitionReader;
-            this.contractAssembly = contractAssembly;
+
+            this.availableFilters = schemaDefinitionReader.ProtocolDefinition.EnabledFilters;
+            this.contractAssembly = schemaDefinitionReader.ProtocolDefinition.ContractAssembly;
 
             Protocol = protocol;
             Version = version;

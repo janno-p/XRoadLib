@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Web.Services.Description;
 
 #if !NETSTANDARD1_5
@@ -9,11 +10,13 @@ namespace XRoadLib.Schema
     /// <summary>
     /// Schema exporter for X-Road message protocol legacy version.
     /// </summary>
-    public abstract class SchemaExporterXRoadLegacy : SchemaExporterBase
+    public abstract class SchemaExporterXRoadLegacy : AbstractSchemaExporter
     {
 #if !NETSTANDARD1_5
         private readonly XmlDocument document = new XmlDocument();
 #endif
+
+        private readonly Assembly contractAssembly;
 
         /// <summary>
         /// X-Road producer name for legacy protocols.
@@ -21,15 +24,12 @@ namespace XRoadLib.Schema
         protected readonly string producerName;
 
         /// <summary>
-        /// X-Road standard compliant producer namespace.
-        /// </summary>
-        public abstract string ProducerNamespace { get; }
-
-        /// <summary>
         /// Initialize new legacy schema exporter.
         /// </summary>
-        protected SchemaExporterXRoadLegacy(string producerName)
+        protected SchemaExporterXRoadLegacy(string producerName, Assembly contractAssembly, string producerNamespace)
+            : base(producerNamespace)
         {
+            this.contractAssembly = contractAssembly;
             this.producerName = producerName;
         }
 
@@ -90,6 +90,16 @@ namespace XRoadLib.Schema
             }
 #endif
             servicePort.Extensions.Add(titleBinding);
+        }
+
+        /// <summary>
+        /// Configure protocol global settings.
+        /// </summary>
+        public override void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)
+        {
+            base.ExportProtocolDefinition(protocolDefinition);
+
+            protocolDefinition.ContractAssembly = contractAssembly;
         }
     }
 }

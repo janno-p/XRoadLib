@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Web.Services.Description;
 using XRoadLib.Headers;
 using XRoadLib.Styles;
@@ -20,18 +21,11 @@ namespace XRoadLib.Schema
         public override string XRoadNamespace => NamespaceConstants.XROAD;
 
         /// <summary>
-        /// X-Road standard compliant producer namespace.
-        /// </summary>
-        public override string ProducerNamespace { get; }
-
-        /// <summary>
         /// Initializes schema exporter for X-Road message protocol version 3.1.
         /// </summary>
-        public SchemaExporterXRoad31(string producerName)
-            : base(producerName)
-        {
-            ProducerNamespace = $"http://{producerName}.x-road.ee/producer/";
-        }
+        public SchemaExporterXRoad31(string producerName, Assembly contractAssembly, string producerNamespace = null)
+            : base(producerName, contractAssembly, producerNamespace ?? $"http://{producerName}.x-road.ee/producer/")
+        { }
 
         /// <summary>
         /// Allows each message protocol implementation to customize service description document
@@ -57,16 +51,6 @@ namespace XRoadLib.Schema
                             .WithRequiredHeader(x => x.Id)
                             .WithRequiredHeader(x => x.UserName)
                             .WithHeaderNamespace(NamespaceConstants.XROAD);
-        }
-
-        /// <summary>
-        /// Configure protocol global settings.
-        /// </summary>
-        public override void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)
-        {
-            base.ExportProtocolDefinition(protocolDefinition);
-
-            protocolDefinition.ProducerNamespace = ProducerNamespace;
         }
     }
 }

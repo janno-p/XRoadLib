@@ -48,11 +48,6 @@ namespace XRoadLib
         public string ProducerNamespace => protocolDefinition.ProducerNamespace;
 
         /// <summary>
-        /// Assembly which provides runtime types for operations and types.
-        /// </summary>
-        public Assembly ContractAssembly { get; private set; }
-
-        /// <summary>
         /// Initialize new X-Road message header.
         /// </summary>
         public Func<IXRoadHeader> CreateHeader => headerDefinition.Initializer;
@@ -74,25 +69,8 @@ namespace XRoadLib
 
             headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
             protocolDefinition = schemaDefinitionReader.ProtocolDefinition;
-        }
 
-        /// <summary>
-        /// Initializes new X-Road message protocol instance.
-        /// <param name="name">Identifies protocol instance.</param>
-        /// <param name="producerNamespace">Producer namespace of this protocol instance.</param>
-        /// </summary>
-        public XRoadProtocol(string name, string producerNamespace)
-        {
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException(nameof(name));
-
-            if (string.IsNullOrEmpty(producerNamespace))
-                throw new ArgumentNullException(nameof(producerNamespace));
-
-            schemaDefinitionReader = new SchemaDefinitionReader(producerNamespace);
-
-            headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
-            protocolDefinition = schemaDefinitionReader.ProtocolDefinition;
+            SetContractAssembly();
         }
 
         /// <summary>
@@ -100,44 +78,7 @@ namespace XRoadLib
         /// </summary>
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
-            new ProducerDefinition(this, schemaDefinitionReader, ContractAssembly, version).SaveTo(outputStream);
-        }
-
-        /// <summary>
-        /// Associate runtime types with current message protocol instance.
-        /// </summary>
-        public void SetContractAssemblyOfType<TAssembly>()
-        {
-            SetContractAssembly(typeof(TAssembly).GetTypeInfo().Assembly);
-        }
-
-        /// <summary>
-        /// Associate runtime types with current message protocol instance.
-        /// </summary>
-        public void SetContractAssembly(Assembly assembly, params uint[] supportedVersions)
-        {
-            SetContractAssembly(assembly, null, supportedVersions);
-        }
-
-        /// <summary>
-        /// Associate runtime types with current message protocol instance.
-        /// </summary>
-        public void SetContractAssembly(Assembly assembly, IList<string> availableFilters, params uint[] supportedVersions)
-        {
-            if (ContractAssembly != null)
-                throw new Exception($"This protocol instance (message protocol version `{Name}`) already has contract configured.");
-
-            ContractAssembly = assembly;
-
-            if (supportedVersions == null || supportedVersions.Length == 0)
-            {
-                serializerCache = new SerializerCache(this, schemaDefinitionReader, assembly) { AvailableFilters = availableFilters };
-                return;
-            }
-
-            versioningSerializerCaches = new Dictionary<uint, ISerializerCache>();
-            foreach (var dtoVersion in supportedVersions)
-                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionReader, assembly, dtoVersion) { AvailableFilters = availableFilters });
+            new ProducerDefinition(this, schemaDefinitionReader, version).SaveTo(outputStream);
         }
 
         /// <summary>
@@ -174,9 +115,25 @@ namespace XRoadLib
         /// <summary>
         /// Initialize new X-Road message of this X-Road message protocol instance.
         /// </summary>
-        public XRoadMessage NewMessage(IXRoadHeader header = null)
+        public XRoadMessage CreateMessage(IXRoadHeader header = null)
         {
             return new XRoadMessage(this, header ?? CreateHeader());
+        }
+
+        private void SetContractAssembly()
+        {
+            if (schemaDefinitionReader.ProtocolDefinition.ContractAssembly == null)
+                throw new Exception($"SchemaExporter must define contract assembly of types and operations.");
+
+            if (!schemaDefinitionReader.ProtocolDefinition.SupportedVersions.Any())
+            {
+                serializerCache = new SerializerCache(this, schemaDefinitionReader);
+                return;
+            }
+
+            versioningSerializerCaches = new Dictionary<uint, ISerializerCache>();
+            foreach (var dtoVersion in schemaDefinitionReader.ProtocolDefinition.SupportedVersions)
+                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionReader, dtoVersion));
         }
     }
 }

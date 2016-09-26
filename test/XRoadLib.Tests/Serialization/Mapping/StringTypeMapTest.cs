@@ -77,11 +77,10 @@ namespace XRoadLib.Tests.Serialization.Mapping
             var stream = new StringBuilder();
 
             var protocol = new XRoadProtocol("2.0", new CustomSchemaExporterXRoad20(mode));
-            protocol.SetContractAssembly(typeof(Globals).GetTypeInfo().Assembly, null, 1u, 2u, 3u);
 
             using (var textWriter = new StringWriter(stream))
             using (var writer = XmlWriter.Create(textWriter))
-            using (var message = protocol.NewMessage())
+            using (var message = protocol.CreateMessage())
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("value");
