@@ -13,7 +13,7 @@ namespace XRoadLib.Tests.Contract.Configuration
         public override StringSerializationMode StringSerializationMode => stringSerializationMode;
 
         public CustomXRoad20Protocol()
-            : base("test-producer", "http://producers.test-producer.xtee.riik.ee/producer/test-producer", null, new CustomSchemaExporterXRoad20())
+            : base("http://producers.test-producer.xtee.riik.ee/producer/test-producer", null, new CustomSchemaExporterXRoad20())
         {
             SetContractAssembly(GetType().GetTypeInfo().Assembly, null, 1u, 2u, 3u);
         }

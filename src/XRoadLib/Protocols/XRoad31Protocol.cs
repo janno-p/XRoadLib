@@ -7,15 +7,15 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
-    public class XRoad31Protocol : XRoadLegacyProtocol
+    public class XRoad31Protocol : XRoadProtocol
     {
         protected override string XRoadPrefix => PrefixConstants.XROAD;
         protected override string XRoadNamespace => NamespaceConstants.XROAD;
 
         public override string Name => "3.1";
 
-        public XRoad31Protocol(string producerName, string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
-            : base(producerName, producerNamespace, style ?? new DocLiteralStyle(), schemaExporter)
+        public XRoad31Protocol(string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
+            : base(producerNamespace, style ?? new DocLiteralStyle(), schemaExporter)
         { }
 
         protected override void DefineMandatoryHeaderElements()

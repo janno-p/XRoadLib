@@ -8,15 +8,15 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
 {
-    public class XRoad20Protocol : XRoadLegacyProtocol
+    public class XRoad20Protocol : XRoadProtocol
     {
         protected override string XRoadPrefix => PrefixConstants.XTEE;
         protected override string XRoadNamespace => NamespaceConstants.XTEE;
 
         public override string Name => "2.0";
 
-        public XRoad20Protocol(string producerName, string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
-            : base(producerName, producerNamespace, style ?? new RpcEncodedStyle(), schemaExporter)
+        public XRoad20Protocol(string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
+            : base(producerNamespace, style ?? new RpcEncodedStyle(), schemaExporter)
         { }
 
         protected override void DefineMandatoryHeaderElements()
