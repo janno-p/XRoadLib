@@ -88,11 +88,11 @@ namespace XRoadLib
                 {
                     writer.WriteStartDocument();
 
-                    protocol.WriteSoapEnvelope(writer);
+                    protocol.Style.WriteSoapEnvelope(writer, protocol.ProducerNamespace);
                     if (!string.IsNullOrEmpty(requestNamespace))
                         writer.WriteAttributeString(PrefixConstants.XMLNS, "req", NamespaceConstants.XMLNS, requestNamespace);
 
-                    protocol.WriteSoapHeader(writer, xRoadHeader);
+                    protocol.Style.WriteSoapHeader(writer, xRoadHeader);
 
                     writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
 

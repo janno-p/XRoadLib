@@ -40,7 +40,7 @@ namespace XRoadLib.Protocols.Styles
         }
 #endif
 
-        public override XmlAttribute CreateArrayTypeAttribute(XName qualifiedName)
+        private XmlAttribute CreateArrayTypeAttribute(XName qualifiedName)
         {
             var attribute = document.CreateAttribute(PrefixConstants.WSDL, "arrayType", NamespaceConstants.WSDL);
             attribute.Value = $"{qualifiedName.NamespaceName}:{qualifiedName.LocalName}[]";
@@ -104,6 +104,14 @@ namespace XRoadLib.Protocols.Styles
         public override SoapOperationBinding CreateSoapOperationBinding()
         {
             return new SoapOperationBinding { SoapAction = "", Style = SoapBindingStyle.Rpc };
+        }
+
+        public override void WriteSoapEnvelope(XmlWriter writer, string producerNamespace)
+        {
+            base.WriteSoapEnvelope(writer, producerNamespace);
+
+            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC);
+            writer.WriteAttributeString("encodingStyle", NamespaceConstants.SOAP_ENV, NamespaceConstants.SOAP_ENC);
         }
     }
 }

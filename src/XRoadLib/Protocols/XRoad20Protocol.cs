@@ -18,13 +18,5 @@ namespace XRoadLib.Protocols
 
             return NamespaceConstants.SOAP_ENC.Equals(attributeValue);
         }
-
-        internal override void WriteSoapEnvelope(XmlWriter writer)
-        {
-            base.WriteSoapEnvelope(writer);
-
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC);
-            writer.WriteAttributeString("encodingStyle", NamespaceConstants.SOAP_ENV, NamespaceConstants.SOAP_ENC);
-        }
     }
 }

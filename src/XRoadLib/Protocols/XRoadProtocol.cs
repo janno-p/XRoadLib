@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Protocols.Description;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
@@ -88,30 +87,6 @@ namespace XRoadLib.Protocols
         internal virtual bool IsDefinedByEnvelope(XmlReader reader)
         {
             return false;
-        }
-
-        internal virtual void WriteSoapEnvelope(XmlWriter writer)
-        {
-            writer.WriteStartElement(PrefixConstants.SOAP_ENV, "Envelope", NamespaceConstants.SOAP_ENV);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, ProducerNamespace);
-        }
-
-        /// <summary>
-        /// Serializes header of SOAP message.
-        /// </summary>
-        public void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null)
-        {
-            writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
-
-            header?.WriteTo(writer);
-
-            foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
-                additionalHeader.WriteTo(writer);
-
-            writer.WriteEndElement();
         }
 
         /// <summary>
