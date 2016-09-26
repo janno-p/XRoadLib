@@ -21,16 +21,6 @@ namespace XRoadLib.Schema
         protected readonly string producerName;
 
         /// <summary>
-        /// X-Road namespace preferred prefix.
-        /// </summary>
-        protected readonly string xRoadPrefix;
-
-        /// <summary>
-        /// X-Road namespace which defines X-Road protocol.
-        /// </summary>
-        protected readonly string xRoadNamespace;
-
-        /// <summary>
         /// X-Road standard compliant producer namespace.
         /// </summary>
         public abstract string ProducerNamespace { get; }
@@ -38,11 +28,9 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initialize new legacy schema exporter.
         /// </summary>
-        protected SchemaExporterXRoadLegacy(string producerName, string xRoadPrefix, string xRoadNamespace)
+        protected SchemaExporterXRoadLegacy(string producerName)
         {
             this.producerName = producerName;
-            this.xRoadPrefix = xRoadPrefix;
-            this.xRoadNamespace = xRoadNamespace;
         }
 
         /// <summary>
@@ -63,12 +51,12 @@ namespace XRoadLib.Schema
         {
             base.ExportServiceDescription(serviceDescription);
 
-            serviceDescription.Namespaces.Add(xRoadPrefix, xRoadNamespace);
+            serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
 
 #if NETSTANDARD1_5
-            var address = new XRoadAddressBinding(xRoadPrefix, xRoadNamespace) { Producer = producerName };
+            var address = new XRoadAddressBinding(XRoadPrefix, XRoadNamespace) { Producer = producerName };
 #else
-            var address = document.CreateElement(xRoadPrefix, "address", xRoadNamespace);
+            var address = document.CreateElement(XRoadPrefix, "address", XRoadNamespace);
             address.SetAttribute("producer", producerName);
 #endif
 
@@ -85,13 +73,13 @@ namespace XRoadLib.Schema
         protected void AddXRoadTitle(Port servicePort, string language, string title)
         {
 #if NETSTANDARD1_5
-            var titleBinding = new XRoadTitleBinding(xRoadPrefix, xRoadNamespace)
+            var titleBinding = new XRoadTitleBinding(XRoadPrefix, XRoadNamespace)
             {
                 Language = language,
                 Text = title
             };
 #else
-            var titleBinding = document.CreateElement(xRoadPrefix, "title", xRoadNamespace);
+            var titleBinding = document.CreateElement(XRoadPrefix, "title", XRoadNamespace);
             titleBinding.InnerText = title;
 
             if (!string.IsNullOrWhiteSpace(language))

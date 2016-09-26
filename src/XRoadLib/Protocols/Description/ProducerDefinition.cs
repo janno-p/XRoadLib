@@ -49,6 +49,11 @@ namespace XRoadLib.Protocols.Description
         private readonly Action<string, string> addRequiredImport;
         private readonly Func<string, IList<string>> getRequiredImports;
 
+        private readonly string xRoadPrefix;
+        private readonly string xRoadNamespace;
+
+        private readonly XmlDocument document = new XmlDocument();
+
         /// <summary>
         /// Initialize builder with contract details.
         /// <param name="protocol">X-Road protocol to use when generating service description.</param>
@@ -105,6 +110,9 @@ namespace XRoadLib.Protocols.Description
             };
 
             getRequiredImports = ns => requiredImports.Where(x => x.Item1 == ns).Select(x => x.Item2).ToList();
+
+            xRoadPrefix = schemaDefinitionReader.GetXRoadPrefix();
+            xRoadNamespace = schemaDefinitionReader.GetXRoadNamespace();
         }
 
         /// <summary>
@@ -489,7 +497,7 @@ namespace XRoadLib.Protocols.Description
         {
             portType.Operations.Add(new Operation
             {
-                DocumentationElement = protocol.CreateDocumentationElement(operationDefinition.Documentation),
+                DocumentationElement = CreateDocumentationElement(operationDefinition.Documentation),
                 Name = operationDefinition.Name.LocalName,
                 Messages =
                 {
@@ -533,7 +541,7 @@ namespace XRoadLib.Protocols.Description
                 Name = operationDefinition.Name.LocalName,
                 Extensions =
                 {
-                    protocol.CreateOperationVersionElement(operationDefinition),
+                    CreateXRoadOperationVersionBinding(operationDefinition),
                     protocol.Style.CreateSoapOperationBinding()
                 },
                 Input = inputBinding,
@@ -621,7 +629,7 @@ namespace XRoadLib.Protocols.Description
                 return null;
 
             var markup = definition.Documentation
-                                   .Select(doc => protocol.CreateTitleElement(doc.Item1, doc.Item2, ns => addRequiredImport(schemaNamespace, ns)))
+                                   .Select(doc => CreateTitleElement(doc.Item1, doc.Item2, ns => addRequiredImport(schemaNamespace, ns)))
                                    .Cast<XmlNode>();
 
 #if NETSTANDARD1_5
@@ -830,6 +838,56 @@ namespace XRoadLib.Protocols.Description
                 schemaLocations.Add(namespaceName, schemaDefinitionReader.GetSchemaLocation(namespaceName));
 
             schemaTypes.Add(Tuple.Create(namespaceName, schemaType));
+        }
+
+        private
+#if NETSTANDARD1_5
+            XRoadOperationVersionBinding
+#else
+            XmlElement
+#endif
+                CreateXRoadOperationVersionBinding(OperationDefinition operationDefinition)
+        {
+            if (operationDefinition.Version == 0)
+                return null;
+
+#if NETSTANDARD1_5
+            return new XRoadOperationVersionBinding(xRoadPrefix, xRoadNamespace) { Version = $"v{operationDefinition.Version}" };
+#else
+            var addressElement = document.CreateElement(xRoadPrefix, "version", xRoadNamespace);
+            addressElement.InnerText = $"v{operationDefinition.Version}";
+            return addressElement;
+#endif
+        }
+
+        private XmlElement CreateTitleElement(string languageCode, string value, Action<string> addSchemaImport)
+        {
+            addSchemaImport(xRoadNamespace);
+
+            var titleElement = document.CreateElement(xRoadPrefix, "title", xRoadNamespace);
+            titleElement.InnerText = value;
+
+            if (string.IsNullOrWhiteSpace(languageCode))
+                return titleElement;
+
+            var attribute = document.CreateAttribute("xml", "lang", null);
+            attribute.Value = languageCode;
+            titleElement.Attributes.Append(attribute);
+
+            return titleElement;
+        }
+
+        private XmlElement CreateDocumentationElement(IList<Tuple<string, string>> titles)
+        {
+            if (titles == null || !titles.Any())
+                return null;
+
+            var documentationElement = document.CreateElement(PrefixConstants.WSDL, "documentation", NamespaceConstants.WSDL);
+
+            foreach (var title in titles)
+                documentationElement.AppendChild(CreateTitleElement(title.Item1, title.Item2, _ => { }));
+
+            return documentationElement;
         }
     }
 }

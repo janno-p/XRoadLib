@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Web.Services.Description;
 using System.Xml;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
@@ -10,9 +9,6 @@ namespace XRoadLib.Protocols
 {
     public class XRoad20Protocol : XRoadProtocol
     {
-        protected override string XRoadPrefix => PrefixConstants.XTEE;
-        protected override string XRoadNamespace => NamespaceConstants.XTEE;
-
         public override string Name => "2.0";
 
         public XRoad20Protocol(string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)

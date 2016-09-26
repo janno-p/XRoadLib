@@ -47,16 +47,6 @@ namespace XRoadLib.Protocols
         private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
         private ISerializerCache serializerCache;
 
-        /// <summary>
-        /// Preferred X-Road namespace prefix of the message protocol version.
-        /// </summary>
-        protected abstract string XRoadPrefix { get; }
-
-        /// <summary>
-        /// X-Road specification namespace of the message protocol version.
-        /// </summary>
-        protected abstract string XRoadNamespace { get; }
-
         internal ISet<XName> MandatoryHeaders { get; } = new SortedSet<XName>(new XNameComparer());
 
         /// <summary>
@@ -154,54 +144,6 @@ namespace XRoadLib.Protocols
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
             new ProducerDefinition(this, schemaDefinitionReader, ContractAssembly, version).SaveTo(outputStream);
-        }
-
-#if NETSTANDARD1_5
-        internal XRoadOperationVersionBinding CreateOperationVersionElement(OperationDefinition operationDefinition)
-#else
-        internal XmlElement CreateOperationVersionElement(OperationDefinition operationDefinition)
-#endif
-        {
-            if (operationDefinition.Version == 0)
-                return null;
-
-#if NETSTANDARD1_5
-            return new XRoadOperationVersionBinding(XRoadPrefix, XRoadNamespace) { Version = $"v{operationDefinition.Version}" };
-#else
-            var addressElement = document.CreateElement(XRoadPrefix, "version", XRoadNamespace);
-            addressElement.InnerText = $"v{operationDefinition.Version}";
-            return addressElement;
-#endif
-        }
-
-        internal XmlElement CreateTitleElement(string languageCode, string value, Action<string> addSchemaImport)
-        {
-            addSchemaImport(XRoadNamespace);
-
-            var titleElement = document.CreateElement(XRoadPrefix, "title", XRoadNamespace);
-            titleElement.InnerText = value;
-
-            if (string.IsNullOrWhiteSpace(languageCode))
-                return titleElement;
-
-            var attribute = document.CreateAttribute("xml", "lang", null);
-            attribute.Value = languageCode;
-            titleElement.Attributes.Append(attribute);
-
-            return titleElement;
-        }
-
-        internal XmlElement CreateDocumentationElement(IList<Tuple<string, string>> titles)
-        {
-            if (titles == null || !titles.Any())
-                return null;
-
-            var documentationElement = document.CreateElement(PrefixConstants.WSDL, "documentation", NamespaceConstants.WSDL);
-
-            foreach (var title in titles)
-                documentationElement.AppendChild(CreateTitleElement(title.Item1, title.Item2, _ => { }));
-
-            return documentationElement;
         }
 
         /// <summary>
@@ -319,7 +261,7 @@ namespace XRoadLib.Protocols
             if (!MandatoryHeaders.Contains(name) && value == null)
                 return;
 
-            writer.WriteStartElement(name, XRoadNamespace);
+            writer.WriteStartElement(name, schemaDefinitionReader.GetXRoadNamespace());
 
             Style.WriteExplicitType(writer, typeName);
 

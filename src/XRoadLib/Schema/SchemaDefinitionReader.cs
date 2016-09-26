@@ -8,6 +8,10 @@ using XRoadLib.Extensions;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
+#if !NETSTANDARD1_5
+using System.Xml;
+#endif
+
 namespace XRoadLib.Schema
 {
     /// <summary>
@@ -199,5 +203,15 @@ namespace XRoadLib.Schema
         {
             SchemaExporter?.ExportServiceDescription(serviceDescription);
         }
+
+        /// <summary>
+        /// Get preferred X-Road namespace prefix for service description.
+        /// </summary>
+        public string GetXRoadPrefix() => SchemaExporter != null ? SchemaExporter.XRoadPrefix : PrefixConstants.XROAD;
+
+        /// <summary>
+        /// Get main namespace which defines X-Road message protocol specifics.
+        /// </summary>
+        public string GetXRoadNamespace() => SchemaExporter != null ? SchemaExporter.XRoadNamespace : NamespaceConstants.XROAD_V4;
     }
 }

@@ -9,6 +9,16 @@ namespace XRoadLib.Schema
     public interface ISchemaExporter
     {
         /// <summary>
+        /// Preferred X-Road namespace prefix of the message protocol version.
+        /// </summary>
+        string XRoadPrefix { get; }
+
+        /// <summary>
+        /// X-Road specification namespace of the message protocol version.
+        /// </summary>
+        string XRoadNamespace { get; }
+
+        /// <summary>
         /// Configuration hook for overriding default operation settings.
         /// </summary>
         void ExportOperationDefinition(OperationDefinition operationDefinition);

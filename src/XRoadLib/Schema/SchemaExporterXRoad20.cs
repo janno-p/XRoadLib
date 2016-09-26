@@ -8,6 +8,16 @@ namespace XRoadLib.Schema
     public class SchemaExporterXRoad20 : SchemaExporterXRoadLegacy
     {
         /// <summary>
+        /// Preferred X-Road namespace prefix of the message protocol version.
+        /// </summary>
+        public override string XRoadPrefix => PrefixConstants.XTEE;
+
+        /// <summary>
+        /// X-Road specification namespace of the message protocol version.
+        /// </summary>
+        public override string XRoadNamespace => NamespaceConstants.XTEE;
+
+        /// <summary>
         /// X-Road standard compliant producer namespace.
         /// </summary>
         public override string ProducerNamespace { get; }
@@ -16,7 +26,7 @@ namespace XRoadLib.Schema
         /// Initializes schema exporter for X-Road message protocol version 2.0.
         /// </summary>
         public SchemaExporterXRoad20(string producerName)
-            : base(producerName, PrefixConstants.XTEE, NamespaceConstants.XTEE)
+            : base(producerName)
         {
             ProducerNamespace = $"http://producers.{producerName}.xtee.riik.ee/producer/{producerName}";
         }
