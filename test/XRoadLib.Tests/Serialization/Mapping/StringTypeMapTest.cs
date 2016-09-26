@@ -81,7 +81,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
 
             using (var textWriter = new StringWriter(stream))
             using (var writer = XmlWriter.Create(textWriter))
-            using (var message = new XRoadMessage(protocol, new XRoadHeader20()))
+            using (var message = protocol.NewMessage())
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("value");

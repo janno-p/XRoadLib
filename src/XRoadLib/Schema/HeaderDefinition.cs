@@ -18,6 +18,11 @@ namespace XRoadLib.Schema
         /// Specify mandatory element of the header object.
         /// </summary>
         IHeaderDefinitionBuilder<THeader> WithRequiredHeader<TValue>(Expression<Func<THeader, TValue>> expression);
+
+        /// <summary>
+        /// Define namespaces used to define SOAP header elements.
+        /// </summary>
+        IHeaderDefinitionBuilder<THeader> WithHeaderNamespace(string namespaceName);
     }
 
     /// <summary>
@@ -25,6 +30,8 @@ namespace XRoadLib.Schema
     /// </summary>
     public class HeaderDefinition
     {
+        private readonly ISet<string> headerNamespaces = new HashSet<string>();
+
         /// <summary>
         /// Create new instance of header object.
         /// </summary>
@@ -45,6 +52,14 @@ namespace XRoadLib.Schema
             return new HeaderDefinitionBuilder<THeader>(this);
         }
 
+        /// <summary>
+        /// Test if given namespace is defined as SOAP header element namespace.
+        /// </summary>
+        public bool IsHeaderNamespace(string namespaceName)
+        {
+            return headerNamespaces.Contains(namespaceName);
+        }
+
         private class HeaderDefinitionBuilder<THeader> : IHeaderDefinitionBuilder<THeader> where THeader : IXRoadHeader
         {
             private readonly HeaderDefinition headerDefinition;
@@ -53,6 +68,7 @@ namespace XRoadLib.Schema
             {
                 this.headerDefinition = headerDefinition;
                 headerDefinition.RequiredHeaders.Clear();
+                headerDefinition.headerNamespaces.Clear();
             }
 
             public IHeaderDefinitionBuilder<THeader> WithRequiredHeader<TValue>(Expression<Func<THeader, TValue>> expression)
@@ -66,6 +82,13 @@ namespace XRoadLib.Schema
                     throw new ArgumentException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.", nameof(expression));
 
                 headerDefinition.RequiredHeaders.Add(XName.Get(attribute.ElementName, attribute.Namespace));
+
+                return this;
+            }
+
+            public IHeaderDefinitionBuilder<THeader> WithHeaderNamespace(string namespaceName)
+            {
+                headerDefinition.headerNamespaces.Add(namespaceName);
 
                 return this;
             }

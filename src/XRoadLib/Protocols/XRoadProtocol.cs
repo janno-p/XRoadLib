@@ -5,12 +5,15 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using XRoadLib.Extensions;
 using XRoadLib.Protocols.Description;
 using XRoadLib.Protocols.Headers;
 using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
+
+#if NET40
+using XRoadLib.Extensions;
+#endif
 
 namespace XRoadLib.Protocols
 {
@@ -19,21 +22,6 @@ namespace XRoadLib.Protocols
     /// </summary>
     public abstract class XRoadProtocol
     {
-        /// <summary>
-        /// Qualified name of string type.
-        /// </summary>
-        protected static readonly XName stringTypeName = XName.Get("string", NamespaceConstants.XSD);
-
-        /// <summary>
-        /// Qualified name of boolean type.
-        /// </summary>
-        protected static readonly XName booleanTypeName = XName.Get("boolean", NamespaceConstants.XSD);
-
-        /// <summary>
-        /// Qualified name of binary type.
-        /// </summary>
-        protected static readonly XName base64TypeName = XName.Get("base64", NamespaceConstants.XSD);
-
         private readonly SchemaDefinitionReader schemaDefinitionReader;
 
         private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
@@ -97,8 +85,6 @@ namespace XRoadLib.Protocols
             headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
         }
 
-        internal abstract bool IsHeaderNamespace(string ns);
-
         internal virtual bool IsDefinedByEnvelope(XmlReader reader)
         {
             return false;
@@ -114,18 +100,13 @@ namespace XRoadLib.Protocols
         }
 
         /// <summary>
-        /// Serializes X-Road message protocol header elements.
-        /// </summary>
-        protected abstract void WriteXRoadHeader(XmlWriter writer, IXRoadHeader header);
-
-        /// <summary>
         /// Serializes header of SOAP message.
         /// </summary>
         public void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null)
         {
             writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
 
-            WriteXRoadHeader(writer, header);
+            header?.WriteTo(writer);
 
             foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
                 additionalHeader.WriteTo(writer);
@@ -200,23 +181,16 @@ namespace XRoadLib.Protocols
         }
 
         /// <summary>
-        /// Writes single SOAP header element.
+        /// Test if given namespace is defined as SOAP header element namespace.
         /// </summary>
-        protected void WriteHeaderElement(XmlWriter writer, string name, object value, XName typeName)
+        public bool IsHeaderNamespace(string namespaceName) => headerDefinition.IsHeaderNamespace(namespaceName);
+
+        /// <summary>
+        /// Initialize new X-Road message of this X-Road message protocol instance.
+        /// </summary>
+        public XRoadMessage NewMessage(IXRoadHeader header = null)
         {
-            if (!headerDefinition.RequiredHeaders.Contains(name) && value == null)
-                return;
-
-            writer.WriteStartElement(name, schemaDefinitionReader.GetXRoadNamespace());
-
-            Style.WriteExplicitType(writer, typeName);
-
-            var stringValue = value as string;
-            if (stringValue != null)
-                writer.WriteStringWithMode(stringValue, StringSerializationMode);
-            else writer.WriteValue(value);
-
-            writer.WriteEndElement();
+            return new XRoadMessage(this, header ?? CreateHeader());
         }
     }
 }

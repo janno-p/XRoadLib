@@ -25,7 +25,11 @@ namespace XRoadLib.Tests.Serialization
 
         public void SerializeWithContext<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, bool isMultipart, Action<XRoadMessage, string> f)
         {
-            using (var message = new XRoadMessage(Globals.XRoadProtocol20, new XRoadHeader20()) { IsMultipartContainer = true, BinaryMode = BinaryMode.Attachment })
+            var message = Globals.XRoadProtocol20.NewMessage();
+            message.IsMultipartContainer = true;
+            message.BinaryMode = BinaryMode.Attachment;
+
+            using (message)
             using (var stream = new MemoryStream())
             using (var tw = new StreamWriter(stream, Encoding.UTF8))
             using (var writer = XmlWriter.Create(tw))

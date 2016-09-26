@@ -1,5 +1,6 @@
 using System.Web.Services.Description;
 using XRoadLib.Protocols.Headers;
+using XRoadLib.Protocols.Styles;
 
 namespace XRoadLib.Schema
 {
@@ -71,13 +72,14 @@ namespace XRoadLib.Schema
         {
             base.ExportHeaderDefinition(headerDefinition);
 
-            headerDefinition.Use<XRoadHeader20>(() => new XRoadHeader20())
+            headerDefinition.Use<XRoadHeader20>(() => new XRoadHeader20(headerDefinition, new RpcEncodedStyle()))
                             .WithRequiredHeader(x => x.Asutus)
                             .WithRequiredHeader(x => x.Andmekogu)
                             .WithRequiredHeader(x => x.Nimi)
                             .WithRequiredHeader(x => x.Isikukood)
                             .WithRequiredHeader(x => x.Id)
-                            .WithRequiredHeader(x => x.AmetnikNimi);
+                            .WithRequiredHeader(x => x.AmetnikNimi)
+                            .WithHeaderNamespace(NamespaceConstants.XTEE);
         }
     }
 }

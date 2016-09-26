@@ -22,7 +22,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
             using (var reader = XmlReader.Create(textReader))
             {
                 while (reader.Read() && reader.NodeType != XmlNodeType.Element) { }
-                using (var message = new XRoadMessage(Globals.XRoadProtocol20, new XRoadHeader20()))
+                using (var message = Globals.XRoadProtocol20.NewMessage())
                     return typeMap.Deserialize(reader, null, Globals.GetTestDefinition(typeMap.Definition.Type), message);
             }
         }

@@ -496,7 +496,10 @@ namespace XRoadLib.Tests.Serialization
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
             return DeserializeRequest(templateXml, contentXml, Globals.XRoadProtocol20, (msgr, xmlr) =>
             {
-                using (var message = new XRoadMessage(Globals.XRoadProtocol20, new XRoadHeader20()) { XmlTemplate = template })
+                var message = Globals.XRoadProtocol20.NewMessage();
+                message.XmlTemplate = template;
+
+                using (message)
                 {
                     msgr.Read(message, false);
                     xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol20.ProducerNamespace));
@@ -510,7 +513,10 @@ namespace XRoadLib.Tests.Serialization
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
             return DeserializeRequest(templateXml, contentXml, Globals.XRoadProtocol31, (msgr, xmlr) =>
             {
-                using (var message = new XRoadMessage(Globals.XRoadProtocol31, new XRoadHeader31()) { XmlTemplate = template })
+                var message = Globals.XRoadProtocol31.NewMessage();
+                message.XmlTemplate = template;
+
+                using (message)
                 {
                     msgr.Read(message, false);
                     xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol31.ProducerNamespace));

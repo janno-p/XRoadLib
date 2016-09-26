@@ -1,7 +1,4 @@
-﻿using System.Xml;
-using System.Xml.Linq;
-using XRoadLib.Protocols.Headers;
-using XRoadLib.Protocols.Styles;
+﻿using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
 
 namespace XRoadLib.Protocols
@@ -13,64 +10,5 @@ namespace XRoadLib.Protocols
         public XRoad40Protocol(string producerNamespace, Style style = null, ISchemaExporter schemaExporter = null)
             : base(producerNamespace, style ?? new DocLiteralStyle(), schemaExporter)
         { }
-
-        protected override void WriteXRoadHeader(XmlWriter writer, IXRoadHeader header)
-        {
-            var header40 = header as IXRoadHeader40;
-            if (header40 == null)
-                return;
-
-            if (writer.LookupPrefix(NamespaceConstants.XROAD_V4) == null)
-                writer.WriteAttributeString("xmlns", PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4);
-
-            if (writer.LookupPrefix(NamespaceConstants.XROAD_V4_ID) == null)
-                writer.WriteAttributeString("xmlns", PrefixConstants.ID, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4_ID);
-
-            if (headerDefinition.RequiredHeaders.Contains("client") || header40.Client != null)
-            {
-                var element = new XElement(XName.Get("client", NamespaceConstants.XROAD_V4),
-                    new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), string.IsNullOrWhiteSpace(header40.Client.SubsystemCode) ? "MEMBER" : "SUBSYSTEM"),
-                    new XElement(XName.Get("xRoadInstance", NamespaceConstants.XROAD_V4_ID), header40.Client.XRoadInstance),
-                    new XElement(XName.Get("memberClass", NamespaceConstants.XROAD_V4_ID), header40.Client.MemberClass),
-                    new XElement(XName.Get("memberCode", NamespaceConstants.XROAD_V4_ID), header40.Client.MemberCode));
-                if (!string.IsNullOrWhiteSpace(header40.Client.SubsystemCode))
-                    element.Add(new XElement(XName.Get("subsystemCode", NamespaceConstants.XROAD_V4_ID), header40.Client.SubsystemCode));
-                element.WriteTo(writer);
-            }
-
-            if (headerDefinition.RequiredHeaders.Contains("service") || header40.Service != null)
-            {
-                var element = new XElement(XName.Get("service", NamespaceConstants.XROAD_V4),
-                    new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), "SERVICE"),
-                    new XElement(XName.Get("xRoadInstance", NamespaceConstants.XROAD_V4_ID), header40.Service.XRoadInstance),
-                    new XElement(XName.Get("memberClass", NamespaceConstants.XROAD_V4_ID), header40.Service.MemberClass),
-                    new XElement(XName.Get("memberCode", NamespaceConstants.XROAD_V4_ID), header40.Service.MemberCode));
-                if (!string.IsNullOrWhiteSpace(header40.Service.SubsystemCode))
-                    element.Add(new XElement(XName.Get("subsystemCode", NamespaceConstants.XROAD_V4_ID), header40.Service.SubsystemCode));
-                element.Add(new XElement(XName.Get("serviceCode", NamespaceConstants.XROAD_V4_ID), header40.Service.ServiceCode));
-                if (!string.IsNullOrWhiteSpace(header40.Service.ServiceVersion))
-                    element.Add(new XElement(XName.Get("serviceVersion", NamespaceConstants.XROAD_V4_ID), header40.Service.ServiceVersion));
-                element.WriteTo(writer);
-            }
-
-            if (headerDefinition.RequiredHeaders.Contains("centralService") || header40.CentralService != null)
-            {
-                var element = new XElement(XName.Get("centralService", NamespaceConstants.XROAD_V4),
-                    new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), "CENTRALSERVICE"),
-                    new XElement(XName.Get("xRoadInstance", NamespaceConstants.XROAD_V4_ID), header40.CentralService.XRoadInstance),
-                    new XElement(XName.Get("serviceCode", NamespaceConstants.XROAD_V4_ID), header40.CentralService.ServiceCode));
-                element.WriteTo(writer);
-            }
-
-            WriteHeaderElement(writer, "id", header40.Id, stringTypeName);
-            WriteHeaderElement(writer, "userId", header40.UserId, stringTypeName);
-            WriteHeaderElement(writer, "issue", header40.Issue, stringTypeName);
-            WriteHeaderElement(writer, "protocolVersion", header40.ProtocolVersion, stringTypeName);
-        }
-
-        internal override bool IsHeaderNamespace(string ns)
-        {
-            return NamespaceConstants.XROAD_V4.Equals(ns) || NamespaceConstants.XROAD_V4_REPR.Equals(ns);
-        }
     }
 }

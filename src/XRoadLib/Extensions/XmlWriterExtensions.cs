@@ -1,5 +1,6 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions

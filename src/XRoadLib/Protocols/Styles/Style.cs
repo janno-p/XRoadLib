@@ -4,6 +4,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
+using XRoadLib.Serialization;
 
 #if NETSTANDARD1_5
 using XRoadLib.Xml.Schema;
@@ -38,6 +39,20 @@ namespace XRoadLib.Protocols.Styles
                 WriteExplicitType(writer, typeDefinition.Name);
         }
 
+        public void WriteHeaderElement(XmlWriter writer, string name, object value, XName typeName)
+        {
+            writer.WriteStartElement(name, NamespaceConstants.XTEE);
+
+            WriteExplicitType(writer, typeName);
+
+            var stringValue = value as string;
+            if (stringValue != null)
+                writer.WriteStringWithMode(stringValue, StringSerializationMode);
+            else writer.WriteValue(value);
+
+            writer.WriteEndElement();
+        }
+
         public abstract SoapOperationBinding CreateSoapOperationBinding();
 
         public abstract SoapBodyBinding CreateSoapBodyBinding(string targetNamespace);
@@ -65,5 +80,7 @@ namespace XRoadLib.Protocols.Styles
         public abstract SoapBinding CreateSoapBinding();
 
         public virtual bool UseElementInMessagePart => true;
+
+        public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
     }
 }

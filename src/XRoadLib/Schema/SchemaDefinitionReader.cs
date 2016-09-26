@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Protocols.Headers;
+using XRoadLib.Protocols.Styles;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
@@ -222,13 +223,15 @@ namespace XRoadLib.Schema
         {
             var headerDefinition = new HeaderDefinition();
 
-            headerDefinition.Use<XRoadHeader40>(() => new XRoadHeader40())
+            headerDefinition.Use<XRoadHeader40>(() => new XRoadHeader40(headerDefinition, new DocLiteralStyle()))
                             .WithRequiredHeader(x => x.Client)
                             .WithRequiredHeader(x => x.Client)
                             .WithRequiredHeader(x => x.Service)
                             .WithRequiredHeader(x => x.UserId)
                             .WithRequiredHeader(x => x.Id)
-                            .WithRequiredHeader(x => x.Issue);
+                            .WithRequiredHeader(x => x.Issue)
+                            .WithHeaderNamespace(NamespaceConstants.XROAD_V4)
+                            .WithHeaderNamespace(NamespaceConstants.XROAD_V4_REPR);
 
             SchemaExporter?.ExportHeaderDefinition(headerDefinition);
 

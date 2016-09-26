@@ -419,7 +419,7 @@ namespace XRoadLib.Serialization
                     continue;
                 }
 
-                header.SetHeaderValue(reader);
+                header.ReadHeaderValue(reader);
             }
 
             header?.Validate();
