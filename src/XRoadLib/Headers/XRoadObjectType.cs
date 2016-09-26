@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace XRoadLib.Protocols.Headers
+namespace XRoadLib.Headers
 {
     /// <summary>
     /// Enumeration for XRoad identifier types.

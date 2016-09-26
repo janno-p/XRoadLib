@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols.Headers;
+using XRoadLib.Headers;
 
 namespace XRoadLib.Schema
 {
@@ -41,6 +41,11 @@ namespace XRoadLib.Schema
         /// Names of SOAP header elements required by service description.
         /// </summary>
         public ISet<XName> RequiredHeaders { get; } = new SortedSet<XName>(new XNameComparer());
+
+        /// <summary>
+        /// Name of WSDL message used to define SOAP header elements.
+        /// </summary>
+        public string MessageName { get; set; }
 
         /// <summary>
         /// Define custom header type for X-Road messages.

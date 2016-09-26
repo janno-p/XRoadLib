@@ -1,6 +1,6 @@
 using System.Web.Services.Description;
-using XRoadLib.Protocols.Headers;
-using XRoadLib.Protocols.Styles;
+using XRoadLib.Headers;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Schema
 {
@@ -49,7 +49,7 @@ namespace XRoadLib.Schema
         {
             base.ExportHeaderDefinition(headerDefinition);
 
-            headerDefinition.Use<XRoadHeader31>(() => new XRoadHeader31(headerDefinition, new DocLiteralStyle()))
+            headerDefinition.Use(() => new XRoadHeader31(headerDefinition, new DocLiteralStyle()))
                             .WithRequiredHeader(x => x.Consumer)
                             .WithRequiredHeader(x => x.Producer)
                             .WithRequiredHeader(x => ((IXRoadHeader31)x).Service)

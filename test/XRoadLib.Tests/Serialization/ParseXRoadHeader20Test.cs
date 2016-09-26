@@ -1,4 +1,4 @@
-using XRoadLib.Protocols.Headers;
+using XRoadLib.Headers;
 using Xunit;
 
 namespace XRoadLib.Tests.Serialization

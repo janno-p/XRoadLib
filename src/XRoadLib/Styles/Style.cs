@@ -5,7 +5,7 @@ using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols.Headers;
+using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
@@ -15,7 +15,7 @@ using XRoadLib.Xml.Schema;
 using System.Xml.Schema;
 #endif
 
-namespace XRoadLib.Protocols.Styles
+namespace XRoadLib.Styles
 {
     /// <summary>
     /// X-Road message serialization style.

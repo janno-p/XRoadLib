@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 
-namespace XRoadLib.Protocols.Headers
+namespace XRoadLib.Headers
 {
     /// <summary>
     /// Describes X-Road message SOAP header elements.

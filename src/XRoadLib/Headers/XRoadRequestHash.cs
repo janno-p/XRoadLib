@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace XRoadLib.Protocols.Headers
+namespace XRoadLib.Headers
 {
     /// <summary>
     /// For responses, this field contains a Base64 encoded hash of the request

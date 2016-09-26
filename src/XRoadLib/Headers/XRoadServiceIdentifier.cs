@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
-namespace XRoadLib.Protocols.Headers
+namespace XRoadLib.Headers
 {
     [XmlInclude(typeof(IXRoadIdentifier))]
     [XmlType("XRoadServiceIdentifierType", Namespace = NamespaceConstants.XROAD_V4_ID)]

@@ -1,4 +1,4 @@
-﻿using XRoadLib.Protocols.Headers;
+﻿using XRoadLib.Headers;
 using Xunit;
 
 namespace XRoadLib.Tests.Protocols.Headers
@@ -109,7 +109,7 @@ namespace XRoadLib.Tests.Protocols.Headers
             var xsn = XRoadServiceIdentifier.FromString(withoutProducer);
             Assert.Null(xsn.SubsystemCode);
             Assert.Equal("serviceName", xsn.ServiceCode);
-            Assert.Equal((uint?)1u, xsn.Version);
+            Assert.Equal(1u, xsn.Version);
             Assert.Equal("serviceName.v1", xsn.ToFullName());
             Assert.Equal("/serviceName/v1", xsn.ToString());
         }

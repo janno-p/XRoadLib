@@ -3,8 +3,8 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Serialization.Mapping
 {

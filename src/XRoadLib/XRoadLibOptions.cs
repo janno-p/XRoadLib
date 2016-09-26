@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using XRoadLib.Handler;
-using XRoadLib.Protocols;
 
 namespace XRoadLib
 {

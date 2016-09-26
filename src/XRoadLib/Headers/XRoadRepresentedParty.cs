@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace XRoadLib.Protocols.Headers
+namespace XRoadLib.Headers
 {
     [XmlType("XRoadRepresentedPartyType", Namespace = NamespaceConstants.XROAD_V4_REPR)]
     public class XRoadRepresentedParty

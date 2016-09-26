@@ -110,23 +110,23 @@ namespace XRoadLib
         {
             switch (namespaceName)
             {
-                case NamespaceConstants.HTTP:
-                case NamespaceConstants.MIME:
-                case NamespaceConstants.SOAP:
-                case NamespaceConstants.SOAP_ENC:
-                case NamespaceConstants.SOAP_ENV:
-                case NamespaceConstants.WSDL:
-                case NamespaceConstants.XML:
-                case NamespaceConstants.XMLNS:
-                case NamespaceConstants.XMIME:
-                case NamespaceConstants.XOP:
-                case NamespaceConstants.XROAD:
-                case NamespaceConstants.XROAD_V4:
-                case NamespaceConstants.XROAD_V4_ID:
-                case NamespaceConstants.XROAD_V4_REPR:
-                case NamespaceConstants.XSD:
-                case NamespaceConstants.XSI:
-                case NamespaceConstants.XTEE:
+                case HTTP:
+                case MIME:
+                case SOAP:
+                case SOAP_ENC:
+                case SOAP_ENV:
+                case WSDL:
+                case XML:
+                case XMLNS:
+                case XMIME:
+                case XOP:
+                case XROAD:
+                case XROAD_V4:
+                case XROAD_V4_ID:
+                case XROAD_V4_REPR:
+                case XSD:
+                case XSI:
+                case XTEE:
                     return namespaceName;
             }
 

@@ -5,7 +5,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Template;

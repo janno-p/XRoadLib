@@ -5,13 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Xml.Linq;
-using XRoadLib.Protocols;
-using XRoadLib.Protocols.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
 using XRoadLib.Extensions;
-
+using XRoadLib.Headers;
 #if NET40
 using System.Web;
 #else

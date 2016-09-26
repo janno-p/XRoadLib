@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Xml;
-using XRoadLib.Protocols.Styles;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Schema
 {

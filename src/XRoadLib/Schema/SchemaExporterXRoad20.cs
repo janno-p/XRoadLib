@@ -1,6 +1,6 @@
 using System.Web.Services.Description;
-using XRoadLib.Protocols.Headers;
-using XRoadLib.Protocols.Styles;
+using XRoadLib.Headers;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Schema
 {
@@ -72,7 +72,7 @@ namespace XRoadLib.Schema
         {
             base.ExportHeaderDefinition(headerDefinition);
 
-            headerDefinition.Use<XRoadHeader20>(() => new XRoadHeader20(headerDefinition, new RpcEncodedStyle()))
+            headerDefinition.Use(() => new XRoadHeader20(headerDefinition, new RpcEncodedStyle()))
                             .WithRequiredHeader(x => x.Asutus)
                             .WithRequiredHeader(x => x.Andmekogu)
                             .WithRequiredHeader(x => x.Nimi)

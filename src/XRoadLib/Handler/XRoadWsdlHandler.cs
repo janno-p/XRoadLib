@@ -2,7 +2,6 @@
 
 using System;
 using Microsoft.AspNetCore.Http;
-using XRoadLib.Protocols;
 
 namespace XRoadLib.Handler
 {

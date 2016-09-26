@@ -4,17 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using XRoadLib.Protocols.Description;
-using XRoadLib.Protocols.Headers;
-using XRoadLib.Protocols.Styles;
+using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
+using XRoadLib.Styles;
 
 #if NET40
 using XRoadLib.Extensions;
 #endif
 
-namespace XRoadLib.Protocols
+namespace XRoadLib
 {
     /// <summary>
     /// X-Road message protocol implementation details.

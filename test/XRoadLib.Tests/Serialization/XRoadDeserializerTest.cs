@@ -4,8 +4,6 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols;
-using XRoadLib.Protocols.Headers;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;

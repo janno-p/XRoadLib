@@ -110,7 +110,7 @@ namespace XRoadLib.Serialization.Template
                         return new XRoadRequestTemplateNode(childNodeName, childNode);
 
 #if NETSTANDARD1_5
-                    var refNode = (XElement)XElement.ReadFrom(childNode.CreateNavigator().SelectSingleNode(refAttribute.Value).ReadSubtree());
+                    var refNode = (XElement)XNode.ReadFrom(childNode.CreateNavigator().SelectSingleNode(refAttribute.Value).ReadSubtree());
 #else
                     var refNode = childNode.XPathSelectElements(refAttribute.Value).SingleOrDefault();
 #endif

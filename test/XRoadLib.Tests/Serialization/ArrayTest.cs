@@ -4,7 +4,6 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols;
 using XRoadLib.Serialization;
 using XRoadLib.Tests.Contract.Mapping;
 using Xunit;

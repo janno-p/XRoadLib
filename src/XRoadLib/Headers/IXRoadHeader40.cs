@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace XRoadLib.Protocols.Headers
+namespace XRoadLib.Headers
 {
     /// <summary>
     /// X-Road message protocol version 4.0 SOAP header elements.

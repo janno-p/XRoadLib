@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
+using XRoadLib.Styles;
 
-namespace XRoadLib.Protocols.Headers
+namespace XRoadLib.Headers
 {
     /// <summary>
     /// Details of X-Road message protocol version 3.1 header.

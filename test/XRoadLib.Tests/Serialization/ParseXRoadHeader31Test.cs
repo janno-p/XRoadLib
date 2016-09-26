@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using XRoadLib.Protocols;
-using XRoadLib.Protocols.Headers;
+using XRoadLib.Headers;
 using Xunit;
 
 namespace XRoadLib.Tests.Serialization

@@ -10,7 +10,7 @@ using XRoadLib.Xml.Schema;
 using System.Xml.Schema;
 #endif
 
-namespace XRoadLib.Protocols.Styles
+namespace XRoadLib.Styles
 {
     public class RpcEncodedStyle : Style
     {

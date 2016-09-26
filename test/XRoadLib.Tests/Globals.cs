@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Xml.Linq;
-using XRoadLib.Protocols;
 using XRoadLib.Schema;
 using XRoadLib.Tests.Contract;
 using XRoadLib.Tests.Contract.Configuration;

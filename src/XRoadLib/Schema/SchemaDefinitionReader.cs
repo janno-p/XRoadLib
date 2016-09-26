@@ -5,10 +5,10 @@ using System.Web.Services.Description;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
-using XRoadLib.Protocols.Headers;
-using XRoadLib.Protocols.Styles;
+using XRoadLib.Headers;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Schema
 {
@@ -224,9 +224,9 @@ namespace XRoadLib.Schema
         /// </summary>
         public HeaderDefinition GetXRoadHeaderDefinition()
         {
-            var headerDefinition = new HeaderDefinition();
+            var headerDefinition = new HeaderDefinition { MessageName = "RequiredHeaders" };
 
-            headerDefinition.Use<XRoadHeader40>(() => new XRoadHeader40(headerDefinition, new DocLiteralStyle()))
+            headerDefinition.Use(() => new XRoadHeader40(headerDefinition, new DocLiteralStyle()))
                             .WithRequiredHeader(x => x.Client)
                             .WithRequiredHeader(x => x.Client)
                             .WithRequiredHeader(x => x.Service)

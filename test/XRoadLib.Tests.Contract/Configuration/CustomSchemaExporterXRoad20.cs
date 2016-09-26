@@ -1,8 +1,8 @@
 ﻿using System.Web.Services.Description;
 using System.Xml;
-using XRoadLib.Protocols.Styles;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {

@@ -20,7 +20,7 @@ using XRoadLib.Xml.Schema;
 using System.Xml.Schema;
 #endif
 
-namespace XRoadLib.Protocols.Description
+namespace XRoadLib
 {
     /// <summary>
     /// Extracts contract information from given assembly and presents it as
@@ -28,8 +28,6 @@ namespace XRoadLib.Protocols.Description
     /// </summary>
     public sealed class ProducerDefinition
     {
-        private const string STANDARD_HEADER_NAME = "RequiredHeaders";
-
         private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
         private readonly SchemaDefinitionReader schemaDefinitionReader;
@@ -350,11 +348,12 @@ namespace XRoadLib.Protocols.Description
             } while (initialCount != referencedTypes.Count);
 
             if (addFaultType && faultDefinition.State == DefinitionState.Default)
-            {
-                var faultType = new XmlSchemaComplexType { Name = faultDefinition.Name.LocalName, Particle = CreateFaultSequence() };
-                faultType.Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition);
-                AddSchemaType(schemaTypes, faultDefinition.Name.NamespaceName, faultType);
-            }
+                AddSchemaType(schemaTypes, faultDefinition.Name.NamespaceName, new XmlSchemaComplexType
+                {
+                    Name = faultDefinition.Name.LocalName,
+                    Particle = CreateFaultSequence(),
+                    Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition)
+                });
 
             return schemaTypes
                 .Select(x => x.Item1)
@@ -557,7 +556,7 @@ namespace XRoadLib.Protocols.Description
 #endif
         {
             extensions.Add(protocol.Style.CreateSoapBodyBinding(protocol.ProducerNamespace));
-            foreach (var headerBinding in headerDefinition.RequiredHeaders.Select(name => protocol.Style.CreateSoapHeaderBinding(name, STANDARD_HEADER_NAME, protocol.ProducerNamespace)).Select(projectionFunc))
+            foreach (var headerBinding in headerDefinition.RequiredHeaders.Select(name => protocol.Style.CreateSoapHeaderBinding(name, headerDefinition.MessageName, protocol.ProducerNamespace)).Select(projectionFunc))
                 extensions.Add(headerBinding);
         }
 
@@ -780,7 +779,7 @@ namespace XRoadLib.Protocols.Description
             var serviceDescription = new ServiceDescription { TargetNamespace = protocol.ProducerNamespace };
             AddServiceDescriptionNamespaces(serviceDescription);
 
-            var standardHeader = new Message { Name = STANDARD_HEADER_NAME };
+            var standardHeader = new Message { Name = headerDefinition.MessageName };
 
             foreach (var requiredHeader in headerDefinition.RequiredHeaders)
                 standardHeader.Parts.Add(new MessagePart { Name = requiredHeader.LocalName, Element = new XmlQualifiedName(requiredHeader.LocalName, requiredHeader.NamespaceName) });
