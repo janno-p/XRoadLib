@@ -57,11 +57,6 @@ namespace XRoadLib.Protocols
             WriteHeaderElement(writer, "encryptedCert", header31.EncryptedCert, stringTypeName);
         }
 
-        internal override IXRoadHeader CreateHeader()
-        {
-            return new XRoadHeader31();
-        }
-
         internal override bool IsHeaderNamespace(string ns)
         {
             return NamespaceConstants.XROAD.Equals(ns);

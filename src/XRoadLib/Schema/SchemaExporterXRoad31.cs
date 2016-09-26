@@ -1,4 +1,5 @@
 using System.Web.Services.Description;
+using XRoadLib.Protocols.Headers;
 
 namespace XRoadLib.Schema
 {
@@ -38,6 +39,16 @@ namespace XRoadLib.Schema
         public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {
             base.ExportServiceDescription(serviceDescription);
+        }
+
+        /// <summary>
+        /// Configure SOAP header of the messages.
+        /// </summary>
+        public override void ExportHeaderDefinition(HeaderDefinition headerDefinition)
+        {
+            base.ExportHeaderDefinition(headerDefinition);
+
+            headerDefinition.Use<XRoadHeader31>(() => new XRoadHeader31());
         }
     }
 }

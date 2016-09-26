@@ -60,5 +60,10 @@ namespace XRoadLib.Schema
         /// before publishing.
         /// </summary>
         public virtual void ExportServiceDescription(ServiceDescription serviceDescription) { }
+
+        /// <summary>
+        /// Configure SOAP header of the messages.
+        /// </summary>
+        public virtual void ExportHeaderDefinition(HeaderDefinition headerDefinition) { }
     }
 }

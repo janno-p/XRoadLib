@@ -58,5 +58,10 @@ namespace XRoadLib.Schema
         /// before publishing.
         /// </summary>
         void ExportServiceDescription(ServiceDescription serviceDescription);
+
+        /// <summary>
+        /// Customize X-Road message header elements.
+        /// </summary>
+        void ExportHeaderDefinition(HeaderDefinition headerDefinition);
     }
 }

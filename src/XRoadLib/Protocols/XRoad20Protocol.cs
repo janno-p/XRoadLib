@@ -58,11 +58,6 @@ namespace XRoadLib.Protocols
             WriteHeaderElement(writer, "salastatud_sertifikaadiga", header20.SalastatudSertifikaadiga, stringTypeName);
         }
 
-        internal override IXRoadHeader CreateHeader()
-        {
-            return new XRoadHeader20();
-        }
-
         internal override bool IsHeaderNamespace(string ns)
         {
             return NamespaceConstants.XTEE.Equals(ns);

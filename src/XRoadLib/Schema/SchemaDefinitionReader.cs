@@ -5,6 +5,7 @@ using System.Web.Services.Description;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
+using XRoadLib.Protocols.Headers;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
@@ -213,5 +214,19 @@ namespace XRoadLib.Schema
         /// Get main namespace which defines X-Road message protocol specifics.
         /// </summary>
         public string GetXRoadNamespace() => SchemaExporter != null ? SchemaExporter.XRoadNamespace : NamespaceConstants.XROAD_V4;
+
+        /// <summary>
+        /// Customize X-Road message header elements.
+        /// </summary>
+        public HeaderDefinition GetXRoadHeaderDefinition()
+        {
+            var headerDefinition = new HeaderDefinition();
+
+            headerDefinition.Use<XRoadHeader40>(() => new XRoadHeader40());
+
+            SchemaExporter?.ExportHeaderDefinition(headerDefinition);
+
+            return headerDefinition;
+        }
     }
 }

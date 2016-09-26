@@ -84,11 +84,6 @@ namespace XRoadLib.Protocols
             WriteHeaderElement(writer, "protocolVersion", header40.ProtocolVersion, stringTypeName);
         }
 
-        internal override IXRoadHeader CreateHeader()
-        {
-            return new XRoadHeader40();
-        }
-
         internal override bool IsHeaderNamespace(string ns)
         {
             return NamespaceConstants.XROAD_V4.Equals(ns) || NamespaceConstants.XROAD_V4_REPR.Equals(ns);

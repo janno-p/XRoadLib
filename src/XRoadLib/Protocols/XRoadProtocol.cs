@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -36,11 +35,6 @@ namespace XRoadLib.Protocols
         /// Qualified name of binary type.
         /// </summary>
         protected static readonly XName base64TypeName = XName.Get("base64", NamespaceConstants.XSD);
-
-        /// <summary>
-        /// <see>XmlDocument</see> instance for building element and attribute nodes.
-        /// </summary>
-        protected readonly XmlDocument document = new XmlDocument();
 
         private readonly SchemaDefinitionReader schemaDefinitionReader;
 
@@ -85,6 +79,11 @@ namespace XRoadLib.Protocols
         protected abstract void DefineMandatoryHeaderElements();
 
         /// <summary>
+        /// Initialize new X-Road message header.
+        /// </summary>
+        public Func<IXRoadHeader> CreateHeader { get; }
+
+        /// <summary>
         /// Initializes new X-Road message protocol instance.
         /// </summary>
         protected XRoadProtocol(string producerNamespace, Style style, ISchemaExporter schemaExporter)
@@ -98,6 +97,9 @@ namespace XRoadLib.Protocols
             ProducerNamespace = producerNamespace;
 
             schemaDefinitionReader = new SchemaDefinitionReader(producerNamespace, schemaExporter);
+
+            var headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
+            CreateHeader = headerDefinition.Initializer;
         }
 
         internal abstract bool IsHeaderNamespace(string ns);
@@ -106,8 +108,6 @@ namespace XRoadLib.Protocols
         {
             return false;
         }
-
-        internal abstract IXRoadHeader CreateHeader();
 
         internal virtual void WriteSoapEnvelope(XmlWriter writer)
         {
