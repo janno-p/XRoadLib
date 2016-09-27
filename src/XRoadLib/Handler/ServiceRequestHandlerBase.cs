@@ -5,21 +5,32 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using System.Web;
+using XRoadLib.Events;
 using XRoadLib.Extensions;
-using XRoadLib.Handler.Events;
 using XRoadLib.Serialization;
-using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Handler
 {
+    /// <summary>
+    /// Base class of service request handlers.
+    /// </summary>
     public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
         private readonly ICollection<XRoadProtocol> supportedProtocols;
 
+        /// <summary>
+        /// Temporary file storage location.
+        /// </summary>
         public string StoragePath { get; set; }
+
+        /// <summary>
+        /// Serialization overrrides.
+        /// </summary>
         public ICustomSerialization CustomSerialization { get; set; }
 
+        /// <summary>
+        /// Initialize new service request handler with protocols it can handle.
+        /// </summary>
         protected ServiceRequestHandlerBase(IEnumerable<XRoadProtocol> supportedProtocols)
         {
             if (supportedProtocols == null)
@@ -27,121 +38,128 @@ namespace XRoadLib.Handler
             this.supportedProtocols = new List<XRoadProtocol>(supportedProtocols);
         }
 
-        protected abstract object InvokeMetaService(IServiceMap serviceMap);
+        /// <summary>
+        /// Handle X-Road message protocol meta-service request.
+        /// </summary>
+        protected abstract object InvokeMetaService(XRoadContextClassic context);
 
-        protected abstract object GetServiceObject(IServiceMap serviceMap);
+        /// <summary>
+        /// Get main service object which implements the functionality of
+        /// the operation.
+        /// </summary>
+        protected abstract object GetServiceObject(XRoadContextClassic context);
 
-        protected virtual void OnRequestLoaded()
+        /// <summary>
+        /// Intercept X-Road service request after request message is loaded.
+        /// </summary>
+        protected virtual void OnRequestLoaded(XRoadContextClassic context)
         { }
 
-        protected virtual void OnInvocationError(InvocationErrorEventArgs args)
+        /// <summary>
+        /// Handle exception that occured on service method invokation.
+        /// </summary>
+        protected virtual void OnInvocationError(XRoadContextClassic context)
         { }
 
-        protected virtual void OnBeforeDeserialization(BeforeDeserializationEventArgs args)
+        /// <summary>
+        /// Customize XML reader settings before deserialization of the X-Road message.
+        /// </summary>
+        protected virtual void OnBeforeDeserialization(XRoadContextClassic context, BeforeDeserializationEventArgs args)
         { }
 
-        protected virtual void OnAfterDeserialization()
+        /// <summary>
+        /// Intercept X-Road service request handling after deserialization of the message.
+        /// </summary>
+        protected virtual void OnAfterDeserialization(XRoadContextClassic context)
         { }
 
-        protected virtual void OnBeforeSerialization(object result)
+        /// <summary>
+        /// Intercept X-Road service request handling before serialization of the response message.
+        /// </summary>
+        protected virtual void OnBeforeSerialization(XRoadContextClassic context)
         { }
 
-        protected virtual void OnAfterSerialization(object result)
+        /// <summary>
+        /// Intercept X-Road service request handling after serialization of the response message.
+        /// </summary>
+        protected virtual void OnAfterSerialization(XRoadContextClassic context)
         { }
 
-        protected override void HandleRequest(HttpContext httpContext)
+        /// <summary>
+        /// Handle current X-Road operation.
+        /// </summary>
+        protected override void HandleRequest(XRoadContextClassic context)
         {
-            if (httpContext.Request.InputStream.Length == 0)
+            if (context.HttpContext.Request.InputStream.Length == 0)
                 throw XRoadException.InvalidQuery("Empty request content");
 
-            requestMessage.LoadRequest(httpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), supportedProtocols);
-            if (requestMessage.Protocol == null && requestMessage.MetaServiceMap == null)
+            context.Request.LoadRequest(context.HttpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), supportedProtocols);
+            if (context.Request.Protocol == null && context.Request.MetaServiceMap == null)
             {
                 var supportedProtocolsString = string.Join(", ", supportedProtocols.Select(x => $@"""{x.Name}"""));
                 throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
             }
 
-            responseMessage.Copy(requestMessage);
+            context.Response.Copy(context.Request);
+            context.ServiceMap = context.Request.MetaServiceMap;
 
-            OnRequestLoaded();
-
-            IServiceMap serviceMap;
-            var result = InvokeServiceMethod(requestMessage.GetSerializerCache(), out serviceMap);
-
-            responseMessage.BinaryMode = serviceMap.Definition.OutputBinaryMode;
-
-            SerializeXRoadResponse(httpContext, result, serviceMap);
+            OnRequestLoaded(context);
+            InvokeServiceMethod(context);
+            SerializeXRoadResponse(context);
         }
 
-        private object InvokeServiceMethod(ISerializerCache serializerCache, out IServiceMap serviceMap)
+        private void InvokeServiceMethod(XRoadContextClassic context)
         {
-            object result;
-            if ((serviceMap = InvokeMetaService(out result)) != null)
-                return result;
+            if (context.ServiceMap != null)
+            {
+                context.Result = InvokeMetaService(context);
+                return;
+            }
 
-            serviceMap = serializerCache.GetServiceMap(requestMessage.RootElementName);
+            context.ServiceMap = context.Request.GetSerializerCache().GetServiceMap(context.Request.RootElementName);
+            context.Response.BinaryMode = context.ServiceMap.Definition.OutputBinaryMode;
 
-            var serviceObject = GetServiceObject(serviceMap);
-
-            var input = DeserializeMethodInput(serviceMap);
+            var serviceObject = GetServiceObject(context);
+            DeserializeMethodInput(context);
 
             try
             {
-                result = serviceMap.Definition.MethodInfo.Invoke(serviceObject, serviceMap.HasParameters ? new[] { input } : new object[0]);
+                var parameters = context.ServiceMap.HasParameters ? new[] { context.Parameters } : new object[0];
+                context.Result = context.ServiceMap.Definition.MethodInfo.Invoke(serviceObject, parameters);
             }
             catch (Exception exception)
             {
-                var e = new InvocationErrorEventArgs(exception);
-                OnInvocationError(e);
+                context.Exception = exception;
+                OnInvocationError(context);
 
-                if (e.Result != null)
-                    return e.Result;
-
-                throw;
+                if (context.Result == null)
+                    throw;
             }
-
-            return result;
         }
 
-        private IServiceMap InvokeMetaService(out object result)
+        private void DeserializeMethodInput(XRoadContextClassic context)
         {
-            result = null;
+            var args = new BeforeDeserializationEventArgs();
+            OnBeforeDeserialization(context, args);
 
-            if (requestMessage.MetaServiceMap == null)
-                return null;
+            context.Request.ContentStream.Position = 0;
+            var reader = XmlReader.Create(context.Request.ContentStream, args.XmlReaderSettings);
 
-            var serviceMap = requestMessage.MetaServiceMap;
+            reader.MoveToPayload(context.Request.RootElementName);
 
-            result = InvokeMetaService(serviceMap);
+            context.Parameters = context.ServiceMap.DeserializeRequest(reader, context.Request);
 
-            return serviceMap;
+            OnAfterDeserialization(context);
         }
 
-        private object DeserializeMethodInput(IServiceMap serviceMap)
+        private void SerializeXRoadResponse(XRoadContextClassic context)
         {
-            var beforeDeserializationEventArgs = new BeforeDeserializationEventArgs(serviceMap);
-            OnBeforeDeserialization(beforeDeserializationEventArgs);
+            OnBeforeSerialization(context);
 
-            requestMessage.ContentStream.Position = 0;
-            var reader = XmlReader.Create(requestMessage.ContentStream, beforeDeserializationEventArgs.XmlReaderSettings);
-
-            reader.MoveToPayload(requestMessage.RootElementName);
-
-            var parameters = serviceMap.DeserializeRequest(reader, requestMessage);
-
-            OnAfterDeserialization();
-
-            return parameters;
-        }
-
-        private void SerializeXRoadResponse(HttpContext httpContext, object result, IServiceMap serviceMap)
-        {
-            OnBeforeSerialization(result);
-
-            requestMessage.ContentStream.Position = 0;
-            using (var reader = XmlReader.Create(requestMessage.ContentStream, new XmlReaderSettings { CloseInput = false }))
+            context.Request.ContentStream.Position = 0;
+            using (var reader = XmlReader.Create(context.Request.ContentStream, new XmlReaderSettings { CloseInput = false }))
             {
-                var writer = new XmlTextWriter(responseMessage.ContentStream, responseMessage.ContentEncoding);
+                var writer = new XmlTextWriter(context.Response.ContentStream, context.Response.ContentEncoding);
 
                 writer.WriteStartDocument();
 
@@ -163,15 +181,15 @@ namespace XRoadLib.Handler
                 if (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
                     writer.WriteAttributes(reader, true);
 
-                serviceMap.SerializeResponse(writer, result, responseMessage, reader, CustomSerialization);
+                context.ServiceMap.SerializeResponse(writer, context.Result, context.Response, reader, CustomSerialization);
 
                 writer.WriteEndDocument();
                 writer.Flush();
             }
 
-            responseMessage.SaveTo(httpContext);
+            context.Response.SaveTo(context.HttpContext);
 
-            OnAfterSerialization(result);
+            OnAfterSerialization(context);
         }
     }
 }
