@@ -379,7 +379,7 @@ namespace XRoadLib
 
             var complexTypeSequence = new XmlSchemaSequence();
 
-            if (!definition.DeclaringOperationDefinition.ProhibitRequestPartInResponse)
+            if (definition.DeclaringOperationDefinition.CopyRequestPartToResponse)
                 complexTypeSequence.Items.Add(requestElement);
 
             switch (definition.XRoadFaultPresentation)

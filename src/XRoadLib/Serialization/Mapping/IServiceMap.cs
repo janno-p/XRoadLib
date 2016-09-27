@@ -9,26 +9,19 @@ namespace XRoadLib.Serialization.Mapping
     public interface IServiceMap
     {
         /// <summary>
-        /// Provides information whether this ServiceMap has any input parameters defined
-        /// or has an empty request element.
-        /// </summary>
-        bool HasParameters { get; }
-
-        /// <summary>
-        /// Specifies if X-Road fault is returned wrapped inside operation response element
-        /// or separately as its own element.
-        /// </summary>
-        bool HasXRoadFaultInResponse { get; }
-
-        /// <summary>
-        /// Response part name of the operation.
-        /// </summary>
-        string ResponsePartName { get; }
-
-        /// <summary>
         /// Configuration settings of the operation that the ServiceMap implements.
         /// </summary>
-        OperationDefinition Definition { get; }
+        OperationDefinition OperationDefinition { get; }
+
+        /// <summary>
+        /// Response element specification of the X-Road operation.
+        /// </summary>
+        RequestValueDefinition RequestValueDefinition { get; }
+
+        /// <summary>
+        /// Response element specification of the X-Road operation.
+        /// </summary>
+        ResponseValueDefinition ResponseValueDefinition { get; }
 
         /// <summary>
         /// Deserializes X-Road message protocol requests according to operation definitions.

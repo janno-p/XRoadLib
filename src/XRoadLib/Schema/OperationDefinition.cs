@@ -14,7 +14,7 @@ namespace XRoadLib.Schema
 
         public string InputMessageName { get; set; }
         public BinaryMode InputBinaryMode { get; set; }
-        public bool ProhibitRequestPartInResponse { get; set; }
+        public bool CopyRequestPartToResponse { get; set; }
 
         public string OutputMessageName { get; set; }
         public BinaryMode OutputBinaryMode { get; set; }
@@ -31,7 +31,7 @@ namespace XRoadLib.Schema
             OutputBinaryMode = BinaryMode.Xml;
             State = (serviceAttribute?.IsHidden).GetValueOrDefault() ? DefinitionState.Hidden : DefinitionState.Default;
             Version = version.GetValueOrDefault(serviceAttribute?.AddedInVersion ?? 1u);
-            ProhibitRequestPartInResponse = false;
+            CopyRequestPartToResponse = true;
             InputMessageName = qualifiedName.LocalName;
             OutputMessageName = $"{qualifiedName.LocalName}Response";
             Documentation = methodInfo.GetXRoadTitles().Where(title => !string.IsNullOrWhiteSpace(title.Item2)).ToArray();

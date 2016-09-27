@@ -121,15 +121,15 @@ namespace XRoadLib.Handler
             }
 
             context.ServiceMap = context.Request.GetSerializerCache().GetServiceMap(context.Request.RootElementName);
-            context.Response.BinaryMode = context.ServiceMap.Definition.OutputBinaryMode;
+            context.Response.BinaryMode = context.ServiceMap.OperationDefinition.OutputBinaryMode;
 
             var serviceObject = GetServiceObject(context);
             DeserializeMethodInput(context);
 
             try
             {
-                var parameters = context.ServiceMap.HasParameters ? new [] { context.Parameters } : new object[0];
-                context.Result = context.ServiceMap.Definition.MethodInfo.Invoke(serviceObject, parameters);
+                var parameters = context.ServiceMap.RequestValueDefinition.ParameterInfo != null ? new [] { context.Parameters } : new object[0];
+                context.Result = context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters);
             }
             catch (Exception exception)
             {

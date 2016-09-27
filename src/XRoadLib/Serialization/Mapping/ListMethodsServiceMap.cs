@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Styles;
+
+#if !NET40
+using System.Reflection;
+#endif
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -16,23 +19,17 @@ namespace XRoadLib.Serialization.Mapping
         /// <summary>
         /// Operation specification.
         /// </summary>
-        public OperationDefinition Definition { get; }
+        public OperationDefinition OperationDefinition { get; }
 
         /// <summary>
-        /// Any parameters for the operation?
+        /// Response element specification of the X-Road operation.
         /// </summary>
-        public bool HasParameters => false;
+        public RequestValueDefinition RequestValueDefinition { get; }
 
         /// <summary>
-        /// Specifies if X-Road fault is returned wrapped inside operation response element
-        /// or separately as its own element.
+        /// Response element specification of the X-Road operation.
         /// </summary>
-        public bool HasXRoadFaultInResponse => true;
-
-        /// <summary>
-        /// Response part name of the operation.
-        /// </summary>
-        public string ResponsePartName { get; }
+        public ResponseValueDefinition ResponseValueDefinition { get; }
 
         /// <summary>
         /// Initialize new `listMethods` service map.
@@ -41,8 +38,13 @@ namespace XRoadLib.Serialization.Mapping
         {
             var methodInfo = typeof(Implementation).GetTypeInfo().GetMethod("Execute");
 
-            Definition = new OperationDefinition(operationName, null, methodInfo);
-            ResponsePartName = operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response";
+            OperationDefinition = new OperationDefinition(operationName, null, methodInfo);
+            RequestValueDefinition = new RequestValueDefinition(OperationDefinition);
+            ResponseValueDefinition = new ResponseValueDefinition(OperationDefinition)
+            {
+                ContainsNonTechnicalFault = true,
+                ResponseElementName = operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response"
+            };
         }
 
         /// <summary>
@@ -74,16 +76,16 @@ namespace XRoadLib.Serialization.Mapping
         /// </summary>
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null)
         {
-            var containsRequest = requestReader.MoveToElement(2, Definition.Name.LocalName, Definition.Name.NamespaceName);
+            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
 
             if (containsRequest)
-                writer.WriteStartElement(requestReader.Prefix, $"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
-            else writer.WriteStartElement($"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
+                writer.WriteStartElement(requestReader.Prefix, $"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
+            else writer.WriteStartElement($"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
 
             var namespaceInContext = requestReader.NamespaceURI;
 
-            var responsePartName = Definition.Name.NamespaceName.Equals(NamespaceConstants.XTEE) ? "keha" : "response";
-            var style = Definition.Name.NamespaceName.Equals(NamespaceConstants.XTEE) ? (Style)new RpcEncodedStyle() : new DocLiteralStyle();
+            var responsePartName = OperationDefinition.Name.NamespaceName.Equals(NamespaceConstants.XTEE) ? "keha" : "response";
+            var style = OperationDefinition.Name.NamespaceName.Equals(NamespaceConstants.XTEE) ? (Style)new RpcEncodedStyle() : new DocLiteralStyle();
 
             if (Equals(namespaceInContext, ""))
                 writer.WriteStartElement(responsePartName);

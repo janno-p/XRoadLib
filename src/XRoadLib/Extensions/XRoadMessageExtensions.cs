@@ -17,7 +17,7 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static object DeserializeMessageContent(this XRoadMessage message, IServiceMap serviceMap)
         {
-            if (serviceMap.HasXRoadFaultInResponse)
+            if (serviceMap.ResponseValueDefinition.ContainsNonTechnicalFault)
                 ThrowIfXRoadFault(message, serviceMap);
 
             message.ContentStream.Position = 0;
@@ -45,7 +45,7 @@ namespace XRoadLib.Extensions
         {
             message.ContentStream.Position = 0;
 
-            var pathRoot = $"/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/{serviceMap.ResponsePartName}";
+            var pathRoot = $"/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/{serviceMap.ResponseValueDefinition.ResponseElementName}";
 
             var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
             var navigator = doc.CreateNavigator();

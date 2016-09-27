@@ -11,18 +11,17 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class TestSystemServiceMap : IServiceMap
     {
-        public OperationDefinition Definition { get; }
-
-        public bool HasParameters => false;
-        public bool HasXRoadFaultInResponse => true;
-
-        public string ResponsePartName { get { throw new System.NotImplementedException(); } }
+        public OperationDefinition OperationDefinition { get; }
+        public RequestValueDefinition RequestValueDefinition { get; }
+        public ResponseValueDefinition ResponseValueDefinition { get; }
 
         public TestSystemServiceMap(XName operationName)
         {
             var methodInfo = typeof(Implementation).GetTypeInfo().GetMethod("Execute");
 
-            Definition = new OperationDefinition(operationName, null, methodInfo);
+            OperationDefinition = new OperationDefinition(operationName, null, methodInfo);
+            RequestValueDefinition = new RequestValueDefinition(OperationDefinition);
+            ResponseValueDefinition = new ResponseValueDefinition(OperationDefinition) { ContainsNonTechnicalFault = true };
         }
 
         public object DeserializeRequest(XmlReader reader, XRoadMessage message)
@@ -42,11 +41,11 @@ namespace XRoadLib.Serialization.Mapping
 
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null)
         {
-            var containsRequest = requestReader.MoveToElement(2, Definition.Name.LocalName, Definition.Name.NamespaceName);
+            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
 
             if (containsRequest)
-                writer.WriteStartElement(requestReader.Prefix, $"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
-            else writer.WriteStartElement($"{Definition.Name.LocalName}Response", Definition.Name.NamespaceName);
+                writer.WriteStartElement(requestReader.Prefix, $"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
+            else writer.WriteStartElement($"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
 
             writer.WriteEndElement();
         }
