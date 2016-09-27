@@ -12,7 +12,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
 {
     public class StringTypeMapTest : TypeMapTestBase
     {
-        private static readonly ITypeMap typeMap = new StringTypeMap(schemaDefinitionReader.GetSimpleTypeDefinition<string>("string"));
+        private static readonly ITypeMap typeMap = new StringTypeMap(schemaDefinitionProvider.GetSimpleTypeDefinition<string>("string"));
         private readonly Func<string, object> deserializeValue = x => DeserializeValue(typeMap, x);
         private readonly Func<object, string> serializeValue = x => SerializeValue(typeMap, x);
 

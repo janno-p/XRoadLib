@@ -15,7 +15,7 @@ namespace XRoadLib.Schema
     /// <summary>
     /// Extracts serialization/definition details from runtime types and methods.
     /// </summary>
-    public class SchemaDefinitionReader
+    public class SchemaDefinitionProvider
     {
         private readonly ISchemaExporter schemaExporter;
 
@@ -27,7 +27,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes definition builder.
         /// </summary>
-        public SchemaDefinitionReader(ISchemaExporter schemaExporter)
+        public SchemaDefinitionProvider(ISchemaExporter schemaExporter)
         {
             if (schemaExporter == null)
                 throw new ArgumentNullException(nameof(schemaExporter));
@@ -220,7 +220,6 @@ namespace XRoadLib.Schema
             var headerDefinition = new HeaderDefinition { MessageName = "RequiredHeaders" };
 
             headerDefinition.Use(() => new XRoadHeader40(headerDefinition, new DocLiteralStyle()))
-                            .WithRequiredHeader(x => x.Client)
                             .WithRequiredHeader(x => x.Client)
                             .WithRequiredHeader(x => x.Service)
                             .WithRequiredHeader(x => x.UserId)

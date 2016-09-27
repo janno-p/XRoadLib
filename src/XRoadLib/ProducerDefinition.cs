@@ -30,7 +30,7 @@ namespace XRoadLib
     {
         private readonly Assembly contractAssembly;
         private readonly XRoadProtocol protocol;
-        private readonly SchemaDefinitionReader schemaDefinitionReader;
+        private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly uint? version;
 
         private readonly Binding binding;
@@ -56,21 +56,21 @@ namespace XRoadLib
         /// <summary>
         /// Initialize builder with contract details.
         /// <param name="protocol">X-Road protocol to use when generating service description.</param>
-        /// <param name="schemaDefinitionReader">Provides overrides for default presentation format.</param>
+        /// <param name="schemaDefinitionProvider">Provides overrides for default presentation format.</param>
         /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
         /// </summary>
-        public ProducerDefinition(XRoadProtocol protocol, SchemaDefinitionReader schemaDefinitionReader, uint? version = null)
+        public ProducerDefinition(XRoadProtocol protocol, SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
             if (protocol == null)
                 throw new ArgumentNullException(nameof(protocol));
             this.protocol = protocol;
 
-            if (schemaDefinitionReader == null)
-                throw new ArgumentNullException(nameof(schemaDefinitionReader));
-            this.schemaDefinitionReader = schemaDefinitionReader;
+            if (schemaDefinitionProvider == null)
+                throw new ArgumentNullException(nameof(schemaDefinitionProvider));
+            this.schemaDefinitionProvider = schemaDefinitionProvider;
 
             this.version = version;
-            contractAssembly = schemaDefinitionReader.ProtocolDefinition.ContractAssembly;
+            contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
 
             portType = new PortType { Name = "PortTypeName" };
 
@@ -102,16 +102,16 @@ namespace XRoadLib
                     return;
 
                 if (!schemaLocations.ContainsKey(typeNamespace))
-                    schemaLocations.Add(typeNamespace, schemaDefinitionReader.GetSchemaLocation(typeNamespace));
+                    schemaLocations.Add(typeNamespace, schemaDefinitionProvider.GetSchemaLocation(typeNamespace));
 
                 requiredImports.Add(Tuple.Create(schemaNamespace, typeNamespace));
             };
 
             getRequiredImports = ns => requiredImports.Where(x => x.Item1 == ns).Select(x => x.Item2).ToList();
 
-            xRoadPrefix = schemaDefinitionReader.GetXRoadPrefix();
-            xRoadNamespace = schemaDefinitionReader.GetXRoadNamespace();
-            headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
+            xRoadPrefix = schemaDefinitionProvider.GetXRoadPrefix();
+            xRoadNamespace = schemaDefinitionProvider.GetXRoadNamespace();
+            headerDefinition = schemaDefinitionProvider.GetXRoadHeaderDefinition();
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace XRoadLib
             var typeDefinitions = contractAssembly.GetTypes()
                                                   .Where(type => type.IsXRoadSerializable() || (type.GetTypeInfo().IsEnum && type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>() != null))
                                                   .Where(type => !version.HasValue || type.GetTypeInfo().ExistsInVersion(version.Value))
-                                                  .Select(type => schemaDefinitionReader.GetTypeDefinition(type))
+                                                  .Select(type => schemaDefinitionProvider.GetTypeDefinition(type))
                                                   .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default)
                                                   .ToList();
 
@@ -178,7 +178,7 @@ namespace XRoadLib
             return contractAssembly.GetServiceContracts()
                                    .SelectMany(x => x.Value
                                                      .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
-                                                     .Select(op => schemaDefinitionReader.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), version)))
+                                                     .Select(op => schemaDefinitionProvider.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), version)))
                                    .Where(def => def.State == DefinitionState.Default)
                                    .OrderBy(def => def.Name.LocalName.ToLower())
                                    .ToList();
@@ -190,12 +190,12 @@ namespace XRoadLib
             var schemaElements = new List<XmlSchemaElement>();
             var referencedTypes = new Dictionary<XmlQualifiedName, XmlSchemaType>();
 
-            var faultDefinition = schemaDefinitionReader.GetFaultDefinition();
+            var faultDefinition = schemaDefinitionProvider.GetFaultDefinition();
             var addFaultType = false;
 
             foreach (var operationDefinition in GetOperationDefinitions(targetNamespace))
             {
-                var requestValueDefinition = schemaDefinitionReader.GetRequestValueDefinition(operationDefinition);
+                var requestValueDefinition = schemaDefinitionProvider.GetRequestValueDefinition(operationDefinition);
 
                 Func<XmlSchemaElement> createRequestElement = () => requestValueDefinition.ParameterInfo != null
                     ? CreateContentElement(requestValueDefinition, targetNamespace, referencedTypes)
@@ -210,7 +210,7 @@ namespace XRoadLib
                         SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement } } }
                     });
 
-                var responseValueDefinition = schemaDefinitionReader.GetResponseValueDefinition(operationDefinition);
+                var responseValueDefinition = schemaDefinitionProvider.GetResponseValueDefinition(operationDefinition);
                 if (!responseValueDefinition.ContainsNonTechnicalFault)
                     addFaultType = true;
 
@@ -457,7 +457,7 @@ namespace XRoadLib
             if (additionalTypeDefinitions.TryGetValue(type, out qualifiedName))
                 return qualifiedName;
 
-            var definition = schemaDefinitionReader.GetTypeDefinition(type, typeName);
+            var definition = schemaDefinitionProvider.GetTypeDefinition(type, typeName);
             if (definition.State != DefinitionState.Default)
                 return null;
 
@@ -661,7 +661,7 @@ namespace XRoadLib
             if (runtimeTypeDefinitions.ContainsKey(contentDefinition.RuntimeType))
                 return runtimeTypeDefinitions[contentDefinition.RuntimeType];
 
-            return schemaDefinitionReader.GetTypeDefinition(contentDefinition.RuntimeType);
+            return schemaDefinitionProvider.GetTypeDefinition(contentDefinition.RuntimeType);
         }
 
         private void SetSchemaElementType(XmlSchemaElement schemaElement, string schemaNamespace, IContentDefinition contentDefinition, IDictionary<XmlQualifiedName, XmlSchemaType> referencedTypes)
@@ -797,7 +797,7 @@ namespace XRoadLib
 
             serviceDescription.Services.Add(service);
 
-            schemaDefinitionReader.ExportServiceDescription(serviceDescription);
+            schemaDefinitionProvider.ExportServiceDescription(serviceDescription);
 
             writer.WriteStartDocument();
             serviceDescription.Write(writer);
@@ -818,12 +818,12 @@ namespace XRoadLib
 
         private IEnumerable<PropertyDefinition> GetDescriptionProperties(TypeDefinition typeDefinition)
         {
-            return typeDefinition.Type.GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaDefinitionReader.GetPropertyDefinition(p, typeDefinition)).Where(d => d.State == DefinitionState.Default);
+            return typeDefinition.Type.GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaDefinitionProvider.GetPropertyDefinition(p, typeDefinition)).Where(d => d.State == DefinitionState.Default);
         }
 
         private void AddSystemType<T>(string typeName)
         {
-            var typeDefinition = schemaDefinitionReader.GetSimpleTypeDefinition<T>(typeName);
+            var typeDefinition = schemaDefinitionProvider.GetSimpleTypeDefinition<T>(typeName);
 
             if (typeDefinition.Type != null && !runtimeTypeDefinitions.ContainsKey(typeDefinition.Type))
                 runtimeTypeDefinitions.Add(typeDefinition.Type, typeDefinition);
@@ -835,7 +835,7 @@ namespace XRoadLib
         private void AddSchemaType(ICollection<Tuple<string, XmlSchemaType>> schemaTypes, string namespaceName, XmlSchemaType schemaType)
         {
             if (!schemaLocations.ContainsKey(namespaceName))
-                schemaLocations.Add(namespaceName, schemaDefinitionReader.GetSchemaLocation(namespaceName));
+                schemaLocations.Add(namespaceName, schemaDefinitionProvider.GetSchemaLocation(namespaceName));
 
             schemaTypes.Add(Tuple.Create(namespaceName, schemaType));
         }

@@ -20,7 +20,7 @@ namespace XRoadLib
     /// </summary>
     public class XRoadProtocol
     {
-        private readonly SchemaDefinitionReader schemaDefinitionReader;
+        private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly ProtocolDefinition protocolDefinition;
         private readonly HeaderDefinition headerDefinition;
 
@@ -65,10 +65,10 @@ namespace XRoadLib
             if (schemaExporter == null)
                 throw new ArgumentNullException(nameof(schemaExporter));
 
-            schemaDefinitionReader = new SchemaDefinitionReader(schemaExporter);
+            schemaDefinitionProvider = new SchemaDefinitionProvider(schemaExporter);
 
-            headerDefinition = schemaDefinitionReader.GetXRoadHeaderDefinition();
-            protocolDefinition = schemaDefinitionReader.ProtocolDefinition;
+            headerDefinition = schemaDefinitionProvider.GetXRoadHeaderDefinition();
+            protocolDefinition = schemaDefinitionProvider.ProtocolDefinition;
 
             SetContractAssembly();
         }
@@ -78,7 +78,7 @@ namespace XRoadLib
         /// </summary>
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
-            new ProducerDefinition(this, schemaDefinitionReader, version).SaveTo(outputStream);
+            new ProducerDefinition(this, schemaDefinitionProvider, version).SaveTo(outputStream);
         }
 
         /// <summary>
@@ -122,18 +122,18 @@ namespace XRoadLib
 
         private void SetContractAssembly()
         {
-            if (schemaDefinitionReader.ProtocolDefinition.ContractAssembly == null)
+            if (schemaDefinitionProvider.ProtocolDefinition.ContractAssembly == null)
                 throw new Exception($"SchemaExporter must define contract assembly of types and operations.");
 
-            if (!schemaDefinitionReader.ProtocolDefinition.SupportedVersions.Any())
+            if (!schemaDefinitionProvider.ProtocolDefinition.SupportedVersions.Any())
             {
-                serializerCache = new SerializerCache(this, schemaDefinitionReader);
+                serializerCache = new SerializerCache(this, schemaDefinitionProvider);
                 return;
             }
 
             versioningSerializerCaches = new Dictionary<uint, ISerializerCache>();
-            foreach (var dtoVersion in schemaDefinitionReader.ProtocolDefinition.SupportedVersions)
-                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionReader, dtoVersion));
+            foreach (var dtoVersion in schemaDefinitionProvider.ProtocolDefinition.SupportedVersions)
+                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionProvider, dtoVersion));
         }
     }
 }

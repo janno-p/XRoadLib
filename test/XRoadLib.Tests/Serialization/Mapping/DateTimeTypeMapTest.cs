@@ -6,7 +6,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
 {
     public class DateTimeTypeMapTest : TypeMapTestBase
     {
-        private static readonly DateTimeTypeMap dateTimeTypeMap = new DateTimeTypeMap(schemaDefinitionReader.GetSimpleTypeDefinition<DateTime>("dateTime"));
+        private static readonly DateTimeTypeMap dateTimeTypeMap = new DateTimeTypeMap(schemaDefinitionProvider.GetSimpleTypeDefinition<DateTime>("dateTime"));
         private static readonly Func<string, object> deserializeValue = x => DeserializeValue(dateTimeTypeMap, x);
 
         [Fact]
