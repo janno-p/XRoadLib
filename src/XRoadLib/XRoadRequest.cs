@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Xml;
 using System.Xml.Linq;
+using XRoadLib.Events;
 using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Serialization;
@@ -11,34 +12,36 @@ using XRoadLib.Serialization.Mapping;
 namespace XRoadLib
 {
     /// <summary>
-    /// Wraps WebRequest object to be used in event handler.
-    /// </summary>
-    public class XRoadRequestEventArgs : EventArgs
-    {
-        /// <summary>
-        /// WebRequest object which is used to invoke X-Road request.
-        /// </summary>
-        public WebRequest WebRequest { get; }
-
-        /// <summary>
-        /// Initialize event argument class.
-        /// </summary>
-        public XRoadRequestEventArgs(WebRequest webRequest)
-        {
-            WebRequest = webRequest;
-        }
-    }
-
-    /// <summary>
     /// X-Road request object which wraps single X-Road web request.
     /// </summary>
     public interface IXRoadRequest
     {
         /// <summary>
+        /// Provides access to underlying protocol instance.
+        /// </summary>
+        XRoadProtocol Protocol { get; }
+
+        /// <summary>
+        /// Provides access to underlying request uri.
+        /// </summary>
+        Uri Uri { get; }
+
+        /// <summary>
+        /// Provides access to underlying request namespace.
+        /// </summary>
+        string RequestNamespace { get; }
+
+        /// <summary>
         /// Event is called before invoking WebRequest which allows to
         /// customize request options.
         /// </summary>
-        event EventHandler<XRoadRequestEventArgs> BeforeBeginRequest;
+        event EventHandler<XRoadRequestEventArgs> BeforeRequest;
+
+        /// <summary>
+        /// Event is called before deserializing WebResponse content which allows to
+        /// customize response options.
+        /// </summary>
+        event EventHandler<XRoadResponseEventArgs> BeforeDeserialize;
 
         /// <summary>
         /// Executes specified X-Road operations with given arguments.
@@ -51,15 +54,32 @@ namespace XRoadLib
     /// </summary>
     public class XRoadRequest : IXRoadRequest
     {
-        private readonly XRoadProtocol protocol;
-        private readonly Uri uri;
-        private readonly string requestNamespace;
+        /// <summary>
+        /// Provides access to underlying protocol instance.
+        /// </summary>
+        public XRoadProtocol Protocol { get; }
+
+        /// <summary>
+        /// Provides access to underlying request uri.
+        /// </summary>
+        public Uri Uri { get; }
+
+        /// <summary>
+        /// Provides access to underlying request namespace.
+        /// </summary>
+        public string RequestNamespace { get; }
 
         /// <summary>
         /// Event is called before invoking WebRequest which allows to
         /// customize request options.
         /// </summary>
-        public event EventHandler<XRoadRequestEventArgs> BeforeBeginRequest;
+        public event EventHandler<XRoadRequestEventArgs> BeforeRequest;
+
+        /// <summary>
+        /// Event is called before deserializing WebResponse content which allows to
+        /// customize response options.
+        /// </summary>
+        public event EventHandler<XRoadResponseEventArgs> BeforeDeserialize;
 
         /// <summary>
         /// Initialize new request object.
@@ -69,9 +89,9 @@ namespace XRoadLib
         /// </summary>
         public XRoadRequest(Uri uri, XRoadProtocol protocol, string requestNamespace = null)
         {
-            this.protocol = protocol;
-            this.uri = uri;
-            this.requestNamespace = requestNamespace;
+            Protocol = protocol;
+            Uri = uri;
+            RequestNamespace = requestNamespace;
         }
 
         /// <summary>
@@ -81,22 +101,22 @@ namespace XRoadLib
         {
             IServiceMap operationServiceMap = null;
 
-            using (var requestMessage = new XRoadMessage(protocol, xRoadHeader))
+            using (var requestMessage = new XRoadMessage(Protocol, xRoadHeader))
             {
                 using (var writer = XmlWriter.Create(requestMessage.ContentStream))
                 {
                     writer.WriteStartDocument();
 
-                    protocol.Style.WriteSoapEnvelope(writer, protocol.ProducerNamespace);
-                    if (!string.IsNullOrEmpty(requestNamespace))
-                        writer.WriteAttributeString(PrefixConstants.XMLNS, "req", NamespaceConstants.XMLNS, requestNamespace);
+                    Protocol.Style.WriteSoapEnvelope(writer, Protocol.ProducerNamespace);
+                    if (!string.IsNullOrEmpty(RequestNamespace))
+                        writer.WriteAttributeString(PrefixConstants.XMLNS, "req", NamespaceConstants.XMLNS, RequestNamespace);
 
-                    protocol.Style.WriteSoapHeader(writer, xRoadHeader);
+                    Protocol.Style.WriteSoapHeader(writer, xRoadHeader);
 
                     writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
 
-                    operationServiceMap = serviceMap ?? requestMessage.GetSerializerCache().GetServiceMap(XName.Get(xRoadHeader.Service.ServiceCode, protocol.ProducerNamespace));
-                    operationServiceMap.SerializeRequest(writer, arg, requestMessage, requestNamespace);
+                    operationServiceMap = serviceMap ?? requestMessage.GetSerializerCache().GetServiceMap(XName.Get(xRoadHeader.Service.ServiceCode, Protocol.ProducerNamespace));
+                    operationServiceMap.SerializeRequest(writer, arg, requestMessage, RequestNamespace);
 
                     writer.WriteEndElement();
                     writer.WriteEndElement();
@@ -104,13 +124,13 @@ namespace XRoadLib
                     writer.Flush();
                 }
 
-                var request = WebRequest.Create(uri);
+                var request = WebRequest.Create(Uri);
 
                 request.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
                 request.Headers["SOAPAction"] = string.Empty;
                 request.Method = "POST";
 
-                BeforeBeginRequest?.Invoke(this, new XRoadRequestEventArgs(request));
+                BeforeRequest?.Invoke(this, new XRoadRequestEventArgs(request, requestMessage));
 
                 requestMessage.SaveTo(request);
 
@@ -124,7 +144,8 @@ namespace XRoadLib
                 using (var responseMessage = new XRoadMessage())
                 {
                     responseStream?.CopyTo(seekableStream);
-                    responseMessage.LoadResponse(seekableStream, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), protocol);
+                    BeforeDeserialize?.Invoke(this, new XRoadResponseEventArgs(response, seekableStream));
+                    responseMessage.LoadResponse(seekableStream, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), Protocol);
                     return (T)responseMessage.DeserializeMessageContent(operationServiceMap);
                 }
             }
