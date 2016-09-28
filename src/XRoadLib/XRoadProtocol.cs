@@ -13,7 +13,58 @@ namespace XRoadLib
     /// <summary>
     /// X-Road message protocol implementation details.
     /// </summary>
-    public class XRoadProtocol
+    public interface IXRoadProtocol
+    {
+        /// <summary>
+        /// String form of message protocol version.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Global versions supported by this X-Road message protocol instance.
+        /// </summary>
+        IEnumerable<uint> SupportedVersions { get; }
+
+        /// <summary>
+        /// XML document style of messages (RPC/Encoded or Document/Literal).
+        /// </summary>
+        Style Style { get; }
+
+        /// <summary>
+        /// Main namespace which defines current producer operations and types.
+        /// </summary>
+        string ProducerNamespace { get; }
+
+        /// <summary>
+        /// Initialize new X-Road message header.
+        /// </summary>
+        IXRoadHeader CreateHeader();
+
+        /// <summary>
+        /// Generates new service description for current message protocol instance.
+        /// </summary>
+        void WriteServiceDescription(Stream outputStream, uint? version = null);
+
+        /// <summary>
+        /// Get runtime types lookup object.
+        /// </summary>
+        ISerializerCache GetSerializerCache(uint? version = null);
+
+        /// <summary>
+        /// Test if given namespace is defined as SOAP header element namespace.
+        /// </summary>
+        bool IsHeaderNamespace(string namespaceName);
+
+        /// <summary>
+        /// Check if envelope defines given protocol schema.
+        /// </summary>
+        bool IsDefinedByEnvelope(XmlReader reader);
+    }
+
+    /// <summary>
+    /// X-Road message protocol implementation details.
+    /// </summary>
+    public class XRoadProtocol : IXRoadProtocol
     {
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly ProtocolDefinition protocolDefinition;
@@ -45,7 +96,7 @@ namespace XRoadLib
         /// <summary>
         /// Initialize new X-Road message header.
         /// </summary>
-        public Func<IXRoadHeader> CreateHeader => headerDefinition.Initializer;
+        public IXRoadHeader CreateHeader() => headerDefinition.Initializer();
 
         /// <summary>
         /// Initializes new X-Road message protocol instance.
@@ -112,14 +163,6 @@ namespace XRoadLib
         /// Check if envelope defines given protocol schema.
         /// </summary>
         public bool IsDefinedByEnvelope(XmlReader reader) => protocolDefinition.DetectEnvelope?.Invoke(reader) ?? false;
-
-        /// <summary>
-        /// Initialize new X-Road message of this X-Road message protocol instance.
-        /// </summary>
-        public XRoadMessage CreateMessage(IXRoadHeader header = null)
-        {
-            return new XRoadMessage(this, header ?? CreateHeader());
-        }
 
         private void SetContractAssembly()
         {

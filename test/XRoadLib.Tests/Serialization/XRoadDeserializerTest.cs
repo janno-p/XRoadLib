@@ -523,7 +523,7 @@ namespace XRoadLib.Tests.Serialization
             });
         }
 
-        private object DeserializeRequest(string templateXml, string contentXml, XRoadProtocol protocol, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
+        private object DeserializeRequest(string templateXml, string contentXml, IXRoadProtocol protocol, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream))

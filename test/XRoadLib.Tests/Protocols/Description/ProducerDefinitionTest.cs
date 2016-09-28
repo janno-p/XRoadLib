@@ -189,7 +189,7 @@ namespace XRoadLib.Tests.Protocols.Description
             return port;
         }
 
-        private XDocument GetDocument(XRoadProtocol protocol, uint version)
+        private XDocument GetDocument(IXRoadProtocol protocol, uint version)
         {
             using (var stream = new MemoryStream())
             {

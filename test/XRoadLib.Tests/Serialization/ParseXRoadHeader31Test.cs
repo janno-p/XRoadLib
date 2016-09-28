@@ -168,7 +168,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("bibopp", xhr3.EncryptedCert);
         }
 
-        public static Tuple<IXRoadHeader, IList<XElement>, XRoadProtocol> ParseHeader(string xml)
+        public static Tuple<IXRoadHeader, IList<XElement>, IXRoadProtocol> ParseHeader(string xml)
         {
             return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD);
         }

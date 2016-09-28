@@ -209,7 +209,7 @@ namespace XRoadLib.Serialization.Mapping
                    && ResponseValueDefinition.ContainsNonTechnicalFault;
         }
 
-        private static void SerializeFault(XmlWriter writer, IXRoadFault fault, XRoadProtocol protocol)
+        private static void SerializeFault(XmlWriter writer, IXRoadFault fault, IXRoadProtocol protocol)
         {
             writer.WriteStartElement("faultCode");
             protocol.Style.WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));

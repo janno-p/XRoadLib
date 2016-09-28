@@ -19,7 +19,7 @@ namespace XRoadLib
         /// <summary>
         /// Provides access to underlying protocol instance.
         /// </summary>
-        XRoadProtocol Protocol { get; }
+        IXRoadProtocol Protocol { get; }
 
         /// <summary>
         /// Provides access to underlying request uri.
@@ -57,7 +57,7 @@ namespace XRoadLib
         /// <summary>
         /// Provides access to underlying protocol instance.
         /// </summary>
-        public XRoadProtocol Protocol { get; }
+        public IXRoadProtocol Protocol { get; }
 
         /// <summary>
         /// Provides access to underlying request uri.
@@ -87,7 +87,7 @@ namespace XRoadLib
         /// <param name="protocol">X-Road message protocol version.</param>
         /// <param name="requestNamespace">Overrides default producer namespace for operation payload element.</param>
         /// </summary>
-        public XRoadRequest(Uri uri, XRoadProtocol protocol, string requestNamespace = null)
+        public XRoadRequest(Uri uri, IXRoadProtocol protocol, string requestNamespace = null)
         {
             Protocol = protocol;
             Uri = uri;

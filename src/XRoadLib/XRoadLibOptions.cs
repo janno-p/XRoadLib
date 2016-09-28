@@ -14,7 +14,7 @@ namespace XRoadLib
         public Type WsdlHandler { get; private set; }
         public Type RequestHandler { get; private set; }
         public Assembly ContractAssembly { get; set; }
-        public ICollection<XRoadProtocol> SupportedProtocols { get; set; } = new List<XRoadProtocol>();
+        public ICollection<IXRoadProtocol> SupportedProtocols { get; set; } = new List<IXRoadProtocol>();
         public string StoragePath { get; set; }
 
         public void AddWsdlHandler<T>() where T : IXRoadHandler

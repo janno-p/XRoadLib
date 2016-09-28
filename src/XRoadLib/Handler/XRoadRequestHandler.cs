@@ -17,14 +17,14 @@ namespace XRoadLib.Handler
     /// </summary>
     public class XRoadRequestHandler : XRoadHandlerBase
     {
-        private readonly ICollection<XRoadProtocol> supportedProtocols;
+        private readonly ICollection<IXRoadProtocol> supportedProtocols;
         private readonly string storagePath;
 
         /// <summary>
         /// Initialize new service request handler with X-Road message protocols
         /// it should be able to handle and storage path of temporary files.
         /// </summary>
-        public XRoadRequestHandler(IEnumerable<XRoadProtocol> supportedProtocols, string storagePath)
+        public XRoadRequestHandler(IEnumerable<IXRoadProtocol> supportedProtocols, string storagePath)
         {
             if (supportedProtocols == null)
                 throw new ArgumentNullException(nameof(supportedProtocols));

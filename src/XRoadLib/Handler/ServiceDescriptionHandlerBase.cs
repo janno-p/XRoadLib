@@ -12,7 +12,7 @@ namespace XRoadLib.Handler
         /// <summary>
         /// X-Road protocol which description is provided by handler.
         /// </summary>
-        protected virtual XRoadProtocol Protocol => null;
+        protected virtual IXRoadProtocol Protocol => null;
 
         /// <summary>
         /// DTO version of the service description.

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using System.Xml;
+using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Tests.Contract.Configuration;

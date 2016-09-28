@@ -12,7 +12,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanHandleBufferLimit()
         {
             using (var stream = new MemoryStream(Enumerable.Repeat((byte)32, 10).ToArray()))
-            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<XRoadProtocol>()))
+            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IXRoadProtocol>()))
             {
                 stream.Position = 0;
 
@@ -36,7 +36,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanHandleLineMarker()
         {
             using (var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 }))
-            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<XRoadProtocol>()))
+            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IXRoadProtocol>()))
             {
                 stream.Position = 0;
 
@@ -54,7 +54,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanHandleChunkBeginningWithMarker()
         {
             using (var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 }))
-            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<XRoadProtocol>()))
+            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IXRoadProtocol>()))
             {
                 stream.Position = 0;
 
@@ -77,7 +77,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanHandleSplittingMarker()
         {
             using (var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 }))
-            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<XRoadProtocol>()))
+            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IXRoadProtocol>()))
             {
                 stream.Position = 0;
 
@@ -94,7 +94,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanHandleMultipleMarkersInARow()
         {
             using (var stream = new MemoryStream(new byte[] { 40, 13, 10, 13, 10, 13, 10, 13, 10, 40 }))
-            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<XRoadProtocol>()))
+            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IXRoadProtocol>()))
             {
                 stream.Position = 0;
 
@@ -120,7 +120,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanHandleRecurringMarkerBufferLimit()
         {
             using (var stream = new MemoryStream(new byte[] { 40, 13, 13, 13, 13, 13, 13, 10, 33, 34, 40, 40 }))
-            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<XRoadProtocol>()))
+            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IXRoadProtocol>()))
             {
                 stream.Position = 0;
 
