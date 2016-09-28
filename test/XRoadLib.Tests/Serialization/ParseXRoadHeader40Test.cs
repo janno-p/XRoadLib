@@ -364,7 +364,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal(NamespaceConstants.XROAD, tuple.Item2[0].Name.NamespaceName);
         }
 
-        public static Tuple<IXRoadHeader, IList<XElement>, XRoadProtocol> ParseHeader(string xml)
+        public static Tuple<IXRoadHeader, IList<XElement>, IXRoadProtocol> ParseHeader(string xml)
         {
             return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD_V4);
         }

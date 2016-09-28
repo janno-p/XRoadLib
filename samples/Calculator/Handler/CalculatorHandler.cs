@@ -10,7 +10,7 @@ namespace Calculator.Handler
     {
         private readonly IServiceProvider serviceProvider;
 
-        public CalculatorHandler(IServiceProvider serviceProvider, IEnumerable<XRoadProtocol> supportedProtocols, string storagePath)
+        public CalculatorHandler(IServiceProvider serviceProvider, IEnumerable<IXRoadProtocol> supportedProtocols, string storagePath)
             : base(supportedProtocols, storagePath)
         {
             this.serviceProvider = serviceProvider;

@@ -10,12 +10,12 @@ namespace XRoadLib.Handler
     /// </summary>
     public class XRoadWsdlHandler : XRoadHandlerBase
     {
-        private readonly XRoadProtocol protocol;
+        private readonly IXRoadProtocol protocol;
 
         /// <summary>
         /// Initialize new handler for certain protocol.
         /// </summary>
-        public XRoadWsdlHandler(XRoadProtocol protocol)
+        public XRoadWsdlHandler(IXRoadProtocol protocol)
         {
             if (protocol == null)
                 throw new ArgumentNullException(nameof(protocol));

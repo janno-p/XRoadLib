@@ -25,7 +25,7 @@ namespace XRoadLib.Serialization
 
         private static readonly byte[] newLine = { (byte)'\r', (byte)'\n' };
 
-        private readonly ICollection<XRoadProtocol> supportedProtocols;
+        private readonly ICollection<IXRoadProtocol> supportedProtocols;
         private readonly string storagePath;
         private readonly string contentTypeHeader;
 
@@ -33,12 +33,12 @@ namespace XRoadLib.Serialization
         private int? peekedByte;
         private long streamPosition;
 
-        public XRoadMessageReader(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public XRoadMessageReader(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
         {
             this.contentTypeHeader = contentTypeHeader;
             this.storagePath = storagePath;
             this.stream = stream;
-            this.supportedProtocols = new List<XRoadProtocol>(supportedProtocols);
+            this.supportedProtocols = new List<IXRoadProtocol>(supportedProtocols);
         }
 
         public void Read(XRoadMessage target, bool isResponse = false)
@@ -388,7 +388,7 @@ namespace XRoadLib.Serialization
             return charset;
         }
 
-        private XRoadProtocol ParseXRoadProtocol(XmlReader reader)
+        private IXRoadProtocol ParseXRoadProtocol(XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
                 throw XRoadException.InvalidQuery("Päringus puudub SOAP-ENV:Envelope element.");
@@ -396,7 +396,7 @@ namespace XRoadLib.Serialization
             return supportedProtocols.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }
 
-        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, XRoadProtocol protocol)
+        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IXRoadProtocol protocol)
         {
             if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
                 return;

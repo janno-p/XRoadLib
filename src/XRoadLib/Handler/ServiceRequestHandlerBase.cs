@@ -16,7 +16,7 @@ namespace XRoadLib.Handler
     /// </summary>
     public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
-        private readonly ICollection<XRoadProtocol> supportedProtocols;
+        private readonly ICollection<IXRoadProtocol> supportedProtocols;
 
         /// <summary>
         /// Temporary file storage location.
@@ -31,11 +31,11 @@ namespace XRoadLib.Handler
         /// <summary>
         /// Initialize new service request handler with protocols it can handle.
         /// </summary>
-        protected ServiceRequestHandlerBase(IEnumerable<XRoadProtocol> supportedProtocols)
+        protected ServiceRequestHandlerBase(IEnumerable<IXRoadProtocol> supportedProtocols)
         {
             if (supportedProtocols == null)
                 throw new ArgumentNullException(nameof(supportedProtocols));
-            this.supportedProtocols = new List<XRoadProtocol>(supportedProtocols);
+            this.supportedProtocols = new List<IXRoadProtocol>(supportedProtocols);
         }
 
         /// <summary>

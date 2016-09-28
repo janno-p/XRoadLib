@@ -9,9 +9,9 @@ namespace XRoadLib.Tests
 {
     public static class Globals
     {
-        public static XRoadProtocol XRoadProtocol20 { get; } = new XRoadProtocol("2.0", new CustomSchemaExporterXRoad20());
-        public static XRoadProtocol XRoadProtocol31 { get; } = new XRoadProtocol("3.1", new CustomSchemaExporterXRoad31());
-        public static XRoadProtocol XRoadProtocol40 { get; } = new XRoadProtocol("4.0", new DefaultSchemaExporter("http://test-producer.x-road.eu/", typeof(Class1).GetTypeInfo().Assembly) { SupportedVersions = { 1u, 2u } });
+        public static IXRoadProtocol XRoadProtocol20 { get; } = new XRoadProtocol("2.0", new CustomSchemaExporterXRoad20());
+        public static IXRoadProtocol XRoadProtocol31 { get; } = new XRoadProtocol("3.1", new CustomSchemaExporterXRoad31());
+        public static IXRoadProtocol XRoadProtocol40 { get; } = new XRoadProtocol("4.0", new DefaultSchemaExporter("http://test-producer.x-road.eu/", typeof(Class1).GetTypeInfo().Assembly) { SupportedVersions = { 1u, 2u } });
 
         public static IContentDefinition GetTestDefinition(Type type)
         {

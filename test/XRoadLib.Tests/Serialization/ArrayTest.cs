@@ -12,7 +12,7 @@ namespace XRoadLib.Tests.Serialization
 {
     public class ArrayTest
     {
-        private static readonly XRoadProtocol protocol = Globals.XRoadProtocol31;
+        private static readonly IXRoadProtocol protocol = Globals.XRoadProtocol31;
 
         private readonly ISerializerCache serializerCache = protocol.GetSerializerCache(1u);
 

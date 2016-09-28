@@ -13,7 +13,7 @@ namespace Calculator
 {
     public class Startup
     {
-        private readonly XRoadProtocol protocol = new XRoadProtocol("3.1", new SchemaExporterXRoad31("producer", typeof(Startup).GetTypeInfo().Assembly));
+        private readonly IXRoadProtocol protocol = new XRoadProtocol("3.1", new SchemaExporterXRoad31("producer", typeof(Startup).GetTypeInfo().Assembly));
 
         public void ConfigureServices(IServiceCollection services)
         {

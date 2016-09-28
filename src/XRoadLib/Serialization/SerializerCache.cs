@@ -24,12 +24,12 @@ namespace XRoadLib.Serialization
         private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
         private readonly ConcurrentDictionary<Type, ITypeMap> runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
-        public XRoadProtocol Protocol { get; }
+        public IXRoadProtocol Protocol { get; }
         public uint? Version { get; }
 
         // public IEnumerable<string> AvailableFilters { get { return availableFilters; } set { availableFilters = value != null ? new List<string>(value) : null; } }
 
-        public SerializerCache(XRoadProtocol protocol, SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
+        public SerializerCache(IXRoadProtocol protocol, SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
             this.schemaDefinitionProvider = schemaDefinitionProvider;
 

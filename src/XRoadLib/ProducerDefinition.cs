@@ -29,7 +29,7 @@ namespace XRoadLib
     public sealed class ProducerDefinition
     {
         private readonly Assembly contractAssembly;
-        private readonly XRoadProtocol protocol;
+        private readonly IXRoadProtocol protocol;
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly uint? version;
 
@@ -59,7 +59,7 @@ namespace XRoadLib
         /// <param name="schemaDefinitionProvider">Provides overrides for default presentation format.</param>
         /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
         /// </summary>
-        public ProducerDefinition(XRoadProtocol protocol, SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
+        public ProducerDefinition(IXRoadProtocol protocol, SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
             if (protocol == null)
                 throw new ArgumentNullException(nameof(protocol));

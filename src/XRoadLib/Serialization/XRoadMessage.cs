@@ -75,7 +75,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// X-Road message protocol version used to serialize/deserialize this message.
         /// </summary>
-        public XRoadProtocol Protocol { get; set; }
+        public IXRoadProtocol Protocol { get; set; }
 
         /// <summary>
         /// X-Road protocol compliant header values extracted from SOAP header of
@@ -149,7 +149,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Initializes new empty X-Road message for request serialization.
         /// </summary>
-        public XRoadMessage(XRoadProtocol protocol, IXRoadHeader header)
+        public XRoadMessage(IXRoadProtocol protocol, IXRoadHeader header)
             : this(new MemoryStream())
         {
             Protocol = protocol;
@@ -176,7 +176,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(System.Web.HttpContext httpContext, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public void LoadRequest(System.Web.HttpContext httpContext, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
         {
             LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, supportedProtocols);
         }
@@ -185,7 +185,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
         {
 #if NET40
             var requestStream = httpContext.Request.InputStream;
@@ -198,7 +198,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, XRoadProtocol protocol)
+        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IXRoadProtocol protocol)
         {
             LoadRequest(stream, contentTypeHeader, storagePath, new [] { protocol });
         }
@@ -206,7 +206,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
         {
             using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, supportedProtocols))
                 reader.Read(this);
@@ -215,7 +215,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
-        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, XRoadProtocol protocol)
+        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IXRoadProtocol protocol)
         {
             LoadResponse(stream, contentTypeHeader, storagePath, new [] { protocol });
         }
@@ -223,7 +223,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
-        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<XRoadProtocol> supportedProtocols)
+        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
         {
             using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, supportedProtocols))
                 reader.Read(this, true);

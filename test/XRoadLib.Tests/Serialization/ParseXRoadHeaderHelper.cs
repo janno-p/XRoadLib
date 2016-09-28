@@ -10,7 +10,7 @@ namespace XRoadLib.Tests.Serialization
 {
     public static class ParseXRoadHeaderHelper
     {
-        public static Tuple<IXRoadHeader, IList<XElement>, XRoadProtocol> ParseHeader(string xml, string ns)
+        public static Tuple<IXRoadHeader, IList<XElement>, IXRoadProtocol> ParseHeader(string xml, string ns)
         {
             using (var stream = new MemoryStream())
             using (var streamWriter = new StreamWriter(stream, Encoding.UTF8))
