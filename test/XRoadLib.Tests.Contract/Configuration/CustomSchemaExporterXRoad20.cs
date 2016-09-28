@@ -55,7 +55,10 @@ namespace XRoadLib.Tests.Contract.Configuration
 
             // Customize service name:
             serviceDescription.Services[0].Name = "TestService";
+        }
 
+        protected override void AddXRoadTitles(Port servicePort)
+        {
             AddXRoadTitle(servicePort, "", "Ilma keeleta palun");
             AddXRoadTitle(servicePort, "en", "XRoadLib test producer");
             AddXRoadTitle(servicePort, "et", "XRoadLib test andmekogu");

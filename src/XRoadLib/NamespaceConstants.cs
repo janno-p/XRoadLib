@@ -132,5 +132,56 @@ namespace XRoadLib
 
             return null;
         }
+
+        /// <summary>
+        /// Get preferred global XML namespace prefix of the namespace.
+        /// </summary>
+        public static string GetPreferredPrefix(string namespaceName)
+        {
+            switch (namespaceName)
+            {
+                case MIME:
+                    return PrefixConstants.MIME;
+
+                case SOAP:
+                    return PrefixConstants.SOAP;
+
+                case SOAP_ENC:
+                    return PrefixConstants.SOAP_ENC;
+
+                case SOAP_ENV:
+                    return PrefixConstants.SOAP_ENV;
+
+                case WSDL:
+                    return PrefixConstants.WSDL;
+
+                case XMIME:
+                    return PrefixConstants.XMIME;
+
+                case XOP:
+                    return PrefixConstants.XOP;
+
+                case XROAD:
+                case XROAD_V4:
+                    return PrefixConstants.XROAD;
+
+                case XROAD_V4_ID:
+                    return PrefixConstants.ID;
+
+                case XROAD_V4_REPR:
+                    return PrefixConstants.REPR;
+
+                case XSD:
+                    return PrefixConstants.XSD;
+
+                case XSI:
+                    return PrefixConstants.XSI;
+
+                case XTEE:
+                    return PrefixConstants.XTEE;
+            }
+
+            return null;
+        }
     }
 }

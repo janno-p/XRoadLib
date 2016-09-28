@@ -49,17 +49,6 @@ namespace XRoadLib.Schema
         }
 
         /// <summary>
-        /// Allows each message protocol implementation to customize service description document
-        /// before publishing.
-        /// </summary>
-        public override void ExportServiceDescription(ServiceDescription serviceDescription)
-        {
-            base.ExportServiceDescription(serviceDescription);
-
-            serviceDescription.Namespaces.Add(PrefixConstants.SOAP_ENC, NamespaceConstants.SOAP_ENC);
-        }
-
-        /// <summary>
         /// Configure SOAP header of the messages.
         /// </summary>
         public override void ExportHeaderDefinition(HeaderDefinition headerDefinition)

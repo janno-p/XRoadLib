@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Styles;
-
-#if NET40
-using XRoadLib.Extensions;
-#endif
 
 namespace XRoadLib
 {
@@ -78,6 +73,12 @@ namespace XRoadLib
         /// </summary>
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
+            if (!version.HasValue && SupportedVersions.Any())
+                throw new ArgumentNullException(nameof(version), "Version value is required to generate service description.");
+
+            if (version.HasValue && !SupportedVersions.Contains(version.Value))
+                throw new ArgumentOutOfRangeException(nameof(version), $"Version {version.Value} is not supported.");
+
             new ProducerDefinition(this, schemaDefinitionProvider, version).SaveTo(outputStream);
         }
 

@@ -65,7 +65,15 @@ namespace XRoadLib.Schema
 
             var soapAddressBinding = (SoapAddressBinding)servicePort.Extensions[0];
             soapAddressBinding.Location = "http://TURVASERVER/cgi-bin/consumer_proxy";
+
+            AddXRoadTitles(servicePort);
         }
+
+        /// <summary>
+        /// Define X-Road titles of the service port.
+        /// </summary>
+        protected virtual void AddXRoadTitles(Port servicePort)
+        { }
 
         /// <summary>
         /// Adds X-Road title element to service port.

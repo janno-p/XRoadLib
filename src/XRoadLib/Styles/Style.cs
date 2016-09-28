@@ -60,9 +60,9 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Serializes X-Road SOAP message header element.
         /// </summary>
-        public void WriteHeaderElement(XmlWriter writer, string name, object value, XName typeName)
+        public void WriteHeaderElement(XmlWriter writer, string name, string namespaceName, object value, XName typeName)
         {
-            writer.WriteStartElement(name, NamespaceConstants.XTEE);
+            writer.WriteStartElement(name, namespaceName);
 
             WriteExplicitType(writer, typeName);
 

@@ -377,7 +377,7 @@ namespace XRoadLib.Headers
             {
                 var value = m.Item2(this);
                 if (definition.RequiredHeaders.Contains(m.Item1) || value != null)
-                    style.WriteHeaderElement(writer, m.Item1, value, m.Item3);
+                    style.WriteHeaderElement(writer, m.Item1, NamespaceConstants.XROAD_V4_ID, value, m.Item3);
             }
         }
     }

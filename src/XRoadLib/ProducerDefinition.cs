@@ -47,6 +47,9 @@ namespace XRoadLib
         private readonly Action<string, string> addRequiredImport;
         private readonly Func<string, IList<string>> getRequiredImports;
 
+        private readonly Func<string, bool> addGlobalNamespace;
+        private readonly Func<IList<Tuple<string, string>>> getGlobalNamespaces;
+
         private readonly string xRoadPrefix;
         private readonly string xRoadNamespace;
         private readonly HeaderDefinition headerDefinition;
@@ -94,6 +97,21 @@ namespace XRoadLib
 
             CollectTypes();
 
+            var globalNamespaces = new Dictionary<string, string>();
+
+            addGlobalNamespace = (namespaceName) =>
+            {
+                var prefix = NamespaceConstants.GetPreferredPrefix(namespaceName);
+                if (string.IsNullOrEmpty(prefix))
+                    return false;
+
+                globalNamespaces[prefix] = namespaceName;
+
+                return true;
+            };
+
+            getGlobalNamespaces = () => globalNamespaces.Select(x => Tuple.Create(x.Key, x.Value)).ToList();
+
             var requiredImports = new SortedSet<Tuple<string, string>>();
 
             addRequiredImport = (schemaNamespace, typeNamespace) =>
@@ -112,6 +130,11 @@ namespace XRoadLib
             xRoadPrefix = schemaDefinitionProvider.GetXRoadPrefix();
             xRoadNamespace = schemaDefinitionProvider.GetXRoadNamespace();
             headerDefinition = schemaDefinitionProvider.GetXRoadHeaderDefinition();
+
+            addGlobalNamespace(NamespaceConstants.SOAP);
+            addGlobalNamespace(NamespaceConstants.SOAP_ENV);
+            addGlobalNamespace(NamespaceConstants.WSDL);
+            addGlobalNamespace(NamespaceConstants.XSD);
         }
 
         /// <summary>
@@ -441,11 +464,15 @@ namespace XRoadLib
                 foreach (var schemaElement in schemaElements.OrderBy(x => x.Name.ToLower()))
                     schema.Items.Add(schemaElement);
 
+            if (schema.TargetNamespace != schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace)
+                schema.Namespaces.Add("tns", schema.TargetNamespace);
+
             var n = 1;
             foreach (var namespaceImport in getRequiredImports(schema.TargetNamespace))
             {
                 schema.Includes.Add(new XmlSchemaImport { Namespace = namespaceImport, SchemaLocation = schemaLocations[namespaceImport] });
-                schema.Namespaces.Add($"ns{n++}", namespaceImport);
+                if (!addGlobalNamespace(namespaceImport))
+                    schema.Namespaces.Add($"ns{n++}", namespaceImport);
             }
 
             return schema;
@@ -516,6 +543,8 @@ namespace XRoadLib
             }
 
             var soapPart = new MimePart();
+
+            addGlobalNamespace(NamespaceConstants.MIME);
 
 #if NETSTANDARD1_5
             AddOperationContentBinding(soapPart.Extensions, x => x);
@@ -776,7 +805,6 @@ namespace XRoadLib
         private void WriteServiceDescription(XmlWriter writer)
         {
             var serviceDescription = new ServiceDescription { TargetNamespace = protocol.ProducerNamespace };
-            AddServiceDescriptionNamespaces(serviceDescription);
 
             var standardHeader = new Message { Name = headerDefinition.MessageName };
 
@@ -797,6 +825,8 @@ namespace XRoadLib
 
             serviceDescription.Services.Add(service);
 
+            AddServiceDescriptionNamespaces(serviceDescription);
+
             schemaDefinitionProvider.ExportServiceDescription(serviceDescription);
 
             writer.WriteStartDocument();
@@ -807,12 +837,8 @@ namespace XRoadLib
 
         private void AddServiceDescriptionNamespaces(DocumentableItem serviceDescription)
         {
-            serviceDescription.Namespaces.Add(PrefixConstants.MIME, NamespaceConstants.MIME);
-            serviceDescription.Namespaces.Add(PrefixConstants.SOAP, NamespaceConstants.SOAP);
-            serviceDescription.Namespaces.Add(PrefixConstants.SOAP_ENV, NamespaceConstants.SOAP_ENV);
-            serviceDescription.Namespaces.Add(PrefixConstants.WSDL, NamespaceConstants.WSDL);
-            serviceDescription.Namespaces.Add(PrefixConstants.XMIME, NamespaceConstants.XMIME);
-            serviceDescription.Namespaces.Add(PrefixConstants.XSD, NamespaceConstants.XSD);
+            foreach (var tuple in getGlobalNamespaces())
+                serviceDescription.Namespaces.Add(tuple.Item1, tuple.Item2);
             serviceDescription.Namespaces.Add("", protocol.ProducerNamespace);
         }
 

@@ -23,7 +23,7 @@ namespace XRoadLib.Headers
             createTuple("producer", x => x.Producer, stringTypeName),
             createTuple("userId", x => x.UserId, stringTypeName),
             createTuple("issue", x => x.Issue, stringTypeName),
-            createTuple("service", x => x.Service, stringTypeName),
+            createTuple("service", x => ((IXRoadHeader31)x).Service, stringTypeName),
             createTuple("id", x => x.Id, stringTypeName),
             createTuple("unit", x => x.Unit, stringTypeName),
             createTuple("position", x => x.Position, stringTypeName),
@@ -260,7 +260,7 @@ namespace XRoadLib.Headers
             {
                 var value = m.Item2(this);
                 if (definition.RequiredHeaders.Contains(m.Item1) || value != null)
-                    style.WriteHeaderElement(writer, m.Item1, value, m.Item3);
+                    style.WriteHeaderElement(writer, m.Item1, NamespaceConstants.XROAD, value, m.Item3);
             }
         }
     }
