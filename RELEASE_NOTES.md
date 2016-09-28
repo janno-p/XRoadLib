@@ -1,4 +1,4 @@
-#### 1.0.0-beta032 - Unreleased
+#### 1.0.0-beta032 - 28.09.2016
 * Refactor all customizations to ISchemaExporter.
 
 #### 1.0.0-beta031 - 23.09.2016
