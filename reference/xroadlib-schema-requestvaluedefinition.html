@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Schema</span><br />
 </p>
 <div class="xmldoc">
+<p>Specification for individual X-Road message request part.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,15 +52,17 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '363', 363)" onmouseover="showTip(event, '363', 363)">
-            new(...)
+          <code onmouseout="hideTip(event, '402', 402)" onmouseover="showTip(event, '402', 402)">
+            new(declaringOperationDefinition)
           </code>
-          <div class="tip" id="363">
-            <strong>Signature:</strong> (parameterInfo:ParameterInfo * declaringOperationDefinition:OperationDefinition) -&gt; unit<br />
+          <div class="tip" id="402">
+            <strong>Signature:</strong> declaringOperationDefinition:OperationDefinition -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Initializes new request definition object.</p>
+
+
         </td>
       </tr>
     </tbody>
@@ -72,59 +76,83 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '364', 364)" onmouseover="showTip(event, '364', 364)">
+          <code onmouseout="hideTip(event, '403', 403)" onmouseover="showTip(event, '403', 403)">
             DeclaringOperationDefinition
           </code>
-          <div class="tip" id="364">
+          <div class="tip" id="403">
             <strong>Signature:</strong> OperationDefinition<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Operation which uses this request part in its input.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '365', 365)" onmouseover="showTip(event, '365', 365)">
+          <code onmouseout="hideTip(event, '404', 404)" onmouseover="showTip(event, '404', 404)">
             ParameterInfo
           </code>
-          <div class="tip" id="365">
+          <div class="tip" id="404">
             <strong>Signature:</strong> ParameterInfo<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Runtime parameter info of request object.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '366', 366)" onmouseover="showTip(event, '366', 366)">
+          <code onmouseout="hideTip(event, '405', 405)" onmouseover="showTip(event, '405', 405)">
+            RequestElementName()
+          </code>
+          <div class="tip" id="405">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Serialized element name of this request object.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '406', 406)" onmouseover="showTip(event, '406', 406)">
             RuntimeName
           </code>
-          <div class="tip" id="366">
+          <div class="tip" id="406">
             <strong>Signature:</strong> string<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Runtime name to identify this definition object.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '367', 367)" onmouseover="showTip(event, '367', 367)">
+          <code onmouseout="hideTip(event, '407', 407)" onmouseover="showTip(event, '407', 407)">
             ToString()
           </code>
-          <div class="tip" id="367">
+          <div class="tip" id="407">
             <strong>Signature:</strong> unit -&gt; string<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Detailed string presentation of the request object.</p>
+
+
         </td>
       </tr>
     </tbody>

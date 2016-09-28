@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib</span><br />
 </p>
 <div class="xmldoc">
+<p>X-Road request object which wraps single X-Road web request.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,15 +52,18 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
-            new(uri, protocol)
+          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
+            new(uri, protocol, requestNamespace)
           </code>
-          <div class="tip" id="19">
-            <strong>Signature:</strong> (uri:Uri * protocol:XRoadProtocol) -&gt; unit<br />
+          <div class="tip" id="59">
+            <strong>Signature:</strong> (uri:Uri * protocol:IXRoadProtocol * requestNamespace:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Initialize new request object.
+Network location of the adapter or X-Road server.X-Road message protocol version.Overrides default producer namespace for operation payload element.</p>
+
+
         </td>
       </tr>
     </tbody>
@@ -72,16 +77,105 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
-            Execute(...)
+          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+            BeforeDeserialize
           </code>
-          <div class="tip" id="20">
-            <strong>Signature:</strong> (arg:obj * xRoadHeader:IXRoadHeader * requestNamespace:string) -&gt; &#39;T<br />
+          <div class="tip" id="60">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;XRoadResponseEventArgs&gt;,XRoadResponseEventArgs&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Event is called before deserializing WebResponse content which allows to
+customize response options.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
+            BeforeRequest
+          </code>
+          <div class="tip" id="61">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;XRoadRequestEventArgs&gt;,XRoadRequestEventArgs&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Event is called before invoking WebRequest which allows to
+customize request options.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
+            Execute(arg, xRoadHeader, serviceMap)
+          </code>
+          <div class="tip" id="62">
+            <strong>Signature:</strong> (arg:obj * xRoadHeader:IXRoadHeader * serviceMap:IServiceMap) -&gt; &#39;T<br />
               <strong>Modifiers:</strong> abstract<br />
                           <strong>Type parameters:</strong> 'T          </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Executes specified X-Road operations with given arguments.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
+            Protocol
+          </code>
+          <div class="tip" id="63">
+            <strong>Signature:</strong> IXRoadProtocol<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Provides access to underlying protocol instance.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+            RequestNamespace
+          </code>
+          <div class="tip" id="64">
+            <strong>Signature:</strong> string<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Provides access to underlying request namespace.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+            Uri
+          </code>
+          <div class="tip" id="65">
+            <strong>Signature:</strong> Uri<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Provides access to underlying request uri.</p>
+
+
         </td>
       </tr>
     </tbody>

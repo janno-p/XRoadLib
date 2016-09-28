@@ -40,6 +40,9 @@
   <span>Namespace: XRoadLib.Schema</span><br />
 </p>
 <div class="xmldoc">
+<p>Provides configuration hooks for customizing contract serialization
+and definitions.</p>
+
 </div>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
@@ -50,76 +53,206 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '340', 340)" onmouseover="showTip(event, '340', 340)">
+          <code onmouseout="hideTip(event, '365', 365)" onmouseover="showTip(event, '365', 365)">
+            ExportFaultDefinition(faultDefinition)
+          </code>
+          <div class="tip" id="365">
+            <strong>Signature:</strong> faultDefinition:FaultDefinition -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Configuration hook for overriding default non-technical fault settings.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '366', 366)" onmouseover="showTip(event, '366', 366)">
+            ExportHeaderDefinition(headerDefinition)
+          </code>
+          <div class="tip" id="366">
+            <strong>Signature:</strong> headerDefinition:HeaderDefinition -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Customize X-Road message header elements.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '367', 367)" onmouseover="showTip(event, '367', 367)">
             ExportOperationDefinition(...)
           </code>
-          <div class="tip" id="340">
+          <div class="tip" id="367">
             <strong>Signature:</strong> operationDefinition:OperationDefinition -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Configuration hook for overriding default operation settings.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '341', 341)" onmouseover="showTip(event, '341', 341)">
+          <code onmouseout="hideTip(event, '368', 368)" onmouseover="showTip(event, '368', 368)">
             ExportPropertyDefinition(...)
           </code>
-          <div class="tip" id="341">
+          <div class="tip" id="368">
             <strong>Signature:</strong> propertyDefinition:PropertyDefinition -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Configuration hook for overriding default property settings.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '342', 342)" onmouseover="showTip(event, '342', 342)">
+          <code onmouseout="hideTip(event, '369', 369)" onmouseover="showTip(event, '369', 369)">
+            ExportProtocolDefinition(...)
+          </code>
+          <div class="tip" id="369">
+            <strong>Signature:</strong> protocolDefinition:ProtocolDefinition -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Configure protocol global settings.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '370', 370)" onmouseover="showTip(event, '370', 370)">
             ExportRequestValueDefinition(...)
           </code>
-          <div class="tip" id="342">
+          <div class="tip" id="370">
             <strong>Signature:</strong> requestValueDefinition:RequestValueDefinition -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Configuration hook for overriding default request element settings.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '343', 343)" onmouseover="showTip(event, '343', 343)">
+          <code onmouseout="hideTip(event, '371', 371)" onmouseover="showTip(event, '371', 371)">
             ExportResponseValueDefinition(...)
           </code>
-          <div class="tip" id="343">
+          <div class="tip" id="371">
             <strong>Signature:</strong> responseValueDefinition:ResponseValueDefinition -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Configuration hook for overriding default response element settings.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '344', 344)" onmouseover="showTip(event, '344', 344)">
+          <code onmouseout="hideTip(event, '372', 372)" onmouseover="showTip(event, '372', 372)">
+            ExportSchemaLocation(namespaceName)
+          </code>
+          <div class="tip" id="372">
+            <strong>Signature:</strong> namespaceName:string -&gt; string<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Provide custom schema locations.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '373', 373)" onmouseover="showTip(event, '373', 373)">
+            ExportServiceDescription(...)
+          </code>
+          <div class="tip" id="373">
+            <strong>Signature:</strong> serviceDescription:ServiceDescription -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Allows each message protocol implementation to customize service description document
+before publishing.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '374', 374)" onmouseover="showTip(event, '374', 374)">
             ExportTypeDefinition(typeDefinition)
           </code>
-          <div class="tip" id="344">
+          <div class="tip" id="374">
             <strong>Signature:</strong> typeDefinition:TypeDefinition -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Configuration hook for overriding default type settings.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '375', 375)" onmouseover="showTip(event, '375', 375)">
+            XRoadNamespace
+          </code>
+          <div class="tip" id="375">
+            <strong>Signature:</strong> string<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>X-Road specification namespace of the message protocol version.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '376', 376)" onmouseover="showTip(event, '376', 376)">
+            XRoadPrefix
+          </code>
+          <div class="tip" id="376">
+            <strong>Signature:</strong> string<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Preferred X-Road namespace prefix of the message protocol version.</p>
+
+
         </td>
       </tr>
     </tbody>

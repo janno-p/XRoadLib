@@ -40,6 +40,9 @@
   <span>Namespace: XRoadLib</span><br />
 </p>
 <div class="xmldoc">
+<p>Extracts contract information from given assembly and presents it as
+service description XML document.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,15 +53,18 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
+          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
             new(...)
           </code>
-          <div class="tip" id="1">
-            <strong>Signature:</strong> (contractAssembly:Assembly * protocol:XRoadProtocol * version:Nullable&lt;uint32&gt; * environmentProducerName:string) -&gt; unit<br />
+          <div class="tip" id="18">
+            <strong>Signature:</strong> (protocol:IXRoadProtocol * schemaDefinitionProvider:SchemaDefinitionProvider * version:Nullable&lt;uint32&gt;) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Initialize builder with contract details.
+X-Road protocol to use when generating service description.Provides overrides for default presentation format.Global version for service description (when versioning entire schema and operations using same version number).</p>
+
+
         </td>
       </tr>
     </tbody>
@@ -72,57 +78,17 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
-            AddHeader(expression)
-          </code>
-          <div class="tip" id="2">
-            <strong>Signature:</strong> expression:Expression&lt;Func&lt;IXRoadHeader,&#39;T&gt;&gt; -&gt; unit<br />
-                          <strong>Type parameters:</strong> 'T          </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
             SaveTo(stream)
           </code>
-          <div class="tip" id="3">
+          <div class="tip" id="19">
             <strong>Signature:</strong> stream:Stream -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
+          <p>Outputs service description to specified stream.</p>
 
-          <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
-            set_HeaderMessage(value)
-          </code>
-          <div class="tip" id="4">
-            <strong>Signature:</strong> value:string -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
 
-          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
-            set_Location(value)
-          </code>
-          <div class="tip" id="5">
-            <strong>Signature:</strong> value:string -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
         </td>
       </tr>
     </tbody>

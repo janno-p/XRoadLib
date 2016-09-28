@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Extensions</span><br />
 </p>
 <div class="xmldoc">
+<p>Extension methods for XRoadMessage class.</p>
+
 </div>
   <h3>Static members</h3>
   <table class="table table-bordered member-list">
@@ -50,29 +52,18 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+          <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
             DeserializeMessageContent(...)
           </code>
-          <div class="tip" id="60">
-            <strong>Signature:</strong> (message:XRoadMessage * operationName:string) -&gt; obj<br />
+          <div class="tip" id="116">
+            <strong>Signature:</strong> (message:XRoadMessage * serviceMap:IServiceMap) -&gt; obj<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
+          <p>Deserializes X-Road message response or throws XRoadFaultException when
+X-Road fault is parsed from the message instead of expected result value.</p>
 
-          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
-            DeserializeXRoadFault(message)
-          </code>
-          <div class="tip" id="61">
-            <strong>Signature:</strong> message:XRoadMessage -&gt; IXRoadFault<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
+
         </td>
       </tr>
     </tbody>

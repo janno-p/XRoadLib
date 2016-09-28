@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Serialization.Mapping</span><br />
 </p>
 <div class="xmldoc">
+<p>Provides serialization/deserialization interface for X-Road operations.</p>
+
 </div>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
@@ -50,91 +52,120 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '521', 521)" onmouseover="showTip(event, '521', 521)">
-            Definition
+          <code onmouseout="hideTip(event, '594', 594)" onmouseover="showTip(event, '594', 594)">
+            DeserializeRequest(reader, message)
           </code>
-          <div class="tip" id="521">
+          <div class="tip" id="594">
+            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Deserializes X-Road message protocol requests according to operation definitions.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '595', 595)" onmouseover="showTip(event, '595', 595)">
+            DeserializeResponse(reader, message)
+          </code>
+          <div class="tip" id="595">
+            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Deserializes X-Road message protocol responses according to operation definitions.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '596', 596)" onmouseover="showTip(event, '596', 596)">
+            OperationDefinition
+          </code>
+          <div class="tip" id="596">
             <strong>Signature:</strong> OperationDefinition<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Configuration settings of the operation that the ServiceMap implements.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '522', 522)" onmouseover="showTip(event, '522', 522)">
-            DeserializeRequest(reader, message)
+          <code onmouseout="hideTip(event, '597', 597)" onmouseover="showTip(event, '597', 597)">
+            RequestValueDefinition
           </code>
-          <div class="tip" id="522">
-            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
+          <div class="tip" id="597">
+            <strong>Signature:</strong> RequestValueDefinition<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Response element specification of the X-Road operation.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '523', 523)" onmouseover="showTip(event, '523', 523)">
-            DeserializeResponse(reader, message)
+          <code onmouseout="hideTip(event, '598', 598)" onmouseover="showTip(event, '598', 598)">
+            ResponseValueDefinition
           </code>
-          <div class="tip" id="523">
-            <strong>Signature:</strong> (reader:XmlReader * message:XRoadMessage) -&gt; obj<br />
+          <div class="tip" id="598">
+            <strong>Signature:</strong> ResponseValueDefinition<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Response element specification of the X-Road operation.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '524', 524)" onmouseover="showTip(event, '524', 524)">
-            HasParameters
-          </code>
-          <div class="tip" id="524">
-            <strong>Signature:</strong> bool<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '525', 525)" onmouseover="showTip(event, '525', 525)">
+          <code onmouseout="hideTip(event, '599', 599)" onmouseover="showTip(event, '599', 599)">
             SerializeRequest(...)
           </code>
-          <div class="tip" id="525">
+          <div class="tip" id="599">
             <strong>Signature:</strong> (writer:XmlWriter * value:obj * message:XRoadMessage * requestNamespace:string) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Serializes X-Road message protocol requests according to operation definitions.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '526', 526)" onmouseover="showTip(event, '526', 526)">
+          <code onmouseout="hideTip(event, '600', 600)" onmouseover="showTip(event, '600', 600)">
             SerializeResponse(...)
           </code>
-          <div class="tip" id="526">
+          <div class="tip" id="600">
             <strong>Signature:</strong> (writer:XmlWriter * value:obj * message:XRoadMessage * requestReader:XmlReader * customSerialization:ICustomSerialization) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Serializes X-Road message protocol responses according to operation definitions.</p>
+
+
         </td>
       </tr>
     </tbody>

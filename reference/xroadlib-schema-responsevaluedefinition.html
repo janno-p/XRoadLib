@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Schema</span><br />
 </p>
 <div class="xmldoc">
+<p>Configuration options for customizing response elements.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,15 +52,18 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '368', 368)" onmouseover="showTip(event, '368', 368)">
+          <code onmouseout="hideTip(event, '408', 408)" onmouseover="showTip(event, '408', 408)">
             new(declaringOperationDefinition)
           </code>
-          <div class="tip" id="368">
+          <div class="tip" id="408">
             <strong>Signature:</strong> declaringOperationDefinition:OperationDefinition -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Initializes new response definition using default values extracted from
+operation definition entity.</p>
+
+
         </td>
       </tr>
     </tbody>
@@ -72,73 +77,147 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '369', 369)" onmouseover="showTip(event, '369', 369)">
+          <code onmouseout="hideTip(event, '409', 409)" onmouseover="showTip(event, '409', 409)">
+            ContainsNonTechnicalFault()
+          </code>
+          <div class="tip" id="409">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Should technical fault fields be returned inside response element.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '410', 410)" onmouseover="showTip(event, '410', 410)">
             DeclaringOperationDefinition
           </code>
-          <div class="tip" id="369">
+          <div class="tip" id="410">
             <strong>Signature:</strong> OperationDefinition<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Operation definition to which this response element definition belongs to.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '370', 370)" onmouseover="showTip(event, '370', 370)">
+          <code onmouseout="hideTip(event, '411', 411)" onmouseover="showTip(event, '411', 411)">
+            FaultName()
+          </code>
+          <div class="tip" id="411">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Fault element name for response element.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '412', 412)" onmouseover="showTip(event, '412', 412)">
             ParameterInfo
           </code>
-          <div class="tip" id="370">
+          <div class="tip" id="412">
             <strong>Signature:</strong> ParameterInfo<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Runtime return parameter of the method which implements the operation.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '371', 371)" onmouseover="showTip(event, '371', 371)">
+          <code onmouseout="hideTip(event, '413', 413)" onmouseover="showTip(event, '413', 413)">
+            RequestElementName()
+          </code>
+          <div class="tip" id="413">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Request element name in response message.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '414', 414)" onmouseover="showTip(event, '414', 414)">
+            ResponseElementName()
+          </code>
+          <div class="tip" id="414">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Response element name in response message.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '415', 415)" onmouseover="showTip(event, '415', 415)">
             RuntimeName
           </code>
-          <div class="tip" id="371">
+          <div class="tip" id="415">
             <strong>Signature:</strong> string<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Name of runtime parameter this response value represents.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '372', 372)" onmouseover="showTip(event, '372', 372)">
+          <code onmouseout="hideTip(event, '416', 416)" onmouseover="showTip(event, '416', 416)">
             ToString()
           </code>
-          <div class="tip" id="372">
+          <div class="tip" id="416">
             <strong>Signature:</strong> unit -&gt; string<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>User-friendly display format for response element.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '373', 373)" onmouseover="showTip(event, '373', 373)">
+          <code onmouseout="hideTip(event, '417', 417)" onmouseover="showTip(event, '417', 417)">
             XRoadFaultPresentation()
           </code>
-          <div class="tip" id="373">
+          <div class="tip" id="417">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Describes the appearance of fault elements in service description.</p>
+
+
         </td>
       </tr>
     </tbody>

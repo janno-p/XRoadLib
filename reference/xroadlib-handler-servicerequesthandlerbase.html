@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Handler</span><br />
 </p>
 <div class="xmldoc">
+<p>Base class of service request handlers.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,15 +52,17 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
+          <code onmouseout="hideTip(event, '146', 146)" onmouseover="showTip(event, '146', 146)">
             new(supportedProtocols)
           </code>
-          <div class="tip" id="86">
-            <strong>Signature:</strong> supportedProtocols:IEnumerable&lt;XRoadProtocol&gt; -&gt; unit<br />
+          <div class="tip" id="146">
+            <strong>Signature:</strong> supportedProtocols:IEnumerable&lt;IXRoadProtocol&gt; -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Initialize new service request handler with protocols it can handle.</p>
+
+
         </td>
       </tr>
     </tbody>
@@ -72,29 +76,33 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '87', 87)" onmouseover="showTip(event, '87', 87)">
+          <code onmouseout="hideTip(event, '147', 147)" onmouseover="showTip(event, '147', 147)">
             CustomSerialization()
           </code>
-          <div class="tip" id="87">
+          <div class="tip" id="147">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Serialization overrrides.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '88', 88)" onmouseover="showTip(event, '88', 88)">
+          <code onmouseout="hideTip(event, '148', 148)" onmouseover="showTip(event, '148', 148)">
             StoragePath()
           </code>
-          <div class="tip" id="88">
+          <div class="tip" id="148">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Temporary file storage location.</p>
+
+
         </td>
       </tr>
     </tbody>

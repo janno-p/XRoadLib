@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Extensions</span><br />
 </p>
 <div class="xmldoc">
+<p>Extension methods for XmlReader class.</p>
+
 </div>
   <h3>Static members</h3>
   <table class="table table-bordered member-list">
@@ -50,155 +52,177 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
+          <code onmouseout="hideTip(event, '121', 121)" onmouseover="showTip(event, '121', 121)">
             ConsumeNilElement(reader, isNil)
           </code>
-          <div class="tip" id="63">
+          <div class="tip" id="121">
             <strong>Signature:</strong> (reader:XmlReader * isNil:bool) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Reposition XML reader to the next element if it's currently at nil element.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+          <code onmouseout="hideTip(event, '122', 122)" onmouseover="showTip(event, '122', 122)">
             ConsumeUnusedElement(reader)
           </code>
-          <div class="tip" id="64">
+          <div class="tip" id="122">
             <strong>Signature:</strong> reader:XmlReader -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Reposition reader at location where next Read() call will navigate to next node.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+          <code onmouseout="hideTip(event, '123', 123)" onmouseover="showTip(event, '123', 123)">
             GetXName(reader)
           </code>
-          <div class="tip" id="65">
+          <div class="tip" id="123">
             <strong>Signature:</strong> reader:XmlReader -&gt; XName<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Get current reader node name as XName.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+          <code onmouseout="hideTip(event, '124', 124)" onmouseover="showTip(event, '124', 124)">
             IsCurrentElement(...)
           </code>
-          <div class="tip" id="66">
+          <div class="tip" id="124">
             <strong>Signature:</strong> (reader:XmlReader * depth:int * name:string * namespace:string) -&gt; bool<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Check if XML reader is currently positioned at the specified element.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
             IsHeaderNamespace(reader)
           </code>
-          <div class="tip" id="67">
+          <div class="tip" id="125">
             <strong>Signature:</strong> reader:XmlReader -&gt; bool<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Check if current XML reader node is defined in one of the X-Road schema namespaces.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
             IsNilElement(reader)
           </code>
-          <div class="tip" id="68">
+          <div class="tip" id="126">
             <strong>Signature:</strong> reader:XmlReader -&gt; bool<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Test if current element is marked as nil with xsi attribute.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
+          <code onmouseout="hideTip(event, '127', 127)" onmouseover="showTip(event, '127', 127)">
             MoveToBody(reader)
           </code>
-          <div class="tip" id="69">
+          <div class="tip" id="127">
             <strong>Signature:</strong> reader:XmlReader -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Fast-forward XML reader position to SOAP Body element.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
+          <code onmouseout="hideTip(event, '128', 128)" onmouseover="showTip(event, '128', 128)">
             MoveToElement(...)
           </code>
-          <div class="tip" id="70">
+          <div class="tip" id="128">
             <strong>Signature:</strong> (reader:XmlReader * depth:int * name:string * namespace:string) -&gt; bool<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Move XML reader current position to next element which matches the given arguments.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
+          <code onmouseout="hideTip(event, '129', 129)" onmouseover="showTip(event, '129', 129)">
             MoveToPayload(reader, rootElementName)
           </code>
-          <div class="tip" id="71">
+          <div class="tip" id="129">
             <strong>Signature:</strong> (reader:XmlReader * rootElementName:XName) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Fast-forward XML reader position to payload element.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
-            ReadToElement(reader, localName)
-          </code>
-          <div class="tip" id="72">
-            <strong>Signature:</strong> (reader:XmlReader * localName:string) -&gt; bool<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
+          <code onmouseout="hideTip(event, '130', 130)" onmouseover="showTip(event, '130', 130)">
             ReadToEndElement(reader)
           </code>
-          <div class="tip" id="73">
+          <div class="tip" id="130">
             <strong>Signature:</strong> reader:XmlReader -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Reposition XML reader to matching end element of the current element.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '131', 131)" onmouseover="showTip(event, '131', 131)">
+            ReadXRoadFault(reader, depth)
+          </code>
+          <div class="tip" id="131">
+            <strong>Signature:</strong> (reader:XmlReader * depth:int) -&gt; IXRoadFault<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Deserialize current node as XRoadFault entity.</p>
+
+
         </td>
       </tr>
     </tbody>
