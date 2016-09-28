@@ -43,10 +43,10 @@ namespace XRoadLib.Schema
         {
             base.ExportHeaderDefinition(headerDefinition);
 
-            headerDefinition.Use(() => new XRoadHeader31(headerDefinition, new DocLiteralStyle()))
+            headerDefinition.Use<XRoadHeader31>()
                             .WithRequiredHeader(x => x.Consumer)
                             .WithRequiredHeader(x => x.Producer)
-                            .WithRequiredHeader(x => ((IXRoadHeader31)x).Service)
+                            .WithRequiredHeader(x => x.ServiceName)
                             .WithRequiredHeader(x => x.UserId)
                             .WithRequiredHeader(x => x.Id)
                             .WithRequiredHeader(x => x.UserName)

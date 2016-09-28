@@ -35,7 +35,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Create new instance of header object.
         /// </summary>
-        public Func<IXRoadHeader> Initializer { get; private set; }
+        public Func<IXRoadHeader> CreateInstance { get; private set; }
 
         /// <summary>
         /// Names of SOAP header elements required by service description.
@@ -50,10 +50,9 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Define custom header type for X-Road messages.
         /// </summary>
-        public IHeaderDefinitionBuilder<THeader> Use<THeader>(Func<THeader> initializer) where THeader : IXRoadHeader
+        public IHeaderDefinitionBuilder<THeader> Use<THeader>() where THeader : IXRoadHeader, new()
         {
-            Initializer = () => initializer();
-
+            CreateInstance = () => new THeader();
             return new HeaderDefinitionBuilder<THeader>(this);
         }
 

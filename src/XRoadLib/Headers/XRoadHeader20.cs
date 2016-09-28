@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Schema;
-using XRoadLib.Styles;
 
 namespace XRoadLib.Headers
 {
@@ -13,53 +10,28 @@ namespace XRoadLib.Headers
     /// </summary>
     public class XRoadHeader20 : IXRoadHeader, IXRoadHeader20
     {
-        private static readonly XName stringTypeName = XName.Get("string", NamespaceConstants.XSD);
-        private static readonly XName booleanTypeName = XName.Get("boolean", NamespaceConstants.XSD);
-        private static readonly XName base64TypeName = XName.Get("base64", NamespaceConstants.XSD);
-        private static readonly Func<string, Func<XRoadHeader20, object>, XName, Tuple<string, Func<XRoadHeader20, object>, XName>> createTuple = (a, b, c) => new Tuple<string, Func<XRoadHeader20, object>, XName>(a, b, c);
-        private static readonly ICollection<Tuple<string, Func<XRoadHeader20, object>, XName>> elementMappings = new []
-        {
-            createTuple("asutus", x => x.Asutus, stringTypeName),
-            createTuple("andmekogu", x => x.Andmekogu, stringTypeName),
-            createTuple("isikukood", x => x.Isikukood, stringTypeName),
-            createTuple("toimik", x => x.Toimik, stringTypeName),
-            createTuple("nimi", x => x.Nimi, stringTypeName),
-            createTuple("ametnik", x => x.Ametnik, stringTypeName),
-            createTuple("id", x => x.Id, stringTypeName),
-            createTuple("allasutus", x => x.Allasutus, stringTypeName),
-            createTuple("amet", x => x.Amet, stringTypeName),
-            createTuple("ametniknimi", x => x.AmetnikNimi, stringTypeName),
-            createTuple("asynkroonne", x => x.Asünkroonne, booleanTypeName),
-            createTuple("autentija", x => x.Autentija, stringTypeName),
-            createTuple("makstud", x => x.Makstud, stringTypeName),
-            createTuple("salastada", x => x.Salastada, stringTypeName),
-            createTuple("salastada_sertifikaadiga", x => x.SalastadaSertifikaadiga, base64TypeName),
-            createTuple("salastatud", x => x.Salastatud, stringTypeName),
-            createTuple("salastatud_sertifikaadiga", x => x.SalastatudSertifikaadiga, stringTypeName)
-        };
-
-        private readonly HeaderDefinition definition;
-        private readonly Style style;
+        private readonly XRoadClientIdentifier client = new XRoadClientIdentifier();
+        private readonly XRoadServiceIdentifier service = new XRoadServiceIdentifier();
 
         /// <summary>
         /// Identifies X-Road client.
         /// </summary>
-        public XRoadClientIdentifier Client { get; set; }
+        XRoadClientIdentifier IXRoadHeader.Client => client;
 
         /// <summary>
         /// Identifies X-Road operation.
         /// </summary>
-        public XRoadServiceIdentifier Service { get; set; }
+        XRoadServiceIdentifier IXRoadHeader.Service => service;
 
         /// <summary>
         /// Identifies user who sent X-Road message.
         /// </summary>
-        public string UserId { get; set; }
+        string IXRoadHeader.UserId => Isikukood;
 
         /// <summary>
         /// Operation specific identifier for the X-Road message.
         /// </summary>
-        public string Issue { get; set; }
+        string IXRoadHeader.Issue => Toimik;
 
         /// <summary>
         /// Protocol version of the X-Road message.
@@ -69,58 +41,67 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Asutuse DNS-nimi.
         /// </summary>
-        public string Asutus => Client.MemberCode;
+        public virtual string Asutus { get { return client.MemberCode; } set { client.MemberCode = value; } }
 
         /// <summary>
         /// Andmekogu DNS-nimi.
         /// </summary>
-        public string Andmekogu => Service?.SubsystemCode;
+        public virtual string Andmekogu { get { return service.SubsystemCode; } set { service.SubsystemCode = value; } }
 
         /// <summary>
         /// Teenuse kasutaja isikukood, millele eelneb kahekohaline maa kood.
         /// Nt. EE37702026518.
         /// </summary>
-        public string Isikukood => UserId;
+        public virtual string Isikukood { get; set; }
 
         /// <summary>
         /// Teenuse väljakutsega seonduva toimiku number (mittekohustuslik)
         /// </summary>
-        public string Toimik => Issue;
+        public virtual string Toimik { get; set; }
 
         /// <summary>
         /// Kutsutava teenuse nimi.
         /// </summary>
-        public string Nimi => Service?.ToFullName();
+        public virtual string Nimi
+        {
+            get { return service.ToFullName(); }
+            set
+            {
+                var serviceValue = XRoadServiceIdentifier.FromString(value);
+                service.ServiceCode = serviceValue.ServiceCode;
+                service.ServiceVersion = serviceValue.ServiceVersion;
+            }
+        }
 
         /// <summary>
         /// Unique id for the X-Road message.
         /// </summary>
-        public string Id { get; set; }
+        public virtual string Id { get; set; }
 
         /// <summary>
         /// Teenuse kasutaja Eesti isikukood.
         /// </summary>
-        public string Ametnik { get; set; }
+        public virtual string Ametnik { get; set; }
 
         /// <summary>
         /// Asutuse registrikood, mille nimel teenust kasutatakse (kasutusel juriidilise isiku portaalis).
         /// </summary>
-        public string Allasutus { get; set; }
+        public virtual string Allasutus { get; set; }
 
         /// <summary>
         /// Teenuse kasutaja ametikoht.
         /// </summary>
-        public string Amet { get; set; }
+        public virtual string Amet { get; set; }
 
         /// <summary>
         /// Teenuse kasutaja nimi.
         /// </summary>
-        public string AmetnikNimi { get; set; }
+        public virtual string AmetnikNimi { get; set; }
 
         /// <summary>
         /// Teenuse kasutamise asünkroonsus.Kui väärtus on "true", siis sooritab turvaserver päringu asünkroonselt.
         /// </summary>
-        public bool? Asünkroonne { get; set; }
+        public virtual bool? Asünkroonne { get; set; }
 
         /// <summary>
         /// Teenuse kasutaja autentimise viis.Võimalikud variandid on:
@@ -130,52 +111,43 @@ namespace XRoadLib.Headers
         /// • PAROOL – kasutajatunnuse ja parooliga autenditud.
         /// Autentimise viisi järel võib sulgudes olla täpsustus (näiteks panga kaudu autentimisel panga tunnus infosüsteemis).
         /// </summary>
-        public string Autentija { get; set; }
+        public virtual string Autentija { get; set; }
 
         /// <summary>
         /// Teenuse kasutamise eest makstud summa.
         /// </summary>
-        public string Makstud { get; set; }
+        public virtual string Makstud { get; set; }
 
         /// <summary>
         /// Kui asutusele on X-tee keskuse poolt antud päringute salastamise õigus ja andmekogu on nõus päringut
         /// salastama, siis selle elemendi olemasolul päringu päises andmekogu turvaserver krüpteerib päringu logi,
         /// kasutades selleks X-tee keskuse salastusvõtit.
         /// </summary>
-        public string Salastada { get; set; }
+        public virtual string Salastada { get; set; }
 
         /// <summary>
         /// Päringu sooritaja ID-kaardi autentimissertifikaat DER-kujul base64 kodeerituna. Selle elemendi olemasolu
         /// päringu päises väljendab soovi päringu logi salastamiseks asutuse turvaserveris päringu sooritaja ID-kaardi
         /// autentimisvõtmega. Seda välja kasutatakse ainult kodaniku päringute portaalis.
         /// </summary>
-        public string SalastadaSertifikaadiga { get; set; }
+        public virtual string SalastadaSertifikaadiga { get; set; }
 
         /// <summary>
         /// Kui päringu välja päises oli element salastada ja päringulogi salastamine õnnestus, siis vastuse päisesse
         /// lisatakse tühi element salastatud.
         /// </summary>
-        public string Salastatud { get; set; }
+        public virtual string Salastatud { get; set; }
 
         /// <summary>
         /// Kui päringu päises oli element salastada_sertifikaadiga ja päringulogi salastamine õnnestus, siis vastuse päisesesse
         /// lisatakse tühi element salastatud_sertifikaadiga.
         /// </summary>
-        public string SalastatudSertifikaadiga { get; set; }
-
-        /// <summary>
-        /// Initialize new X-Road message protocol version 2.0 header object.
-        /// </summary>
-        public XRoadHeader20(HeaderDefinition definition, Style style)
-        {
-            this.definition = definition;
-            this.style = style;
-        }
+        public virtual string SalastatudSertifikaadiga { get; set; }
 
         /// <summary>
         /// Try to read current position in XML reader as X-Road header element.
         /// </summary>
-        public void ReadHeaderValue(XmlReader reader)
+        public virtual void ReadHeaderValue(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.XTEE)
             {
@@ -198,15 +170,11 @@ namespace XRoadLib.Headers
                         return;
 
                     case "toimik":
-                        Issue = reader.ReadElementContentAsString();
+                        Toimik = reader.ReadElementContentAsString();
                         return;
 
                     case "nimi":
-                        var service = XRoadServiceIdentifier.FromString(reader.ReadElementContentAsString());
-                        if (Service == null)
-                            Service = new XRoadServiceIdentifier();
-                        Service.ServiceCode = service.ServiceCode;
-                        Service.ServiceVersion = service.ServiceVersion;
+                        Nimi = reader.ReadElementContentAsString();
                         return;
 
                     case "id":
@@ -214,19 +182,15 @@ namespace XRoadLib.Headers
                         return;
 
                     case "isikukood":
-                        UserId = reader.ReadElementContentAsString();
+                        Isikukood = reader.ReadElementContentAsString();
                         return;
 
                     case "andmekogu":
-                        if (Service == null)
-                            Service = new XRoadServiceIdentifier();
-                        Service.SubsystemCode = reader.ReadElementContentAsString();
+                        Andmekogu = reader.ReadElementContentAsString();
                         return;
 
                     case "asutus":
-                        if (Client == null)
-                            Client = new XRoadClientIdentifier();
-                        Client.MemberCode = reader.ReadElementContentAsString();
+                        Asutus = reader.ReadElementContentAsString();
                         return;
 
                     case "ametnik":
@@ -266,23 +230,41 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Check if all required SOAP headers are present and in correct format.
         /// </summary>
-        public void Validate()
+        public virtual void Validate()
         { }
 
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.
         /// </summary>
-        public void WriteTo(XmlWriter writer)
+        public virtual void WriteTo(XmlWriter writer, IXRoadProtocol protocol)
         {
             if (writer.LookupPrefix(NamespaceConstants.XTEE) == null)
                 writer.WriteAttributeString("xmlns", PrefixConstants.XTEE, NamespaceConstants.XMLNS, NamespaceConstants.XTEE);
 
-            foreach (var m in elementMappings)
+            Action<string, object, XName> writeHeaderValue = (elementName, value, typeName) =>
             {
-                var value = m.Item2(this);
-                if (definition.RequiredHeaders.Contains(m.Item1) || value != null)
-                    style.WriteHeaderElement(writer, m.Item1, NamespaceConstants.XTEE, value, m.Item3);
-            }
+                var name = XName.Get(elementName, NamespaceConstants.XTEE);
+                if (protocol.HeaderDefinition.RequiredHeaders.Contains(name) || value != null)
+                    protocol.Style.WriteHeaderElement(writer, name, value, typeName);
+            };
+
+            writeHeaderValue("asutus", Asutus, XmlTypeConstants.String);
+            writeHeaderValue("andmekogu", Andmekogu, XmlTypeConstants.String);
+            writeHeaderValue("isikukood", Isikukood, XmlTypeConstants.String);
+            writeHeaderValue("toimik", Toimik, XmlTypeConstants.String);
+            writeHeaderValue("nimi", Nimi, XmlTypeConstants.String);
+            writeHeaderValue("ametnik", Ametnik, XmlTypeConstants.String);
+            writeHeaderValue("id", Id, XmlTypeConstants.String);
+            writeHeaderValue("allasutus", Allasutus, XmlTypeConstants.String);
+            writeHeaderValue("amet", Amet, XmlTypeConstants.String);
+            writeHeaderValue("ametniknimi", AmetnikNimi, XmlTypeConstants.String);
+            writeHeaderValue("asynkroonne", Asünkroonne, XmlTypeConstants.Boolean);
+            writeHeaderValue("autentija", Autentija, XmlTypeConstants.String);
+            writeHeaderValue("makstud", Makstud, XmlTypeConstants.String);
+            writeHeaderValue("salastada", Salastada, XmlTypeConstants.String);
+            writeHeaderValue("salastada_sertifikaadiga", SalastadaSertifikaadiga, XmlTypeConstants.Base64);
+            writeHeaderValue("salastatud", Salastatud, XmlTypeConstants.String);
+            writeHeaderValue("salastatud_sertifikaadiga", SalastatudSertifikaadiga, XmlTypeConstants.String);
         }
     }
 }

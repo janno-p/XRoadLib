@@ -111,7 +111,7 @@ namespace XRoadLib
                     if (!string.IsNullOrEmpty(RequestNamespace))
                         writer.WriteAttributeString(PrefixConstants.XMLNS, "req", NamespaceConstants.XMLNS, RequestNamespace);
 
-                    Protocol.Style.WriteSoapHeader(writer, xRoadHeader);
+                    Protocol.WriteSoapHeader(writer, xRoadHeader);
 
                     writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
 

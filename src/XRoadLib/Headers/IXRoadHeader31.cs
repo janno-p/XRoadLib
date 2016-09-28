@@ -33,7 +33,7 @@ namespace XRoadLib.Headers
         /// Kutsutava teenuse nimi.
         /// </summary>
         [XmlElement("service", Namespace = NamespaceConstants.XROAD)]
-        string Service { get; }
+        string ServiceName { get; }
 
         /// <summary>
         /// Teenuse väljakutsega seonduva toimiku number (mittekohustuslik).

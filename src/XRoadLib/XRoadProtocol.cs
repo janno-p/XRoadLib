@@ -21,11 +21,6 @@ namespace XRoadLib
         string Name { get; }
 
         /// <summary>
-        /// Global versions supported by this X-Road message protocol instance.
-        /// </summary>
-        IEnumerable<uint> SupportedVersions { get; }
-
-        /// <summary>
         /// XML document style of messages (RPC/Encoded or Document/Literal).
         /// </summary>
         Style Style { get; }
@@ -36,14 +31,14 @@ namespace XRoadLib
         string ProducerNamespace { get; }
 
         /// <summary>
-        /// Initialize new X-Road message header.
+        /// Header definition of the protocol.
         /// </summary>
-        IXRoadHeader CreateHeader();
+        HeaderDefinition HeaderDefinition { get; }
 
         /// <summary>
-        /// Generates new service description for current message protocol instance.
+        /// Protocol specification.
         /// </summary>
-        void WriteServiceDescription(Stream outputStream, uint? version = null);
+        ProtocolDefinition ProtocolDefinition { get; }
 
         /// <summary>
         /// Get runtime types lookup object.
@@ -51,14 +46,9 @@ namespace XRoadLib
         ISerializerCache GetSerializerCache(uint? version = null);
 
         /// <summary>
-        /// Test if given namespace is defined as SOAP header element namespace.
+        /// Generates new service description for current message protocol instance.
         /// </summary>
-        bool IsHeaderNamespace(string namespaceName);
-
-        /// <summary>
-        /// Check if envelope defines given protocol schema.
-        /// </summary>
-        bool IsDefinedByEnvelope(XmlReader reader);
+        void WriteServiceDescription(Stream outputStream, uint? version = null);
     }
 
     /// <summary>
@@ -66,12 +56,9 @@ namespace XRoadLib
     /// </summary>
     public class XRoadProtocol : IXRoadProtocol
     {
-        private readonly SchemaDefinitionProvider schemaDefinitionProvider;
-        private readonly ProtocolDefinition protocolDefinition;
-        private readonly HeaderDefinition headerDefinition;
+        private readonly IDictionary<uint, ISerializerCache> serializerCaches = new Dictionary<uint, ISerializerCache>();
 
-        private IDictionary<uint, ISerializerCache> versioningSerializerCaches;
-        private ISerializerCache serializerCache;
+        private readonly SchemaDefinitionProvider schemaDefinitionProvider;
 
         /// <summary>
         /// String form of message protocol version.
@@ -79,24 +66,24 @@ namespace XRoadLib
         public string Name { get; }
 
         /// <summary>
-        /// Global versions supported by this X-Road message protocol instance.
-        /// </summary>
-        public IEnumerable<uint> SupportedVersions => versioningSerializerCaches?.Keys ?? Enumerable.Empty<uint>();
-
-        /// <summary>
         /// XML document style of messages (RPC/Encoded or Document/Literal).
         /// </summary>
-        public Style Style => protocolDefinition.Style;
+        public Style Style => ProtocolDefinition.Style;
 
         /// <summary>
         /// Main namespace which defines current producer operations and types.
         /// </summary>
-        public string ProducerNamespace => protocolDefinition.ProducerNamespace;
+        public string ProducerNamespace => ProtocolDefinition.ProducerNamespace;
 
         /// <summary>
-        /// Initialize new X-Road message header.
+        /// Header definition of the protocol.
         /// </summary>
-        public IXRoadHeader CreateHeader() => headerDefinition.Initializer();
+        public HeaderDefinition HeaderDefinition { get; }
+
+        /// <summary>
+        /// Protocol specification.
+        /// </summary>
+        public ProtocolDefinition ProtocolDefinition { get; }
 
         /// <summary>
         /// Initializes new X-Road message protocol instance.
@@ -113,8 +100,8 @@ namespace XRoadLib
 
             schemaDefinitionProvider = new SchemaDefinitionProvider(schemaExporter);
 
-            headerDefinition = schemaDefinitionProvider.GetXRoadHeaderDefinition();
-            protocolDefinition = schemaDefinitionProvider.ProtocolDefinition;
+            HeaderDefinition = schemaDefinitionProvider.GetXRoadHeaderDefinition();
+            ProtocolDefinition = schemaDefinitionProvider.ProtocolDefinition;
 
             SetContractAssembly();
         }
@@ -124,10 +111,10 @@ namespace XRoadLib
         /// </summary>
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
-            if (!version.HasValue && SupportedVersions.Any())
+            if (!version.HasValue && ProtocolDefinition.SupportedVersions.Any())
                 throw new ArgumentNullException(nameof(version), "Version value is required to generate service description.");
 
-            if (version.HasValue && !SupportedVersions.Contains(version.Value))
+            if (version.HasValue && !ProtocolDefinition.SupportedVersions.Contains(version.Value))
                 throw new ArgumentOutOfRangeException(nameof(version), $"Version {version.Value} is not supported.");
 
             new ProducerDefinition(this, schemaDefinitionProvider, version).SaveTo(outputStream);
@@ -138,46 +125,35 @@ namespace XRoadLib
         /// </summary>
         public ISerializerCache GetSerializerCache(uint? version = null)
         {
-            if (serializerCache == null && versioningSerializerCaches == null)
+            if (!serializerCaches.Any())
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) is not configured with contract assembly.");
 
-            if (serializerCache != null)
-                return serializerCache;
+            if (!ProtocolDefinition.SupportedVersions.Any())
+                return serializerCaches.Single().Value;
 
             if (!version.HasValue)
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) requires specific version value.");
 
             ISerializerCache versioningSerializerCache;
-            if (versioningSerializerCaches.TryGetValue(version.Value, out versioningSerializerCache))
+            if (serializerCaches.TryGetValue(version.Value, out versioningSerializerCache))
                 return versioningSerializerCache;
 
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
         }
 
-        /// <summary>
-        /// Test if given namespace is defined as SOAP header element namespace.
-        /// </summary>
-        public bool IsHeaderNamespace(string namespaceName) => headerDefinition.IsHeaderNamespace(namespaceName);
-
-        /// <summary>
-        /// Check if envelope defines given protocol schema.
-        /// </summary>
-        public bool IsDefinedByEnvelope(XmlReader reader) => protocolDefinition.DetectEnvelope?.Invoke(reader) ?? false;
-
         private void SetContractAssembly()
         {
-            if (schemaDefinitionProvider.ProtocolDefinition.ContractAssembly == null)
+            if (ProtocolDefinition.ContractAssembly == null)
                 throw new Exception($"SchemaExporter must define contract assembly of types and operations.");
 
-            if (!schemaDefinitionProvider.ProtocolDefinition.SupportedVersions.Any())
+            if (!ProtocolDefinition.SupportedVersions.Any())
             {
-                serializerCache = new SerializerCache(this, schemaDefinitionProvider);
+                serializerCaches.Add(0, new SerializerCache(this, schemaDefinitionProvider));
                 return;
             }
 
-            versioningSerializerCaches = new Dictionary<uint, ISerializerCache>();
-            foreach (var dtoVersion in schemaDefinitionProvider.ProtocolDefinition.SupportedVersions)
-                versioningSerializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionProvider, dtoVersion));
+            foreach (var dtoVersion in ProtocolDefinition.SupportedVersions)
+                serializerCaches.Add(dtoVersion, new SerializerCache(this, schemaDefinitionProvider, dtoVersion));
         }
     }
 }

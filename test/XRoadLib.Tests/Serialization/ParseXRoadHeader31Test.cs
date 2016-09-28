@@ -60,7 +60,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("testService", xhr.Service.ServiceCode);
             Assert.Equal("v5", xhr.Service.ServiceVersion);
             Assert.Equal((uint?)5, xhr.Service.Version);
-            Assert.Equal("testService.v5", xhr3.Service);
+            Assert.Equal("testService.v5", xhr3.ServiceName);
         }
 
         [Fact]

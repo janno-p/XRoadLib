@@ -50,6 +50,6 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.
         /// </summary>
-        void WriteTo(XmlWriter writer);
+        void WriteTo(XmlWriter writer, IXRoadProtocol protocol);
     }
 }

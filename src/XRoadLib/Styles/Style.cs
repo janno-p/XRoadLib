@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
@@ -60,9 +57,9 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Serializes X-Road SOAP message header element.
         /// </summary>
-        public void WriteHeaderElement(XmlWriter writer, string name, string namespaceName, object value, XName typeName)
+        public void WriteHeaderElement(XmlWriter writer, XName name, object value, XName typeName)
         {
-            writer.WriteStartElement(name, namespaceName);
+            writer.WriteStartElement(name.LocalName, name.NamespaceName);
 
             WriteExplicitType(writer, typeName);
 
@@ -136,21 +133,6 @@ namespace XRoadLib.Styles
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, producerNamespace);
-        }
-
-        /// <summary>
-        /// Serializes header of SOAP message.
-        /// </summary>
-        public virtual void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, IEnumerable<XElement> additionalHeaders = null)
-        {
-            writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
-
-            header?.WriteTo(writer);
-
-            foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
-                additionalHeader.WriteTo(writer);
-
-            writer.WriteEndElement();
         }
     }
 }

@@ -55,7 +55,7 @@ namespace XRoadLib.Schema
         {
             base.ExportHeaderDefinition(headerDefinition);
 
-            headerDefinition.Use(() => new XRoadHeader20(headerDefinition, new RpcEncodedStyle()))
+            headerDefinition.Use<XRoadHeader20>()
                             .WithRequiredHeader(x => x.Asutus)
                             .WithRequiredHeader(x => x.Andmekogu)
                             .WithRequiredHeader(x => x.Nimi)

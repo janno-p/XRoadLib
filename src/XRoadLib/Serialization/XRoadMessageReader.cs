@@ -401,7 +401,7 @@ namespace XRoadLib.Serialization
             if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
                 return;
 
-            var header = protocol?.CreateHeader();
+            var header = protocol?.HeaderDefinition.CreateInstance();
             var unresolved = new List<XElement>();
 
             while (reader.MoveToElement(2))
@@ -409,7 +409,7 @@ namespace XRoadLib.Serialization
                 if (protocol == null)
                 {
                     protocol = supportedProtocols.SingleOrDefault(p => p.IsHeaderNamespace(reader.NamespaceURI));
-                    header = protocol?.CreateHeader();
+                    header = protocol?.HeaderDefinition.CreateInstance();
                 }
 
                 if (protocol == null || header == null || !protocol.IsHeaderNamespace(reader.NamespaceURI))

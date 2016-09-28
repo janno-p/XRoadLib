@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
-using XRoadLib.Schema;
-using XRoadLib.Styles;
 
 namespace XRoadLib.Headers
 {
@@ -13,77 +10,55 @@ namespace XRoadLib.Headers
     /// </summary>
     public class XRoadHeader40 : IXRoadHeader, IXRoadHeader40
     {
-        private static readonly XName stringTypeName = XName.Get("string", NamespaceConstants.XSD);
-        private static readonly Func<string, Func<XRoadHeader40, object>, XName, Tuple<string, Func<XRoadHeader40, object>, XName>> createTuple = (a, b, c) => new Tuple<string, Func<XRoadHeader40, object>, XName>(a, b, c);
-        private static readonly ICollection<Tuple<string, Func<XRoadHeader40, object>, XName>> elementMappings = new []
-        {
-            createTuple("id", x => x.Id, stringTypeName),
-            createTuple("userId", x => x.UserId, stringTypeName),
-            createTuple("issue", x => x.Issue, stringTypeName),
-            createTuple("protocolVersion", x => x.ProtocolVersion, stringTypeName)
-        };
-
-        private readonly HeaderDefinition definition;
-        private readonly Style style;
-
         /// <summary>
         /// Client identity.
         /// </summary>
-        public XRoadClientIdentifier Client { get; set; }
+        public virtual XRoadClientIdentifier Client { get; set; }
 
         /// <summary>
         /// Service identity.
         /// </summary>
-        public XRoadServiceIdentifier Service { get; set; }
+        public virtual XRoadServiceIdentifier Service { get; set; }
 
         /// <summary>
         /// User identity code.
         /// </summary>
-        public string UserId { get; set; }
+        public virtual string UserId { get; set; }
 
         /// <summary>
         /// Received application, issue or document.
         /// </summary>
-        public string Issue { get; set; }
+        public virtual string Issue { get; set; }
 
         /// <summary>
         /// Unique identity of the request.
         /// </summary>
-        public string Id { get; set; }
+        public virtual string Id { get; set; }
 
         /// <summary>
         /// X-Road message protocol version.
         /// </summary>
-        public string ProtocolVersion { get; set; }
+        public virtual string ProtocolVersion { get; set; }
 
         /// <summary>
         /// Central service identity.
         /// </summary>
-        public XRoadCentralServiceIdentifier CentralService { get; set; }
+        public virtual XRoadCentralServiceIdentifier CentralService { get; set; }
 
         /// <summary>
         /// Represented party details.
         /// </summary>
-        public XRoadRepresentedParty RepresentedParty { get; set; }
+        public virtual XRoadRepresentedParty RepresentedParty { get; set; }
 
         /// <summary>
         /// Request hash of the X-Road message.
         /// </summary>
-        public XRoadRequestHash RequestHash { get; set; }
-
-        /// <summary>
-        /// Initialize new X-Road message protocol version 3.1 header object.
-        /// </summary>
-        public XRoadHeader40(HeaderDefinition definition, Style style)
-        {
-            this.definition = definition;
-            this.style = style;
-        }
+        public virtual XRoadRequestHash RequestHash { get; set; }
 
         /// <summary>
         /// Check for presence of mandatory parts.
         /// </summary>
-        public void Validate()
+        public virtual void Validate()
         {
             if (Client == null)
                 throw XRoadException.InvalidQuery("X-Road header `client` element is mandatory.");
@@ -98,7 +73,7 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Read next header value from the XML reader object.
         /// </summary>
-        public void ReadHeaderValue(XmlReader reader)
+        public virtual void ReadHeaderValue(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.XROAD_V4_REPR && reader.LocalName == "representedParty")
             {
@@ -329,7 +304,7 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.
         /// </summary>
-        public void WriteTo(XmlWriter writer)
+        public virtual void WriteTo(XmlWriter writer, IXRoadProtocol protocol)
         {
             if (writer.LookupPrefix(NamespaceConstants.XROAD_V4) == null)
                 writer.WriteAttributeString("xmlns", PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4);
@@ -337,7 +312,7 @@ namespace XRoadLib.Headers
             if (writer.LookupPrefix(NamespaceConstants.XROAD_V4_ID) == null)
                 writer.WriteAttributeString("xmlns", PrefixConstants.ID, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4_ID);
 
-            if (definition.RequiredHeaders.Contains("client") || Client != null)
+            if (protocol.HeaderDefinition.RequiredHeaders.Contains(XName.Get("client", NamespaceConstants.XROAD_V4)) || Client != null)
             {
                 var element = new XElement(XName.Get("client", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), string.IsNullOrWhiteSpace(Client.SubsystemCode) ? "MEMBER" : "SUBSYSTEM"),
@@ -349,7 +324,7 @@ namespace XRoadLib.Headers
                 element.WriteTo(writer);
             }
 
-            if (definition.RequiredHeaders.Contains("service") || Service != null)
+            if (protocol.HeaderDefinition.RequiredHeaders.Contains(XName.Get("service", NamespaceConstants.XROAD_V4)) || Service != null)
             {
                 var element = new XElement(XName.Get("service", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), "SERVICE"),
@@ -364,7 +339,7 @@ namespace XRoadLib.Headers
                 element.WriteTo(writer);
             }
 
-            if (definition.RequiredHeaders.Contains("centralService") || CentralService != null)
+            if (protocol.HeaderDefinition.RequiredHeaders.Contains(XName.Get("centralService", NamespaceConstants.XROAD_V4)) || CentralService != null)
             {
                 var element = new XElement(XName.Get("centralService", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), "CENTRALSERVICE"),
@@ -373,12 +348,17 @@ namespace XRoadLib.Headers
                 element.WriteTo(writer);
             }
 
-            foreach (var m in elementMappings)
+            Action<string, object, XName> writeHeaderValue = (elementName, value, typeName) =>
             {
-                var value = m.Item2(this);
-                if (definition.RequiredHeaders.Contains(m.Item1) || value != null)
-                    style.WriteHeaderElement(writer, m.Item1, NamespaceConstants.XROAD_V4_ID, value, m.Item3);
-            }
+                var name = XName.Get(elementName, NamespaceConstants.XROAD_V4);
+                if (protocol.HeaderDefinition.RequiredHeaders.Contains(name) || value != null)
+                    protocol.Style.WriteHeaderElement(writer, name, value, typeName);
+            };
+
+            writeHeaderValue("id", Id, XmlTypeConstants.String);
+            writeHeaderValue("userId", UserId, XmlTypeConstants.String);
+            writeHeaderValue("issue", Issue, XmlTypeConstants.String);
+            writeHeaderValue("protocolVersion", ProtocolVersion, XmlTypeConstants.String);
         }
     }
 }
