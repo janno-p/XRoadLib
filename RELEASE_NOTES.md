@@ -1,3 +1,6 @@
+#### 1.0.0-beta033 - 29.09.2016
+* Improved customization support for X-Road message headers.
+
 #### 1.0.0-beta032 - 28.09.2016
 * Refactor all customizations to ISchemaExporter.
 
