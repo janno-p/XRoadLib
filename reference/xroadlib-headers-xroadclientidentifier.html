@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Headers</span><br />
 </p>
 <div class="xmldoc">
+<p>X-Road service client identifier.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,10 +52,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '219', 219)" onmouseover="showTip(event, '219', 219)">
+          <code onmouseout="hideTip(event, '218', 218)" onmouseover="showTip(event, '218', 218)">
             new()
           </code>
-          <div class="tip" id="219">
+          <div class="tip" id="218">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -72,8 +74,25 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '220', 220)" onmouseover="showTip(event, '220', 220)">
+          <code onmouseout="hideTip(event, '219', 219)" onmouseover="showTip(event, '219', 219)">
             MemberClass()
+          </code>
+          <div class="tip" id="219">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Clients member class.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '220', 220)" onmouseover="showTip(event, '220', 220)">
+            MemberCode()
           </code>
           <div class="tip" id="220">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -81,14 +100,16 @@
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Clients unique code.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '221', 221)" onmouseover="showTip(event, '221', 221)">
-            MemberCode()
+            ObjectType()
           </code>
           <div class="tip" id="221">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -96,14 +117,16 @@
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>X-Road client identifier type: MEMBER or SUBSYSTEM.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '222', 222)" onmouseover="showTip(event, '222', 222)">
-            ObjectType()
+            SubsystemCode()
           </code>
           <div class="tip" id="222">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -111,52 +134,43 @@
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Subsystem name, when client identifier specifies subsystem identifier.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '223', 223)" onmouseover="showTip(event, '223', 223)">
-            SubsystemCode()
+            ToString()
           </code>
           <div class="tip" id="223">
-            <strong>Signature:</strong> unit -&gt; unit<br />
+            <strong>Signature:</strong> unit -&gt; string<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>String presentation of the client identifier.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '224', 224)" onmouseover="showTip(event, '224', 224)">
-            ToString()
-          </code>
-          <div class="tip" id="224">
-            <strong>Signature:</strong> unit -&gt; string<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '225', 225)" onmouseover="showTip(event, '225', 225)">
             XRoadInstance()
           </code>
-          <div class="tip" id="225">
+          <div class="tip" id="224">
             <strong>Signature:</strong> unit -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>X-Road instance name.</p>
+
+
         </td>
       </tr>
     </tbody>

@@ -52,15 +52,63 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '117', 117)" onmouseover="showTip(event, '117', 117)">
+          <code onmouseout="hideTip(event, '113', 113)" onmouseover="showTip(event, '113', 113)">
             CreateMessage(protocol, header)
           </code>
-          <div class="tip" id="117">
+          <div class="tip" id="113">
             <strong>Signature:</strong> (protocol:IXRoadProtocol * header:IXRoadHeader) -&gt; XRoadMessage<br />
                       </div>
         </td>
         <td class="xmldoc">
           <p>Initialize new X-Road message of this X-Road message protocol instance.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '114', 114)" onmouseover="showTip(event, '114', 114)">
+            IsDefinedByEnvelope(protocol, reader)
+          </code>
+          <div class="tip" id="114">
+            <strong>Signature:</strong> (protocol:IXRoadProtocol * reader:XmlReader) -&gt; bool<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Check if envelope defines given protocol schema.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
+            IsHeaderNamespace(...)
+          </code>
+          <div class="tip" id="115">
+            <strong>Signature:</strong> (protocol:IXRoadProtocol * namespaceName:string) -&gt; bool<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Test if given namespace is defined as SOAP header element namespace.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
+            WriteSoapHeader(...)
+          </code>
+          <div class="tip" id="116">
+            <strong>Signature:</strong> (protocol:IXRoadProtocol * writer:XmlWriter * header:IXRoadHeader * additionalHeaders:IEnumerable&lt;XElement&gt;) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Serializes header of SOAP message.</p>
 
 
         </td>
