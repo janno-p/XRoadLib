@@ -96,6 +96,8 @@ namespace XRoadLib
             if (schemaExporter == null)
                 throw new ArgumentNullException(nameof(schemaExporter));
 
+            Name = name;
+
             schemaDefinitionProvider = new SchemaDefinitionProvider(schemaExporter);
 
             HeaderDefinition = schemaDefinitionProvider.GetXRoadHeaderDefinition();
