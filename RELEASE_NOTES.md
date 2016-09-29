@@ -1,3 +1,6 @@
+#### 1.0.0-beta034 - 29.09.2016
+* Fix X-Road header serialization error when serializing required header with missing value.
+
 #### 1.0.0-beta033 - 29.09.2016
 * Improved customization support for X-Road message headers.
 

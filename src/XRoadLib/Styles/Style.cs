@@ -63,9 +63,8 @@ namespace XRoadLib.Styles
 
             WriteExplicitType(writer, typeName);
 
-            var stringValue = value as string;
-            if (stringValue != null)
-                writer.WriteStringWithMode(stringValue, StringSerializationMode);
+            if (typeName.LocalName == "string" && typeName.NamespaceName == NamespaceConstants.XSD)
+                writer.WriteStringWithMode((string)value ?? "", StringSerializationMode);
             else writer.WriteValue(value);
 
             writer.WriteEndElement();
