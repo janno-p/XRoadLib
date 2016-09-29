@@ -2,6 +2,9 @@
 
 namespace XRoadLib.Headers
 {
+    /// <summary>
+    /// X-Road message protocol version 3.1 SOAP header elements.
+    /// </summary>
     public interface IXRoadHeader31
     {
         /// <summary>

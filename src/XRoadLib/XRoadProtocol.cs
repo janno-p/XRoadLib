@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
-using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Styles;

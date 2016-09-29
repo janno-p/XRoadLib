@@ -2,6 +2,9 @@
 
 namespace XRoadLib.Headers
 {
+    /// <summary>
+    /// X-Road header extension for represented party messages.
+    /// </summary>
     [XmlType("XRoadRepresentedPartyType", Namespace = NamespaceConstants.XROAD_V4_REPR)]
     public class XRoadRepresentedParty
     {

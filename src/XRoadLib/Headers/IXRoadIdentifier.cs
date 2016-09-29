@@ -45,6 +45,9 @@ namespace XRoadLib.Headers
         [XmlElement("serviceVersion", Namespace = NamespaceConstants.XROAD_V4_ID)]
         string ServiceVersion { get; }
 
+        /// <summary>
+        /// Specifies identifier type.
+        /// </summary>
         [XmlAttribute("objectType", Namespace = NamespaceConstants.XROAD_V4_ID)]
         XRoadObjectType ObjectType { get; }
     }

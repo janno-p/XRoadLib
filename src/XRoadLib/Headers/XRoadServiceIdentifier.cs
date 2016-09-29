@@ -5,19 +5,43 @@ using System.Xml.Serialization;
 
 namespace XRoadLib.Headers
 {
+    /// <summary>
+    /// X-Road service identifier.
+    /// </summary>
     [XmlInclude(typeof(IXRoadIdentifier))]
     [XmlType("XRoadServiceIdentifierType", Namespace = NamespaceConstants.XROAD_V4_ID)]
     public class XRoadServiceIdentifier : IXRoadIdentifier
     {
         private string serviceVersion;
 
+        /// <summary>
+        /// X-Road instance name.
+        /// </summary>
         public string XRoadInstance { get; set; }
+
+        /// <summary>
+        /// X-Road service provider class.
+        /// </summary>
         public string MemberClass { get; set; }
+
+        /// <summary>
+        /// X-Road service provider code.
+        /// </summary>
         public string MemberCode { get; set; }
+
+        /// <summary>
+        /// X-Road service provider subsystem code.
+        /// </summary>
         public string SubsystemCode { get; set; } // Optional
+
+        /// <summary>
+        /// X-Road service name.
+        /// </summary>
         public string ServiceCode { get; set; }
 
-        // Optional
+        /// <summary>
+        /// X-Road service version.
+        /// </summary>
         public string ServiceVersion
         {
             get { return serviceVersion; }
@@ -28,10 +52,19 @@ namespace XRoadLib.Headers
             }
         }
 
+        /// <summary>
+        /// X-Road identifier type (SERVICE).
+        /// </summary>
         public XRoadObjectType ObjectType { get; set; }
 
+        /// <summary>
+        /// X-Road service version as number.
+        /// </summary>
         public uint? Version { get; private set; }
 
+        /// <summary>
+        /// Parse X-Road service identifier from legacy service name.
+        /// </summary>
         public static XRoadServiceIdentifier FromString(string serviceName)
         {
             if (serviceName == null)
@@ -56,6 +89,9 @@ namespace XRoadLib.Headers
             };
         }
 
+        /// <summary>
+        /// Convert X-Road service identifier to old service name.
+        /// </summary>
         public string ToFullName()
         {
             var sb = new StringBuilder();
@@ -71,6 +107,9 @@ namespace XRoadLib.Headers
             return sb.ToString();
         }
 
+        /// <summary>
+        /// String presentation of the X-Road service identifier.
+        /// </summary>
         public override string ToString()
         {
             var sb = new StringBuilder();
