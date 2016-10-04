@@ -839,7 +839,7 @@ namespace XRoadLib
         {
             foreach (var tuple in getGlobalNamespaces())
                 serviceDescription.Namespaces.Add(tuple.Item1, tuple.Item2);
-            serviceDescription.Namespaces.Add("", protocol.ProducerNamespace);
+            serviceDescription.Namespaces.Add(PrefixConstants.TARGET, protocol.ProducerNamespace);
         }
 
         private IEnumerable<PropertyDefinition> GetDescriptionProperties(TypeDefinition typeDefinition)

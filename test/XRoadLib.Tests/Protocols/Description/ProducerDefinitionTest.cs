@@ -177,7 +177,7 @@ namespace XRoadLib.Tests.Protocols.Description
             Assert.NotNull(port);
             Assert.Equal(2, port.Attributes().Count());
             Assert.Equal("TestPort", port.Attribute("name").Value);
-            Assert.Equal("TestBinding", port.Attribute("binding").Value);
+            Assert.Equal("tns:TestBinding", port.Attribute("binding").Value);
 
             Assert.False(port.Elements().Any(e => e.Name != soap("address") && e.Name != xrdns("address") && e.Name != xrdns("title")));
 

@@ -1,3 +1,6 @@
+#### 1.0.0-beta035 - Unreleased
+* Use explicit target namespace prefix instead of default in service description.
+
 #### 1.0.0-beta034 - 29.09.2016
 * Fix X-Road header serialization error when serializing required header with missing value.
 * Fix X-Road protocol name not assigned bug.
