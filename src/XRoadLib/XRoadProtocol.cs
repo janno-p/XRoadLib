@@ -134,6 +134,8 @@ namespace XRoadLib
             if (!version.HasValue)
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) requires specific version value.");
 
+            var serializerVersion = version.Value > 0u ? version.Value : ProtocolDefinition.SupportedVersions.Max();
+
             ISerializerCache versioningSerializerCache;
             if (serializerCaches.TryGetValue(version.Value, out versioningSerializerCache))
                 return versioningSerializerCache;

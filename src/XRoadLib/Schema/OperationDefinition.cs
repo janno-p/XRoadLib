@@ -30,7 +30,7 @@ namespace XRoadLib.Schema
             InputBinaryMode = BinaryMode.Xml;
             OutputBinaryMode = BinaryMode.Xml;
             State = (serviceAttribute?.IsHidden).GetValueOrDefault() ? DefinitionState.Hidden : DefinitionState.Default;
-            Version = version.GetValueOrDefault(serviceAttribute?.AddedInVersion ?? 1u);
+            Version = version.GetValueOrDefault(serviceAttribute?.AddedInVersion ?? 0u);
             CopyRequestPartToResponse = true;
             InputMessageName = qualifiedName.LocalName;
             OutputMessageName = $"{qualifiedName.LocalName}Response";

@@ -128,7 +128,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Operation version of current X-Road message.
         /// </summary>
-        public uint Version => Header == null || Header.Service == null || !Header.Service.Version.HasValue ? 1u : Header.Service.Version.Value;
+        public uint Version => Header == null || Header.Service == null || !Header.Service.Version.HasValue ? 0u : Header.Service.Version.Value;
 
         /// <summary>
         /// X-Road message template request element root node.
