@@ -1,5 +1,7 @@
-#### 1.0.0-beta035 - Unreleased
+#### 1.0.0-beta035 - 13.10.2016
 * Use explicit target namespace prefix instead of default in service description.
+* Use highest supported version of serializers for meta services.
+* Fix base64 attachment serialization bug: insert line breaks after every 76 characters.
 
 #### 1.0.0-beta034 - 29.09.2016
 * Fix X-Road header serialization error when serializing required header with missing value.
