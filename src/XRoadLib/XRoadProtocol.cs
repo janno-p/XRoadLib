@@ -137,7 +137,7 @@ namespace XRoadLib
             var serializerVersion = version.Value > 0u ? version.Value : ProtocolDefinition.SupportedVersions.Max();
 
             ISerializerCache versioningSerializerCache;
-            if (serializerCaches.TryGetValue(version.Value, out versioningSerializerCache))
+            if (serializerCaches.TryGetValue(serializerVersion, out versioningSerializerCache))
                 return versioningSerializerCache;
 
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));

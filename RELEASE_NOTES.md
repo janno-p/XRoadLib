@@ -1,3 +1,6 @@
+#### 1.0.0-beta036 - 13.10.2016
+* Fix regression when using meta services.
+
 #### 1.0.0-beta035 - 13.10.2016
 * Use explicit target namespace prefix instead of default in service description.
 * Use highest supported version of serializers for meta services.
