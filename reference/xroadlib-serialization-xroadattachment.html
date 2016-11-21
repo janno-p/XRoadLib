@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Serialization</span><br />
 </p>
 <div class="xmldoc">
+<p>Binary content of X-Road messages.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -58,8 +60,7 @@
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Seda interface't kasutatakse s�steemis olemasoleva faili esitamisel attachement'ina
-St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib</p>
+          <p>Initializes new attachment based on existing stream.</p>
 
 
         </td>
@@ -75,7 +76,8 @@ St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib</p>
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Seda interfacet kasutatakse faili s�steemi uploadimisel</p>
+          <p>Initializes new attachment from temporary file, which is specified
+by fullPath.</p>
 
 
         </td>
@@ -99,7 +101,8 @@ St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib</p>
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Manuse unikaalne tunnus p�ringu sees, mille j�rgi viidatakse manusele SOAP s�numist.</p>
+          <p>Attachments unique identificator inside the request
+which references the multipart content.</p>
 
 
         </td>
@@ -115,7 +118,9 @@ St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib</p>
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Underlying stream which contains the content.</p>
+
+
         </td>
       </tr>
       <tr>
@@ -130,7 +135,9 @@ St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib</p>
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Clean up unmanaged resources.</p>
+
+
         </td>
       </tr>
       <tr>
@@ -144,7 +151,9 @@ St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib</p>
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Does the attachment have any content.</p>
+
+
         </td>
       </tr>
       <tr>
@@ -158,21 +167,26 @@ St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib</p>
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Indicates whether content is serialized as multipart attachement or not.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '492', 492)" onmouseover="showTip(event, '492', 492)">
-            ToBase64String()
+            WriteAsBase64(writer)
           </code>
           <div class="tip" id="492">
-            <strong>Signature:</strong> unit -&gt; string<br />
+            <strong>Signature:</strong> writer:XmlWriter -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Writes attachments contents to the specificed XML writer object
+using base64 encoding.</p>
+
+
         </td>
       </tr>
       <tr>
@@ -182,11 +196,14 @@ St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib</p>
             WriteAsBase64(writer)
           </code>
           <div class="tip" id="493">
-            <strong>Signature:</strong> writer:XmlWriter -&gt; unit<br />
+            <strong>Signature:</strong> writer:TextWriter -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Writes attachments contents to the specificed output stream object
+using base64 encoding.</p>
+
+
         </td>
       </tr>
     </tbody>
