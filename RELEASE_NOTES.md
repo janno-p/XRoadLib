@@ -1,3 +1,6 @@
+#### 1.0.0-beta037 - 21.11.2016
+* Fix base64 encoding excess memory allocation problem.
+
 #### 1.0.0-beta036 - 13.10.2016
 * Fix regression when using meta services.
 
