@@ -8,8 +8,7 @@ namespace XRoadLib.Serialization
 {
     internal class XRoadMessageWriter : IDisposable
     {
-        private const string NEW_LINE = "\r\n";
-        private const int BASE64_LINE_LENGTH = 76;
+        public const string NEW_LINE = "\r\n";
 
         private readonly CountingStream outputStream;
 
@@ -104,29 +103,7 @@ namespace XRoadLib.Serialization
             writer.Write("Content-ID: <{0}>", attachment.ContentID.Trim('<', '>', ' '));
             writer.Write(NEW_LINE);
             writer.Write(NEW_LINE);
-
-            var base64String = attachment.ToBase64String();
-            if (base64String.Length == 0)
-            {
-                writer.Write(NEW_LINE);
-                return;
-            }
-
-            using (var reader = new StringReader(base64String))
-            {
-                var buffer = new char[BASE64_LINE_LENGTH];
-                int readCount;
-
-                do
-                {
-                    readCount = reader.Read(buffer, 0, BASE64_LINE_LENGTH);
-                    if (readCount == 0)
-                        break;
-
-                    writer.Write(buffer, 0, readCount);
-                    writer.Write(NEW_LINE);
-                } while (readCount >= BASE64_LINE_LENGTH);
-            }
+            attachment.WriteAsBase64(writer);
         }
 
         private void SerializeXopAttachment(XRoadAttachment attachment, string boundaryMarker)

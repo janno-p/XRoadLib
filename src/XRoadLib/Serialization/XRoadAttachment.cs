@@ -1,22 +1,39 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml;
 
 namespace XRoadLib.Serialization
 {
+    /// <summary>
+    /// Binary content of X-Road messages.
+    /// </summary>
     public class XRoadAttachment : IDisposable
     {
+        private const int BASE64_LINE_LENGTH = 76;
+
         private readonly string contentID;
         private readonly string contentPath;
 
+        /// <summary>
+        /// Underlying stream which contains the content.
+        /// </summary>
         public Stream ContentStream { get; private set; }
 
+        /// <summary>
+        /// Indicates whether content is serialized as multipart attachement or not.
+        /// </summary>
         public bool IsMultipartContent { get; set; }
 
-        /// <summary>Manuse unikaalne tunnus p�ringu sees, mille j�rgi viidatakse manusele SOAP s�numist.</summary>
+        /// <summary>
+        /// Attachments unique identificator inside the request
+        /// which references the multipart content.
+        /// </summary>
         public string ContentID { get { return contentID; } }
 
+        /// <summary>
+        /// Does the attachment have any content.
+        /// </summary>
         public bool HasContent { get { return ContentStream.Length > 0; } }
 
         private XRoadAttachment()
@@ -25,8 +42,7 @@ namespace XRoadLib.Serialization
         }
 
         /// <summary>
-        /// Seda interface't kasutatakse s�steemis olemasoleva faili esitamisel attachement'ina
-        /// St. mitte siis kui klient uploadib faili, vadi siis, kui ta downloadib
+        /// Initializes new attachment based on existing stream.
         /// </summary>
         public XRoadAttachment(Stream contentStream) : this()
         {
@@ -34,7 +50,10 @@ namespace XRoadLib.Serialization
             ContentStream = contentStream;
         }
 
-        /// <summary>Seda interfacet kasutatakse faili s�steemi uploadimisel</summary>
+        /// <summary>
+        /// Initializes new attachment from temporary file, which is specified
+        /// by fullPath.
+        /// </summary>
         public XRoadAttachment(string contentID, string fullPath) : this()
         {
             ContentStream = new FileStream(fullPath, FileMode.Create);
@@ -57,16 +76,10 @@ namespace XRoadLib.Serialization
                 File.Delete(contentPath);
         }
 
-        public string ToBase64String()
-        {
-            ContentStream.Position = 0;
-
-            var buffer = new byte[ContentStream.Length];
-            ContentStream.Read(buffer, 0, buffer.Length);
-
-            return Convert.ToBase64String(buffer);
-        }
-
+        /// <summary>
+        /// Writes attachments contents to the specificed XML writer object
+        /// using base64 encoding.
+        /// </summary>
         public void WriteAsBase64(XmlWriter writer)
         {
             ContentStream.Position = 0;
@@ -80,6 +93,34 @@ namespace XRoadLib.Serialization
                 writer.WriteBase64(buffer, 0, bytesRead);
         }
 
+        /// <summary>
+        /// Writes attachments contents to the specificed output stream object
+        /// using base64 encoding.
+        /// </summary>
+        public void WriteAsBase64(TextWriter writer)
+        {
+            const int bufferSize = (BASE64_LINE_LENGTH / 4) * 3;
+            var buffer = new byte[bufferSize];
+
+            ContentStream.Position = 0;
+
+            var noContent = true;
+
+            int bytesRead;
+            while ((bytesRead = ContentStream.Read(buffer, 0, bufferSize)) > 0)
+            {
+                noContent = false;
+                writer.Write(Convert.ToBase64String(buffer, 0, bytesRead));
+                writer.Write(XRoadMessageWriter.NEW_LINE);
+            }
+
+            if (noContent)
+                writer.Write(XRoadMessageWriter.NEW_LINE);
+        }
+
+        /// <summary>
+        /// Clean up unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             Close();
