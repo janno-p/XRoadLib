@@ -1,3 +1,6 @@
+#### 1.0.0-beta038 - 22.11.2016
+* Allow overriding of default IHttpHandler.ProcessRequest method.
+
 #### 1.0.0-beta037 - 21.11.2016
 * Fix base64 encoding excess memory allocation problem.
 

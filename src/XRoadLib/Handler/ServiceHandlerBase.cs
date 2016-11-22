@@ -24,7 +24,7 @@ namespace XRoadLib.Handler
         /// <summary>
         /// Handle incoming request.
         /// </summary>
-        public void ProcessRequest(HttpContext httpContext)
+        public virtual void ProcessRequest(HttpContext httpContext)
         {
             httpContext.Request.InputStream.Position = 0;
             httpContext.Response.ContentType = $"text/xml; charset={encoding.HeaderName}";
