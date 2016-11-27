@@ -1,5 +1,3 @@
-#if !NET40
-
 using System;
 using Microsoft.AspNetCore.Http;
 
@@ -31,5 +29,3 @@ namespace XRoadLib.Handler
         }
     }
 }
-
-#endif

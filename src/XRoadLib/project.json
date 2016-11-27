@@ -25,38 +25,27 @@
     "tags": [ "x-tee", "x-road", "xtee", "xroad" ],
     "summary": "A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach."
   },
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "frameworks": {
-    "netstandard1.5": {
+    "netstandard1.6": {
       "dependencies": {
-        "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
-        "Microsoft.Extensions.DependencyInjection": "1.0.0",
-        "NETStandard.Library": "1.6.0",
-        "System.Linq.Expressions": "4.1.0",
-        "System.Net.Requests": "4.0.11",
-        "System.Reflection.Emit.Lightweight": "4.0.1",
-        "System.Security.Cryptography.Algorithms": "4.2.0",
-        "System.Xml.XmlDocument": "4.0.1",
-        "System.Xml.XmlSerializer": "4.0.11",
-        "System.Xml.XPath": "4.0.1",
-        "System.Xml.XPath.XDocument": "4.0.1"
-      }
-    },
-    "net40": {
-      "frameworkAssemblies": {
-        "System.Numerics": "",
-        "System.Web": "",
-        "System.Web.Services": "",
-        "System.Xml": "",
-        "System.Xml.Linq": ""
+        "Microsoft.AspNetCore.Http.Abstractions": "1.1.0",
+        "Microsoft.Extensions.DependencyInjection": "1.1.0",
+        "NETStandard.Library": "1.6.1",
+        "System.Linq.Expressions": "4.3.0",
+        "System.Net.Requests": "4.3.0",
+        "System.Reflection.Emit.Lightweight": "4.3.0",
+        "System.Security.Cryptography.Algorithms": "4.3.0",
+        "System.Xml.XmlDocument": "4.3.0",
+        "System.Xml.XmlSerializer": "4.3.0",
+        "System.Xml.XPath": "4.3.0",
+        "System.Xml.XPath.XDocument": "4.3.0"
       }
     },
     "net451": {
       "dependencies": {
-        "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
-        "Microsoft.Extensions.DependencyInjection": "1.0.0"
+        "Microsoft.AspNetCore.Http.Abstractions": "1.1.0",
+        "Microsoft.Extensions.DependencyInjection": "1.1.0"
       },
       "frameworkAssemblies": {
         "System.Numerics": "",

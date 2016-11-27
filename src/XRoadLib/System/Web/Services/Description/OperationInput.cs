@@ -1,4 +1,4 @@
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
 
 namespace System.Web.Services.Description
 {

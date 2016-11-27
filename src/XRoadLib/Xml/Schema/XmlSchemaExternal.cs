@@ -1,6 +1,6 @@
-using System.Xml;
+#if NETSTANDARD1_6
 
-#if NETSTANDARD1_5
+using System.Xml;
 
 namespace XRoadLib.Xml.Schema
 {
