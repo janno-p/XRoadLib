@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Xml;
 using System.Xml.Linq;
+using Google.Protobuf;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
@@ -44,7 +45,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
             RequestValueDefinition = requestValueDefinition;
             ResponseValueDefinition = responseValueDefinition;
 
-            typeMap = serializerCache.GetTypeMap(XName.Get("base64Binary", NamespaceConstants.XSD), false);
+            typeMap = ((IContentTypeMap)serializerCache.GetTypeMap(XName.Get("base64Binary", NamespaceConstants.XSD), false)).GetOptimizedContentTypeMap();
 
             readRequestMethod = BuildReadValueMethod(RequestValueDefinition);
             readResponseMethod = BuildReadValueMethod(ResponseValueDefinition);
@@ -57,7 +58,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
             var requestName = RequestValueDefinition.RequestElementName;
 
             if (!RequestValueDefinition.MergeContent && !reader.MoveToElement(3, requestName))
-                throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
+                throw XRoadException.InvalidQuery($"Pï¿½ringus puudub X-tee `{requestName}` element.");
 
             if (RequestValueDefinition.ParameterInfo != null)
                 return DeserializeValue(reader, RequestValueDefinition, message, readRequestMethod);
@@ -207,14 +208,17 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
             if (type == null)
                 return (o, v) => { };
 
-            var method = type.GetMethod("WriteTo", BindingFlags.Public | BindingFlags.Instance);
+            var method = typeof(MessageExtensions).GetMethod("WriteTo", BindingFlags.Public | BindingFlags.Static);
 
             var dynamicWrite = new DynamicMethod("DynamicWrite", typeof(void), new[] { typeof(Stream), typeof(object) }, type, true);
             var generator = dynamicWrite.GetILGenerator();
 
             generator.Emit(OpCodes.Ldarg_1);
+            generator.Emit(OpCodes.Castclass, typeof(IMessage));
+
             generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(OpCodes.Callvirt, method);
+
+            generator.Emit(OpCodes.Call, method);
             generator.Emit(OpCodes.Ret);
 
             return (WriteValueMethod)dynamicWrite.CreateDelegate(typeof(WriteValueMethod));
