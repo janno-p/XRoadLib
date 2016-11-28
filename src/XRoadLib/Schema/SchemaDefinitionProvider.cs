@@ -134,9 +134,11 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes default request element definition and applies customizations (if any).
         /// </summary>
-        public RequestValueDefinition GetRequestValueDefinition(OperationDefinition operationDefinition)
+        public RequestValueDefinition GetRequestValueDefinition(OperationDefinition operationDefinition, Action<RequestValueDefinition> customizeRequestValueDefinition = null)
         {
             var requestValueDefinition = new RequestValueDefinition(operationDefinition);
+
+            customizeRequestValueDefinition?.Invoke(requestValueDefinition);
 
             schemaExporter.ExportRequestValueDefinition(requestValueDefinition);
 
@@ -146,9 +148,11 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes default response element definition and applies customizations (if any).
         /// </summary>
-        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
+        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null, Action<ResponseValueDefinition> customizeResponseValueDefinition = null)
         {
             var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
+
+            customizeResponseValueDefinition?.Invoke(responseValueDefinition);
 
             schemaExporter.ExportResponseValueDefinition(responseValueDefinition);
 
@@ -189,9 +193,9 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Get schema location of specified schema namespace.
         /// </summary>
-        public string GetSchemaLocation(string namespaceName)
+        public string GetSchemaLocation(string namespaceName, Func<string, string> customizeSchemaLocation = null)
         {
-            return schemaExporter.ExportSchemaLocation(namespaceName) ?? NamespaceConstants.GetSchemaLocation(namespaceName);
+            return schemaExporter.ExportSchemaLocation(namespaceName) ?? customizeSchemaLocation?.Invoke(namespaceName) ?? NamespaceConstants.GetSchemaLocation(namespaceName);
         }
 
         /// <summary>

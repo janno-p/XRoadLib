@@ -11,6 +11,8 @@ namespace XRoadLib.Schema
 
         public Tuple<string, string>[] Documentation { get; set; }
 
+        public Tuple<XName, string>[] CustomAttributes { get; set; }
+
         internal static Type NormalizeType(Type type)
         {
             return Nullable.GetUnderlyingType(type) ?? type;

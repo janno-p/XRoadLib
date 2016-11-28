@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Xml;
@@ -58,7 +58,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
             var requestName = RequestValueDefinition.RequestElementName;
 
             if (!RequestValueDefinition.MergeContent && !reader.MoveToElement(3, requestName))
-                throw XRoadException.InvalidQuery($"P�ringus puudub X-tee `{requestName}` element.");
+                throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
             if (RequestValueDefinition.ParameterInfo != null)
                 return DeserializeValue(reader, RequestValueDefinition, message, readRequestMethod);
