@@ -4,36 +4,27 @@ using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
-namespace XRoadLib.Extensions.ProtoBuf
+namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
 {
     /// <summary>
     /// Provides protocol buffers serialization/deserialization interface for X-Road operations.
     /// </summary>
     public class ProtoBufServiceMap : IServiceMap
     {
-        public OperationDefinition OperationDefinition
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        /// <summary>
+        /// Configuration settings of the operation that the ServiceMap implements.
+        /// </summary>
+        public OperationDefinition OperationDefinition { get; }
 
-        public RequestValueDefinition RequestValueDefinition
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        /// <summary>
+        /// Request element specification of the X-Road operation.
+        /// </summary>
+        public RequestValueDefinition RequestValueDefinition { get; }
 
-        public ResponseValueDefinition ResponseValueDefinition
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        /// <summary>
+        /// Response element specification of the X-Road operation.
+        /// </summary>
+        public ResponseValueDefinition ResponseValueDefinition { get; }
 
         public object DeserializeRequest(XmlReader reader, XRoadMessage message)
         {
@@ -53,6 +44,13 @@ namespace XRoadLib.Extensions.ProtoBuf
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null)
         {
             throw new NotImplementedException();
+        }
+
+        public ProtoBufServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestValueDefinition requestValueDefinition, ResponseValueDefinition responseValueDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
+        {
+            OperationDefinition = operationDefinition;
+            RequestValueDefinition = requestValueDefinition;
+            ResponseValueDefinition = responseValueDefinition;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace XRoadLib.Serialization.Mapping
         public OperationDefinition OperationDefinition { get; }
 
         /// <summary>
-        /// Response element specification of the X-Road operation.
+        /// Request element specification of the X-Road operation.
         /// </summary>
         public RequestValueDefinition RequestValueDefinition { get; }
 

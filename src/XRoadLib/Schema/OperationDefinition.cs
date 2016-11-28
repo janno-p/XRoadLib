@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
+using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Schema
 {
@@ -19,6 +21,9 @@ namespace XRoadLib.Schema
         public string OutputMessageName { get; set; }
         public BinaryMode OutputBinaryMode { get; set; }
 
+        public Type ServiceMapType { get; set; }
+        public bool UseTypeMaps { get; set; }
+
         public OperationDefinition(XName qualifiedName, uint? version, MethodInfo methodInfo)
         {
             MethodInfo = methodInfo;
@@ -35,6 +40,8 @@ namespace XRoadLib.Schema
             InputMessageName = qualifiedName.LocalName;
             OutputMessageName = $"{qualifiedName.LocalName}Response";
             Documentation = methodInfo.GetXRoadTitles().Where(title => !string.IsNullOrWhiteSpace(title.Item2)).ToArray();
+            ServiceMapType = serviceAttribute?.ServiceMapType ?? typeof(ServiceMap);
+            UseTypeMaps = (serviceAttribute?.UseTypeMaps).GetValueOrDefault(true);
         }
     }
 }

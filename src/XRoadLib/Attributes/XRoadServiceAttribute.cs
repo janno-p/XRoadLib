@@ -45,6 +45,11 @@ namespace XRoadLib.Attributes
         public virtual uint RemovedInVersion { get { return removedInVersion.GetValueOrDefault(uint.MaxValue); } set { removedInVersion = value; } }
 
         /// <summary>
+        /// Does ServiceMap use TypeMaps to serialize service request and response elements.
+        /// </summary>
+        public virtual bool UseTypeMaps { get; } = true;
+
+        /// <summary>
         /// Initializes new operation definition.
         /// </summary>
         public XRoadServiceAttribute(string name)
