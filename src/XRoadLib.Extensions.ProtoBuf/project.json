@@ -12,6 +12,12 @@
       }
     }
   },
+  "dependencies": {
+    "XRoadLib": {
+      "target": "project",
+      "version": "1.0.0-*"
+    }
+  },
   "frameworks": {
     "netstandard1.6": {
       "dependencies": {
