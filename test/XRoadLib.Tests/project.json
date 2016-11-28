@@ -30,6 +30,7 @@
     }
   },
   "runtimes": {
-    "linuxmint.18-x64": {}
+    "linuxmint.18-x64": {},
+    "ubuntu.14.04-x64": {}
   }
 }
