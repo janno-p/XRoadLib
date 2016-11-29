@@ -1,9 +1,9 @@
-{
+ï»¿{
   "title": "XRoadLib.Extensions.ProtoBuf",
   "version": "1.0.0-*",
   "description": "XRoadLib extension to use Google Protocol Buffers with X-Road messages",
-  "authors": [ "Janno Põldma" ],
-  "copyright": "Copyright © 2016",
+  "authors": [ "Janno PÃµldma" ],
+  "copyright": "Copyright Â© 2016",
   "buildOptions": {
     "nowarn": [ "CS1591" ],
     "warningsAsErrors": true,
@@ -17,7 +17,7 @@
     }
   },
   "packOptions": {
-    "owners": [ "Janno Põldma" ],
+    "owners": [ "Janno Pï¿½ldma" ],
     "iconUrl": "https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png",
     "licenseUrl": "http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt",
     "projectUrl": "http://github.com/janno-p/XRoadLib",
