@@ -12,7 +12,7 @@ using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
 using MessageCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.Message>;
 using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.ServiceDescriptionFormatExtension>;
 using XRoadLib.Xml.Schema;
@@ -44,7 +44,7 @@ namespace XRoadLib
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
         private readonly IDictionary<string, string> schemaLocations = new Dictionary<string, string>();
 
-        private readonly Action<string, string> addRequiredImport;
+        private readonly Action<string, string, ISchemaExporter> addRequiredImport;
         private readonly Func<string, IList<string>> getRequiredImports;
 
         private readonly Func<string, bool> addGlobalNamespace;
@@ -114,13 +114,13 @@ namespace XRoadLib
 
             var requiredImports = new SortedSet<Tuple<string, string>>();
 
-            addRequiredImport = (schemaNamespace, typeNamespace) =>
+            addRequiredImport = (schemaNamespace, typeNamespace, schemaExporter) =>
             {
                 if (typeNamespace == NamespaceConstants.XSD || typeNamespace == schemaNamespace)
                     return;
 
                 if (!schemaLocations.ContainsKey(typeNamespace))
-                    schemaLocations.Add(typeNamespace, schemaDefinitionProvider.GetSchemaLocation(typeNamespace));
+                    schemaLocations.Add(typeNamespace, schemaDefinitionProvider.GetSchemaLocation(typeNamespace, schemaExporter));
 
                 requiredImports.Add(Tuple.Create(schemaNamespace, typeNamespace));
             };
@@ -225,6 +225,7 @@ namespace XRoadLib
                     : new XmlSchemaElement { Name = requestValueDefinition.RequestElementName, SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() } };
 
                 var requestElement = createRequestElement();
+                AddCustomAttributes(requestValueDefinition, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
                 if (protocol.Style.UseElementInMessagePart)
                     schemaElements.Add(new XmlSchemaElement
@@ -268,6 +269,8 @@ namespace XRoadLib
                     }
                 }
                 else responseElement = resultElement = CreateContentElement(responseValueDefinition, targetNamespace, referencedTypes);
+
+                AddCustomAttributes(responseValueDefinition, responseElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
                 if (protocol.Style.UseElementInMessagePart)
                 {
@@ -546,7 +549,7 @@ namespace XRoadLib
 
             addGlobalNamespace(NamespaceConstants.MIME);
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             AddOperationContentBinding(soapPart.Extensions, x => x);
 #else
             AddOperationContentBinding(soapPart.Extensions, protocol.Style.CreateSoapHeader);
@@ -579,7 +582,7 @@ namespace XRoadLib
         }
 
         private void AddOperationContentBinding<THeader>(ServiceDescriptionFormatExtensionCollection extensions, Func<SoapHeaderBinding, THeader> projectionFunc)
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             where THeader : ServiceDescriptionFormatExtension
 #endif
         {
@@ -647,7 +650,7 @@ namespace XRoadLib
             if (!runtimeTypeDefinitions.TryGetValue(type, out typeDefinition))
                 throw new Exception($"Unrecognized type `{type.FullName}`.");
 
-            addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName);
+            addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName, null);
 
             return new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
         }
@@ -658,10 +661,10 @@ namespace XRoadLib
                 return null;
 
             var markup = definition.Documentation
-                                   .Select(doc => CreateTitleElement(doc.Item1, doc.Item2, ns => addRequiredImport(schemaNamespace, ns)))
+                                   .Select(doc => CreateTitleElement(doc.Item1, doc.Item2, ns => addRequiredImport(schemaNamespace, ns, null)))
                                    .Cast<XmlNode>();
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             var appInfo = new XmlSchemaAppInfo();
             appInfo.Markup.AddRange(markup);
 #else
@@ -673,9 +676,9 @@ namespace XRoadLib
 
         private void AddBinaryAttribute(string schemaNamespace, XmlSchemaAnnotated schemaElement)
         {
-            addRequiredImport(schemaNamespace, NamespaceConstants.XMIME);
+            addRequiredImport(schemaNamespace, NamespaceConstants.XMIME, null);
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             schemaElement.UnhandledAttributes.Add(protocol.Style.CreateExpectedContentType("application/octet-stream"));
 #else
             schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
@@ -701,7 +704,7 @@ namespace XRoadLib
             var typeDefinition = GetContentTypeDefinition(contentDefinition);
             if (!typeDefinition.IsAnonymous)
             {
-                addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName);
+                addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName, null);
                 schemaElement.SchemaTypeName = new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
                 if (!referencedTypes.ContainsKey(schemaElement.SchemaTypeName))
                     referencedTypes.Add(schemaElement.SchemaTypeName, null);
@@ -797,7 +800,7 @@ namespace XRoadLib
 
             SetSchemaElementType(itemElement, schemaNamespace, propertyDefinition.ArrayItemDefinition, referencedTypes);
 
-            protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, ns => addRequiredImport(schemaNamespace, ns));
+            protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, ns => addRequiredImport(schemaNamespace, ns, null));
 
             return schemaElement;
         }
@@ -867,7 +870,7 @@ namespace XRoadLib
         }
 
         private
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             XRoadOperationVersionBinding
 #else
             XmlElement
@@ -877,7 +880,7 @@ namespace XRoadLib
             if (operationDefinition.Version == 0)
                 return null;
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             return new XRoadOperationVersionBinding(xRoadPrefix, xRoadNamespace) { Version = $"v{operationDefinition.Version}" };
 #else
             var addressElement = document.CreateElement(xRoadPrefix, "version", xRoadNamespace);
@@ -914,6 +917,38 @@ namespace XRoadLib
                 documentationElement.AppendChild(CreateTitleElement(title.Item1, title.Item2, _ => { }));
 
             return documentationElement;
+        }
+
+        private XmlAttribute CreateAttribute(XName attributeName, string value, Action<string> addSchemaImport)
+        {
+            addSchemaImport(attributeName.NamespaceName);
+
+            var attribute = document.CreateAttribute(attributeName.LocalName, attributeName.NamespaceName);
+            attribute.Value = value;
+            return attribute;
+        }
+
+        private void AddCustomAttributes(Definition definition, XmlSchemaAnnotated target, Action<string> addSchemaImport)
+        {
+            if (definition.CustomAttributes == null)
+                return;
+
+#if !NETSTANDARD1_6
+            var attributes = new List<XmlAttribute>(target.UnhandledAttributes);
+#endif
+            foreach (var attribute in definition.CustomAttributes ?? Enumerable.Empty<Tuple<XName, string>>())
+            {
+                var attr = CreateAttribute(attribute.Item1, attribute.Item2, addSchemaImport);
+#if NETSTANDARD1_6
+                target.UnhandledAttributes.Add(attr);
+#else
+                attributes.Add(attr);
+#endif
+            }
+
+#if !NETSTANDARD1_6
+            target.UnhandledAttributes = attributes.ToArray();
+#endif
         }
     }
 }

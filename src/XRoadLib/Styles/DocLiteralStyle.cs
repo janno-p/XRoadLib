@@ -3,7 +3,7 @@ using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
 using XRoadLib.Xml.Schema;
 #else
 using System.Xml.Schema;
@@ -13,7 +13,7 @@ namespace XRoadLib.Styles
 {
     public class DocLiteralStyle : Style
     {
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         public override XmlElement CreateSoapHeader(SoapHeaderBinding binding)
         {
             var element = document.CreateElement(PrefixConstants.SOAP, "header", NamespaceConstants.SOAP);

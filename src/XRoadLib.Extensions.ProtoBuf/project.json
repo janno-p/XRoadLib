@@ -1,7 +1,11 @@
 {
+  "title": "XRoadLib.Extensions.ProtoBuf",
   "version": "1.0.0-*",
+  "description": "XRoadLib extension to use Google Protocol Buffers with X-Road messages",
+  "authors": [ "Janno Põldma" ],
+  "copyright": "Copyright © 2016",
   "buildOptions": {
-    "nowarn": ["CS1591"],
+    "nowarn": [ "CS1591" ],
     "warningsAsErrors": true,
     "xmlDoc": true
   },
@@ -12,20 +16,24 @@
       }
     }
   },
-  "frameworks": {
-    "netstandard1.5": {
-      "dependencies": {
-        "Microsoft.NETCore.Platforms": "1.0.1"
-      }
-    },
-    "net40": {
-      "frameworkAssemblies": {
-
-      }
-    },
-    "net45": {
-      "frameworkAssemblies": {
-      }
+  "packOptions": {
+    "owners": [ "Janno Põldma" ],
+    "iconUrl": "https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png",
+    "licenseUrl": "http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt",
+    "projectUrl": "http://github.com/janno-p/XRoadLib",
+    "requireLicenseAcceptance": false,
+    "tags": [ "x-tee", "x-road", "xtee", "xroad", "protocol", "buffers" ],
+    "summary": "XRoadLib extension to use Google Protocol Buffers with X-Road messages"
+  },
+  "dependencies": {
+    "Google.Protobuf": "3.1.0",
+    "XRoadLib": {
+      "target": "project",
+      "version": "1.0.0-*"
     }
+  },
+  "frameworks": {
+    "netstandard1.6": {},
+    "net451": {}
   }
 }

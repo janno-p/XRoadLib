@@ -6,7 +6,7 @@ init:
   - git config --global core.autocrlf true
 environment:
   matrix:
-    - FRAMEWORK: netcoreapp1.0
+    - FRAMEWORK: netcoreapp1.1
     - FRAMEWORK: net451
 configuration: Release
 build: off

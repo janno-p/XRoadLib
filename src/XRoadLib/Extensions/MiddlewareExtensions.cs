@@ -1,5 +1,3 @@
-#if !NET40
-
 using System;
 using Microsoft.AspNetCore.Builder;
 
@@ -20,5 +18,3 @@ namespace XRoadLib.Extensions
         }
     }
 }
-
-#endif

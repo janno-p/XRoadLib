@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Styles;
-
-#if !NET40
-using System.Reflection;
-#endif
 
 namespace XRoadLib.Serialization.Mapping
 {

@@ -138,6 +138,7 @@ namespace XRoadLib.Schema
         {
             var requestValueDefinition = new RequestValueDefinition(operationDefinition);
 
+            operationDefinition.ExtensionSchemaExporter?.ExportRequestValueDefinition(requestValueDefinition);
             schemaExporter.ExportRequestValueDefinition(requestValueDefinition);
 
             return requestValueDefinition;
@@ -150,6 +151,7 @@ namespace XRoadLib.Schema
         {
             var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
 
+            operationDefinition.ExtensionSchemaExporter?.ExportResponseValueDefinition(responseValueDefinition);
             schemaExporter.ExportResponseValueDefinition(responseValueDefinition);
 
             return responseValueDefinition;
@@ -169,6 +171,7 @@ namespace XRoadLib.Schema
         {
             var operationDefinition = new OperationDefinition(qualifiedName, version, methodInfo);
 
+            operationDefinition.ExtensionSchemaExporter?.ExportOperationDefinition(operationDefinition);
             schemaExporter.ExportOperationDefinition(operationDefinition);
 
             return operationDefinition;
@@ -189,9 +192,11 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Get schema location of specified schema namespace.
         /// </summary>
-        public string GetSchemaLocation(string namespaceName)
+        public string GetSchemaLocation(string namespaceName, ISchemaExporter extension = null)
         {
-            return schemaExporter.ExportSchemaLocation(namespaceName) ?? NamespaceConstants.GetSchemaLocation(namespaceName);
+            return schemaExporter.ExportSchemaLocation(namespaceName)
+                ?? extension?.ExportSchemaLocation(namespaceName)
+                ?? NamespaceConstants.GetSchemaLocation(namespaceName);
         }
 
         /// <summary>

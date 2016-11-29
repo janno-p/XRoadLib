@@ -33,8 +33,8 @@ namespace XRoadLib.Serialization
         {
             this.schemaDefinitionProvider = schemaDefinitionProvider;
 
-            this.availableFilters = schemaDefinitionProvider.ProtocolDefinition.EnabledFilters;
-            this.contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
+            availableFilters = schemaDefinitionProvider.ProtocolDefinition.EnabledFilters;
+            contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
 
             Protocol = protocol;
             Version = version;
@@ -85,11 +85,23 @@ namespace XRoadLib.Serialization
                 throw XRoadException.UnknownOperation(qualifiedName);
 
             var requestValueDefinition = schemaDefinitionProvider.GetRequestValueDefinition(operationDefinition);
+            var inputTypeMap = GetContentDefinitionTypeMap(requestValueDefinition, null);
 
-            var inputTypeMap = GetTypeMap(requestValueDefinition.ParameterInfo?.ParameterType);
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
+            var responseValueDefinition = outputTuple.Item1;
+            var outputTypeMap = outputTuple.Item2;
 
-            return serviceMaps.GetOrAdd(qualifiedName, new ServiceMap(this, operationDefinition, requestValueDefinition, outputTuple.Item1, inputTypeMap, outputTuple.Item2));
+            var serviceMap = (IServiceMap)Activator.CreateInstance(
+                operationDefinition.ServiceMapType,
+                this,
+                operationDefinition,
+                requestValueDefinition,
+                responseValueDefinition,
+                inputTypeMap,
+                outputTypeMap
+            );
+
+            return serviceMaps.GetOrAdd(qualifiedName, serviceMap);
         }
 
         private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
@@ -155,7 +167,7 @@ namespace XRoadLib.Serialization
             if (collectionDefinition != null)
             {
                 var elementType = typeDefinition.Type.GetElementType();
-                if (elementType.GetTypeInfo().Assembly != contractAssembly)
+                if (!ReferenceEquals(elementType.GetTypeInfo().Assembly, contractAssembly))
                     return null;
 
                 var itemTypeMap = GetTypeMap(elementType, partialTypeMaps);
@@ -166,7 +178,7 @@ namespace XRoadLib.Serialization
                 return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
             }
 
-            if (typeDefinition.Type.GetTypeInfo().Assembly != contractAssembly)
+            if (!ReferenceEquals(typeDefinition.Type.GetTypeInfo().Assembly, contractAssembly))
                 return null;
 
             if (!typeDefinition.Type.GetTypeInfo().IsEnum && !typeDefinition.Type.GetTypeInfo().IsAbstract && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
@@ -273,7 +285,7 @@ namespace XRoadLib.Serialization
                 case "System.String": return XName.Get("string", NamespaceConstants.XSD);
             }
 
-            if (type.GetTypeInfo().Assembly == contractAssembly)
+            if (ReferenceEquals(type.GetTypeInfo().Assembly, contractAssembly))
                 return XName.Get(type.Name, Protocol.ProducerNamespace);
 
             throw XRoadException.AndmetüübileVastavNimeruumPuudub(type.FullName);

@@ -5,7 +5,7 @@ dist: trusty
 
 env:
   matrix:
-    - FRAMEWORK=netcoreapp1.0
+    - FRAMEWORK=netcoreapp1.1
     - FRAMEWORK=net451
 
 before_install:
