@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>XRoadRequestHandler - XRoadLib</title>
+    <title>ProtoBufServiceMap - XRoadLib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Janno Põldma"/>
@@ -35,12 +35,12 @@
 
 
 
-<h1>XRoadRequestHandler</h1>
+<h1>ProtoBufServiceMap</h1>
 <p>
-  <span>Namespace: XRoadLib.Handler</span><br />
+  <span>Namespace: XRoadLib.Extensions.ProtoBuf.Serialization.Mapping</span><br />
 </p>
 <div class="xmldoc">
-<p>Base class of service request handlers.</p>
+<p>Provides protocol buffers serialization/deserialization interface for X-Road operations.</p>
 
 </div>
   <h3>Constructors</h3>
@@ -52,43 +52,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '157', 157)" onmouseover="showTip(event, '157', 157)">
-            new(supportedProtocols, storagePath)
+          <code onmouseout="hideTip(event, '142', 142)" onmouseover="showTip(event, '142', 142)">
+            new(...)
           </code>
-          <div class="tip" id="157">
-            <strong>Signature:</strong> (supportedProtocols:IEnumerable&lt;IXRoadProtocol&gt; * storagePath:string) -&gt; unit<br />
+          <div class="tip" id="142">
+            <strong>Signature:</strong> (serializerCache:ISerializerCache * operationDefinition:OperationDefinition * requestValueDefinition:RequestValueDefinition * responseValueDefinition:ResponseValueDefinition * inputTypeMap:ITypeMap * outputTypeMap:ITypeMap) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Initialize new service request handler with X-Road message protocols
-it should be able to handle and storage path of temporary files.</p>
-
-
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <h3>Instance members</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '158', 158)" onmouseover="showTip(event, '158', 158)">
-            HandleRequest(httpContext)
-          </code>
-          <div class="tip" id="158">
-            <strong>Signature:</strong> httpContext:HttpContext -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          <p>Handle incoming web request as X-Road service request.</p>
-
-
+          
         </td>
       </tr>
     </tbody>

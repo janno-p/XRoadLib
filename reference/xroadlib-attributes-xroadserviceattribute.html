@@ -40,6 +40,8 @@
   <span>Namespace: XRoadLib.Attributes</span><br />
 </p>
 <div class="xmldoc">
+<p>Defines operation method.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -58,7 +60,9 @@
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Initializes new operation definition.</p>
+
+
         </td>
       </tr>
     </tbody>
@@ -77,10 +81,13 @@
           </code>
           <div class="tip" id="70">
             <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>X-Road service version which first defined given operation.</p>
+
+
         </td>
       </tr>
       <tr>
@@ -91,10 +98,13 @@
           </code>
           <div class="tip" id="71">
             <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Abstract operations do not define binding details.</p>
+
+
         </td>
       </tr>
       <tr>
@@ -105,10 +115,13 @@
           </code>
           <div class="tip" id="72">
             <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Hidden operations are not included in service description.</p>
+
+
         </td>
       </tr>
       <tr>
@@ -122,7 +135,9 @@
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>Operation name.</p>
+
+
         </td>
       </tr>
       <tr>
@@ -133,10 +148,47 @@
           </code>
           <div class="tip" id="74">
             <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          
+          <p>X-Road service version which removed given operation.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
+            SchemaExporter
+          </code>
+          <div class="tip" id="75">
+            <strong>Signature:</strong> ISchemaExporter<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Provides extension specific customizations for the schema.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
+            ServiceMapType
+          </code>
+          <div class="tip" id="76">
+            <strong>Signature:</strong> Type<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>ServiceMap type which implements operation definition.</p>
+
+
         </td>
       </tr>
     </tbody>
