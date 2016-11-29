@@ -44,7 +44,7 @@ namespace XRoadLib
         private readonly IDictionary<Type, TypeDefinition> runtimeTypeDefinitions = new Dictionary<Type, TypeDefinition>();
         private readonly IDictionary<string, string> schemaLocations = new Dictionary<string, string>();
 
-        private readonly Action<string, string, OperationDefinition> addRequiredImport;
+        private readonly Action<string, string, ISchemaExporter> addRequiredImport;
         private readonly Func<string, IList<string>> getRequiredImports;
 
         private readonly Func<string, bool> addGlobalNamespace;
@@ -114,16 +114,13 @@ namespace XRoadLib
 
             var requiredImports = new SortedSet<Tuple<string, string>>();
 
-            addRequiredImport = (schemaNamespace, typeNamespace, op) =>
+            addRequiredImport = (schemaNamespace, typeNamespace, schemaExporter) =>
             {
                 if (typeNamespace == NamespaceConstants.XSD || typeNamespace == schemaNamespace)
                     return;
 
                 if (!schemaLocations.ContainsKey(typeNamespace))
-                {
-                    var customSchemaLocation = op?.ServiceAttribute != null ? (Func<string, string>)op.ServiceAttribute.CustomizeSchemaLocation : null;
-                    schemaLocations.Add(typeNamespace, schemaDefinitionProvider.GetSchemaLocation(typeNamespace, customSchemaLocation));
-                }
+                    schemaLocations.Add(typeNamespace, schemaDefinitionProvider.GetSchemaLocation(typeNamespace, schemaExporter));
 
                 requiredImports.Add(Tuple.Create(schemaNamespace, typeNamespace));
             };
@@ -221,16 +218,14 @@ namespace XRoadLib
 
             foreach (var operationDefinition in GetOperationDefinitions(targetNamespace))
             {
-                operationDefinition.ServiceAttribute.CustomizeOperationDefinition(operationDefinition);
-
-                var requestValueDefinition = schemaDefinitionProvider.GetRequestValueDefinition(operationDefinition, operationDefinition.ServiceAttribute.CustomizeRequestValueDefinition);
+                var requestValueDefinition = schemaDefinitionProvider.GetRequestValueDefinition(operationDefinition);
 
                 Func<XmlSchemaElement> createRequestElement = () => requestValueDefinition.ParameterInfo != null
                     ? CreateContentElement(requestValueDefinition, targetNamespace, referencedTypes)
                     : new XmlSchemaElement { Name = requestValueDefinition.RequestElementName, SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() } };
 
                 var requestElement = createRequestElement();
-                AddCustomAttributes(requestValueDefinition, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition));
+                AddCustomAttributes(requestValueDefinition, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
                 if (protocol.Style.UseElementInMessagePart)
                     schemaElements.Add(new XmlSchemaElement
@@ -239,7 +234,7 @@ namespace XRoadLib
                         SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement } } }
                     });
 
-                var responseValueDefinition = schemaDefinitionProvider.GetResponseValueDefinition(operationDefinition, null, operationDefinition.ServiceAttribute.CustomizeResponseValueDefinition);
+                var responseValueDefinition = schemaDefinitionProvider.GetResponseValueDefinition(operationDefinition);
                 if (!responseValueDefinition.ContainsNonTechnicalFault)
                     addFaultType = true;
 
@@ -275,7 +270,7 @@ namespace XRoadLib
                 }
                 else responseElement = resultElement = CreateContentElement(responseValueDefinition, targetNamespace, referencedTypes);
 
-                AddCustomAttributes(responseValueDefinition, responseElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition));
+                AddCustomAttributes(responseValueDefinition, responseElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
                 if (protocol.Style.UseElementInMessagePart)
                 {

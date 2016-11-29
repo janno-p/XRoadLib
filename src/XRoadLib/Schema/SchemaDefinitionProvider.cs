@@ -134,12 +134,11 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes default request element definition and applies customizations (if any).
         /// </summary>
-        public RequestValueDefinition GetRequestValueDefinition(OperationDefinition operationDefinition, Action<RequestValueDefinition> customizeRequestValueDefinition = null)
+        public RequestValueDefinition GetRequestValueDefinition(OperationDefinition operationDefinition)
         {
             var requestValueDefinition = new RequestValueDefinition(operationDefinition);
 
-            customizeRequestValueDefinition?.Invoke(requestValueDefinition);
-
+            operationDefinition.ExtensionSchemaExporter?.ExportRequestValueDefinition(requestValueDefinition);
             schemaExporter.ExportRequestValueDefinition(requestValueDefinition);
 
             return requestValueDefinition;
@@ -148,12 +147,11 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes default response element definition and applies customizations (if any).
         /// </summary>
-        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null, Action<ResponseValueDefinition> customizeResponseValueDefinition = null)
+        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
             var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
 
-            customizeResponseValueDefinition?.Invoke(responseValueDefinition);
-
+            operationDefinition.ExtensionSchemaExporter?.ExportResponseValueDefinition(responseValueDefinition);
             schemaExporter.ExportResponseValueDefinition(responseValueDefinition);
 
             return responseValueDefinition;
@@ -173,6 +171,7 @@ namespace XRoadLib.Schema
         {
             var operationDefinition = new OperationDefinition(qualifiedName, version, methodInfo);
 
+            operationDefinition.ExtensionSchemaExporter?.ExportOperationDefinition(operationDefinition);
             schemaExporter.ExportOperationDefinition(operationDefinition);
 
             return operationDefinition;
@@ -193,9 +192,11 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Get schema location of specified schema namespace.
         /// </summary>
-        public string GetSchemaLocation(string namespaceName, Func<string, string> customizeSchemaLocation = null)
+        public string GetSchemaLocation(string namespaceName, ISchemaExporter extension = null)
         {
-            return schemaExporter.ExportSchemaLocation(namespaceName) ?? customizeSchemaLocation?.Invoke(namespaceName) ?? NamespaceConstants.GetSchemaLocation(namespaceName);
+            return schemaExporter.ExportSchemaLocation(namespaceName)
+                ?? extension?.ExportSchemaLocation(namespaceName)
+                ?? NamespaceConstants.GetSchemaLocation(namespaceName);
         }
 
         /// <summary>

@@ -46,32 +46,9 @@ namespace XRoadLib.Attributes
         public virtual uint RemovedInVersion { get { return removedInVersion.GetValueOrDefault(uint.MaxValue); } set { removedInVersion = value; } }
 
         /// <summary>
-        /// Does ServiceMap use TypeMaps to serialize service request and response elements.
+        /// Provides extension specific customizations for the schema.
         /// </summary>
-        public virtual bool UseTypeMaps { get; } = true;
-
-        /// <summary>
-        /// Specifies if service extension wants to override default operation definition.
-        /// </summary>
-        public virtual void CustomizeOperationDefinition(OperationDefinition definition) { }
-
-        /// <summary>
-        /// Specifies if service extension wants to override default request value definition.
-        /// </summary>
-        public virtual void CustomizeRequestValueDefinition(RequestValueDefinition definition) { }
-
-        /// <summary>
-        /// Specifies if service extension wants to override default response value definition.
-        /// </summary>
-        public virtual void CustomizeResponseValueDefinition(ResponseValueDefinition definition) { }
-
-        /// <summary>
-        /// Specifies if service extension wants to override default schema location.
-        /// </summary>
-        public virtual string CustomizeSchemaLocation(string namespaceName)
-        {
-            return null;
-        }
+        public virtual ISchemaExporter SchemaExporter { get; }
 
         /// <summary>
         /// Initializes new operation definition.
