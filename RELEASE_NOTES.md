@@ -1,3 +1,6 @@
+#### 1.0.0-beta039 - 29.11.2016
+* Extension package to support Google Protocol Buffers serialization.
+
 #### 1.0.0-beta038 - 22.11.2016
 * Allow overriding of default IHttpHandler.ProcessRequest method.
 
