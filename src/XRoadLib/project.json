@@ -2,10 +2,10 @@
   "title": "XRoadLib",
   "version": "1.0.0-*",
   "description": "A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach.",
-  "authors": ["Janno Põldma"],
+  "authors": [ "Janno Põldma" ],
   "copyright": "Copyright © 2016",
   "buildOptions": {
-    "nowarn": ["CS1591"],
+    "nowarn": [ "CS1591" ],
     "warningsAsErrors": true,
     "xmlDoc": true
   },
