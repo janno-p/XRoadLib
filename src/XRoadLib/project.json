@@ -30,7 +30,7 @@
     "netstandard1.6": {
       "dependencies": {
         "Microsoft.AspNetCore.Http.Abstractions": "1.1.0",
-        "Microsoft.Extensions.DependencyInjection": "1.1.0",
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
         "NETStandard.Library": "1.6.1",
         "System.Linq.Expressions": "4.3.0",
         "System.Net.Requests": "4.3.0",
@@ -45,7 +45,7 @@
     "net451": {
       "dependencies": {
         "Microsoft.AspNetCore.Http.Abstractions": "1.1.0",
-        "Microsoft.Extensions.DependencyInjection": "1.1.0"
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0"
       },
       "frameworkAssemblies": {
         "System.Numerics": "",
