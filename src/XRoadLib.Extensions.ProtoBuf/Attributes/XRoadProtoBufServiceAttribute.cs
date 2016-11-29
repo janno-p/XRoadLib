@@ -19,20 +19,17 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
 
         private static readonly Type serviceMapType = typeof(ProtoBufServiceMap);
 
+        private readonly Lazy<ISchemaExporter> schemaExporter;
+
         /// <summary>
         /// ServiceMap type which implements operation definition.
         /// </summary>
         public override Type ServiceMapType => serviceMapType;
 
         /// <summary>
-        /// Protocol buffers handles its own serialization, so TypeMaps are not required.
+        /// Provides extension specific customizations for the schema.
         /// </summary>
-        public override bool UseTypeMaps { get; } = false;
-
-        /// <summary>
-        /// Type which carries protocol buffers reflection info.
-        /// </summary>
-        public Type ReflectionType { get; }
+        public override ISchemaExporter SchemaExporter => schemaExporter.Value;
 
         /// <summary>
         /// Initializes new operation definition with protocol buffers support.
@@ -40,50 +37,52 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
         public XRoadProtoBufServiceAttribute(string name, Type reflectionType)
             : base(name)
         {
-            ReflectionType = reflectionType;
+            schemaExporter = new Lazy<ISchemaExporter>(() => new ProtoBufSchemaExporter(reflectionType));
         }
 
-        /// <summary>
-        /// Specifies if service extension wants to override default operation definition.
-        /// </summary>
-        public override void CustomizeOperationDefinition(OperationDefinition definition)
+        private class ProtoBufSchemaExporter : AbstractSchemaExporter
         {
-            definition.CopyRequestPartToResponse = false;
-        }
+            private readonly Type reflectionType;
 
-        /// <summary>
-        /// Specifies if service extension wants to override default request value definition.
-        /// </summary>
-        public override void CustomizeRequestValueDefinition(RequestValueDefinition definition)
-        {
-            definition.RuntimeType = typeof(Stream);
-            definition.UseXop = true;
-            definition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
-        }
+            public override string XRoadPrefix => string.Empty;
+            public override string XRoadNamespace => string.Empty;
 
-        /// <summary>
-        /// Specifies if service extension wants to override default response value definition.
-        /// </summary>
-        public override void CustomizeResponseValueDefinition(ResponseValueDefinition definition)
-        {
-            definition.RuntimeType = typeof(Stream);
-            definition.UseXop = true;
-            definition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
-        }
+            public ProtoBufSchemaExporter(Type reflectionType)
+                : base(string.Empty)
+            {
+                this.reflectionType = reflectionType;
+            }
 
-        /// <summary>
-        /// Specifies if service extension wants to override default schema location.
-        /// </summary>
-        public override string CustomizeSchemaLocation(string namespaceName)
-        {
-            return namespaceName.Equals(XROAD_PROTOBUF_SCHEMA) ? XROAD_PROTOBUF_SCHEMA : null;
-        }
+            public override void ExportOperationDefinition(OperationDefinition operationDefinition)
+            {
+                operationDefinition.CopyRequestPartToResponse = false;
+            }
 
-        private string GetPrototypeName()
-        {
-            var propertyInfo = ReflectionType.GetProperty("Descriptor", BindingFlags.Public | BindingFlags.Static);
-            var descriptor = (FileDescriptor)propertyInfo.GetGetMethod().Invoke(null, new object[0]);
-            return descriptor.Name;
+            public override void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition)
+            {
+                requestValueDefinition.RuntimeType = typeof(Stream);
+                requestValueDefinition.UseXop = true;
+                requestValueDefinition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
+            }
+
+            public override void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition)
+            {
+                responseValueDefinition.RuntimeType = typeof(Stream);
+                responseValueDefinition.UseXop = true;
+                responseValueDefinition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
+            }
+
+            public override string ExportSchemaLocation(string namespaceName)
+            {
+                return namespaceName.Equals(XROAD_PROTOBUF_SCHEMA) ? XROAD_PROTOBUF_SCHEMA : null;
+            }
+
+            private string GetPrototypeName()
+            {
+                var propertyInfo = reflectionType.GetProperty("Descriptor", BindingFlags.Public | BindingFlags.Static);
+                var descriptor = (FileDescriptor)propertyInfo.GetGetMethod().Invoke(null, new object[0]);
+                return descriptor.Name;
+            }
         }
     }
 }

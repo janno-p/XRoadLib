@@ -85,7 +85,7 @@ namespace XRoadLib.Serialization
                 throw XRoadException.UnknownOperation(qualifiedName);
 
             var requestValueDefinition = schemaDefinitionProvider.GetRequestValueDefinition(operationDefinition);
-            var inputTypeMap = operationDefinition.UseTypeMaps ? GetTypeMap(requestValueDefinition.ParameterInfo?.ParameterType) : null;
+            var inputTypeMap = GetContentDefinitionTypeMap(requestValueDefinition, null);
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
             var responseValueDefinition = outputTuple.Item1;
@@ -350,7 +350,7 @@ namespace XRoadLib.Serialization
             if (returnValueDefinition.State == DefinitionState.Ignored)
                 return null;
 
-            var outputTypeMap = operationDefinition.UseTypeMaps ? GetContentDefinitionTypeMap(returnValueDefinition, null) : null;
+            var outputTypeMap = GetContentDefinitionTypeMap(returnValueDefinition, null);
             if (outputTypeMap != null)
                 returnValueDefinition.TypeName = outputTypeMap.Definition.Name;
 

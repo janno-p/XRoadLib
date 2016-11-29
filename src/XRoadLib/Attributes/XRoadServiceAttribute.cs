@@ -48,7 +48,7 @@ namespace XRoadLib.Attributes
         /// <summary>
         /// Provides extension specific customizations for the schema.
         /// </summary>
-        public virtual ISchemaExporter SchemaExporter { get; }
+        public virtual ISchemaExporter SchemaExporter { get; } = null;
 
         /// <summary>
         /// Initializes new operation definition.

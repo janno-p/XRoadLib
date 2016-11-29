@@ -30,6 +30,10 @@ namespace XRoadLib.Serialization.Mapping
         /// </summary>
         public ResponseValueDefinition ResponseValueDefinition { get; }
 
+        private bool HasWrapperResultElement => !ResponseValueDefinition.MergeContent
+                                                && ResponseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit
+                                                && ResponseValueDefinition.ContainsNonTechnicalFault;
+
         /// <summary>
         /// Initializes new ServiceMap entity using settings specified in operationDefinition.
         /// <param name="serializerCache">Provides TypeMap lookup.</param>
@@ -60,7 +64,7 @@ namespace XRoadLib.Serialization.Mapping
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
             if (RequestValueDefinition.ParameterInfo != null)
-                return DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestValueDefinition, message);
+                return ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestValueDefinition, message));
 
             return null;
         }
@@ -88,11 +92,11 @@ namespace XRoadLib.Serialization.Mapping
             if (!hasResponseElement || reader.LocalName != responseName)
                 throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
 
-            var hasWrapperElement = HasWrapperResultElement(message);
+            var hasWrapperElement = HasWrapperResultElement;
             if (hasWrapperElement && !reader.MoveToElement(4, ResponseValueDefinition.Name.LocalName, ResponseValueDefinition.Name.NamespaceName))
                 throw XRoadException.InvalidQuery($"Expected result wrapper element `{ResponseValueDefinition.Name}` was not found in SOAP message.");
 
-            return DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseValueDefinition, message);
+            return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseValueDefinition, message));
         }
 
         private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, IContentDefinition contentDefinition, XRoadMessage message)
@@ -129,7 +133,7 @@ namespace XRoadLib.Serialization.Mapping
                 writer.WriteStartElement(RequestValueDefinition.RequestElementName);
 
             if (RequestValueDefinition.ParameterInfo != null)
-                SerializeValue(writer, value, inputTypeMap, message.RequestNode, message, RequestValueDefinition);
+                SerializeValue(writer, PrepareRequestValue(value), inputTypeMap, message.RequestNode, message, RequestValueDefinition);
 
             if (!RequestValueDefinition.MergeContent)
                 writer.WriteEndElement();
@@ -170,12 +174,11 @@ namespace XRoadLib.Serialization.Mapping
                     SerializeFault(writer, fault, message.Protocol);
                 else if (outputTypeMap != null)
                 {
-                    var addWrapperElement = HasWrapperResultElement(message);
-
+                    var addWrapperElement = HasWrapperResultElement;
                     if (addWrapperElement)
                         writer.WriteStartElement(ResponseValueDefinition.Name.LocalName, ResponseValueDefinition.Name.NamespaceName);
 
-                    SerializeValue(writer, value, outputTypeMap, message.ResponseNode, message, ResponseValueDefinition);
+                    SerializeValue(writer, PrepareResponseValue(value), outputTypeMap, message.ResponseNode, message, ResponseValueDefinition);
 
                     if (addWrapperElement)
                         writer.WriteEndElement();
@@ -189,6 +192,11 @@ namespace XRoadLib.Serialization.Mapping
             writer.WriteEndElement();
         }
 
+        protected virtual object PrepareRequestValue(object value) => value;
+        protected virtual object PrepareResponseValue(object value) => value;
+        protected virtual object ProcessRequestValue(object value) => value;
+        protected virtual object ProcessResponseValue(object value) => value;
+
         private void SerializeValue(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message, IContentDefinition contentDefinition)
         {
             if (value == null)
@@ -200,13 +208,6 @@ namespace XRoadLib.Serialization.Mapping
             var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : typeMap;
 
             concreteTypeMap.Serialize(writer, templateNode, value, contentDefinition, message);
-        }
-
-        private bool HasWrapperResultElement(XRoadMessage message)
-        {
-            return !ResponseValueDefinition.MergeContent
-                   && ResponseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit
-                   && ResponseValueDefinition.ContainsNonTechnicalFault;
         }
 
         private static void SerializeFault(XmlWriter writer, IXRoadFault fault, IXRoadProtocol protocol)
