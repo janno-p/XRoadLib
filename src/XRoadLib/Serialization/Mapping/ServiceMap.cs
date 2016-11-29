@@ -46,11 +46,16 @@ namespace XRoadLib.Serialization.Mapping
         public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestValueDefinition requestValueDefinition, ResponseValueDefinition responseValueDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
         {
             this.serializerCache = serializerCache;
-            this.inputTypeMap = inputTypeMap;
-            this.outputTypeMap = outputTypeMap;
+
             RequestValueDefinition = requestValueDefinition;
             ResponseValueDefinition = responseValueDefinition;
             OperationDefinition = operationDefinition;
+
+            var inputContentTypeMap = inputTypeMap as IContentTypeMap;
+            this.inputTypeMap = inputContentTypeMap != null && requestValueDefinition.UseXop ? inputContentTypeMap.GetOptimizedContentTypeMap() : inputTypeMap;
+
+            var outputContentTypeMap = outputTypeMap as IContentTypeMap;
+            this.outputTypeMap = outputContentTypeMap != null && responseValueDefinition.UseXop ? outputContentTypeMap.GetOptimizedContentTypeMap() : outputTypeMap;
         }
 
         /// <summary>
