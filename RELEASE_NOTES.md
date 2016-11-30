@@ -1,3 +1,6 @@
+#### 1.0.0-beta040 - 30.11.2016
+* Fix Content-Type header value of `application/xop+xml` message root part.
+
 #### 1.0.0-beta039 - 29.11.2016
 * Extension package to support Google Protocol Buffers serialization.
 

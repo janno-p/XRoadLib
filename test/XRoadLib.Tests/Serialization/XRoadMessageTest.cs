@@ -32,7 +32,7 @@ namespace XRoadLib.Tests.Serialization
             using (var y = new XRoadAttachment(new MemoryStream(new byte[] { 5, 6, 7, 8, 9 })))
             {
                 var contentLength = WriteContent("test2", new[] { x, y });
-                Assert.Equal(534L, contentLength);
+                Assert.Equal(562L, contentLength);
             }
         }
 

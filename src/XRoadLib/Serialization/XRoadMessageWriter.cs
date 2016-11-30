@@ -9,6 +9,9 @@ namespace XRoadLib.Serialization
     internal class XRoadMessageWriter : IDisposable
     {
         public const string NEW_LINE = "\r\n";
+        
+        private const string SOAP_MULTIPART_ROOT_CONTENT_TYPE = "Content-Type: text/xml; charset=UTF-8";
+        private const string XOP_MULTIPART_ROOT_CONTENT_TYPE = "Content-Type: " + XRoadMessage.MULTIPART_CONTENT_TYPE_XOP + @"; charset=UTF-8; type=""text/xml""";
 
         private readonly CountingStream outputStream;
 
@@ -78,7 +81,7 @@ namespace XRoadLib.Serialization
             writer.Write(NEW_LINE);
             writer.Write("--{0}", boundaryMarker);
             writer.Write(NEW_LINE);
-            writer.Write("Content-Type: text/xml; charset=UTF-8");
+            writer.Write(source.BinaryMode == BinaryMode.Attachment ? SOAP_MULTIPART_ROOT_CONTENT_TYPE : XOP_MULTIPART_ROOT_CONTENT_TYPE);
             writer.Write(NEW_LINE);
             writer.Write("Content-Transfer-Encoding: 8bit");
             writer.Write(NEW_LINE);
