@@ -108,7 +108,10 @@ namespace XRoadLib.Handler
             SerializeXRoadResponse(context);
         }
 
-        private void InvokeServiceMethod(XRoadContextClassic context)
+        /// <summary>
+        /// Calls service method which implements the X-Road operation.
+        /// </summary>
+        protected virtual void InvokeServiceMethod(XRoadContextClassic context)
         {
             if (context.ServiceMap != null)
             {
@@ -137,7 +140,10 @@ namespace XRoadLib.Handler
             }
         }
 
-        private void DeserializeMethodInput(XRoadContextClassic context)
+        /// <summary>
+        /// Deserializes X-Road request from SOAP message payload.
+        /// </summary>
+        protected virtual void DeserializeMethodInput(XRoadContextClassic context)
         {
             var args = new BeforeDeserializationEventArgs();
             OnBeforeDeserialization(context, args);
@@ -152,7 +158,10 @@ namespace XRoadLib.Handler
             OnAfterDeserialization(context);
         }
 
-        private void SerializeXRoadResponse(XRoadContextClassic context)
+        /// <summary>
+        /// Serializes service result to a X-Road message response.
+        /// </summary>
+        protected virtual void SerializeXRoadResponse(XRoadContextClassic context)
         {
             OnBeforeSerialization(context);
 
