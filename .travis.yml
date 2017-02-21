@@ -5,8 +5,8 @@ dist: trusty
 
 env:
   matrix:
-    - FRAMEWORK=netcoreapp1.1 FRAMEWORKPATH=
-    - FRAMEWORK=net452 FRAMEWORKPATH=/property:FrameworkPathOverride=/usr/lib/mono/4.5/
+    - FRAMEWORK=netcoreapp1.1 FRAMEWORKPATH= TESTCOMMAND="dotnet test test/XRoadLib.Tests/XRoadLib.Tests.csproj --framework netcoreapp1.1 --configuration Debug"
+    - FRAMEWORK=net452 FRAMEWORKPATH=/property:FrameworkPathOverride=/usr/lib/mono/4.5/ TESTCOMMAND="mono ~/.nuget/packages/xunit.runner.console/2.2.0/tools/xunit.console.exe test/XRoadLib.Tests/bin/Debug/net452/XRoadLib.Tests.dll"
 
 before_install:
   - sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
@@ -19,4 +19,4 @@ script:
   - dotnet --info
   - dotnet restore test/XRoadLib.Tests/XRoadLib.Tests.csproj
   - dotnet build test/XRoadLib.Tests/XRoadLib.Tests.csproj --framework $FRAMEWORK --configuration Debug $FRAMEWORKPATH
-  - mono ~/.nuget/packages/xunit.runner.console/2.2.0/tools/xunit.console.exe test/XRoadLib.Tests/bin/Debug/XRoadLib.Tests.dll
+  - $TESTCOMMAND
