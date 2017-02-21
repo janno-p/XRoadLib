@@ -11,13 +11,9 @@ environment:
 configuration: Release
 build: off
 before_test:
-  - ps: >-
-      (new-object net.webclient).DownloadFile('https://download.microsoft.com/download/5/F/E/5FEB7E95-C643-48D5-8329-9D2C63676CE8/dotnet-dev-win-x64.1.0.0-rc4-004771.exe', 'core.exe')
-
-      core.exe /install /quiet /norestart
-
-      dotnet --info
-
-      dotnet restore
+  - ps: appveyor DownloadFile https://download.microsoft.com/download/5/F/E/5FEB7E95-C643-48D5-8329-9D2C63676CE8/dotnet-dev-win-x64.1.0.0-rc4-004771.exe "C:\dotnet.exe"
+  - cmd: call C:\dotnet.exe /install /quiet /norestart
+  - cmd: dotnet --info
+  - cmd: dotnet restore
 test_script:
   - cmd: dotnet test test\XRoadLib.Tests --framework %FRAMEWORK%
