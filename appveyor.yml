@@ -12,7 +12,7 @@ configuration: Release
 build: off
 before_test:
   - ps: >-
-      (new-object net.webclient).DownloadFile('https://download.microsoft.com/download/0/A/3/0A372822-205D-4A86-BFA7-084D2CBE9EDF/DotNetCore.1.0.1-SDK.1.0.0.Preview2-003131-x64.exe', 'core.exe')
+      (new-object net.webclient).DownloadFile('https://download.microsoft.com/download/5/F/E/5FEB7E95-C643-48D5-8329-9D2C63676CE8/dotnet-dev-win-x64.1.0.0-rc4-004771.exe', 'core.exe')
 
       core.exe /install /quiet /norestart
 
