@@ -16,4 +16,4 @@ before_test:
   - cmd: dotnet --info
   - cmd: dotnet restore
 test_script:
-  - cmd: dotnet test test\XRoadLib.Tests\XRoadLib.Test.csproj --framework %FRAMEWORK%
+  - cmd: dotnet test test\XRoadLib.Tests\XRoadLib.Tests.csproj --framework %FRAMEWORK%
