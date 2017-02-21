@@ -34,7 +34,7 @@ let release = LoadReleaseNotes "RELEASE_NOTES.md"
 
 // Projects which will be included in release
 let productProjects =
-    !! "src/*/project.json"
+    !! "src/*/*.csproj"
 
 // --------------------------------------------------------------------------------------
 // Helper functions for dotnet command
@@ -85,8 +85,8 @@ Target "BuildRelease" (fun _ ->
 Target "CopyBinaries" (fun _ ->
     productProjects
     |> Seq.map (fun f -> Path.GetDirectoryName(f))
-    |> Seq.filter (fun d -> Directory.Exists(d </> "bin" </> "Release" </> "net451"))
-    |> Seq.map (fun d -> (d </> "bin" </> "Release" </> "net451", "bin" </> DirectoryInfo(d).Name))
+    |> Seq.filter (fun d -> Directory.Exists(d </> "bin" </> "Release" </> "net452"))
+    |> Seq.map (fun d -> (d </> "bin" </> "Release" </> "net452", "bin" </> DirectoryInfo(d).Name))
     |> Seq.iter (fun (fromDir, toDir) -> CopyDir toDir fromDir (fun _ -> true))
 )
 
@@ -94,8 +94,8 @@ Target "CopyBinaries" (fun _ ->
 // Run tests for all target framework versions
 
 Target "RunTests" (fun _ ->
-    !! "test/*/project.json"
-    -- "test/XRoadLib.Tests.Contract/project.json"
+    !! "test/*/*.csproj"
+    -- "test/XRoadLib.Tests.Contract/XRoadLib.Tests.Contract.csproj"
     |> Seq.iter (fun proj ->
         DotnetRestore proj
         DotnetTest proj)

@@ -1,5 +1,5 @@
 source https://nuget.org/api/v2
-framework >= net451
+framework >= net452
 
 nuget FAKE
 nuget FSharp.Formatting

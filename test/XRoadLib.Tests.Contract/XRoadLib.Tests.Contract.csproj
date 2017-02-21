@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6.1;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6.1;net452</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>XRoadLib.Tests.Contract</AssemblyName>
     <PackageId>XRoadLib.Tests.Contract</PackageId>
@@ -15,7 +15,7 @@
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
     <Reference Include="System.Web.Services" />
     <Reference Include="Microsoft.CSharp" />

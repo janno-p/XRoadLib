@@ -6,7 +6,6 @@
     <AssemblyName>Calculator</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Calculator</PackageId>
-    <RuntimeIdentifiers>linuxmint.18-x64</RuntimeIdentifiers>
     <RuntimeFrameworkVersion>1.1.0</RuntimeFrameworkVersion>
   </PropertyGroup>
 
@@ -14,7 +13,7 @@
     <ProjectReference Include="..\..\src\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.0" />
   </ItemGroup>
