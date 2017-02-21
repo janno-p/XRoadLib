@@ -6,15 +6,15 @@ dist: trusty
 env:
   matrix:
     - FRAMEWORK=netcoreapp1.1
-    - FRAMEWORK=net451
+    - FRAMEWORK=net452
 
 before_install:
   - sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
-  - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
   - sudo apt-get update
-  - sudo apt-get -y install dotnet-dev-1.0.0-preview2-003131
+  - sudo apt-get -y install dotnet-dev-1.0.0-rc4-004771
 
 script:
   - dotnet --info
-  - dotnet restore src test
-  - dotnet test test/XRoadLib.Tests --framework $FRAMEWORK
+  - dotnet restore test/XRoadLib.Tests/XRoadLib.Tests.csproj
+  - dotnet test test/XRoadLib.Tests/XRoadLib.Tests.csproj --framework $FRAMEWORK --configuration Debug
