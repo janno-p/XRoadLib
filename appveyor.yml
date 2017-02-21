@@ -16,6 +16,6 @@ before_test:
 
       core.exe /install /quiet /norestart
 
-      dotnet restore src test
+      dotnet restore
 test_script:
   - cmd: dotnet test test\XRoadLib.Tests --framework %FRAMEWORK%
