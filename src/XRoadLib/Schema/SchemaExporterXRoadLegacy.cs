@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Web.Services.Description;
 
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6_1
 using System.Xml;
 #endif
 
@@ -12,7 +12,7 @@ namespace XRoadLib.Schema
     /// </summary>
     public abstract class SchemaExporterXRoadLegacy : AbstractSchemaExporter
     {
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6_1
         private readonly XmlDocument document = new XmlDocument();
 #endif
 
@@ -53,7 +53,7 @@ namespace XRoadLib.Schema
 
             serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
             var address = new XRoadAddressBinding(XRoadPrefix, XRoadNamespace) { Producer = producerName };
 #else
             var address = document.CreateElement(XRoadPrefix, "address", XRoadNamespace);
@@ -80,7 +80,7 @@ namespace XRoadLib.Schema
         /// </summary>
         protected void AddXRoadTitle(Port servicePort, string language, string title)
         {
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
             var titleBinding = new XRoadTitleBinding(XRoadPrefix, XRoadNamespace)
             {
                 Language = language,

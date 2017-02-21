@@ -12,7 +12,7 @@ using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
 using MessageCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.Message>;
 using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.ServiceDescriptionFormatExtension>;
 using XRoadLib.Xml.Schema;
@@ -549,7 +549,7 @@ namespace XRoadLib
 
             addGlobalNamespace(NamespaceConstants.MIME);
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
             AddOperationContentBinding(soapPart.Extensions, x => x);
 #else
             AddOperationContentBinding(soapPart.Extensions, protocol.Style.CreateSoapHeader);
@@ -582,7 +582,7 @@ namespace XRoadLib
         }
 
         private void AddOperationContentBinding<THeader>(ServiceDescriptionFormatExtensionCollection extensions, Func<SoapHeaderBinding, THeader> projectionFunc)
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
             where THeader : ServiceDescriptionFormatExtension
 #endif
         {
@@ -664,7 +664,7 @@ namespace XRoadLib
                                    .Select(doc => CreateTitleElement(doc.Item1, doc.Item2, ns => addRequiredImport(schemaNamespace, ns, null)))
                                    .Cast<XmlNode>();
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
             var appInfo = new XmlSchemaAppInfo();
             appInfo.Markup.AddRange(markup);
 #else
@@ -678,7 +678,7 @@ namespace XRoadLib
         {
             addRequiredImport(schemaNamespace, NamespaceConstants.XMIME, null);
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
             schemaElement.UnhandledAttributes.Add(protocol.Style.CreateExpectedContentType("application/octet-stream"));
 #else
             schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
@@ -870,7 +870,7 @@ namespace XRoadLib
         }
 
         private
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
             XRoadOperationVersionBinding
 #else
             XmlElement
@@ -880,7 +880,7 @@ namespace XRoadLib
             if (operationDefinition.Version == 0)
                 return null;
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
             return new XRoadOperationVersionBinding(xRoadPrefix, xRoadNamespace) { Version = $"v{operationDefinition.Version}" };
 #else
             var addressElement = document.CreateElement(xRoadPrefix, "version", xRoadNamespace);
@@ -933,20 +933,20 @@ namespace XRoadLib
             if (definition.CustomAttributes == null)
                 return;
 
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6_1
             var attributes = new List<XmlAttribute>(target.UnhandledAttributes);
 #endif
             foreach (var attribute in definition.CustomAttributes ?? Enumerable.Empty<Tuple<XName, string>>())
             {
                 var attr = CreateAttribute(attribute.Item1, attribute.Item2, addSchemaImport);
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
                 target.UnhandledAttributes.Add(attr);
 #else
                 attributes.Add(attr);
 #endif
             }
 
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6_1
             target.UnhandledAttributes = attributes.ToArray();
 #endif
         }

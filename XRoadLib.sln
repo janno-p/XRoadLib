@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B98-5CED-492C-A5B7-A5B4F73CF142}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,12 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "XRoadLib", "src\XRoadLib\XRoadLib.xproj", "{5109476D-6533-4275-AB06-39D95728BBFA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{BF60BC93-E09B-4E5F-9D85-95A519479D54}"
 	ProjectSection(SolutionItems) = preProject
 		build.fsx = build.fsx
-		global.json = global.json
 		README.md = README.md
 		RELEASE_NOTES.md = RELEASE_NOTES.md
 	EndProjectSection
@@ -34,13 +31,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{8E6D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{ED8079DD-2B06-4030-9F0F-DC548F98E1C4}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "XRoadLib.Tests", "test\XRoadLib.Tests\XRoadLib.Tests.xproj", "{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "XRoadLib.Tests.Contract", "test\XRoadLib.Tests.Contract\XRoadLib.Tests.Contract.xproj", "{231811E0-4F3B-45DD-A777-2CE4C7EAB755}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "XRoadLib.Extensions.ProtoBuf", "src\XRoadLib.Extensions.ProtoBuf\XRoadLib.Extensions.ProtoBuf.xproj", "{5A056724-F4B7-4A8E-8EEB-819299541F2C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{21BB3EB6-7BD5-4C26-9F7C-868F46AB6274}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRoadLib", "src\XRoadLib\XRoadLib.csproj", "{5109476D-6533-4275-AB06-39D95728BBFA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRoadLib.Tests", "test\XRoadLib.Tests\XRoadLib.Tests.csproj", "{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRoadLib.Tests.Contract", "test\XRoadLib.Tests.Contract\XRoadLib.Tests.Contract.csproj", "{231811E0-4F3B-45DD-A777-2CE4C7EAB755}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRoadLib.Extensions.ProtoBuf", "src\XRoadLib.Extensions.ProtoBuf\XRoadLib.Extensions.ProtoBuf.csproj", "{5A056724-F4B7-4A8E-8EEB-819299541F2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,9 +66,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5109476D-6533-4275-AB06-39D95728BBFA} = {21BB3EB6-7BD5-4C26-9F7C-868F46AB6274}
 		{83F16175-43B1-4C90-A1EE-8E351C33435D} = {A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}
 		{8E6D5255-776D-4B61-85F9-73C37AA1FB9A} = {A6A6AF7D-D6E3-442D-9B1E-58CC91879BE1}
+		{5109476D-6533-4275-AB06-39D95728BBFA} = {21BB3EB6-7BD5-4C26-9F7C-868F46AB6274}
 		{AFE5FB96-EF23-4C38-80C2-6E07E4B34BD9} = {ED8079DD-2B06-4030-9F0F-DC548F98E1C4}
 		{231811E0-4F3B-45DD-A777-2CE4C7EAB755} = {ED8079DD-2B06-4030-9F0F-DC548F98E1C4}
 		{5A056724-F4B7-4A8E-8EEB-819299541F2C} = {21BB3EB6-7BD5-4C26-9F7C-868F46AB6274}

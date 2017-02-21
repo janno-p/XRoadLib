@@ -168,7 +168,7 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6_1
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
@@ -220,7 +220,7 @@ namespace XRoadLib.Serialization
                 reader.Read(this, true);
         }
 
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6_1
         /// <summary>
         /// Serializes X-Road message into specified HTTP context response.
         /// </summary>

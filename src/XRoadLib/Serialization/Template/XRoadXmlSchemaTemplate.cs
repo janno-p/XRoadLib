@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6_1
 using XRoadLib.Xml.Schema;
 #else
 using System.Xml.Schema;

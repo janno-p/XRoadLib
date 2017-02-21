@@ -7,10 +7,7 @@
     {
       "taskName": "build",
       "args": [
-        "${workspaceRoot}/src/XRoadLib",
-        "${workspaceRoot}/src/XRoadLib.Extensions.ProtoBuf",
-        "${workspaceRoot}/test/XRoadLib.Tests",
-        "${workspaceRoot}/test/XRoadLib.Tests.Contract"
+        "${workspaceRoot}/XRoadLib.sln"
       ],
       "isBuildCommand": true,
       "problemMatcher": "$msCompile"

@@ -74,7 +74,7 @@ namespace XRoadLib.Serialization
         { }
     }
 
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_6_1
     /// <summary>
     /// X-Road context of classical ASP.NET applications.
     /// </summary>
