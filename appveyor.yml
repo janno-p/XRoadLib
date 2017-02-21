@@ -7,7 +7,7 @@ init:
 environment:
   matrix:
     - FRAMEWORK: netcoreapp1.1
-    - FRAMEWORK: net451
+    - FRAMEWORK: net452
 configuration: Release
 build: off
 before_test:
