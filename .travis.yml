@@ -18,5 +18,5 @@ script:
   - which mono
   - dotnet --info
   - dotnet restore test/XRoadLib.Tests/XRoadLib.Tests.csproj
-  - dotnet build test/XRoadLib.Tests/XRoadLib.Tests.csproj --framework $FRAMEWORK --configuration Debug $FRAMEWORKPATH
+  - dotnet build test/XRoadLib.Tests/XRoadLib.Tests.csproj --framework $FRAMEWORK --configuration Debug --verbosity detailed $FRAMEWORKPATH
   - $TESTCOMMAND
