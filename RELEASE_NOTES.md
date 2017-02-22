@@ -1,3 +1,7 @@
+#### 1.0.0-beta042 - 22.02.2017
+* Fix NuGet publishing.
+* Remove duplicate entries from API reference.
+
 #### 1.0.0-beta041 - 22.02.2017
 * Improve extensibility of base handlers.
 
