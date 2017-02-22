@@ -44,22 +44,6 @@ namespace XRoadLib.Schema
         }
 
         /// <summary>
-        /// Configure SOAP header of the messages.
-        /// </summary>
-        public override void ExportHeaderDefinition(HeaderDefinition headerDefinition)
-        {
-            base.ExportHeaderDefinition(headerDefinition);
-
-            headerDefinition.Use<XRoadHeader40>()
-                            .WithRequiredHeader(x => x.Client)
-                            .WithRequiredHeader(x => x.Service)
-                            .WithRequiredHeader(x => x.UserId)
-                            .WithRequiredHeader(x => x.Id)
-                            .WithRequiredHeader(x => x.ProtocolVersion)
-                            .WithHeaderNamespace(NamespaceConstants.XROAD_V4);
-        }
-
-        /// <summary>
         /// Configure protocol global settings.
         /// </summary>
         public override void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)

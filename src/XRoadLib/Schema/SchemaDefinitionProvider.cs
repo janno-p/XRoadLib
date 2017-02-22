@@ -230,6 +230,7 @@ namespace XRoadLib.Schema
                             .WithRequiredHeader(x => x.UserId)
                             .WithRequiredHeader(x => x.Id)
                             .WithRequiredHeader(x => x.Issue)
+                            .WithRequiredHeader(x => x.ProtocolVersion)
                             .WithHeaderNamespace(NamespaceConstants.XROAD_V4)
                             .WithHeaderNamespace(NamespaceConstants.XROAD_V4_REPR);
 
