@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>SchemaDefinitionProvider - XRoadLib</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Janno Põldma"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/XRoadLib/content/style.css" />
+    <script type="text/javascript" src="/XRoadLib/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/janno-p/XRoadLib">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/XRoadLib/index.html">XRoadLib</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>SchemaDefinitionProvider</h1>
+<p>
+  <span>Namespace: XRoadLib.Schema</span><br />
+</p>
+<div class="xmldoc">
+<p>Extracts serialization/definition details from runtime types and methods.</p>
+
+</div>
+  <h3>Constructors</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Constructor</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '882', 882)" onmouseover="showTip(event, '882', 882)">
+            new(schemaExporter)
+          </code>
+          <div class="tip" id="882">
+            <strong>Signature:</strong> schemaExporter:ISchemaExporter -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes definition builder.</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '883', 883)" onmouseover="showTip(event, '883', 883)">
+            ExportServiceDescription(...)
+          </code>
+          <div class="tip" id="883">
+            <strong>Signature:</strong> serviceDescription:ServiceDescription -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Customize service description before presentation.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '884', 884)" onmouseover="showTip(event, '884', 884)">
+            GetCollectionDefinition(typeDefinition)
+          </code>
+          <div class="tip" id="884">
+            <strong>Signature:</strong> typeDefinition:TypeDefinition -&gt; CollectionDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes default collection type definition and applies customizations (if any).</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '885', 885)" onmouseover="showTip(event, '885', 885)">
+            GetFaultDefinition()
+          </code>
+          <div class="tip" id="885">
+            <strong>Signature:</strong> unit -&gt; FaultDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes default fault definition and applies customizations (if any).</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '886', 886)" onmouseover="showTip(event, '886', 886)">
+            GetOperationDefinition(...)
+          </code>
+          <div class="tip" id="886">
+            <strong>Signature:</strong> (methodInfo:MethodInfo * qualifiedName:XName * version:Nullable&lt;uint32&gt;) -&gt; OperationDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes default opeartion definition and applies customizations (if any).</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '887', 887)" onmouseover="showTip(event, '887', 887)">
+            GetPropertyDefinition(...)
+          </code>
+          <div class="tip" id="887">
+            <strong>Signature:</strong> (propertyInfo:PropertyInfo * typeDefinition:TypeDefinition) -&gt; PropertyDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes default property definition and applies customizations (if any).</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '888', 888)" onmouseover="showTip(event, '888', 888)">
+            GetRequestValueDefinition(...)
+          </code>
+          <div class="tip" id="888">
+            <strong>Signature:</strong> operationDefinition:OperationDefinition -&gt; RequestValueDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes default request element definition and applies customizations (if any).</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '889', 889)" onmouseover="showTip(event, '889', 889)">
+            GetResponseValueDefinition(...)
+          </code>
+          <div class="tip" id="889">
+            <strong>Signature:</strong> (operationDefinition:OperationDefinition * xRoadFaultPresentation:Nullable&lt;XRoadFaultPresentation&gt;) -&gt; ResponseValueDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes default response element definition and applies customizations (if any).</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '890', 890)" onmouseover="showTip(event, '890', 890)">
+            GetSchemaLocation(...)
+          </code>
+          <div class="tip" id="890">
+            <strong>Signature:</strong> (namespaceName:string * extension:ISchemaExporter) -&gt; string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Get schema location of specified schema namespace.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '891', 891)" onmouseover="showTip(event, '891', 891)">
+            GetSimpleTypeDefinition(typeName)
+          </code>
+          <div class="tip" id="891">
+            <strong>Signature:</strong> typeName:string -&gt; TypeDefinition<br />
+                          <strong>Type parameters:</strong> 'T          </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes default simple type definition and applies customizations (if any).</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '892', 892)" onmouseover="showTip(event, '892', 892)">
+            GetTypeDefinition(type, typeName)
+          </code>
+          <div class="tip" id="892">
+            <strong>Signature:</strong> (type:Type * typeName:string) -&gt; TypeDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Initializes default type definition and applies customizations (if any).</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '893', 893)" onmouseover="showTip(event, '893', 893)">
+            GetXRoadHeaderDefinition()
+          </code>
+          <div class="tip" id="893">
+            <strong>Signature:</strong> unit -&gt; HeaderDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Customize X-Road message header elements.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '894', 894)" onmouseover="showTip(event, '894', 894)">
+            GetXRoadNamespace()
+          </code>
+          <div class="tip" id="894">
+            <strong>Signature:</strong> unit -&gt; string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Get main namespace which defines X-Road message protocol specifics.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '895', 895)" onmouseover="showTip(event, '895', 895)">
+            GetXRoadPrefix()
+          </code>
+          <div class="tip" id="895">
+            <strong>Signature:</strong> unit -&gt; string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Get preferred X-Road namespace prefix for service description.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '896', 896)" onmouseover="showTip(event, '896', 896)">
+            ProtocolDefinition
+          </code>
+          <div class="tip" id="896">
+            <strong>Signature:</strong> ProtocolDefinition<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Global settings for protocol instance.</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/XRoadLib/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">XRoadLib</li>
+            <li><a href="/XRoadLib/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/XRoadLib">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/janno-p/XRoadLib">Source Code on GitHub</a></li>
+            <li><a href="/XRoadLib/license.html">License</a></li>
+            <li><a href="/XRoadLib/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/XRoadLib/tutorial.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/XRoadLib/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/janno-p/XRoadLib"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>
