@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using XRoadLib.Headers;
 
 namespace XRoadLib.Schema
 {
@@ -40,6 +41,22 @@ namespace XRoadLib.Schema
             : base(producerNamespace)
         {
             this.contractAssembly = contractAssembly;
+        }
+
+        /// <summary>
+        /// Configure SOAP header of the messages.
+        /// </summary>
+        public override void ExportHeaderDefinition(HeaderDefinition headerDefinition)
+        {
+            base.ExportHeaderDefinition(headerDefinition);
+
+            headerDefinition.Use<XRoadHeader40>()
+                            .WithRequiredHeader(x => x.Client)
+                            .WithRequiredHeader(x => x.Service)
+                            .WithRequiredHeader(x => x.UserId)
+                            .WithRequiredHeader(x => x.Id)
+                            .WithRequiredHeader(x => x.ProtocolVersion)
+                            .WithHeaderNamespace(NamespaceConstants.XROAD_V4);
         }
 
         /// <summary>
