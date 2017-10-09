@@ -132,7 +132,6 @@ namespace XRoadLib
             headerDefinition = schemaDefinitionProvider.GetXRoadHeaderDefinition();
 
             addGlobalNamespace(NamespaceConstants.SOAP);
-            addGlobalNamespace(NamespaceConstants.SOAP_ENV);
             addGlobalNamespace(NamespaceConstants.WSDL);
             addGlobalNamespace(NamespaceConstants.XSD);
         }
