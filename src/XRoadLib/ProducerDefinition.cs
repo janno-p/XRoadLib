@@ -656,12 +656,20 @@ namespace XRoadLib
 
         private XmlSchemaAnnotation CreateSchemaAnnotation(string schemaNamespace, Definition definition)
         {
-            if (!definition.Documentation.Any())
+            if (definition.Documentation.IsEmpty)
                 return null;
 
-            var markup = definition.Documentation
-                                   .Select(doc => CreateTitleElement(doc.Item1, doc.Item2, ns => addRequiredImport(schemaNamespace, ns, null)))
-                                   .Cast<XmlNode>();
+            var markup = definition
+                .Documentation
+                .Titles
+                .Select(doc => CreateXrdDocumentationElement("title", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null)))
+                .Concat(definition.Documentation
+                                  .Notes
+                                  .Select(doc => CreateXrdDocumentationElement("notes", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
+                .Concat(definition.Documentation
+                                  .Notes
+                                  .Select(doc => CreateXrdDocumentationElement(protocol.ProtocolDefinition.TechNotesElementName, doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
+                .Cast<XmlNode>();
 
 #if NETSTANDARD1_6_1
             var appInfo = new XmlSchemaAppInfo();
@@ -888,11 +896,11 @@ namespace XRoadLib
 #endif
         }
 
-        private XmlElement CreateTitleElement(string languageCode, string value, Action<string> addSchemaImport)
+        private XmlElement CreateXrdDocumentationElement(string name, string languageCode, string value, Action<string> addSchemaImport)
         {
             addSchemaImport(xRoadNamespace);
 
-            var titleElement = document.CreateElement(xRoadPrefix, "title", xRoadNamespace);
+            var titleElement = document.CreateElement(xRoadPrefix, name, xRoadNamespace);
             titleElement.InnerText = value;
 
             if (string.IsNullOrWhiteSpace(languageCode))
@@ -905,15 +913,21 @@ namespace XRoadLib
             return titleElement;
         }
 
-        private XmlElement CreateDocumentationElement(IList<Tuple<string, string>> titles)
+        private XmlElement CreateDocumentationElement(DocumentationDefinition documentationDefinition)
         {
-            if (titles == null || !titles.Any())
+            if (documentationDefinition.IsEmpty)
                 return null;
 
             var documentationElement = document.CreateElement(PrefixConstants.WSDL, "documentation", NamespaceConstants.WSDL);
 
-            foreach (var title in titles)
-                documentationElement.AppendChild(CreateTitleElement(title.Item1, title.Item2, _ => { }));
+            foreach (var title in documentationDefinition.Titles)
+                documentationElement.AppendChild(CreateXrdDocumentationElement("title", title.LanguageCode, title.Value, _ => { }));
+
+            foreach (var title in documentationDefinition.Notes)
+                documentationElement.AppendChild(CreateXrdDocumentationElement("notes", title.LanguageCode, title.Value, _ => { }));
+
+            foreach (var title in documentationDefinition.TechNotes)
+                documentationElement.AppendChild(CreateXrdDocumentationElement(protocol.ProtocolDefinition.TechNotesElementName, title.LanguageCode, title.Value, _ => { }));
 
             return documentationElement;
         }

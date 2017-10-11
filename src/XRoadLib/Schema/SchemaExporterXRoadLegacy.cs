@@ -108,6 +108,7 @@ namespace XRoadLib.Schema
             base.ExportProtocolDefinition(protocolDefinition);
 
             protocolDefinition.ContractAssembly = contractAssembly;
+            protocolDefinition.TechNotesElementName = "technotes";
         }
     }
 }

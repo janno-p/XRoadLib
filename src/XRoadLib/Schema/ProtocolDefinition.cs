@@ -40,5 +40,10 @@ namespace XRoadLib.Schema
         /// Define list of content filters of X-Road message elements.
         /// </summary>
         public ISet<string> EnabledFilters { get; } = new HashSet<string>();
+
+        /// <summary>
+        /// Defines technotes element name
+        /// </summary>
+        public string TechNotesElementName { get; set; } = "techNotes";
     }
 }

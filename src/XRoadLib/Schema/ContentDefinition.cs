@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -83,7 +82,7 @@ namespace XRoadLib.Schema
             TypeName = customTypeName != null ? XName.Get(customTypeName, NamespaceConstants.XSD) : null;
             IsOptional = sourceInfo.GetSingleAttribute<XRoadOptionalAttribute>() != null;
             State = DefinitionState.Default;
-            Documentation = sourceInfo.GetXRoadTitles().Where(title => !string.IsNullOrWhiteSpace(title.Item2)).ToArray();
+            Documentation = new DocumentationDefinition(sourceInfo);
             MergeContent = sourceInfo.GetSingleAttribute<XRoadMergeContentAttribute>() != null || sourceInfo.GetSingleAttribute<XmlTextAttribute>() != null;
 
             if (!RuntimeType.IsArray)

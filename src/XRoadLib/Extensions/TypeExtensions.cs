@@ -61,11 +61,25 @@ namespace XRoadLib.Extensions
             return properties;
         }
 
-        public static IEnumerable<Tuple<string, string>> GetXRoadTitles(this ICustomAttributeProvider customAttributeProvider)
+        public static IEnumerable<XRoadTitleAttribute> GetXRoadTitles(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(XRoadTitleAttribute), false)
                                           .OfType<XRoadTitleAttribute>()
-                                          .Select(x => Tuple.Create(x.LanguageCode, x.Value));
+                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
+        }
+
+        public static IEnumerable<XRoadNotesAttribute> GetXRoadNotes(this ICustomAttributeProvider customAttributeProvider)
+        {
+            return customAttributeProvider.GetCustomAttributes(typeof(XRoadNotesAttribute), false)
+                                          .OfType<XRoadNotesAttribute>()
+                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
+        }
+
+        public static IEnumerable<XRoadTechNotesAttribute> GetXRoadTechNotes(this ICustomAttributeProvider customAttributeProvider)
+        {
+            return customAttributeProvider.GetCustomAttributes(typeof(XRoadTechNotesAttribute), false)
+                                          .OfType<XRoadTechNotesAttribute>()
+                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
         }
 
         public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)

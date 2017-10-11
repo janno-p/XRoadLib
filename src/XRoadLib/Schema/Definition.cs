@@ -9,7 +9,7 @@ namespace XRoadLib.Schema
 
         public DefinitionState State { get; set; }
 
-        public Tuple<string, string>[] Documentation { get; set; }
+        public DocumentationDefinition Documentation { get; set; }
 
         public Tuple<XName, string>[] CustomAttributes { get; set; }
 

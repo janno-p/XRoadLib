@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace XRoadLib.Schema
+﻿namespace XRoadLib.Schema
 {
     /// <summary>
     /// Configuration options for customizing non-technical faults.
@@ -12,7 +10,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public FaultDefinition()
         {
-            Documentation = new Tuple<string, string>[0];
+            Documentation = new DocumentationDefinition();
         }
     }
 }

@@ -3,20 +3,20 @@
 namespace XRoadLib.Attributes
 {
     /// <summary>
-    /// Title of the service (for displaying to users)
+    /// Description of the service (for displaying to users).
     /// </summary>
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true)]
-    public class XRoadTitleAttribute : Attribute
+    public class XRoadNotesAttribute : Attribute
     {
         public string LanguageCode { get; }
         public string Value { get; }
 
-        public XRoadTitleAttribute(string value)
+        public XRoadNotesAttribute(string value)
         {
             Value = value;
         }
 
-        public XRoadTitleAttribute(string languageCode, string value)
+        public XRoadNotesAttribute(string languageCode, string value)
         {
             LanguageCode = languageCode;
             Value = value;

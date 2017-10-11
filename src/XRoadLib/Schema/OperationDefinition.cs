@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Mapping;
 
@@ -81,7 +80,7 @@ namespace XRoadLib.Schema
             CopyRequestPartToResponse = true;
             InputMessageName = qualifiedName.LocalName;
             OutputMessageName = $"{qualifiedName.LocalName}Response";
-            Documentation = methodInfo.GetXRoadTitles().Where(title => !string.IsNullOrWhiteSpace(title.Item2)).ToArray();
+            Documentation = new DocumentationDefinition(methodInfo);
             ServiceMapType = attribute?.ServiceMapType ?? typeof(ServiceMap);
             ExtensionSchemaExporter = attribute?.SchemaExporter;
         }
