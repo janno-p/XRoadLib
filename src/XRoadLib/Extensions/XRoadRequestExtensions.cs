@@ -2,7 +2,7 @@ using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 
-#if !NETSTANDARD1_6_1
+#if !NETSTANDARD1_6
 using System.Collections.Specialized;
 #endif
 
@@ -10,7 +10,7 @@ namespace XRoadLib.Extensions
 {
     public static class XRoadRequestExtensions
     {
-#if !NETSTANDARD1_6_1
+#if !NETSTANDARD1_6
         public static string GetContentTypeHeader(this NameValueCollection headers)
         {
             var contentTypeKey = headers?.AllKeys.FirstOrDefault(key => key.Trim().ToLower().Equals("content-type"));

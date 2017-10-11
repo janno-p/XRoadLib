@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6.1;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;net452</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>XRoadLib.Tests.Contract</AssemblyName>
     <PackageId>XRoadLib.Tests.Contract</PackageId>
@@ -11,7 +11,7 @@
     <ProjectReference Include="..\..\src\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6.1' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 

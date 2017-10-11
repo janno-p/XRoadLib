@@ -1,4 +1,4 @@
-#if NETSTANDARD1_6_1
+#if NETSTANDARD1_6
 
 namespace XRoadLib.Xml.Schema
 {

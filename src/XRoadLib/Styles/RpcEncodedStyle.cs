@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 
-#if NETSTANDARD1_6_1
+#if NETSTANDARD1_6
 using XRoadLib.Xml.Schema;
 #else
 using System.Xml.Schema;
@@ -25,7 +25,7 @@ namespace XRoadLib.Styles
             writer.WriteArrayTypeAttribute(itemQualifiedName, arraySize);
         }
 
-#if !NETSTANDARD1_6_1
+#if !NETSTANDARD1_6
         public override XmlElement CreateSoapHeader(SoapHeaderBinding binding)
         {
             var element = document.CreateElement(PrefixConstants.SOAP, "header", NamespaceConstants.SOAP);
@@ -56,7 +56,7 @@ namespace XRoadLib.Styles
             if (itemElement.SchemaTypeName != null)
             {
                 var attribute = CreateArrayTypeAttribute(XName.Get(itemElement.SchemaTypeName.Name, itemElement.SchemaTypeName.Namespace));
-#if NETSTANDARD1_6_1
+#if NETSTANDARD1_6
                 schemaAttribute.UnhandledAttributes.Add(attribute);
 #else
                 schemaAttribute.UnhandledAttributes = new[] { attribute };
