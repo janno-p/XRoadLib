@@ -5,12 +5,7 @@ using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
-
-#if NETSTANDARD1_6
-using XRoadLib.Xml.Schema;
-#else
 using System.Xml.Schema;
-#endif
 
 namespace XRoadLib.Styles
 {
@@ -85,7 +80,7 @@ namespace XRoadLib.Styles
         /// </summary>
         public abstract SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace);
 
-#if !NETSTANDARD1_6
+#if !NETSTANDARD2_0
         /// <summary>
         /// Create SOAP header element.
         /// </summary>

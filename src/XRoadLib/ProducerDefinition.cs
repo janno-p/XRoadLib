@@ -7,17 +7,15 @@ using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
-#if NETSTANDARD1_6
+#if NETSTANDARD2_0
 using MessageCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.Message>;
 using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.ServiceDescriptionFormatExtension>;
-using XRoadLib.Xml.Schema;
-#else
-using System.Xml.Schema;
 #endif
 
 namespace XRoadLib
@@ -548,7 +546,7 @@ namespace XRoadLib
 
             addGlobalNamespace(NamespaceConstants.MIME);
 
-#if NETSTANDARD1_6
+#if NETSTANDARD2_0
             AddOperationContentBinding(soapPart.Extensions, x => x);
 #else
             AddOperationContentBinding(soapPart.Extensions, protocol.Style.CreateSoapHeader);
@@ -581,7 +579,7 @@ namespace XRoadLib
         }
 
         private void AddOperationContentBinding<THeader>(ServiceDescriptionFormatExtensionCollection extensions, Func<SoapHeaderBinding, THeader> projectionFunc)
-#if NETSTANDARD1_6
+#if NETSTANDARD2_0
             where THeader : ServiceDescriptionFormatExtension
 #endif
         {
@@ -671,12 +669,7 @@ namespace XRoadLib
                                   .Select(doc => CreateXrdDocumentationElement(protocol.ProtocolDefinition.TechNotesElementName, doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
                 .Cast<XmlNode>();
 
-#if NETSTANDARD1_6
-            var appInfo = new XmlSchemaAppInfo();
-            appInfo.Markup.AddRange(markup);
-#else
             var appInfo = new XmlSchemaAppInfo { Markup = markup.ToArray() };
-#endif
 
             return new XmlSchemaAnnotation { Items = { appInfo } };
         }
@@ -685,11 +678,7 @@ namespace XRoadLib
         {
             addRequiredImport(schemaNamespace, NamespaceConstants.XMIME, null);
 
-#if NETSTANDARD1_6
-            schemaElement.UnhandledAttributes.Add(protocol.Style.CreateExpectedContentType("application/octet-stream"));
-#else
             schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
-#endif
         }
 
         private TypeDefinition GetContentTypeDefinition(IContentDefinition contentDefinition)
@@ -877,7 +866,7 @@ namespace XRoadLib
         }
 
         private
-#if NETSTANDARD1_6
+#if NETSTANDARD2_0
             XRoadOperationVersionBinding
 #else
             XmlElement
@@ -887,7 +876,7 @@ namespace XRoadLib
             if (operationDefinition.Version == 0)
                 return null;
 
-#if NETSTANDARD1_6
+#if NETSTANDARD2_0
             return new XRoadOperationVersionBinding(xRoadPrefix, xRoadNamespace) { Version = $"v{operationDefinition.Version}" };
 #else
             var addressElement = document.CreateElement(xRoadPrefix, "version", xRoadNamespace);
@@ -946,22 +935,15 @@ namespace XRoadLib
             if (definition.CustomAttributes == null)
                 return;
 
-#if !NETSTANDARD1_6
             var attributes = new List<XmlAttribute>(target.UnhandledAttributes);
-#endif
+
             foreach (var attribute in definition.CustomAttributes ?? Enumerable.Empty<Tuple<XName, string>>())
             {
                 var attr = CreateAttribute(attribute.Item1, attribute.Item2, addSchemaImport);
-#if NETSTANDARD1_6
-                target.UnhandledAttributes.Add(attr);
-#else
                 attributes.Add(attr);
-#endif
             }
 
-#if !NETSTANDARD1_6
             target.UnhandledAttributes = attributes.ToArray();
-#endif
         }
     }
 }

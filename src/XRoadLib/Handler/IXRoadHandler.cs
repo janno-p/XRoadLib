@@ -1,3 +1,5 @@
+#if NETSTANDARD2_0
+
 using System;
 using Microsoft.AspNetCore.Http;
 using XRoadLib.Soap;
@@ -20,3 +22,5 @@ namespace XRoadLib.Handler
         void HandleException(HttpContext httpContext, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details);
     }
 }
+
+#endif

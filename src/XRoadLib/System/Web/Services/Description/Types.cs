@@ -1,8 +1,8 @@
-#if NETSTANDARD1_6
+#if NETSTANDARD2_0
 
 using System.Collections.Generic;
 using System.Xml;
-using XRoadLib.Xml.Schema;
+using System.Xml.Schema;
 
 namespace System.Web.Services.Description
 {

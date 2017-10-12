@@ -1,3 +1,5 @@
+#if NETSTANDARD2_0
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -71,3 +73,5 @@ namespace XRoadLib
         }
     }
 }
+
+#endif

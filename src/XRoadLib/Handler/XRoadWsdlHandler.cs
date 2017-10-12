@@ -1,3 +1,5 @@
+#if NETSTANDARD2_0
+
 using System;
 using Microsoft.AspNetCore.Http;
 
@@ -29,3 +31,5 @@ namespace XRoadLib.Handler
         }
     }
 }
+
+#endif

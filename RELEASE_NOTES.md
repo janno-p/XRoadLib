@@ -2,6 +2,7 @@
 * Remove unnecessary XML namespace prefix from WSDL.
 * Add X-Road specific documentation elements.
 * Assembly strong name key changed.
+* Upgrade to .NET Standard 2.0.
 
 #### 1.0.0-beta042 - 22.02.2017
 * Fix NuGet publishing.
