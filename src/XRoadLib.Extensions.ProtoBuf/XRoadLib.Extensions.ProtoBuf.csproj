@@ -1,39 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>XRoadLib extension to use Google Protocol Buffers with X-Road messages</Description>
-    <Copyright>Copyright © 2016</Copyright>
+    <AssemblyName>XRoadLib.Extensions.ProtoBuf</AssemblyName>
     <AssemblyTitle>XRoadLib.Extensions.ProtoBuf</AssemblyTitle>
-    <Authors>Janno Põldma</Authors>
-    <TargetFrameworks>netstandard1.6;net452</TargetFrameworks>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>XRoadLib.Extensions.ProtoBuf</AssemblyName>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Janno Põldma</Authors>
+    <Copyright>Copyright © 2017</Copyright>
+    <Description>XRoadLib extension to use Google Protocol Buffers with X-Road messages</Description>
     <PackageId>XRoadLib.Extensions.ProtoBuf</PackageId>
     <PackageTags>x-tee;x-road;xtee;xroad;protocol;buffers</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png</PackageIconUrl>
     <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
     <PackageLicenseUrl>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicenseUrl>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.2.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.4.1" />
   </ItemGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <AssemblyOriginatorKeyFile>../XRoadLib.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-  </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
 </Project>
