@@ -33,7 +33,7 @@ namespace XRoadLib.Tests.Serialization
         {
             var doc = SerializeMessage(request);
             Assert.Equal(XName.Get("MergeArrayContent", Globals.XRoadProtocol31.ProducerNamespace), doc.Root.Name);
-            Assert.Equal(1, doc.Root.Elements().Count());
+            Assert.Single(doc.Root.Elements());
 
             var req = doc.Root.Elements("request").Single();
             Assert.Equal(5, req.Elements().Count());
@@ -56,7 +56,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("String", content1[1].Name);
             Assert.Equal("test", content1[1].Value);
 
-            Assert.Equal(0, contentElements[1].Elements().Count());
+            Assert.Empty(contentElements[1].Elements());
 
             var content2 = contentElements[2].Elements().ToList();
             Assert.Equal(6, content2.Count);

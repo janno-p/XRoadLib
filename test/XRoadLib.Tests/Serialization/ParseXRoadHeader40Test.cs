@@ -130,8 +130,8 @@ namespace XRoadLib.Tests.Serialization
             var elXTest = elX.Element(XName.Get("test", NamespaceConstants.SOAP_ENV));
             Assert.NotNull(elXTest);
             Assert.Equal("bla", elXTest.Value);
-            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "y"));
-            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "z"));
+            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "y");
+            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "z");
         }
 
         [Fact]
@@ -152,9 +152,9 @@ namespace XRoadLib.Tests.Serialization
             Assert.Null(tuple.Item1.Service);
             Assert.Null(tuple.Item1.UserId);
             Assert.Equal(3, tuple.Item2.Count);
-            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "x"));
-            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "y"));
-            Assert.True(tuple.Item2.Any(x => x.Name.LocalName == "z"));
+            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "x");
+            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "y");
+            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "z");
         }
 
         [Fact]

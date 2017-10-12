@@ -16,9 +16,7 @@ namespace XRoadLib.Tests.Serialization
             {
                 stream.Position = 0;
 
-                byte[] chunk;
-
-                Assert.Equal(ChunkStop.BufferLimit, reader.ReadChunkOrLine(out chunk, 3));
+                Assert.Equal(ChunkStop.BufferLimit, reader.ReadChunkOrLine(out var chunk, 3));
                 Assert.Collection(chunk, x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x));
 
                 Assert.Equal(ChunkStop.BufferLimit, reader.ReadChunkOrLine(out chunk, 3));
@@ -40,9 +38,7 @@ namespace XRoadLib.Tests.Serialization
             {
                 stream.Position = 0;
 
-                byte[] chunk;
-
-                Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out chunk, 10));
+                Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out var chunk, 10));
                 Assert.Collection(chunk, x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x));
 
                 Assert.Equal(ChunkStop.EndOfStream, reader.ReadChunkOrLine(out chunk, 10));
@@ -64,16 +60,17 @@ namespace XRoadLib.Tests.Serialization
                 Assert.Collection(chunk, x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x));
 
                 Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out chunk, 4));
-                Assert.Collection(chunk);
+                Assert.Empty(chunk);
 
                 Assert.Equal(ChunkStop.BufferLimit, reader.ReadChunkOrLine(out chunk, 4));
                 Assert.Collection(chunk, x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x));
 
                 Assert.Equal(ChunkStop.EndOfStream, reader.ReadChunkOrLine(out chunk, 4));
-                Assert.Collection(chunk);
+                Assert.Empty(chunk);
             }
         }
 
+        [Fact]
         public void CanHandleSplittingMarker()
         {
             using (var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 }))
@@ -81,9 +78,7 @@ namespace XRoadLib.Tests.Serialization
             {
                 stream.Position = 0;
 
-                byte[] chunk;
-
-                Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out chunk, 5));
+                Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out var chunk, 5));
                 Assert.Collection(chunk, x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x), x => Assert.Equal(32, x));
 
                 Assert.Equal(ChunkStop.EndOfStream, reader.ReadChunkOrLine(out chunk, 5));
@@ -91,6 +86,7 @@ namespace XRoadLib.Tests.Serialization
             }
         }
 
+        [Fact]
         public void CanHandleMultipleMarkersInARow()
         {
             using (var stream = new MemoryStream(new byte[] { 40, 13, 10, 13, 10, 13, 10, 13, 10, 40 }))
@@ -98,25 +94,24 @@ namespace XRoadLib.Tests.Serialization
             {
                 stream.Position = 0;
 
-                byte[] chunk;
-
-                Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out chunk, 5));
+                Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out var chunk, 5));
                 Assert.Collection(chunk, x => Assert.Equal(40, x));
 
                 Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out chunk, 5));
-                Assert.Collection(chunk);
+                Assert.Empty(chunk);
 
                 Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out chunk, 5));
-                Assert.Collection(chunk);
+                Assert.Empty(chunk);
 
                 Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out chunk, 5));
-                Assert.Collection(chunk);
+                Assert.Empty(chunk);
 
                 Assert.Equal(ChunkStop.EndOfStream, reader.ReadChunkOrLine(out chunk, 5));
                 Assert.Collection(chunk, x => Assert.Equal(40, x));
             }
         }
 
+        [Fact]
         public void CanHandleRecurringMarkerBufferLimit()
         {
             using (var stream = new MemoryStream(new byte[] { 40, 13, 13, 13, 13, 13, 13, 10, 33, 34, 40, 40 }))
@@ -124,9 +119,7 @@ namespace XRoadLib.Tests.Serialization
             {
                 stream.Position = 0;
 
-                byte[] chunk;
-
-                Assert.Equal(ChunkStop.BufferLimit, reader.ReadChunkOrLine(out chunk, 5));
+                Assert.Equal(ChunkStop.BufferLimit, reader.ReadChunkOrLine(out var chunk, 5));
                 Assert.Collection(chunk, x => Assert.Equal(40, x), x => Assert.Equal(13, x), x => Assert.Equal(13, x), x => Assert.Equal(13, x), x => Assert.Equal(13, x));
 
                 Assert.Equal(ChunkStop.NewLine, reader.ReadChunkOrLine(out chunk, 5));

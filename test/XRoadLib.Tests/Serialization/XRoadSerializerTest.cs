@@ -22,7 +22,7 @@ namespace XRoadLib.Tests.Serialization
             { }
         }
 
-        public void SerializeWithContext<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, bool isMultipart, Action<XRoadMessage, string> f)
+        private static void SerializeWithContext<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, bool isMultipart, Action<XRoadMessage, string> f)
         {
             var message = Globals.XRoadProtocol20.CreateMessage();
             message.IsMultipartContainer = true;

@@ -131,7 +131,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Null(request.Param3);
             Assert.Equal(123, request.Param1.Property1);
             Assert.NotNull(request.Param1.Property2);
-            Assert.Equal(0, request.Param1.Property2.Length);
+            Assert.Empty(request.Param1.Property2);
         }
 
         [Fact]

@@ -28,7 +28,7 @@ namespace XRoadLib.Tests.Protocols.Description
             var address = port.Elements(xroad("address")).SingleOrDefault();
             Assert.NotNull(address);
             Assert.True(address.IsEmpty);
-            Assert.Equal(1, address.Attributes().Count());
+            Assert.Single(address.Attributes());
             Assert.Equal("test-producer", address.Attribute("producer").Value);
 
             Assert.Equal("http://TURVASERVER/cgi-bin/consumer_proxy", port.Elements(soap("address")).Single().Attribute("location").Value);
@@ -43,7 +43,7 @@ namespace XRoadLib.Tests.Protocols.Description
             var address = port.Elements(xtee("address")).SingleOrDefault();
             Assert.NotNull(address);
             Assert.True(address.IsEmpty);
-            Assert.Equal(1, address.Attributes().Count());
+            Assert.Single(address.Attributes());
             Assert.Equal("test-producer", address.Attribute("producer").Value);
 
             Assert.Equal("http://TURVASERVER/cgi-bin/consumer_proxy", port.Elements(soap("address")).Single().Attribute("location").Value);
@@ -89,7 +89,7 @@ namespace XRoadLib.Tests.Protocols.Description
                               });
 
             var noCode = groupedByAttributes.Where(x => !x.Key).SelectMany(x => x).ToList();
-            Assert.Equal(1, noCode.Count);
+            Assert.Single(noCode);
             Assert.Equal("Ilma keeleta palun", noCode[0].Value);
         }
 
@@ -124,7 +124,7 @@ namespace XRoadLib.Tests.Protocols.Description
                               });
 
             var noCode = groupedByAttributes.Where(x => !x.Key).SelectMany(x => x).ToList();
-            Assert.Equal(1, noCode.Count);
+            Assert.Single(noCode);
             Assert.Equal("Ilma keeleta palun", noCode[0].Value);
         }
 
@@ -135,7 +135,7 @@ namespace XRoadLib.Tests.Protocols.Description
             var definitions = doc.Elements(wsdl("definitions")).Single();
             var types = definitions.Elements(wsdl("types")).Single();
             var schema = types.Elements(xsd("schema")).Single();
-            Assert.False(schema.Elements(xsd("complexType")).Any(e => e.Attribute("name").Value == "AnonymousType"));
+            Assert.DoesNotContain(schema.Elements(xsd("complexType")), e => e.Attribute("name").Value == "AnonymousType");
 
             var containerType = schema.Elements(xsd("complexType")).Single(e => e.Attribute("name").Value == "ContainerType");
             var containerTypeParticle = containerType.Elements().Single();
@@ -143,7 +143,7 @@ namespace XRoadLib.Tests.Protocols.Description
             Assert.Equal(2, containerTypeParticle.Elements().Count());
 
             var knownProperty = containerTypeParticle.Elements(xsd("element")).Single(e => e.Attribute("name").Value == "KnownProperty");
-            Assert.Equal("xsd:string", knownProperty.Attribute("type").Value);
+            Assert.Equal($"{knownProperty.GetPrefixOfNamespace(NamespaceConstants.XSD)}:string", knownProperty.Attribute("type").Value);
 
             var anonymousProperty = containerTypeParticle.Elements(xsd("element")).Single(e => e.Attribute("name").Value == "AnonymousProperty");
             Assert.Null(anonymousProperty.Attribute("type"));
@@ -169,9 +169,9 @@ namespace XRoadLib.Tests.Protocols.Description
 
             var service = root.Elements(wsdl("service")).SingleOrDefault();
             Assert.NotNull(service);
-            Assert.Equal(1, service.Attributes().Count());
+            Assert.Single(service.Attributes());
             Assert.Equal("TestService", service.Attribute("name").Value);
-            Assert.Equal(1, service.Elements().Count());
+            Assert.Single(service.Elements());
 
             var port = service.Elements(wsdl("port")).SingleOrDefault();
             Assert.NotNull(port);
@@ -179,12 +179,12 @@ namespace XRoadLib.Tests.Protocols.Description
             Assert.Equal("TestPort", port.Attribute("name").Value);
             Assert.Equal("tns:TestBinding", port.Attribute("binding").Value);
 
-            Assert.False(port.Elements().Any(e => e.Name != soap("address") && e.Name != xrdns("address") && e.Name != xrdns("title")));
+            Assert.DoesNotContain(port.Elements(), e => e.Name != soap("address") && e.Name != xrdns("address") && e.Name != xrdns("title"));
 
             var soapAddress = port.Elements(soap("address")).SingleOrDefault();
             Assert.NotNull(soapAddress);
             Assert.True(soapAddress.IsEmpty);
-            Assert.Equal(1, soapAddress.Attributes().Count());
+            Assert.Single(soapAddress.Attributes());
 
             return port;
         }
