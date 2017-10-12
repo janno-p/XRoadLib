@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>SoapFaultException - XRoadLib</title>
+    <title>XRoadNotesAttribute - XRoadLib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Janno Põldma"/>
@@ -35,11 +35,13 @@
 
 
 
-<h1>SoapFaultException</h1>
+<h1>XRoadNotesAttribute</h1>
 <p>
-  <span>Namespace: XRoadLib.Soap</span><br />
+  <span>Namespace: XRoadLib.Attributes</span><br />
 </p>
 <div class="xmldoc">
+<p>Description of the service (for displaying to users).</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,11 +52,25 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '685', 685)" onmouseover="showTip(event, '685', 685)">
-            new(soapFault)
+          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
+            new(value)
           </code>
-          <div class="tip" id="685">
-            <strong>Signature:</strong> soapFault:ISoapFault -&gt; unit<br />
+          <div class="tip" id="53">
+            <strong>Signature:</strong> value:string -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
+            new(languageCode, value)
+          </code>
+          <div class="tip" id="54">
+            <strong>Signature:</strong> (languageCode:string * value:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -72,12 +88,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '686', 686)" onmouseover="showTip(event, '686', 686)">
-            Details
+          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
+            LanguageCode
           </code>
-          <div class="tip" id="686">
+          <div class="tip" id="55">
             <strong>Signature:</strong> string<br />
-              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -87,42 +102,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '687', 687)" onmouseover="showTip(event, '687', 687)">
-            FaultActor
+          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
+            Value
           </code>
-          <div class="tip" id="687">
+          <div class="tip" id="56">
             <strong>Signature:</strong> string<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '688', 688)" onmouseover="showTip(event, '688', 688)">
-            FaultCode
-          </code>
-          <div class="tip" id="688">
-            <strong>Signature:</strong> string<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '689', 689)" onmouseover="showTip(event, '689', 689)">
-            FaultString
-          </code>
-          <div class="tip" id="689">
-            <strong>Signature:</strong> string<br />
-              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
