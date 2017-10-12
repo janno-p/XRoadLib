@@ -1,4 +1,4 @@
-#### 1.0.0 - unreleased
+#### 1.0.0 - 12.10.2017
 * Remove unnecessary XML namespace prefix from WSDL.
 * Add X-Road specific documentation elements.
 * Assembly strong name key changed.
