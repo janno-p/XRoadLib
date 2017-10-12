@@ -240,8 +240,6 @@ namespace XRoadLib.Serialization
             chunk = new byte[curPos + 1];
             Array.Copy(buffer, chunk, curPos + 1);
 
-            stream.Flush();
-
             return result;
         }
 

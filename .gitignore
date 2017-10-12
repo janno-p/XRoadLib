@@ -257,7 +257,8 @@ packages
 **/*.snk
 release.cmd
 
-docs/content/*.md
+docs/content/license.md
+docs/content/release-notes.md
 docs/output/**/*.*
 temp/
 

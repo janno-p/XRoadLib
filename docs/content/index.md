@@ -30,6 +30,7 @@ files in [the content folder][content]. The API reference is automatically gener
 library implementation.
 
  * [Tutorial](tutorial.html) contains a further explanation of this sample library.
+ * [.NET Core Tutorial](tutorial-dotnetcore.html) contains example application for .NET Core platform.
 
  * [API Reference](reference/index.html) contains automatically generated documentation for all types, modules and
    functions in the library. This includes additional brief samples on using most of the functions.
