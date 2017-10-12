@@ -1,6 +1,7 @@
 #### 1.0.0 - unreleased
 * Remove unnecessary XML namespace prefix from WSDL.
 * Add X-Road specific documentation elements.
+* Assembly strong name key changed.
 
 #### 1.0.0-beta042 - 22.02.2017
 * Fix NuGet publishing.
