@@ -115,7 +115,8 @@ Target "NuGet" (fun _ ->
                     Project = proj
                     OutputPath = __SOURCE_DIRECTORY__ </> "bin"
                     Configuration = "Release"
-                    VersionSuffix = release.SemVer.PreRelease |> Option.fold (fun _ v -> v.Origin) "" }))
+                    VersionSuffix = release.SemVer.PreRelease |> Option.fold (fun _ v -> v.Origin) ""
+                    AdditionalArgs = [(sprintf "/p:Version=%s" release.NugetVersion)] }))
 )
 
 Target "PublishNuget" (fun _ ->
