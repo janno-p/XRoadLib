@@ -1,3 +1,7 @@
+#### 1.0.1 - 13.10.2017
+* Annotation elements appliable to enumeration types and fields.
+* Fix xrd:techNotes annotation.
+
 #### 1.0.0 - 12.10.2017
 * Remove unnecessary XML namespace prefix from WSDL.
 * Add X-Road specific documentation elements.
