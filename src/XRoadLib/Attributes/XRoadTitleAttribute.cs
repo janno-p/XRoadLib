@@ -5,7 +5,7 @@ namespace XRoadLib.Attributes
     /// <summary>
     /// Title of the service (for displaying to users)
     /// </summary>
-    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Enum | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true)]
     public class XRoadTitleAttribute : Attribute
     {
         public string LanguageCode { get; }

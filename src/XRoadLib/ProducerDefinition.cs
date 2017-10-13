@@ -62,13 +62,8 @@ namespace XRoadLib
         /// </summary>
         public ProducerDefinition(IXRoadProtocol protocol, SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
-            if (protocol == null)
-                throw new ArgumentNullException(nameof(protocol));
-            this.protocol = protocol;
-
-            if (schemaDefinitionProvider == null)
-                throw new ArgumentNullException(nameof(schemaDefinitionProvider));
-            this.schemaDefinitionProvider = schemaDefinitionProvider;
+            this.protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
+            this.schemaDefinitionProvider = schemaDefinitionProvider ?? throw new ArgumentNullException(nameof(schemaDefinitionProvider));
 
             this.version = version;
             contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
@@ -185,8 +180,7 @@ namespace XRoadLib
                 if (baseType == null || !baseType.IsXRoadSerializable())
                     continue;
 
-                List<Type> typeList;
-                if (!derivedTypes.TryGetValue(baseType, out typeList))
+                if (!derivedTypes.TryGetValue(baseType, out var typeList))
                     derivedTypes.Add(baseType, typeList = new List<Type>());
 
                 typeList.Add(typeDefinition.Type);
@@ -217,11 +211,11 @@ namespace XRoadLib
             {
                 var requestValueDefinition = schemaDefinitionProvider.GetRequestValueDefinition(operationDefinition);
 
-                Func<XmlSchemaElement> createRequestElement = () => requestValueDefinition.ParameterInfo != null
+                XmlSchemaElement CreateRequestElement() => requestValueDefinition.ParameterInfo != null
                     ? CreateContentElement(requestValueDefinition, targetNamespace, referencedTypes)
                     : new XmlSchemaElement { Name = requestValueDefinition.RequestElementName, SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() } };
 
-                var requestElement = createRequestElement();
+                var requestElement = CreateRequestElement();
                 AddCustomAttributes(requestValueDefinition, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
                 if (protocol.Style.UseElementInMessagePart)
@@ -274,7 +268,7 @@ namespace XRoadLib
                     var responseRequestElement = requestElement;
                     if (requestValueDefinition.RequestElementName != responseValueDefinition.RequestElementName)
                     {
-                        responseRequestElement = createRequestElement();
+                        responseRequestElement = CreateRequestElement();
                         responseRequestElement.Name = responseValueDefinition.RequestElementName;
                     }
                     schemaElements.Add(new XmlSchemaElement
@@ -331,8 +325,7 @@ namespace XRoadLib
 
                 foreach (var kvp in referencedTypes.ToList().Where(x => x.Value == null))
                 {
-                    TypeDefinition typeDefinition;
-                    if (!schemaTypeDefinitions.TryGetValue(XName.Get(kvp.Key.Name, kvp.Key.Namespace), out typeDefinition))
+                    if (!schemaTypeDefinitions.TryGetValue(XName.Get(kvp.Key.Name, kvp.Key.Namespace), out var typeDefinition))
                         continue;
 
                     if (typeDefinition.IsSimpleType)
@@ -343,7 +336,7 @@ namespace XRoadLib
                     if (typeDefinition.Type.GetTypeInfo().IsEnum)
                     {
                         schemaType = new XmlSchemaSimpleType();
-                        AddEnumTypeContent(typeDefinition.Type, (XmlSchemaSimpleType)schemaType);
+                        AddEnumTypeContent(typeDefinition.Type.Namespace, typeDefinition.Type, (XmlSchemaSimpleType)schemaType);
                     }
                     else
                     {
@@ -354,14 +347,13 @@ namespace XRoadLib
                     }
 
                     schemaType.Name = typeDefinition.Name.LocalName;
-                    schemaType.Annotation = CreateSchemaAnnotation(typeDefinition.Name.NamespaceName, typeDefinition);
+                    schemaType.Annotation = CreateSchemaAnnotation(typeDefinition.Name.NamespaceName, typeDefinition.Documentation);
 
                     AddSchemaType(schemaTypes, typeDefinition.Name.NamespaceName, schemaType);
 
                     referencedTypes[kvp.Key] = schemaType;
 
-                    List<Type> typeList;
-                    if (!derivedTypes.TryGetValue(typeDefinition.Type, out typeList))
+                    if (!derivedTypes.TryGetValue(typeDefinition.Type, out var typeList))
                         continue;
 
                     foreach (var qualifiedName in typeList.Select(x => runtimeTypeDefinitions[x]).Select(x => new XmlQualifiedName(x.Name.LocalName, x.Name.NamespaceName)).Where(x => !referencedTypes.ContainsKey(x)))
@@ -374,7 +366,7 @@ namespace XRoadLib
                 {
                     Name = faultDefinition.Name.LocalName,
                     Particle = CreateFaultSequence(),
-                    Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition)
+                    Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition.Documentation)
                 });
 
             return schemaTypes
@@ -480,8 +472,7 @@ namespace XRoadLib
 
         private XmlQualifiedName AddAdditionalTypeDefinition(Type type, string typeName, XmlSchemaElement schemaElement, IList<Tuple<string, XmlSchemaType>> schemaTypes)
         {
-            XmlQualifiedName qualifiedName;
-            if (additionalTypeDefinitions.TryGetValue(type, out qualifiedName))
+            if (additionalTypeDefinitions.TryGetValue(type, out var qualifiedName))
                 return qualifiedName;
 
             var definition = schemaDefinitionProvider.GetTypeDefinition(type, typeName);
@@ -643,8 +634,7 @@ namespace XRoadLib
             if (name != null)
                 return new XmlQualifiedName(name.LocalName, name.NamespaceName);
 
-            TypeDefinition typeDefinition;
-            if (!runtimeTypeDefinitions.TryGetValue(type, out typeDefinition))
+            if (!runtimeTypeDefinitions.TryGetValue(type, out var typeDefinition))
                 throw new Exception($"Unrecognized type `{type.FullName}`.");
 
             addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName, null);
@@ -652,21 +642,20 @@ namespace XRoadLib
             return new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
         }
 
-        private XmlSchemaAnnotation CreateSchemaAnnotation(string schemaNamespace, Definition definition)
+        private XmlSchemaAnnotation CreateSchemaAnnotation(string schemaNamespace, DocumentationDefinition documentationDefinition)
         {
-            if (definition.Documentation.IsEmpty)
+            if (documentationDefinition.IsEmpty)
                 return null;
 
-            var markup = definition
-                .Documentation
+            var markup = documentationDefinition
                 .Titles
                 .Select(doc => CreateXrdDocumentationElement("title", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null)))
-                .Concat(definition.Documentation
-                                  .Notes
-                                  .Select(doc => CreateXrdDocumentationElement("notes", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
-                .Concat(definition.Documentation
-                                  .Notes
-                                  .Select(doc => CreateXrdDocumentationElement(protocol.ProtocolDefinition.TechNotesElementName, doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
+                .Concat(documentationDefinition
+                    .Notes
+                    .Select(doc => CreateXrdDocumentationElement("notes", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
+                .Concat(documentationDefinition
+                    .TechNotes
+                    .Select(doc => CreateXrdDocumentationElement(protocol.ProtocolDefinition.TechNotesElementName, doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
                 .Cast<XmlNode>();
 
             var appInfo = new XmlSchemaAppInfo { Markup = markup.ToArray() };
@@ -713,21 +702,21 @@ namespace XRoadLib
             if (contentDefinition.RuntimeType.GetTypeInfo().IsEnum)
             {
                 schemaType = new XmlSchemaSimpleType();
-                AddEnumTypeContent(contentDefinition.RuntimeType, (XmlSchemaSimpleType)schemaType);
+                AddEnumTypeContent(schemaNamespace, contentDefinition.RuntimeType, (XmlSchemaSimpleType)schemaType);
             }
             else
             {
                 schemaType = new XmlSchemaComplexType();
                 schemaTypeName = AddComplexTypeContent((XmlSchemaComplexType)schemaType, schemaNamespace, typeDefinition, referencedTypes);
             }
-            schemaType.Annotation = CreateSchemaAnnotation(schemaNamespace, typeDefinition);
+            schemaType.Annotation = CreateSchemaAnnotation(schemaNamespace, typeDefinition.Documentation);
 
             if (schemaTypeName == null)
                 schemaElement.SchemaType = schemaType;
             else schemaElement.SchemaTypeName = schemaTypeName;
         }
 
-        private static void AddEnumTypeContent(Type type, XmlSchemaSimpleType schemaType)
+        private void AddEnumTypeContent(string schemaNamespace, Type type, XmlSchemaSimpleType schemaType)
         {
             var restriction = new XmlSchemaSimpleTypeRestriction { BaseTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD) };
 
@@ -735,7 +724,11 @@ namespace XRoadLib
             {
                 var memberInfo = type.GetTypeInfo().GetMember(name).Single();
                 var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
-                restriction.Facets.Add(new XmlSchemaEnumerationFacet { Value = (attribute?.Name).GetValueOrDefault(name) });
+                restriction.Facets.Add(new XmlSchemaEnumerationFacet
+                {
+                    Annotation = CreateSchemaAnnotation(schemaNamespace, new DocumentationDefinition(memberInfo)),
+                    Value = (attribute?.Name).GetValueOrDefault(name)
+                });
             }
 
             schemaType.Content = restriction;
@@ -745,7 +738,7 @@ namespace XRoadLib
         {
             var schemaElement = new XmlSchemaElement
             {
-                Name = propertyDefinition.Name?.LocalName, Annotation = CreateSchemaAnnotation(schemaNamespace, propertyDefinition)
+                Name = propertyDefinition.Name?.LocalName, Annotation = CreateSchemaAnnotation(schemaNamespace, propertyDefinition.Documentation)
             };
 
             if (propertyDefinition.ArrayItemDefinition != null && propertyDefinition.MergeContent)

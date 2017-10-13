@@ -20,6 +20,7 @@ namespace Calculator
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ICalculate, CalculateWebService>();
             services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
             services.AddSingleton(provider => new CalculatorHandler(provider, new[] { protocol }, null));
         }
