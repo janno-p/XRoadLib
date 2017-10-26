@@ -13,7 +13,7 @@ namespace XRoadLib.Styles
         {
             var element = document.CreateElement(PrefixConstants.SOAP, "header", NamespaceConstants.SOAP);
 
-            element.SetAttribute("message", binding.Message.Name);
+            element.SetAttribute("message", $"{PrefixConstants.TARGET}:{binding.Message.Name}");
             element.SetAttribute("part", binding.Part);
             element.SetAttribute("use", "literal");
 
