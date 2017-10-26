@@ -58,7 +58,12 @@ Target "BuildRelease" (fun _ ->
     productProjects
     |> Seq.iter (fun proj ->
         DotNetCli.Restore (fun p -> { p with Project = proj })
-        DotNetCli.Build (fun p -> { p with Project = proj; Configuration = "Release" }))
+        DotNetCli.Build
+            (fun p ->
+                { p with
+                    Project = proj
+                    Configuration = "Release"
+                    AdditionalArgs = [(sprintf "/p:Version=%s" release.NugetVersion)] }))
 )
 
 // --------------------------------------------------------------------------------------

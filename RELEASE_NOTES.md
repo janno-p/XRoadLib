@@ -1,5 +1,7 @@
 #### 1.0.2 - Unreleased
 * Add missing namespace prefix for multipart message header definition.
+* Take into account `MergeContent` value when providing definitions of request and response elements.
+* Fix exception when no service version element is expected in definition.
 
 #### 1.0.1 - 13.10.2017
 * Annotation elements appliable to enumeration types and fields.

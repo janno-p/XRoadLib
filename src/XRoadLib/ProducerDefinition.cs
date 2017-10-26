@@ -219,11 +219,21 @@ namespace XRoadLib
                 AddCustomAttributes(requestValueDefinition, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
                 if (protocol.Style.UseElementInMessagePart)
-                    schemaElements.Add(new XmlSchemaElement
+                {
+                    if (requestValueDefinition.MergeContent)
                     {
-                        Name = operationDefinition.Name.LocalName,
-                        SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement } } }
-                    });
+                        requestElement.Name = operationDefinition.Name.LocalName;
+                        schemaElements.Add(requestElement);
+                    }
+                    else
+                    {
+                        schemaElements.Add(new XmlSchemaElement
+                        {
+                            Name = operationDefinition.Name.LocalName,
+                            SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement } } }
+                        });
+                    }
+                }
 
                 var responseValueDefinition = schemaDefinitionProvider.GetResponseValueDefinition(operationDefinition);
                 if (!responseValueDefinition.ContainsNonTechnicalFault)
@@ -265,17 +275,25 @@ namespace XRoadLib
 
                 if (protocol.Style.UseElementInMessagePart)
                 {
-                    var responseRequestElement = requestElement;
-                    if (requestValueDefinition.RequestElementName != responseValueDefinition.RequestElementName)
+                    if (responseValueDefinition.MergeContent)
                     {
-                        responseRequestElement = CreateRequestElement();
-                        responseRequestElement.Name = responseValueDefinition.RequestElementName;
+                        responseElement.Name = $"{operationDefinition.Name.LocalName}Response";
+                        schemaElements.Add(responseElement);
                     }
-                    schemaElements.Add(new XmlSchemaElement
+                    else
                     {
-                        Name = $"{operationDefinition.Name.LocalName}Response",
-                        SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, responseRequestElement, responseElement, faultDefinition)
-                    });
+                        var responseRequestElement = requestElement;
+                        if (requestValueDefinition.RequestElementName != responseValueDefinition.RequestElementName)
+                        {
+                            responseRequestElement = CreateRequestElement();
+                            responseRequestElement.Name = responseValueDefinition.RequestElementName;
+                        }
+                        schemaElements.Add(new XmlSchemaElement
+                        {
+                            Name = $"{operationDefinition.Name.LocalName}Response",
+                            SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, responseRequestElement, responseElement, faultDefinition)
+                        });
+                    }
                 }
 
                 if (operationDefinition.IsAbstract)
@@ -556,17 +574,20 @@ namespace XRoadLib
             var outputBinding = new OutputBinding();
             AddOperationMessageBindingContent(operationDefinition.OutputBinaryMode, outputBinding);
 
-            binding.Operations.Add(new OperationBinding
+            var operationBinding = new OperationBinding
             {
                 Name = operationDefinition.Name.LocalName,
-                Extensions =
-                {
-                    CreateXRoadOperationVersionBinding(operationDefinition),
-                    protocol.Style.CreateSoapOperationBinding()
-                },
                 Input = inputBinding,
                 Output = outputBinding
-            });
+            };
+
+            var operationVersionBinding = CreateXRoadOperationVersionBinding(operationDefinition);
+            if (operationVersionBinding != null)
+                operationBinding.Extensions.Add(operationVersionBinding);
+
+            operationBinding.Extensions.Add(protocol.Style.CreateSoapOperationBinding());
+
+            binding.Operations.Add(operationBinding);
         }
 
         private void AddOperationContentBinding<THeader>(ServiceDescriptionFormatExtensionCollection extensions, Func<SoapHeaderBinding, THeader> projectionFunc)
