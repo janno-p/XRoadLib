@@ -1,4 +1,4 @@
-#### 1.0.2 - Unreleased
+#### 1.0.2 - 27.10.2017
 * Add missing namespace prefix for multipart message header definition.
 * Take into account `MergeContent` value when providing definitions of request and response elements.
 * Fix exception when no service version element is expected in definition.
