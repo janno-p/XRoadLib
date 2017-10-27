@@ -275,25 +275,17 @@ namespace XRoadLib
 
                 if (protocol.Style.UseElementInMessagePart)
                 {
-                    if (responseValueDefinition.MergeContent)
+                    var responseRequestElement = requestElement;
+                    if (requestValueDefinition.RequestElementName != responseValueDefinition.RequestElementName)
                     {
-                        responseElement.Name = $"{operationDefinition.Name.LocalName}Response";
-                        schemaElements.Add(responseElement);
+                        responseRequestElement = CreateRequestElement();
+                        responseRequestElement.Name = responseValueDefinition.RequestElementName;
                     }
-                    else
+                    schemaElements.Add(new XmlSchemaElement
                     {
-                        var responseRequestElement = requestElement;
-                        if (requestValueDefinition.RequestElementName != responseValueDefinition.RequestElementName)
-                        {
-                            responseRequestElement = CreateRequestElement();
-                            responseRequestElement.Name = responseValueDefinition.RequestElementName;
-                        }
-                        schemaElements.Add(new XmlSchemaElement
-                        {
-                            Name = $"{operationDefinition.Name.LocalName}Response",
-                            SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, responseRequestElement, responseElement, faultDefinition)
-                        });
-                    }
+                        Name = $"{operationDefinition.Name.LocalName}Response",
+                        SchemaType = CreateOperationResponseSchemaType(responseValueDefinition, responseRequestElement, responseElement, faultDefinition)
+                    });
                 }
 
                 if (operationDefinition.IsAbstract)

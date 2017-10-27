@@ -1,3 +1,6 @@
+#### 1.0.3 - 27.10.2017
+* Fix regression in response element definition.
+
 #### 1.0.2 - 27.10.2017
 * Add missing namespace prefix for multipart message header definition.
 * Take into account `MergeContent` value when providing definitions of request and response elements.
