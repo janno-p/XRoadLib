@@ -1,4 +1,4 @@
 language: csharp
-sudo: required
-dist: precise
+sudo: false
+dist: trusty
 script: ./build.sh RunTests
