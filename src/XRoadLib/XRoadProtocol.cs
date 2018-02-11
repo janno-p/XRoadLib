@@ -49,38 +49,26 @@ namespace XRoadLib
         void WriteServiceDescription(Stream outputStream, uint? version = null);
     }
 
-    /// <summary>
-    /// X-Road message protocol implementation details.
-    /// </summary>
+    /// <inheritdoc />
     public class XRoadProtocol : IXRoadProtocol
     {
         private readonly IDictionary<uint, ISerializerCache> serializerCaches = new Dictionary<uint, ISerializerCache>();
 
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
 
-        /// <summary>
-        /// String form of message protocol version.
-        /// </summary>
+        /// <inheritdoc />
         public string Name { get; }
 
-        /// <summary>
-        /// XML document style of messages (RPC/Encoded or Document/Literal).
-        /// </summary>
+        /// <inheritdoc />
         public Style Style => ProtocolDefinition.Style;
 
-        /// <summary>
-        /// Main namespace which defines current producer operations and types.
-        /// </summary>
+        /// <inheritdoc />
         public string ProducerNamespace => ProtocolDefinition.ProducerNamespace;
 
-        /// <summary>
-        /// Header definition of the protocol.
-        /// </summary>
+        /// <inheritdoc />
         public HeaderDefinition HeaderDefinition { get; }
 
-        /// <summary>
-        /// Protocol specification.
-        /// </summary>
+        /// <inheritdoc />
         public ProtocolDefinition ProtocolDefinition { get; }
 
         /// <summary>
@@ -106,9 +94,7 @@ namespace XRoadLib
             SetContractAssembly();
         }
 
-        /// <summary>
-        /// Generates new service description for current message protocol instance.
-        /// </summary>
+        /// <inheritdoc />
         public void WriteServiceDescription(Stream outputStream, uint? version = null)
         {
             if (!version.HasValue && ProtocolDefinition.SupportedVersions.Any())
@@ -120,9 +106,7 @@ namespace XRoadLib
             new ProducerDefinition(this, schemaDefinitionProvider, version).SaveTo(outputStream);
         }
 
-        /// <summary>
-        /// Get runtime types lookup object.
-        /// </summary>
+        /// <inheritdoc />
         public ISerializerCache GetSerializerCache(uint? version = null)
         {
             if (!serializerCaches.Any())
@@ -136,8 +120,7 @@ namespace XRoadLib
 
             var serializerVersion = version.Value > 0u ? version.Value : ProtocolDefinition.SupportedVersions.Max();
 
-            ISerializerCache versioningSerializerCache;
-            if (serializerCaches.TryGetValue(serializerVersion, out versioningSerializerCache))
+            if (serializerCaches.TryGetValue(serializerVersion, out var versioningSerializerCache))
                 return versioningSerializerCache;
 
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
@@ -146,7 +129,7 @@ namespace XRoadLib
         private void SetContractAssembly()
         {
             if (ProtocolDefinition.ContractAssembly == null)
-                throw new Exception($"SchemaExporter must define contract assembly of types and operations.");
+                throw new Exception("SchemaExporter must define contract assembly of types and operations.");
 
             if (!ProtocolDefinition.SupportedVersions.Any())
             {

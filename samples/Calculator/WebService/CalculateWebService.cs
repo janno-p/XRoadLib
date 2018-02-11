@@ -25,9 +25,10 @@ namespace Calculator.WebService
 
                 case Operation.Divide:
                     return (x, y) => x / y;
-            }
 
-            throw new NotImplementedException();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(operation), operation, null);
+            }
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Calculator
                 options.SupportedProtocols.Add(protocol);
             });
 
-            app.Run(async (context) =>
+            app.Run(async context =>
             {
                 await context.Response.WriteAsync("Hello World!");
             });

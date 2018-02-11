@@ -9,7 +9,12 @@ namespace XRoadLib.Tests.Serialization
 {
     public class XRoadMessageTest
     {
-        private readonly IXRoadProtocol[] supportedProtocols = new IXRoadProtocol[] { Globals.XRoadProtocol20, Globals.XRoadProtocol31, Globals.XRoadProtocol40 };
+        private readonly IXRoadProtocol[] supportedProtocols =
+        {
+            Globals.XRoadProtocol20,
+            Globals.XRoadProtocol31,
+            Globals.XRoadProtocol40
+        };
 
         [Fact]
         public void CanWriteEmptyContent()

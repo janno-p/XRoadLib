@@ -92,7 +92,7 @@ namespace XRoadLib
 
             var globalNamespaces = new Dictionary<string, string>();
 
-            addGlobalNamespace = (namespaceName) =>
+            addGlobalNamespace = namespaceName =>
             {
                 var prefix = NamespaceConstants.GetPreferredPrefix(namespaceName);
                 if (string.IsNullOrEmpty(prefix))
@@ -799,7 +799,7 @@ namespace XRoadLib
 
             var itemElement = new XmlSchemaElement
             {
-                Name = arrayContentDefinition.Item.Content.Name.LocalName,
+                Name = arrayContentDefinition.Item.Content.Name.LocalName
             };
 
             if (arrayContentDefinition.Item.MinOccurs != 1)
