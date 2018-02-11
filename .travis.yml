@@ -1,4 +1,6 @@
 language: csharp
+dotnet: 2.1.4
+mono: latest
 sudo: false
 dist: trusty
 script: ./build.sh RunTests
