@@ -4,7 +4,7 @@
 * Added XRoadXmlElementAttribute which extends XmlElementAttribute to support `IsOptional` property.
 * Added XRoadXmlArrayAttribute which extends XmlArrayAttribute to support `IsOptional` property.
 * Added XRoadXmlArrayItemAttribute which extends XmlArrayItemAttribute to support `MinOccurs` and `MaxOccurs` properties.
-* Refactred `ContentDefinition` type to support better array definitions.
+* Refactored `ContentDefinition` type to support better array definitions.
 
 #### 1.0.3 - 27.10.2017
 * Fix regression in response element definition.
