@@ -131,7 +131,7 @@ namespace XRoadLib.Handler
 
             try
             {
-                var parameters = context.ServiceMap.RequestValueDefinition.ParameterInfo != null ? new [] { context.Parameters } : new object[0];
+                var parameters = context.ServiceMap.RequestDefinition.ParameterInfo != null ? new [] { context.Parameters } : new object[0];
                 context.Result = context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters);
             }
             catch (Exception exception)

@@ -36,12 +36,12 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Configuration hook for overriding default response element settings.
         /// </summary>
-        void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition);
+        void ExportResponseDefinition(ResponseDefinition responseDefinition);
 
         /// <summary>
         /// Configuration hook for overriding default request element settings.
         /// </summary>
-        void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition);
+        void ExportRequestDefinition(RequestDefinition requestDefinition);
 
         /// <summary>
         /// Configuration hook for overriding default non-technical fault settings.

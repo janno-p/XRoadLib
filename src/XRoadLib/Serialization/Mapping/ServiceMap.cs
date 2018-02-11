@@ -6,81 +6,71 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    /// <summary>
-    /// Provides serialization/deserialization interface for X-Road operations.
-    /// </summary>
+    /// <inheritdoc />
     public class ServiceMap : IServiceMap
     {
         private readonly ISerializerCache serializerCache;
         private readonly ITypeMap inputTypeMap;
         private readonly ITypeMap outputTypeMap;
 
-        /// <summary>
-        /// Configuration settings of the operation that the ServiceMap implements.
-        /// </summary>
+        /// <inheritdoc />
         public OperationDefinition OperationDefinition { get; }
 
-        /// <summary>
-        /// Request element specification of the X-Road operation.
-        /// </summary>
-        public RequestValueDefinition RequestValueDefinition { get; }
+        /// <inheritdoc />
+        public RequestDefinition RequestDefinition { get; }
 
-        /// <summary>
-        /// Response element specification of the X-Road operation.
-        /// </summary>
-        public ResponseValueDefinition ResponseValueDefinition { get; }
+        /// <inheritdoc />
+        public ResponseDefinition ResponseDefinition { get; }
 
-        private bool HasWrapperResultElement => !ResponseValueDefinition.MergeContent
-                                                && ResponseValueDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit
-                                                && ResponseValueDefinition.ContainsNonTechnicalFault;
+        private bool HasWrapperResultElement =>
+            !ResponseDefinition.MergeContent
+            && ResponseDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit
+            && ResponseDefinition.ContainsNonTechnicalFault;
 
         /// <summary>
         /// Initializes new ServiceMap entity using settings specified in operationDefinition.
         /// <param name="serializerCache">Provides TypeMap lookup.</param>
         /// <param name="operationDefinition">Operation which this ServiceMap represents.</param>
-        /// <param name="requestValueDefinition">Defines operation request message.</param>
-        /// <param name="responseValueDefinition">Defines operation response message.</param>
+        /// <param name="requestDefinition">Defines operation request message.</param>
+        /// <param name="responseDefinition">Defines operation response message.</param>
         /// <param name="inputTypeMap">Default TypeMap of the operation request root element.</param>
         /// <param name="outputTypeMap"> Default TypeMap of the operation response root element.</param>
         /// </summary>
-        public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestValueDefinition requestValueDefinition, ResponseValueDefinition responseValueDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
+        public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
         {
             this.serializerCache = serializerCache;
 
-            RequestValueDefinition = requestValueDefinition;
-            ResponseValueDefinition = responseValueDefinition;
+            RequestDefinition = requestDefinition;
+            ResponseDefinition = responseDefinition;
             OperationDefinition = operationDefinition;
 
-            var inputContentTypeMap = inputTypeMap as IContentTypeMap;
-            this.inputTypeMap = inputContentTypeMap != null && requestValueDefinition.UseXop ? inputContentTypeMap.GetOptimizedContentTypeMap() : inputTypeMap;
+            this.inputTypeMap = inputTypeMap is IContentTypeMap inputContentTypeMap && requestDefinition.UseXop
+                ? inputContentTypeMap.GetOptimizedContentTypeMap()
+                : inputTypeMap;
 
-            var outputContentTypeMap = outputTypeMap as IContentTypeMap;
-            this.outputTypeMap = outputContentTypeMap != null && responseValueDefinition.UseXop ? outputContentTypeMap.GetOptimizedContentTypeMap() : outputTypeMap;
+            this.outputTypeMap = outputTypeMap is IContentTypeMap outputContentTypeMap && responseDefinition.UseXop
+                ? outputContentTypeMap.GetOptimizedContentTypeMap()
+                : outputTypeMap;
         }
 
-        /// <summary>
-        /// Deserializes X-Road message protocol requests according to operation definitions.
-        /// </summary>
+        /// <inheritdoc />
         public object DeserializeRequest(XmlReader reader, XRoadMessage message)
         {
-            var requestName = RequestValueDefinition.RequestElementName;
+            var requestName = RequestDefinition.RequestElementName;
 
-            if (!RequestValueDefinition.MergeContent && !reader.MoveToElement(3, requestName))
+            if (!RequestDefinition.MergeContent && !reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
-            if (RequestValueDefinition.ParameterInfo != null)
-                return ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestValueDefinition, message));
-
-            return null;
+            return RequestDefinition.ParameterInfo != null
+                ? ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestDefinition, message))
+                : null;
         }
 
-        /// <summary>
-        /// Deserializes X-Road message protocol responses according to operation definitions.
-        /// </summary>
+        /// <inheritdoc />
         public object DeserializeResponse(XmlReader reader, XRoadMessage message)
         {
-            var requestName = ResponseValueDefinition.RequestElementName;
-            var responseName = ResponseValueDefinition.ResponseElementName;
+            var requestName = ResponseDefinition.RequestElementName;
+            var responseName = ResponseDefinition.ResponseElementName;
 
             if (OperationDefinition.CopyRequestPartToResponse)
             {
@@ -91,17 +81,17 @@ namespace XRoadLib.Serialization.Mapping
 
             var hasResponseElement = reader.MoveToElement(3);
 
-            if (hasResponseElement && !ResponseValueDefinition.ContainsNonTechnicalFault && reader.LocalName == ResponseValueDefinition.FaultName)
+            if (hasResponseElement && !ResponseDefinition.ContainsNonTechnicalFault && reader.LocalName == ResponseDefinition.FaultName)
                 return reader.ReadXRoadFault(4);
 
             if (!hasResponseElement || reader.LocalName != responseName)
                 throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
 
             var hasWrapperElement = HasWrapperResultElement;
-            if (hasWrapperElement && !reader.MoveToElement(4, ResponseValueDefinition.Name.LocalName, ResponseValueDefinition.Name.NamespaceName))
-                throw XRoadException.InvalidQuery($"Expected result wrapper element `{ResponseValueDefinition.Name}` was not found in SOAP message.");
+            if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.Name.LocalName, ResponseDefinition.Name.NamespaceName))
+                throw XRoadException.InvalidQuery($"Expected result wrapper element `{ResponseDefinition.Name}` was not found in SOAP message.");
 
-            return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseValueDefinition, message));
+            return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition, message));
         }
 
         private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, IContentDefinition contentDefinition, XRoadMessage message)
@@ -123,9 +113,7 @@ namespace XRoadLib.Serialization.Mapping
             return concreteTypeMap.Deserialize(reader, templateNode, contentDefinition, message);
         }
 
-        /// <summary>
-        /// Serializes X-Road message protocol requests according to operation definitions.
-        /// </summary>
+        /// <inheritdoc />
         public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null)
         {
             var ns = string.IsNullOrEmpty(requestNamespace) ? OperationDefinition.Name.NamespaceName : requestNamespace;
@@ -134,13 +122,13 @@ namespace XRoadLib.Serialization.Mapping
             if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, OperationDefinition.Name.LocalName, ns);
             else writer.WriteStartElement(OperationDefinition.Name.LocalName, ns);
 
-            if (!RequestValueDefinition.MergeContent)
-                writer.WriteStartElement(RequestValueDefinition.RequestElementName);
+            if (!RequestDefinition.MergeContent)
+                writer.WriteStartElement(RequestDefinition.RequestElementName);
 
-            if (RequestValueDefinition.ParameterInfo != null)
-                SerializeValue(writer, PrepareRequestValue(value), inputTypeMap, message.RequestNode, message, RequestValueDefinition);
+            if (RequestDefinition.ParameterInfo != null)
+                SerializeValue(writer, PrepareRequestValue(value), inputTypeMap, message.RequestNode, message, RequestDefinition);
 
-            if (!RequestValueDefinition.MergeContent)
+            if (!RequestDefinition.MergeContent)
                 writer.WriteEndElement();
 
             writer.WriteEndElement();
@@ -163,17 +151,17 @@ namespace XRoadLib.Serialization.Mapping
             if (containsRequest && OperationDefinition.CopyRequestPartToResponse)
                 CopyRequestToResponse(writer, requestReader);
 
-            if (!ResponseValueDefinition.ContainsNonTechnicalFault && fault != null)
+            if (!ResponseDefinition.ContainsNonTechnicalFault && fault != null)
             {
-                writer.WriteStartElement(ResponseValueDefinition.FaultName);
+                writer.WriteStartElement(ResponseDefinition.FaultName);
                 SerializeFault(writer, fault, message.Protocol);
                 writer.WriteEndElement();
             }
             else if (outputTypeMap != null)
             {
                 if (Equals(namespaceInContext, ""))
-                    writer.WriteStartElement(ResponseValueDefinition.ResponseElementName);
-                else writer.WriteStartElement(ResponseValueDefinition.ResponseElementName, "");
+                    writer.WriteStartElement(ResponseDefinition.ResponseElementName);
+                else writer.WriteStartElement(ResponseDefinition.ResponseElementName, "");
 
                 if (fault != null)
                     SerializeFault(writer, fault, message.Protocol);
@@ -181,9 +169,9 @@ namespace XRoadLib.Serialization.Mapping
                 {
                     var addWrapperElement = HasWrapperResultElement;
                     if (addWrapperElement)
-                        writer.WriteStartElement(ResponseValueDefinition.Name.LocalName, ResponseValueDefinition.Name.NamespaceName);
+                        writer.WriteStartElement(ResponseDefinition.Name.LocalName, ResponseDefinition.Name.NamespaceName);
 
-                    SerializeValue(writer, PrepareResponseValue(value), outputTypeMap, message.ResponseNode, message, ResponseValueDefinition);
+                    SerializeValue(writer, PrepareResponseValue(value), outputTypeMap, message.ResponseNode, message, ResponseDefinition);
 
                     if (addWrapperElement)
                         writer.WriteEndElement();
@@ -232,12 +220,12 @@ namespace XRoadLib.Serialization.Mapping
         {
             writer.WriteAttributes(reader, true);
 
-            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, RequestValueDefinition.RequestElementName))
+            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, RequestDefinition.RequestElementName))
                 return;
 
-            if (RequestValueDefinition.RequestElementName != ResponseValueDefinition.RequestElementName)
+            if (RequestDefinition.RequestElementName != ResponseDefinition.RequestElementName)
             {
-                writer.WriteStartElement(ResponseValueDefinition.RequestElementName);
+                writer.WriteStartElement(ResponseDefinition.RequestElementName);
                 writer.WriteAttributes(reader, true);
 
                 while (reader.MoveToElement(4))

@@ -64,7 +64,7 @@ namespace XRoadLib.Serialization.Mapping
 
                 var value = typeMap.Deserialize(reader, templateNode, definition.ArrayItemDefinition, message);
 
-                items.Add(value == null ? default(T) : (T)value);
+                items.Add((T)value);
             }
 
             return items.ToArray();
@@ -74,7 +74,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             var valueArray = (Array)value;
 
-            if (!(definition is RequestValueDefinition))
+            if (!(definition is RequestDefinition))
                 message.Protocol.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
 
             var arrayItemDefinition = definition.ArrayItemDefinition;

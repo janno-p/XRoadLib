@@ -9,9 +9,7 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Extensions.ProtoBuf.Attributes
 {
-    /// <summary>
-    /// Defines operation method which uses protocol buffers for serialization.
-    /// </summary>
+    /// <inheritdoc />
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class XRoadProtoBufServiceAttribute : XRoadServiceAttribute
     {
@@ -21,19 +19,13 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
 
         private readonly Lazy<ISchemaExporter> schemaExporter;
 
-        /// <summary>
-        /// ServiceMap type which implements operation definition.
-        /// </summary>
+        /// <inheritdoc />
         public override Type ServiceMapType => serviceMapType;
 
-        /// <summary>
-        /// Provides extension specific customizations for the schema.
-        /// </summary>
+        /// <inheritdoc />
         public override ISchemaExporter SchemaExporter => schemaExporter.Value;
 
-        /// <summary>
-        /// Initializes new operation definition with protocol buffers support.
-        /// </summary>
+        /// <inheritdoc />
         public XRoadProtoBufServiceAttribute(string name, Type reflectionType)
             : base(name)
         {
@@ -58,18 +50,18 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
                 operationDefinition.CopyRequestPartToResponse = false;
             }
 
-            public override void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition)
+            public override void ExportRequestDefinition(RequestDefinition requestDefinition)
             {
-                requestValueDefinition.RuntimeType = typeof(Stream);
-                requestValueDefinition.UseXop = true;
-                requestValueDefinition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
+                requestDefinition.RuntimeType = typeof(Stream);
+                requestDefinition.UseXop = true;
+                requestDefinition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
             }
 
-            public override void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition)
+            public override void ExportResponseDefinition(ResponseDefinition responseDefinition)
             {
-                responseValueDefinition.RuntimeType = typeof(Stream);
-                responseValueDefinition.UseXop = true;
-                responseValueDefinition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
+                responseDefinition.RuntimeType = typeof(Stream);
+                responseDefinition.UseXop = true;
+                responseDefinition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
             }
 
             public override string ExportSchemaLocation(string namespaceName)

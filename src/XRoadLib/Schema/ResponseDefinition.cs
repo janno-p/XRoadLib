@@ -5,7 +5,7 @@ namespace XRoadLib.Schema
     /// <summary>
     /// Configuration options for customizing response elements.
     /// </summary>
-    public class ResponseValueDefinition : ContentDefinition
+    public class ResponseDefinition : ContentDefinition
     {
         /// <summary>
         /// Operation definition to which this response element definition belongs to.
@@ -51,7 +51,7 @@ namespace XRoadLib.Schema
         /// Initializes new response definition using default values extracted from
         /// operation definition entity.
         /// </summary>
-        public ResponseValueDefinition(OperationDefinition declaringOperationDefinition)
+        public ResponseDefinition(OperationDefinition declaringOperationDefinition)
         {
             var parameterInfo = declaringOperationDefinition.MethodInfo.ReturnParameter;
 

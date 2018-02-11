@@ -36,8 +36,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var stringValue = reader.ReadElementContentAsString();
 
-            int enumerationValue;
-            if (!deserializationMapping.TryGetValue(stringValue, out enumerationValue))
+            if (!deserializationMapping.TryGetValue(stringValue, out var enumerationValue))
                 throw new MissingFieldException($"Unexpected value `{stringValue}` for enumeration type `{Definition.Name}`.");
 
             return Enum.ToObject(Definition.Type, enumerationValue);
@@ -45,11 +44,10 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
         {
-            if (!(definition is RequestValueDefinition))
+            if (!(definition is RequestDefinition))
                 message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
-            string enumerationValue;
-            if (!serializationMapping.TryGetValue((int)value, out enumerationValue))
+            if (!serializationMapping.TryGetValue((int)value, out var enumerationValue))
                 throw new MissingFieldException($"Cannot map value `{value}` to enumeration type `{Definition.Name}`.");
 
             writer.WriteValue(enumerationValue);

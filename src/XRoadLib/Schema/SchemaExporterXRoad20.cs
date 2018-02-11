@@ -1,56 +1,41 @@
 using System.Reflection;
-using System.Web.Services.Description;
 using XRoadLib.Headers;
 using XRoadLib.Styles;
 
 namespace XRoadLib.Schema
 {
-    /// <summary>
-    /// Schema exporter for X-Road message protocol version 2.0.
-    /// </summary>
+    /// <inheritdoc />
     public class SchemaExporterXRoad20 : SchemaExporterXRoadLegacy
     {
-        /// <summary>
-        /// Preferred X-Road namespace prefix of the message protocol version.
-        /// </summary>
+        /// <inheritdoc />
         public override string XRoadPrefix => PrefixConstants.XTEE;
 
-        /// <summary>
-        /// X-Road specification namespace of the message protocol version.
-        /// </summary>
+        /// <inheritdoc />
         public override string XRoadNamespace => NamespaceConstants.XTEE;
 
-        /// <summary>
-        /// Initializes schema exporter for X-Road message protocol version 2.0.
-        /// </summary>
+        /// <inheritdoc />
         public SchemaExporterXRoad20(string producerName, Assembly contractAssembly, string producerNamespace = null)
             : base(producerName, contractAssembly, producerNamespace ?? $"http://producers.{producerName}.xtee.riik.ee/producer/{producerName}")
         { }
 
-        /// <summary>
-        /// Configure request elements of X-Road message protocol version 2.0 messages.
-        /// </summary>
-        public override void ExportRequestValueDefinition(RequestValueDefinition requestValueDefinition)
+        /// <inheritdoc />
+        public override void ExportRequestDefinition(RequestDefinition requestDefinition)
         {
-            base.ExportRequestValueDefinition(requestValueDefinition);
+            base.ExportRequestDefinition(requestDefinition);
 
-            requestValueDefinition.RequestElementName = "keha";
+            requestDefinition.RequestElementName = "keha";
         }
 
-        /// <summary>
-        /// Configure response elements of X-Road message protocol version 2.0 messages.
-        /// </summary>
-        public override void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition)
+        /// <inheritdoc />
+        public override void ExportResponseDefinition(ResponseDefinition responseDefinition)
         {
-            base.ExportResponseValueDefinition(responseValueDefinition);
+            base.ExportResponseDefinition(responseDefinition);
 
-            responseValueDefinition.RequestElementName = "paring";
-            responseValueDefinition.ResponseElementName = "keha";
+            responseDefinition.RequestElementName = "paring";
+            responseDefinition.ResponseElementName = "keha";
         }
 
-        /// <summary>
-        /// Configure SOAP header of the messages.
-        /// </summary>
+        /// <inheritdoc />
         public override void ExportHeaderDefinition(HeaderDefinition headerDefinition)
         {
             base.ExportHeaderDefinition(headerDefinition);

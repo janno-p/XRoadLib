@@ -7,7 +7,7 @@ namespace XRoadLib.Schema
     /// <summary>
     /// Specification for individual X-Road message request part.
     /// </summary>
-    public class RequestValueDefinition : ContentDefinition
+    public class RequestDefinition : ContentDefinition
     {
         /// <summary>
         /// Operation which uses this request part in its input.
@@ -32,7 +32,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes new request definition object.
         /// </summary>
-        public RequestValueDefinition(OperationDefinition declaringOperationDefinition)
+        public RequestDefinition(OperationDefinition declaringOperationDefinition)
         {
             var methodParameters = declaringOperationDefinition.MethodInfo.GetParameters();
             if (methodParameters.Length > 1)

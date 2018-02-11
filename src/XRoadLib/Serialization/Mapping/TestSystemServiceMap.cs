@@ -9,16 +9,16 @@ namespace XRoadLib.Serialization.Mapping
     public class TestSystemServiceMap : IServiceMap
     {
         public OperationDefinition OperationDefinition { get; }
-        public RequestValueDefinition RequestValueDefinition { get; }
-        public ResponseValueDefinition ResponseValueDefinition { get; }
+        public RequestDefinition RequestDefinition { get; }
+        public ResponseDefinition ResponseDefinition { get; }
 
         public TestSystemServiceMap(XName operationName)
         {
             var methodInfo = typeof(Implementation).GetTypeInfo().GetMethod("Execute");
 
             OperationDefinition = new OperationDefinition(operationName, null, methodInfo);
-            RequestValueDefinition = new RequestValueDefinition(OperationDefinition);
-            ResponseValueDefinition = new ResponseValueDefinition(OperationDefinition) { ContainsNonTechnicalFault = true };
+            RequestDefinition = new RequestDefinition(OperationDefinition);
+            ResponseDefinition = new ResponseDefinition(OperationDefinition) { ContainsNonTechnicalFault = true };
         }
 
         public object DeserializeRequest(XmlReader reader, XRoadMessage message)
@@ -49,6 +49,7 @@ namespace XRoadLib.Serialization.Mapping
 
         private class Implementation
         {
+            // ReSharper disable once UnusedMember.Local
             public void Execute()
             { }
         }

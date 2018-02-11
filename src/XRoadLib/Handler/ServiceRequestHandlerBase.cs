@@ -11,9 +11,7 @@ using XRoadLib.Serialization;
 
 namespace XRoadLib.Handler
 {
-    /// <summary>
-    /// Base class of service request handlers.
-    /// </summary>
+    /// <inheritdoc />
     public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
         private readonly ICollection<IXRoadProtocol> supportedProtocols;
@@ -127,7 +125,7 @@ namespace XRoadLib.Handler
 
             try
             {
-                var parameters = context.ServiceMap.RequestValueDefinition.ParameterInfo != null ? new[] { context.Parameters } : new object[0];
+                var parameters = context.ServiceMap.RequestDefinition.ParameterInfo != null ? new[] { context.Parameters } : new object[0];
                 context.Result = context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters);
             }
             catch (Exception exception)

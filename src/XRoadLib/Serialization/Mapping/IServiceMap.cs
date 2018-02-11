@@ -16,12 +16,12 @@ namespace XRoadLib.Serialization.Mapping
         /// <summary>
         /// Response element specification of the X-Road operation.
         /// </summary>
-        RequestValueDefinition RequestValueDefinition { get; }
+        RequestDefinition RequestDefinition { get; }
 
         /// <summary>
         /// Response element specification of the X-Road operation.
         /// </summary>
-        ResponseValueDefinition ResponseValueDefinition { get; }
+        ResponseDefinition ResponseDefinition { get; }
 
         /// <summary>
         /// Deserializes X-Road message protocol requests according to operation definitions.

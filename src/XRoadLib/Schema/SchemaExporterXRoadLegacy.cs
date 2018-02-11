@@ -7,9 +7,7 @@ using System.Xml;
 
 namespace XRoadLib.Schema
 {
-    /// <summary>
-    /// Schema exporter for X-Road message protocol legacy version.
-    /// </summary>
+    /// <inheritdoc />
     public abstract class SchemaExporterXRoadLegacy : AbstractSchemaExporter
     {
 #if !NETSTANDARD2_0
@@ -23,9 +21,7 @@ namespace XRoadLib.Schema
         /// </summary>
         protected readonly string producerName;
 
-        /// <summary>
-        /// Initialize new legacy schema exporter.
-        /// </summary>
+        /// <inheritdoc />
         protected SchemaExporterXRoadLegacy(string producerName, Assembly contractAssembly, string producerNamespace)
             : base(producerNamespace)
         {
@@ -33,20 +29,15 @@ namespace XRoadLib.Schema
             this.producerName = producerName;
         }
 
-        /// <summary>
-        /// Configure response elements of X-Road message protocol version 2.0 messages.
-        /// </summary>
-        public override void ExportResponseValueDefinition(ResponseValueDefinition responseValueDefinition)
+        /// <inheritdoc />
+        public override void ExportResponseDefinition(ResponseDefinition responseDefinition)
         {
-            base.ExportResponseValueDefinition(responseValueDefinition);
+            base.ExportResponseDefinition(responseDefinition);
 
-            responseValueDefinition.ContainsNonTechnicalFault = true;
+            responseDefinition.ContainsNonTechnicalFault = true;
         }
 
-        /// <summary>
-        /// Allows each message protocol implementation to customize service description document
-        /// before publishing.
-        /// </summary>
+        /// <inheritdoc />
         public override void ExportServiceDescription(ServiceDescription serviceDescription)
         {
             base.ExportServiceDescription(serviceDescription);

@@ -18,6 +18,7 @@ namespace XRoadLib.Tests.Serialization
     {
         private class X<T>
         {
+            // ReSharper disable once UnusedMember.Local, UnusedParameter.Local
             public void Method(T t)
             { }
         }
@@ -49,12 +50,12 @@ namespace XRoadLib.Tests.Serialization
 
                 var operationDefinition = new OperationDefinition("Method", null, methodInfo);
 
-                var requestValueDefinition = new RequestValueDefinition(operationDefinition);
+                var requestDefinition = new RequestDefinition(operationDefinition);
                 if (typeof(T).IsArray)
-                    requestValueDefinition.ArrayItemDefinition = new ArrayItemDefinition(requestValueDefinition) { Name = XName.Get("item") };
+                    requestDefinition.ArrayItemDefinition = new ArrayItemDefinition(requestDefinition) { Name = XName.Get("item") };
 
                 var typeMap = Globals.XRoadProtocol20.GetSerializerCache(dtoVersion).GetTypeMap(typeof(T));
-                typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestValueDefinition, message);
+                typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition, message);
 
                 writer.WriteEndElement();
 
@@ -74,7 +75,7 @@ namespace XRoadLib.Tests.Serialization
 
                     using (var xmlReader = XmlReader.Create(reader))
                     {
-                        xmlReader.MoveToElement(0, "Envelope", "");
+                        xmlReader.MoveToElement(0, "Envelope");
                         f(message, xmlReader.ReadInnerXml());
                     }
                 }

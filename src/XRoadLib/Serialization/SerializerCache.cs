@@ -71,11 +71,9 @@ namespace XRoadLib.Serialization
             if (qualifiedName == null)
                 return null;
 
-            IServiceMap serviceMap;
-            if (!serviceMaps.TryGetValue(qualifiedName, out serviceMap))
-                serviceMap = AddServiceMap(qualifiedName);
-
-            return serviceMap;
+            return serviceMaps.TryGetValue(qualifiedName, out var serviceMap)
+                ? serviceMap
+                : AddServiceMap(qualifiedName);
         }
 
         private IServiceMap AddServiceMap(XName qualifiedName)
@@ -84,19 +82,19 @@ namespace XRoadLib.Serialization
             if (operationDefinition == null || qualifiedName.NamespaceName != operationDefinition.Name.NamespaceName)
                 throw XRoadException.UnknownOperation(qualifiedName);
 
-            var requestValueDefinition = schemaDefinitionProvider.GetRequestValueDefinition(operationDefinition);
-            var inputTypeMap = GetContentDefinitionTypeMap(requestValueDefinition, null);
+            var requestDefinition = schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
+            var inputTypeMap = GetContentDefinitionTypeMap(requestDefinition, null);
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
-            var responseValueDefinition = outputTuple.Item1;
+            var responseDefinition = outputTuple.Item1;
             var outputTypeMap = outputTuple.Item2;
 
             var serviceMap = (IServiceMap)Activator.CreateInstance(
                 operationDefinition.ServiceMapType,
                 this,
                 operationDefinition,
-                requestValueDefinition,
-                responseValueDefinition,
+                requestDefinition,
+                responseDefinition,
                 inputTypeMap,
                 outputTypeMap
             );
@@ -129,11 +127,9 @@ namespace XRoadLib.Serialization
 
             var normalizedType = Nullable.GetUnderlyingType(runtimeType) ?? runtimeType;
 
-            ITypeMap typeMap;
-            if (!runtimeTypeMaps.TryGetValue(normalizedType, out typeMap) && (partialTypeMaps == null || !partialTypeMaps.TryGetValue(normalizedType, out typeMap)))
-                typeMap = AddTypeMap(normalizedType, partialTypeMaps);
-
-            return typeMap;
+            return runtimeTypeMaps.TryGetValue(normalizedType, out var typeMap) || (partialTypeMaps != null && partialTypeMaps.TryGetValue(normalizedType, out typeMap))
+                ? typeMap
+                : AddTypeMap(normalizedType, partialTypeMaps);
         }
 
         public ITypeMap GetTypeMap(XName qualifiedName, bool isArray)
@@ -141,8 +137,7 @@ namespace XRoadLib.Serialization
             if (qualifiedName == null)
                 return null;
 
-            Tuple<ITypeMap, ITypeMap> typeMaps;
-            if (!xmlTypeMaps.TryGetValue(qualifiedName, out typeMaps))
+            if (!xmlTypeMaps.TryGetValue(qualifiedName, out var typeMaps))
                 typeMaps = AddTypeMap(qualifiedName);
 
             return isArray ? typeMaps?.Item2 : typeMaps?.Item1;
@@ -163,8 +158,7 @@ namespace XRoadLib.Serialization
                 return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
             }
 
-            var collectionDefinition = typeDefinition as CollectionDefinition;
-            if (collectionDefinition != null)
+            if (typeDefinition is CollectionDefinition collectionDefinition)
             {
                 var elementType = typeDefinition.Type.GetElementType();
                 if (!ReferenceEquals(elementType.GetTypeInfo().Assembly, contractAssembly))
@@ -193,8 +187,7 @@ namespace XRoadLib.Serialization
             else
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
 
-            var compositeTypeMap = typeMap as ICompositeTypeMap;
-            if (compositeTypeMap == null)
+            if (!(typeMap is ICompositeTypeMap compositeTypeMap))
                 return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
 
             partialTypeMaps = partialTypeMaps ?? new Dictionary<Type, ITypeMap>();
@@ -233,8 +226,7 @@ namespace XRoadLib.Serialization
             var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.Type), this, schemaDefinitionProvider.GetCollectionDefinition(typeDefinition), typeMap);
             var typeMapTuple = Tuple.Create(typeMap, arrayTypeMap);
 
-            var compositeTypeMap = typeMap as ICompositeTypeMap;
-            if (compositeTypeMap == null)
+            if (!(typeMap is ICompositeTypeMap compositeTypeMap))
                 return xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
 
             var partialTypeMaps = new Dictionary<Type, ITypeMap>
@@ -335,8 +327,7 @@ namespace XRoadLib.Serialization
             if (typeMapType == null)
                 return null;
 
-            ITypeMap typeMap;
-            if (customTypeMaps.TryGetValue(typeMapType, out typeMap))
+            if (customTypeMaps.TryGetValue(typeMapType, out var typeMap))
                 return typeMap;
 
             typeMap = (ITypeMap)Activator.CreateInstance(typeMapType, null, this);
@@ -344,17 +335,17 @@ namespace XRoadLib.Serialization
             return customTypeMaps.GetOrAdd(typeMapType, typeMap);
         }
 
-        private Tuple<ResponseValueDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
+        private Tuple<ResponseDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
-            var returnValueDefinition = schemaDefinitionProvider.GetResponseValueDefinition(operationDefinition, xRoadFaultPresentation);
-            if (returnValueDefinition.State == DefinitionState.Ignored)
+            var returnDefinition = schemaDefinitionProvider.GetResponseDefinition(operationDefinition, xRoadFaultPresentation);
+            if (returnDefinition.State == DefinitionState.Ignored)
                 return null;
 
-            var outputTypeMap = GetContentDefinitionTypeMap(returnValueDefinition, null);
+            var outputTypeMap = GetContentDefinitionTypeMap(returnDefinition, null);
             if (outputTypeMap != null)
-                returnValueDefinition.TypeName = outputTypeMap.Definition.Name;
+                returnDefinition.TypeName = outputTypeMap.Definition.Name;
 
-            return Tuple.Create(returnValueDefinition, outputTypeMap);
+            return Tuple.Create(returnDefinition, outputTypeMap);
         }
     }
 }

@@ -29,9 +29,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public SchemaDefinitionProvider(ISchemaExporter schemaExporter)
         {
-            if (schemaExporter == null)
-                throw new ArgumentNullException(nameof(schemaExporter));
-            this.schemaExporter = schemaExporter;
+            this.schemaExporter = schemaExporter ?? throw new ArgumentNullException(nameof(schemaExporter));
 
             ProtocolDefinition = GetProtocolDefinition();
         }
@@ -134,27 +132,27 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes default request element definition and applies customizations (if any).
         /// </summary>
-        public RequestValueDefinition GetRequestValueDefinition(OperationDefinition operationDefinition)
+        public RequestDefinition GetRequestDefinition(OperationDefinition operationDefinition)
         {
-            var requestValueDefinition = new RequestValueDefinition(operationDefinition);
+            var requestDefinition = new RequestDefinition(operationDefinition);
 
-            operationDefinition.ExtensionSchemaExporter?.ExportRequestValueDefinition(requestValueDefinition);
-            schemaExporter.ExportRequestValueDefinition(requestValueDefinition);
+            operationDefinition.ExtensionSchemaExporter?.ExportRequestDefinition(requestDefinition);
+            schemaExporter.ExportRequestDefinition(requestDefinition);
 
-            return requestValueDefinition;
+            return requestDefinition;
         }
 
         /// <summary>
         /// Initializes default response element definition and applies customizations (if any).
         /// </summary>
-        public ResponseValueDefinition GetResponseValueDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
+        public ResponseDefinition GetResponseDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
-            var responseValueDefinition = new ResponseValueDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
+            var responseDefinition = new ResponseDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
 
-            operationDefinition.ExtensionSchemaExporter?.ExportResponseValueDefinition(responseValueDefinition);
-            schemaExporter.ExportResponseValueDefinition(responseValueDefinition);
+            operationDefinition.ExtensionSchemaExporter?.ExportResponseDefinition(responseDefinition);
+            schemaExporter.ExportResponseDefinition(responseDefinition);
 
-            return responseValueDefinition;
+            return responseDefinition;
         }
 
         private static ITypeMap GetPropertyTypeMap(string customTypeName, Type runtimeType, bool isArray, IDictionary<Type, ITypeMap> partialTypeMaps, ISerializerCache serializerCache)

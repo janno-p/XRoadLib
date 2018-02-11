@@ -16,7 +16,7 @@ namespace XRoadLib.Serialization.Mapping
         public AllTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
             : base(serializerCache, typeDefinition)
         {
-            requiredPropertiesCount = new Lazy<int>(() => deserializationPropertyMaps.Where(x => !x.Value.Definition.IsOptional).Count());
+            requiredPropertiesCount = new Lazy<int>(() => deserializationPropertyMaps.Count(x => !x.Value.Definition.IsOptional));
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
@@ -24,7 +24,7 @@ namespace XRoadLib.Serialization.Mapping
             var dtoObject = new T();
             dtoObject.SetTemplateMembers(templateNode.ChildNames);
 
-            var validateRequired = definition is RequestValueDefinition;
+            var validateRequired = definition is RequestDefinition;
 
             if (contentPropertyMap != null)
             {

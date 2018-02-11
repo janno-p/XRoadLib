@@ -18,7 +18,7 @@ namespace XRoadLib.Serialization.Mapping
             var entity = new T();
             entity.SetTemplateMembers(templateNode.ChildNames);
 
-            var validateRequired = definition is RequestValueDefinition;
+            var validateRequired = definition is RequestDefinition;
 
             if (contentPropertyMap != null)
             {

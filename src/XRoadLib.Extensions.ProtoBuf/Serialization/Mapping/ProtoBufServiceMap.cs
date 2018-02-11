@@ -22,11 +22,11 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
         private readonly WriteValueMethod writeRequestMethod;
         private readonly WriteValueMethod writeResponseMethod;
 
-        public ProtoBufServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestValueDefinition requestValueDefinition, ResponseValueDefinition responseValueDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
-            : base(serializerCache, operationDefinition, requestValueDefinition, responseValueDefinition, inputTypeMap, outputTypeMap)
+        public ProtoBufServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
+            : base(serializerCache, operationDefinition, requestDefinition, responseDefinition, inputTypeMap, outputTypeMap)
         {
-            var requestType = RequestValueDefinition.ParameterInfo?.ParameterType;
-            var responseType = ResponseValueDefinition.ParameterInfo?.ParameterType;
+            var requestType = RequestDefinition.ParameterInfo?.ParameterType;
+            var responseType = ResponseDefinition.ParameterInfo?.ParameterType;
 
             readRequestMethod = BuildReadValueMethod(requestType);
             readResponseMethod = BuildReadValueMethod(responseType);
@@ -52,8 +52,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
 
         private static object ProcessValue(object value, ReadValueMethod readValueMethod)
         {
-            var stream = value as Stream;
-            if (stream == null)
+            if (!(value is Stream stream))
                 return value;
 
             stream.Position = 0;

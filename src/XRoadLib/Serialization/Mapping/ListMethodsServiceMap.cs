@@ -8,25 +8,17 @@ using XRoadLib.Styles;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    /// <summary>
-    /// Virtual service map which implements `listMethods` request.
-    /// </summary>
+    /// <inheritdoc />
     public class ListMethodsServiceMap : IServiceMap
     {
-        /// <summary>
-        /// Operation specification.
-        /// </summary>
+        /// <inheritdoc />
         public OperationDefinition OperationDefinition { get; }
 
-        /// <summary>
-        /// Response element specification of the X-Road operation.
-        /// </summary>
-        public RequestValueDefinition RequestValueDefinition { get; }
+        /// <inheritdoc />
+        public RequestDefinition RequestDefinition { get; }
 
-        /// <summary>
-        /// Response element specification of the X-Road operation.
-        /// </summary>
-        public ResponseValueDefinition ResponseValueDefinition { get; }
+        /// <inheritdoc />
+        public ResponseDefinition ResponseDefinition { get; }
 
         /// <summary>
         /// Initialize new `listMethods` service map.
@@ -36,41 +28,33 @@ namespace XRoadLib.Serialization.Mapping
             var methodInfo = typeof(Implementation).GetTypeInfo().GetMethod("Execute");
 
             OperationDefinition = new OperationDefinition(operationName, null, methodInfo);
-            RequestValueDefinition = new RequestValueDefinition(OperationDefinition);
-            ResponseValueDefinition = new ResponseValueDefinition(OperationDefinition)
+            RequestDefinition = new RequestDefinition(OperationDefinition);
+            ResponseDefinition = new ResponseDefinition(OperationDefinition)
             {
                 ContainsNonTechnicalFault = true,
                 ResponseElementName = operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response"
             };
         }
 
-        /// <summary>
-        /// Deserializes `listMethods` request.
-        /// </summary>
+        /// <inheritdoc />
         public object DeserializeRequest(XmlReader reader, XRoadMessage message)
         {
             throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// Deserializes `listMethods` response.
-        /// </summary>
+        /// <inheritdoc />
         public object DeserializeResponse(XmlReader reader, XRoadMessage message)
         {
             throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// Serializes `listMethods` request.
-        /// </summary>
+        /// <inheritdoc />
         public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace)
         {
             throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// Serializes `listMethods` response.
-        /// </summary>
+        /// <inheritdoc />
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null)
         {
             var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
@@ -107,6 +91,7 @@ namespace XRoadLib.Serialization.Mapping
 
         private class Implementation
         {
+            // ReSharper disable once UnusedMember.Local
             public string[] Execute()
             {
                 return null;
