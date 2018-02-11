@@ -8,8 +8,10 @@ using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
 {
-    public abstract class ContentDefinition : Definition, IContentDefinition
+    public class ContentDefinition : Definition, IContentDefinition
     {
+        public ParticleDefinition Particle { get; }
+
         public bool IgnoreExplicitType { get; set; }
 
         public bool MergeContent { get; set; }
@@ -28,18 +30,22 @@ namespace XRoadLib.Schema
 
         public Type RuntimeType { get; set; }
 
-        public abstract string RuntimeName { get; }
+        public string RuntimeName { get; }
+        
+        public string SerializedName => MergeContent ? ArrayItemDefinition.Name.LocalName : Name.LocalName;
 
-        protected void InitializeContentDefinition(ICustomAttributeProvider sourceInfo)
+        public ContentDefinition(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName)
         {
-            var elementAttribute = sourceInfo.GetSingleAttribute<XmlElementAttribute>();
-            var arrayAttribute = sourceInfo.GetSingleAttribute<XmlArrayAttribute>();
-            var arrayItemAttribute = sourceInfo.GetSingleAttribute<XmlArrayItemAttribute>();
+            Particle = particle;
+            RuntimeName = runtimeName;
+            RuntimeType = runtimeType;
+
+            var elementAttribute = customAttributeProvider.GetSingleAttribute<XmlElementAttribute>();
+            var arrayAttribute = customAttributeProvider.GetSingleAttribute<XmlArrayAttribute>();
+            var arrayItemAttribute = customAttributeProvider.GetSingleAttribute<XmlArrayItemAttribute>();
 
             if (elementAttribute != null && (arrayAttribute != null || arrayItemAttribute != null))
                 throw new Exception($"Property `{this}` should not define XmlElement and XmlArray(Item) attributes at the same time.");
-
-            var runtimeName = RuntimeName;
 
             XName qualifiedName = null;
             XName itemQualifiedName = null;
@@ -80,10 +86,10 @@ namespace XRoadLib.Schema
             Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault());
             UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(RuntimeType);
             TypeName = customTypeName != null ? XName.Get(customTypeName, NamespaceConstants.XSD) : null;
-            IsOptional = sourceInfo.GetSingleAttribute<XRoadOptionalAttribute>() != null;
+            IsOptional = customAttributeProvider.GetSingleAttribute<XRoadOptionalAttribute>() != null;
             State = DefinitionState.Default;
-            Documentation = new DocumentationDefinition(sourceInfo);
-            MergeContent = sourceInfo.GetSingleAttribute<XRoadMergeContentAttribute>() != null || sourceInfo.GetSingleAttribute<XmlTextAttribute>() != null;
+            Documentation = new DocumentationDefinition(customAttributeProvider);
+            MergeContent = customAttributeProvider.GetSingleAttribute<XRoadMergeContentAttribute>() != null || customAttributeProvider.GetSingleAttribute<XmlTextAttribute>() != null;
 
             if (!RuntimeType.IsArray)
                 return;

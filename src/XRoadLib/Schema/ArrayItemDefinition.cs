@@ -5,6 +5,8 @@ namespace XRoadLib.Schema
 {
     public class ArrayItemDefinition : IContentDefinition
     {
+        public ParticleDefinition Particle => null;
+
         public XName Name { get; set; }
 
         public XName TypeName { get; set; }
@@ -27,7 +29,7 @@ namespace XRoadLib.Schema
 
         bool IContentDefinition.MergeContent => false;
 
-        ArrayItemDefinition IContentDefinition.ArrayItemDefinition { get { throw new NotImplementedException(); } }
+        ArrayItemDefinition IContentDefinition.ArrayItemDefinition => throw new NotImplementedException();
 
         public ArrayItemDefinition(IContentDefinition wrapperDefinition)
         {

@@ -96,7 +96,7 @@ namespace XRoadLib.Schema
             var typeAttribute = typeInfo.GetCustomAttribute<XmlTypeAttribute>();
             var isAnonymous = typeAttribute != null && typeAttribute.AnonymousType;
 
-            var normalizedType = Definition.NormalizeType(type);
+            var normalizedType = type.NormalizeType();
 
             if (!isAnonymous)
                 qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(typeName ?? normalizedType.Name),
@@ -153,13 +153,6 @@ namespace XRoadLib.Schema
             schemaExporter.ExportResponseDefinition(responseDefinition);
 
             return responseDefinition;
-        }
-
-        private static ITypeMap GetPropertyTypeMap(string customTypeName, Type runtimeType, bool isArray, IDictionary<Type, ITypeMap> partialTypeMaps, ISerializerCache serializerCache)
-        {
-            return string.IsNullOrWhiteSpace(customTypeName)
-                ? serializerCache.GetTypeMap(runtimeType, partialTypeMaps)
-                : serializerCache.GetTypeMap(XName.Get(customTypeName, NamespaceConstants.XSD), isArray);
         }
 
         /// <summary>

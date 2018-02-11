@@ -64,5 +64,12 @@ namespace XRoadLib.Extensions
 
             return (SetValueMethod)dynamicSet.CreateDelegate(typeof(SetValueMethod));
         }
+        
+        internal static string GetRuntimeName(this PropertyInfo propertyInfo)
+        {
+            var name = propertyInfo.Name;
+            var startIndex = name.LastIndexOf('.');
+            return startIndex >= 0 ? name.Substring(startIndex + 1) : name;
+        }
     }
 }

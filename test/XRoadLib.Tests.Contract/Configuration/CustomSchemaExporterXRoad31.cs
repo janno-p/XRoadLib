@@ -28,7 +28,7 @@ namespace XRoadLib.Tests.Contract.Configuration
 
         public override void ExportPropertyDefinition(PropertyDefinition propertyDefinition)
         {
-            propertyDefinition.UseXop = false;
+            propertyDefinition.Content.UseXop = false;
         }
 
         public override void ExportServiceDescription(ServiceDescription serviceDescription)

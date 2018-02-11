@@ -242,5 +242,10 @@ namespace XRoadLib.Extensions
 
             return null;
         }
+
+        internal static Type NormalizeType(this Type type)
+        {
+            return Nullable.GetUnderlyingType(type) ?? type;
+        }
     }
 }

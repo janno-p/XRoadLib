@@ -35,7 +35,7 @@ namespace XRoadLib.Serialization.Mapping
             var attachment = new XRoadAttachment((Stream)value);
             message.AllAttachments.Add(attachment);
 
-            if (!(definition is RequestDefinition))
+            if (!(definition.Particle is RequestDefinition))
                 message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);

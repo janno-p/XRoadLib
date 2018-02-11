@@ -212,15 +212,15 @@ namespace XRoadLib
                 var requestDefinition = schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
 
                 XmlSchemaElement CreateRequestElement() => requestDefinition.ParameterInfo != null
-                    ? CreateContentElement(requestDefinition, targetNamespace, referencedTypes)
+                    ? CreateContentElement(requestDefinition.Content, targetNamespace, referencedTypes)
                     : new XmlSchemaElement { Name = requestDefinition.RequestElementName, SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() } };
 
                 var requestElement = CreateRequestElement();
-                AddCustomAttributes(requestDefinition, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
+                AddCustomAttributes(requestDefinition.Content, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
                 if (protocol.Style.UseElementInMessagePart)
                 {
-                    if (requestDefinition.MergeContent)
+                    if (requestDefinition.Content.MergeContent)
                     {
                         requestElement.Name = operationDefinition.Name.LocalName;
                         schemaElements.Add(requestElement);
@@ -256,12 +256,12 @@ namespace XRoadLib
                     }
                     else if (responseDefinition.XRoadFaultPresentation == XRoadFaultPresentation.Choice)
                     {
-                        resultElement = CreateContentElement(responseDefinition, targetNamespace, referencedTypes);
+                        resultElement = CreateContentElement(responseDefinition.Content, targetNamespace, referencedTypes);
                         outputParticle.Items.Add(new XmlSchemaChoice { Items = { resultElement, faultSequence } });
                     }
                     else
                     {
-                        resultElement = CreateContentElement(responseDefinition, targetNamespace, referencedTypes);
+                        resultElement = CreateContentElement(responseDefinition.Content, targetNamespace, referencedTypes);
                         resultElement.MinOccurs = 0;
                         outputParticle.Items.Add(resultElement);
 
@@ -269,9 +269,9 @@ namespace XRoadLib
                         outputParticle.Items.Add(faultSequence);
                     }
                 }
-                else responseElement = resultElement = CreateContentElement(responseDefinition, targetNamespace, referencedTypes);
+                else responseElement = resultElement = CreateContentElement(responseDefinition.Content, targetNamespace, referencedTypes);
 
-                AddCustomAttributes(responseDefinition, responseElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
+                AddCustomAttributes(responseDefinition.Content, responseElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
                 if (protocol.Style.UseElementInMessagePart)
                 {
@@ -600,12 +600,12 @@ namespace XRoadLib
 
             foreach (var propertyDefinition in propertyDefinitions)
             {
-                if (propertyDefinition.MergeContent && propertyDefinitions.Count > 1 && propertyDefinition.ArrayItemDefinition == null)
+                if (propertyDefinition.Content.MergeContent && propertyDefinitions.Count > 1 && propertyDefinition.Content.ArrayItemDefinition == null)
                     throw new Exception($"Property {propertyDefinition} of type {typeDefinition} cannot be merged, because there are more than 1 properties present.");
 
-                var contentElement = CreateContentElement(propertyDefinition, schemaNamespace, referencedTypes);
+                var contentElement = CreateContentElement(propertyDefinition.Content, schemaNamespace, referencedTypes);
 
-                if (!propertyDefinition.MergeContent || propertyDefinition.ArrayItemDefinition != null)
+                if (!propertyDefinition.Content.MergeContent || propertyDefinition.Content.ArrayItemDefinition != null)
                 {
                     contentParticle.Items.Add(contentElement);
                     continue;
@@ -849,7 +849,7 @@ namespace XRoadLib
 
         private IEnumerable<PropertyDefinition> GetDescriptionProperties(TypeDefinition typeDefinition)
         {
-            return typeDefinition.Type.GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaDefinitionProvider.GetPropertyDefinition(p, typeDefinition)).Where(d => d.State == DefinitionState.Default);
+            return typeDefinition.Type.GetPropertiesSorted(typeDefinition.ContentComparer, version, p => schemaDefinitionProvider.GetPropertyDefinition(p, typeDefinition)).Where(d => d.Content.State == DefinitionState.Default);
         }
 
         private void AddSystemType<T>(string typeName)

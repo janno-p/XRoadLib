@@ -52,16 +52,16 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
 
             public override void ExportRequestDefinition(RequestDefinition requestDefinition)
             {
-                requestDefinition.RuntimeType = typeof(Stream);
-                requestDefinition.UseXop = true;
-                requestDefinition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
+                requestDefinition.Content.RuntimeType = typeof(Stream);
+                requestDefinition.Content.UseXop = true;
+                requestDefinition.Content.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
             }
 
             public override void ExportResponseDefinition(ResponseDefinition responseDefinition)
             {
-                responseDefinition.RuntimeType = typeof(Stream);
-                responseDefinition.UseXop = true;
-                responseDefinition.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
+                responseDefinition.Content.RuntimeType = typeof(Stream);
+                responseDefinition.Content.UseXop = true;
+                responseDefinition.Content.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
             }
 
             public override string ExportSchemaLocation(string namespaceName)

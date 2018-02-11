@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>XRoadLib</AssemblyName>
     <AssemblyTitle>XRoadLib</AssemblyTitle>
@@ -9,7 +9,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <Authors>Janno Põldma</Authors>
-    <Copyright>Copyright © 2017</Copyright>
+    <Copyright>Copyright © 2018</Copyright>
     <Description>A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach.</Description>
     <PackageId>XRoadLib</PackageId>
     <PackageTags>x-tee;x-road;xtee;xroad</PackageTags>

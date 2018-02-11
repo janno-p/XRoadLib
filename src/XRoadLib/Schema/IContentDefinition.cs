@@ -5,6 +5,8 @@ namespace XRoadLib.Schema
 {
     public interface IContentDefinition
     {
+        ParticleDefinition Particle { get; }
+
         bool IgnoreExplicitType { get; }
 
         bool MergeContent { get; }

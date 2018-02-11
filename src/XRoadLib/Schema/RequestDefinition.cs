@@ -7,7 +7,7 @@ namespace XRoadLib.Schema
     /// <summary>
     /// Specification for individual X-Road message request part.
     /// </summary>
-    public class RequestDefinition : ContentDefinition
+    public class RequestDefinition : ParticleDefinition
     {
         /// <summary>
         /// Operation which uses this request part in its input.
@@ -18,11 +18,6 @@ namespace XRoadLib.Schema
         /// Runtime parameter info of request object.
         /// </summary>
         public ParameterInfo ParameterInfo { get; }
-
-        /// <summary>
-        /// Runtime name to identify this definition object.
-        /// </summary>
-        public override string RuntimeName => "request";
 
         /// <summary>
         /// Serialized element name of this request object.
@@ -41,12 +36,8 @@ namespace XRoadLib.Schema
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = methodParameters.SingleOrDefault();
 
-            if (ParameterInfo == null)
-                return;
-
-            RuntimeType = NormalizeType(ParameterInfo.ParameterType);
-
-            InitializeContentDefinition(ParameterInfo);
+            if (ParameterInfo != null)
+                Content = new ContentDefinition(this, ParameterInfo, ParameterInfo.ParameterType, "request");
         }
 
         /// <summary>
@@ -54,7 +45,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public override string ToString()
         {
-            return $"Input value of {ParameterInfo.Member.DeclaringType?.FullName ?? "<null>"}.{ParameterInfo.Member.Name} ({Name})";
+            return $"Input value of {ParameterInfo.Member.DeclaringType?.FullName ?? "<null>"}.{ParameterInfo.Member.Name}";
         }
     }
 }

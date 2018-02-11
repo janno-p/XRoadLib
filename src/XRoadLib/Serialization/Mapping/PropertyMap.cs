@@ -21,8 +21,9 @@ namespace XRoadLib.Serialization.Mapping
         {
             this.serializerCache = serializerCache;
 
-            var contentTypeMap = typeMap as IContentTypeMap;
-            this.typeMap = contentTypeMap != null && propertyDefinition.UseXop ? contentTypeMap.GetOptimizedContentTypeMap() : typeMap;
+            this.typeMap = typeMap is IContentTypeMap contentTypeMap && propertyDefinition.Content.UseXop
+                ? contentTypeMap.GetOptimizedContentTypeMap()
+                : typeMap;
 
             Definition = propertyDefinition;
 
@@ -32,7 +33,7 @@ namespace XRoadLib.Serialization.Mapping
             if (availableFilters == null)
                 return;
 
-            foreach (var availableFilter in availableFilters.Where(f => Definition.DeclaringTypeDefinition.Type.IsFilterableField(Definition.RuntimeName, f)))
+            foreach (var availableFilter in availableFilters.Where(f => Definition.DeclaringTypeDefinition.Type.IsFilterableField(Definition.Content.RuntimeName, f)))
                 filters.Add(availableFilter);
         }
 
@@ -50,7 +51,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 
-            var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, Definition, message);
+            var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, Definition.Content, message);
             if (propertyValue == null)
                 return true;
 
@@ -66,9 +67,9 @@ namespace XRoadLib.Serialization.Mapping
 
             var propertyValue = value != null ? getValueMethod(value) : null;
 
-            if (!Definition.MergeContent)
+            if (!Definition.Content.MergeContent)
             {
-                writer.WriteStartElement(Definition.Name.LocalName);
+                writer.WriteStartElement(Definition.Content.Name.LocalName);
 
                 if (propertyValue == null)
                     writer.WriteNilAttribute();
@@ -77,10 +78,10 @@ namespace XRoadLib.Serialization.Mapping
             if (propertyValue != null)
             {
                 var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(propertyValue.GetType()) : typeMap;
-                concreteTypeMap.Serialize(writer, templateNode, propertyValue, Definition, message);
+                concreteTypeMap.Serialize(writer, templateNode, propertyValue, Definition.Content, message);
             }
 
-            if (!Definition.MergeContent)
+            if (!Definition.Content.MergeContent)
                 writer.WriteEndElement();
         }
     }

@@ -43,7 +43,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
         {
-            if (!(definition is RequestDefinition))
+            if (!(definition.Particle is RequestDefinition))
                 message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteValue(XmlConvert.ToString((DateTime)value, "yyyy-MM-dd"));

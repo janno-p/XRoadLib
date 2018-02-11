@@ -5,7 +5,7 @@ namespace XRoadLib.Schema
     /// <summary>
     /// Configuration options for customizing response elements.
     /// </summary>
-    public class ResponseDefinition : ContentDefinition
+    public class ResponseDefinition : ParticleDefinition
     {
         /// <summary>
         /// Operation definition to which this response element definition belongs to.
@@ -21,11 +21,6 @@ namespace XRoadLib.Schema
         /// Describes the appearance of fault elements in service description.
         /// </summary>
         public XRoadFaultPresentation XRoadFaultPresentation { get; set; } = XRoadFaultPresentation.Choice;
-
-        /// <summary>
-        /// Name of runtime parameter this response value represents.
-        /// </summary>
-        public override string RuntimeName => "result";
 
         /// <summary>
         /// Fault element name for response element.
@@ -57,9 +52,8 @@ namespace XRoadLib.Schema
 
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = parameterInfo;
-            RuntimeType = NormalizeType(parameterInfo?.ParameterType);
-
-            InitializeContentDefinition(parameterInfo);
+            
+            Content = new ContentDefinition(this, parameterInfo, parameterInfo?.ParameterType, "result");
         }
 
         /// <summary>
@@ -67,7 +61,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public override string ToString()
         {
-            return $"Return value of {ParameterInfo.Member.DeclaringType?.FullName ?? "<null>"}.{ParameterInfo.Member.Name} ({Name})";
+            return $"Return value of {ParameterInfo.Member.DeclaringType?.FullName ?? "<null>"}.{ParameterInfo.Member.Name}";
         }
     }
 }

@@ -52,10 +52,10 @@ namespace XRoadLib.Tests.Serialization
 
                 var requestDefinition = new RequestDefinition(operationDefinition);
                 if (typeof(T).IsArray)
-                    requestDefinition.ArrayItemDefinition = new ArrayItemDefinition(requestDefinition) { Name = XName.Get("item") };
+                    requestDefinition.Content.ArrayItemDefinition = new ArrayItemDefinition(requestDefinition.Content) { Name = XName.Get("item") };
 
                 var typeMap = Globals.XRoadProtocol20.GetSerializerCache(dtoVersion).GetTypeMap(typeof(T));
-                typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition, message);
+                typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition.Content, message);
 
                 writer.WriteEndElement();
 

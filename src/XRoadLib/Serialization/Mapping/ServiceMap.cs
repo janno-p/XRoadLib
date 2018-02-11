@@ -23,7 +23,7 @@ namespace XRoadLib.Serialization.Mapping
         public ResponseDefinition ResponseDefinition { get; }
 
         private bool HasWrapperResultElement =>
-            !ResponseDefinition.MergeContent
+            !ResponseDefinition.Content.MergeContent
             && ResponseDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit
             && ResponseDefinition.ContainsNonTechnicalFault;
 
@@ -44,11 +44,11 @@ namespace XRoadLib.Serialization.Mapping
             ResponseDefinition = responseDefinition;
             OperationDefinition = operationDefinition;
 
-            this.inputTypeMap = inputTypeMap is IContentTypeMap inputContentTypeMap && requestDefinition.UseXop
+            this.inputTypeMap = inputTypeMap is IContentTypeMap inputContentTypeMap && requestDefinition.Content.UseXop
                 ? inputContentTypeMap.GetOptimizedContentTypeMap()
                 : inputTypeMap;
 
-            this.outputTypeMap = outputTypeMap is IContentTypeMap outputContentTypeMap && responseDefinition.UseXop
+            this.outputTypeMap = outputTypeMap is IContentTypeMap outputContentTypeMap && responseDefinition.Content.UseXop
                 ? outputContentTypeMap.GetOptimizedContentTypeMap()
                 : outputTypeMap;
         }
@@ -58,11 +58,11 @@ namespace XRoadLib.Serialization.Mapping
         {
             var requestName = RequestDefinition.RequestElementName;
 
-            if (!RequestDefinition.MergeContent && !reader.MoveToElement(3, requestName))
+            if (!RequestDefinition.Content.MergeContent && !reader.MoveToElement(3, requestName))
                 throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
 
             return RequestDefinition.ParameterInfo != null
-                ? ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestDefinition, message))
+                ? ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestDefinition.Content, message))
                 : null;
         }
 
@@ -88,10 +88,10 @@ namespace XRoadLib.Serialization.Mapping
                 throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
 
             var hasWrapperElement = HasWrapperResultElement;
-            if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.Name.LocalName, ResponseDefinition.Name.NamespaceName))
-                throw XRoadException.InvalidQuery($"Expected result wrapper element `{ResponseDefinition.Name}` was not found in SOAP message.");
+            if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.Content.Name.LocalName, ResponseDefinition.Content.Name.NamespaceName))
+                throw XRoadException.InvalidQuery($"Expected result wrapper element `{ResponseDefinition.Content.Name}` was not found in SOAP message.");
 
-            return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition, message));
+            return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition.Content, message));
         }
 
         private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, IContentDefinition contentDefinition, XRoadMessage message)
@@ -122,13 +122,13 @@ namespace XRoadLib.Serialization.Mapping
             if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, OperationDefinition.Name.LocalName, ns);
             else writer.WriteStartElement(OperationDefinition.Name.LocalName, ns);
 
-            if (!RequestDefinition.MergeContent)
+            if (!RequestDefinition.Content.MergeContent)
                 writer.WriteStartElement(RequestDefinition.RequestElementName);
 
             if (RequestDefinition.ParameterInfo != null)
-                SerializeValue(writer, PrepareRequestValue(value), inputTypeMap, message.RequestNode, message, RequestDefinition);
+                SerializeValue(writer, PrepareRequestValue(value), inputTypeMap, message.RequestNode, message, RequestDefinition.Content);
 
-            if (!RequestDefinition.MergeContent)
+            if (!RequestDefinition.Content.MergeContent)
                 writer.WriteEndElement();
 
             writer.WriteEndElement();
@@ -169,9 +169,9 @@ namespace XRoadLib.Serialization.Mapping
                 {
                     var addWrapperElement = HasWrapperResultElement;
                     if (addWrapperElement)
-                        writer.WriteStartElement(ResponseDefinition.Name.LocalName, ResponseDefinition.Name.NamespaceName);
+                        writer.WriteStartElement(ResponseDefinition.Content.Name.LocalName, ResponseDefinition.Content.Name.NamespaceName);
 
-                    SerializeValue(writer, PrepareResponseValue(value), outputTypeMap, message.ResponseNode, message, ResponseDefinition);
+                    SerializeValue(writer, PrepareResponseValue(value), outputTypeMap, message.ResponseNode, message, ResponseDefinition.Content);
 
                     if (addWrapperElement)
                         writer.WriteEndElement();

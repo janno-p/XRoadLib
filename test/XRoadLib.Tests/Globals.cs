@@ -20,6 +20,7 @@ namespace XRoadLib.Tests
 
         private class TestDefinition : IContentDefinition
         {
+            public ParticleDefinition Particle => null;
             public bool UseXop { get; }
             public bool IgnoreExplicitType { get; }
             public Type RuntimeType { get; }

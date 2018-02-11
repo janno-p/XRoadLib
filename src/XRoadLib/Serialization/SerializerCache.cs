@@ -83,7 +83,7 @@ namespace XRoadLib.Serialization
                 throw XRoadException.UnknownOperation(qualifiedName);
 
             var requestDefinition = schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
-            var inputTypeMap = GetContentDefinitionTypeMap(requestDefinition, null);
+            var inputTypeMap = GetContentDefinitionTypeMap(requestDefinition.Content, null);
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
             var responseDefinition = outputTuple.Item1;
@@ -306,11 +306,11 @@ namespace XRoadLib.Serialization
         {
             return typeDefinition.Type
                                  .GetAllPropertiesSorted(typeDefinition.ContentComparer, Version, p => schemaDefinitionProvider.GetPropertyDefinition(p, typeDefinition))
-                                 .Where(d => d.State != DefinitionState.Ignored)
+                                 .Where(d => d.Content.State != DefinitionState.Ignored)
                                  .Select(p =>
                                  {
-                                     var typeMap = GetContentDefinitionTypeMap(p, partialTypeMaps);
-                                     p.TypeName = typeMap.Definition.Name;
+                                     var typeMap = GetContentDefinitionTypeMap(p.Content, partialTypeMaps);
+                                     p.Content.TypeName = typeMap.Definition.Name;
                                      return Tuple.Create(p, typeMap);
                                  });
         }
@@ -338,12 +338,12 @@ namespace XRoadLib.Serialization
         private Tuple<ResponseDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
             var returnDefinition = schemaDefinitionProvider.GetResponseDefinition(operationDefinition, xRoadFaultPresentation);
-            if (returnDefinition.State == DefinitionState.Ignored)
+            if (returnDefinition.Content.State == DefinitionState.Ignored)
                 return null;
 
-            var outputTypeMap = GetContentDefinitionTypeMap(returnDefinition, null);
+            var outputTypeMap = GetContentDefinitionTypeMap(returnDefinition.Content, null);
             if (outputTypeMap != null)
-                returnDefinition.TypeName = outputTypeMap.Definition.Name;
+                returnDefinition.Content.TypeName = outputTypeMap.Definition.Name;
 
             return Tuple.Create(returnDefinition, outputTypeMap);
         }
