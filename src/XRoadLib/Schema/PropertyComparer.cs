@@ -20,17 +20,14 @@ namespace XRoadLib.Schema
             if (orderValue != 0)
                 return orderValue;
 
-            var xNamespace = x.Name?.NamespaceName ?? x.ArrayItemDefinition?.Name?.NamespaceName ?? "";
-            var yNamespace = y.Name?.NamespaceName ?? y.ArrayItemDefinition?.Name?.NamespaceName ?? "";
+            var xName = x.SerializedName;
+            var yName = y.SerializedName;
 
-            var namespaceValue = string.CompareOrdinal(xNamespace, yNamespace);
-            if (namespaceValue != 0)
-                return namespaceValue;
+            var namespaceValue = string.CompareOrdinal(xName?.NamespaceName ?? "", yName?.NamespaceName ?? "");
 
-            var xName = x.Name?.LocalName ?? x.ArrayItemDefinition?.Name?.LocalName ?? "";
-            var yName = y.Name?.LocalName ?? y.ArrayItemDefinition?.Name?.LocalName ?? "";
-
-            return string.CompareOrdinal(xName, yName);
+            return namespaceValue == 0
+                ? string.CompareOrdinal(xName?.LocalName ?? "", yName?.LocalName ?? "")
+                : namespaceValue;
         }
     }
 }

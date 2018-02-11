@@ -20,9 +20,9 @@ namespace XRoadLib.Serialization.Mapping
             this.serializerCache = serializerCache;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            message.Protocol.Style.WriteType(writer, Definition, definition.RuntimeType, definition.Particle is RequestDefinition);
+            message.Protocol.Style.WriteType(writer, Definition, content.RuntimeType, content.Particle is RequestDefinition);
 
             if (contentPropertyMap != null)
             {
@@ -48,7 +48,7 @@ namespace XRoadLib.Serialization.Mapping
             var createdPropertyMaps = propertyDefinitions.Select(x => new PropertyMap(serializerCache, x.Item1, x.Item2, availableFilters))
                                                          .ToList();
 
-            if (createdPropertyMaps.Count == 1 && createdPropertyMaps[0].Definition.Content.MergeContent && createdPropertyMaps[0].Definition.Content.ArrayItemDefinition == null)
+            if (createdPropertyMaps.Count == 1 && createdPropertyMaps[0].Definition.Content.MergeContent && createdPropertyMaps[0].Definition.Content is SingularContentDefinition)
             {
                 contentPropertyMap = createdPropertyMaps[0];
                 return;
@@ -56,7 +56,7 @@ namespace XRoadLib.Serialization.Mapping
 
             foreach (var propertyMap in createdPropertyMaps)
             {
-                if (propertyMap.Definition.Content.MergeContent && propertyMap.Definition.Content.ArrayItemDefinition == null)
+                if (propertyMap.Definition.Content.MergeContent && propertyMap.Definition.Content is SingularContentDefinition)
                     throw new Exception($"Property {propertyMap.Definition} of type {Definition} cannot be merged, because mixed element content is not allowed.");
 
                 AddPropertyMap(propertyMap);

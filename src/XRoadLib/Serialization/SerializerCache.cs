@@ -315,11 +315,11 @@ namespace XRoadLib.Serialization
                                  });
         }
 
-        private ITypeMap GetContentDefinitionTypeMap(IContentDefinition contentDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
+        private ITypeMap GetContentDefinitionTypeMap(ContentDefinition content, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
-            return contentDefinition.TypeName == null
-                ? GetTypeMap(contentDefinition.RuntimeType, partialTypeMaps)
-                : GetTypeMap(contentDefinition.TypeName, contentDefinition.RuntimeType.IsArray);
+            return content.TypeName == null
+                ? GetTypeMap(content.RuntimeType, partialTypeMaps)
+                : GetTypeMap(content.TypeName, content.RuntimeType.IsArray);
         }
 
         private ITypeMap GetCustomTypeMap(Type typeMapType)

@@ -13,12 +13,12 @@ namespace XRoadLib.Serialization.Mapping
             : base(serializerCache, typeDefinition)
         { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             var entity = new T();
             entity.SetTemplateMembers(templateNode.ChildNames);
 
-            var validateRequired = definition.Particle is RequestDefinition;
+            var validateRequired = content.Particle is RequestDefinition;
 
             if (contentPropertyMap != null)
             {
@@ -30,7 +30,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (reader.IsEmptyElement)
             {
-                ValidateRemainingProperties(properties, definition);
+                ValidateRemainingProperties(properties, content);
                 return MoveNextAndReturn(reader, entity);
             }
 
@@ -52,7 +52,7 @@ namespace XRoadLib.Serialization.Mapping
                 ReadPropertyValue(reader, properties.Current, propertyNode, message, validateRequired, entity);
             }
 
-            ValidateRemainingProperties(properties, definition);
+            ValidateRemainingProperties(properties, content);
 
             return entity;
         }
@@ -83,7 +83,7 @@ namespace XRoadLib.Serialization.Mapping
             while (properties.MoveNext())
             {
                 propertyMap = properties.Current;
-                var propertyName = propertyMap.Definition.Content.SerializedName;
+                var propertyName = propertyMap.Definition.Content.SerializedName.LocalName;
                 var propertyNode = templateNode[properties.Current.Definition.TemplateName, message.Version];
 
                 if (reader.LocalName == propertyName)
@@ -99,16 +99,16 @@ namespace XRoadLib.Serialization.Mapping
             if (propertyMap == null)
                 throw XRoadException.InvalidQuery($"Element `{reader.LocalName}` was unexpected at given location while deserializing type `{Definition.Name}`.");
 
-            throw XRoadException.UnexpectedElementInQuery(Definition.Name, propertyMap.Definition.Content.SerializedName, reader.LocalName);
+            throw XRoadException.UnexpectedElementInQuery(Definition.Name, propertyMap.Definition.Content.SerializedName.LocalName, reader.LocalName);
         }
 
-        private void ValidateRemainingProperties(IEnumerator<IPropertyMap> properties, IContentDefinition contentDefinition)
+        private void ValidateRemainingProperties(IEnumerator<IPropertyMap> properties, ContentDefinition content)
         {
             while (properties.MoveNext())
                 if (!properties.Current.Definition.Content.IsOptional)
                 {
-                    var typeName = Definition?.Name ?? ((contentDefinition as ArrayItemDefinition)?.WrapperDefinition.Particle as PropertyDefinition)?.DeclaringTypeDefinition?.Name;
-                    throw XRoadException.InvalidQuery($"Element `{properties.Current.Definition.Content.SerializedName}` is required by type `{typeName}` definition.");
+                    var typeName = Definition?.Name ?? ((content.Particle as ArrayItemDefinition)?.Array as PropertyDefinition)?.DeclaringTypeDefinition?.Name;
+                    throw XRoadException.InvalidQuery($"Element `{properties.Current.Definition.Content.SerializedName.LocalName}` is required by type `{typeName}` definition.");
                 }
         }
     }

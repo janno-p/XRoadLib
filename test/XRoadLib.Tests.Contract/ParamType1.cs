@@ -7,13 +7,13 @@ namespace XRoadLib.Tests.Contract
     {
         public long Property1 { get; set; }
 
-        [XRoadOptional]
+        [XRoadXmlArray(IsOptional = true)]
         public ParamType2[] Property2 { get; set; }
 
-        [XRoadOptional]
+        [XRoadXmlElement(IsOptional = true)]
         public string Property3 { get; set; }
 
-        [XRoadOptional]
+        [XRoadXmlElement(IsOptional = true)]
         public MimeContent MimeContent { get; set; }
     }
 }

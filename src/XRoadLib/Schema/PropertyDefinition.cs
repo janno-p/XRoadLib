@@ -7,18 +7,20 @@ namespace XRoadLib.Schema
     {
         public TypeDefinition DeclaringTypeDefinition { get; }
         public PropertyInfo PropertyInfo { get; }
+        public string RuntimeName { get; }
         public string TemplateName { get; set; }
 
         public PropertyDefinition(PropertyInfo propertyInfo, TypeDefinition declaringTypeDefinition)
         {
             DeclaringTypeDefinition = declaringTypeDefinition;
             PropertyInfo = propertyInfo;
+            RuntimeName = propertyInfo.GetRuntimeName();
 
-            Content = new ContentDefinition(
+            Content = ContentDefinition.FromType(
                 this,
                 propertyInfo,
                 propertyInfo.PropertyType.NormalizeType(),
-                propertyInfo.GetRuntimeName()
+                RuntimeName
             );
 
             TemplateName = Content.Name?.LocalName;
@@ -26,7 +28,7 @@ namespace XRoadLib.Schema
 
         public override string ToString()
         {
-            return $"Property `{PropertyInfo.GetRuntimeName()}` of type `{PropertyInfo.DeclaringType?.FullName ?? "<null>"}`";
+            return $"Property `{RuntimeName}` of type `{PropertyInfo.DeclaringType?.FullName ?? "<null>"}`";
         }
     }
 }

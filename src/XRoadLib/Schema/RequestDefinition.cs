@@ -37,7 +37,7 @@ namespace XRoadLib.Schema
             ParameterInfo = methodParameters.SingleOrDefault();
 
             if (ParameterInfo != null)
-                Content = new ContentDefinition(this, ParameterInfo, ParameterInfo.ParameterType, "request");
+                Content = ContentDefinition.FromType(this, ParameterInfo, ParameterInfo.ParameterType, "request");
         }
 
         /// <summary>

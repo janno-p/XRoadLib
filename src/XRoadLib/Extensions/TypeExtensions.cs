@@ -129,6 +129,30 @@ namespace XRoadLib.Extensions
             return typeof(Stream).GetTypeInfo().IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.XSD) : null;
         }
 
+        public static bool HasMergeAttribute(this ICustomAttributeProvider customAttributeProvider)
+        {
+            return customAttributeProvider.GetSingleAttribute<XRoadMergeContentAttribute>() != null
+                   || customAttributeProvider.GetSingleAttribute<XmlTextAttribute>() != null;
+        }
+
+        public static XmlElementAttribute GetXmlElementAttribute(this ICustomAttributeProvider customAttributeProvider)
+        {
+            return customAttributeProvider.GetSingleAttribute<XRoadXmlElementAttribute>()
+                   ?? customAttributeProvider.GetSingleAttribute<XmlElementAttribute>();
+        }
+        
+        public static XmlArrayAttribute GetXmlArrayAttribute(this ICustomAttributeProvider customAttributeProvider)
+        {
+            return customAttributeProvider.GetSingleAttribute<XRoadXmlArrayAttribute>()
+                   ?? customAttributeProvider.GetSingleAttribute<XmlArrayAttribute>();
+        }
+        
+        public static XmlArrayItemAttribute GetXmlArrayItemAttribute(this ICustomAttributeProvider customAttributeProvider)
+        {
+            return customAttributeProvider.GetSingleAttribute<XRoadXmlArrayItemAttribute>()
+                   ?? customAttributeProvider.GetSingleAttribute<XmlArrayItemAttribute>();
+        }
+
         public static T GetSingleAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(T), false).Cast<T>().SingleOrDefault();
@@ -177,13 +201,11 @@ namespace XRoadLib.Extensions
                 throw XRoadException.AmbiguousMatch(operationName);
 
             var methodContract = methodContracts.SingleOrDefault();
-            IDictionary<string, XRoadServiceAttribute> serviceContract;
 
-            if (methodContract == null || !serviceContracts.TryGetValue(methodContract, out serviceContract))
+            if (methodContract == null || !serviceContracts.TryGetValue(methodContract, out var serviceContract))
                 throw XRoadException.UndefinedContract(operationName);
 
-            XRoadServiceAttribute serviceAttribute;
-            if (!serviceContract.TryGetValue(operationName, out serviceAttribute))
+            if (!serviceContract.TryGetValue(operationName, out var serviceAttribute))
                 throw XRoadException.UndefinedContract(operationName);
 
             return Tuple.Create(methodContract, serviceAttribute);
@@ -192,23 +214,6 @@ namespace XRoadLib.Extensions
         internal static string GetValueOrDefault(this string value, string defaultValue = null)
         {
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
-        }
-
-        private static XName GetQualifiedDataType(string dataType)
-        {
-            return string.IsNullOrWhiteSpace(dataType)
-                ? null
-                : XName.Get(dataType, dataType == "base64" || dataType == "hexBinary" ? NamespaceConstants.SOAP_ENC : NamespaceConstants.XSD);
-        }
-
-        internal static XName GetQualifiedArrayItemDataType(this ICustomAttributeProvider provider)
-        {
-            return GetQualifiedDataType(provider.GetSingleAttribute<XmlArrayItemAttribute>()?.DataType);
-        }
-
-        internal static XName GetQualifiedElementDataType(this ICustomAttributeProvider provider)
-        {
-            return GetQualifiedDataType(provider.GetSingleAttribute<XmlElementAttribute>()?.DataType);
         }
 
         internal static XmlElementAttribute GetElementAttributeFromInterface(this Type declaringType, PropertyInfo propertyInfo)

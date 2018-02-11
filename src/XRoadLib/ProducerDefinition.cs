@@ -515,10 +515,9 @@ namespace XRoadLib
             if (!resultElement.SchemaTypeName.IsEmpty)
                 return resultElement.SchemaTypeName;
 
-            if (resultType.IsArray)
-                return AddAdditionalTypeDefinition(resultType, $"ArrayOf{resultType.GetElementType().Name}", resultElement, schemaTypes);
-
-            return null;
+            return resultType.IsArray
+                ? AddAdditionalTypeDefinition(resultType, $"ArrayOf{resultType.GetElementType().Name}", resultElement, schemaTypes)
+                : null;
         }
 
         private void AddPortTypeOperation(OperationDefinition operationDefinition, Message inputMessage, Message outputMessage, string targetNamespace)
@@ -600,12 +599,14 @@ namespace XRoadLib
 
             foreach (var propertyDefinition in propertyDefinitions)
             {
-                if (propertyDefinition.Content.MergeContent && propertyDefinitions.Count > 1 && propertyDefinition.Content.ArrayItemDefinition == null)
+                var propertyContent = propertyDefinition.Content;
+
+                if (propertyContent.MergeContent && propertyDefinitions.Count > 1 && propertyContent is SingularContentDefinition)
                     throw new Exception($"Property {propertyDefinition} of type {typeDefinition} cannot be merged, because there are more than 1 properties present.");
 
-                var contentElement = CreateContentElement(propertyDefinition.Content, schemaNamespace, referencedTypes);
+                var contentElement = CreateContentElement(propertyContent, schemaNamespace, referencedTypes);
 
-                if (!propertyDefinition.Content.MergeContent || propertyDefinition.Content.ArrayItemDefinition != null)
+                if (!propertyContent.MergeContent || propertyContent is ArrayContentDefiniton)
                 {
                     contentParticle.Items.Add(contentElement);
                     continue;
@@ -683,7 +684,7 @@ namespace XRoadLib
             schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
         }
 
-        private TypeDefinition GetContentTypeDefinition(IContentDefinition contentDefinition)
+        private TypeDefinition GetContentTypeDefinition(ContentDefinition contentDefinition)
         {
             if (contentDefinition.TypeName != null)
                 return schemaTypeDefinitions[contentDefinition.TypeName];
@@ -694,7 +695,7 @@ namespace XRoadLib
             return schemaDefinitionProvider.GetTypeDefinition(contentDefinition.RuntimeType);
         }
 
-        private void SetSchemaElementType(XmlSchemaElement schemaElement, string schemaNamespace, IContentDefinition contentDefinition, IDictionary<XmlQualifiedName, XmlSchemaType> referencedTypes)
+        private void SetSchemaElementType(XmlSchemaElement schemaElement, string schemaNamespace, ContentDefinition contentDefinition, IDictionary<XmlQualifiedName, XmlSchemaType> referencedTypes)
         {
             if (typeof(Stream).GetTypeInfo().IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
                 AddBinaryAttribute(schemaNamespace, schemaElement);
@@ -747,43 +748,49 @@ namespace XRoadLib
             schemaType.Content = restriction;
         }
 
-        private XmlSchemaElement CreateContentElement(ContentDefinition propertyDefinition, string schemaNamespace, IDictionary<XmlQualifiedName, XmlSchemaType> referencedTypes)
+        private XmlSchemaElement CreateContentElement(ContentDefinition contentDefinition, string schemaNamespace, IDictionary<XmlQualifiedName, XmlSchemaType> referencedTypes)
         {
             var schemaElement = new XmlSchemaElement
             {
-                Name = propertyDefinition.Name?.LocalName, Annotation = CreateSchemaAnnotation(schemaNamespace, propertyDefinition.Documentation)
+                Name = contentDefinition.Name?.LocalName,
+                Annotation = CreateSchemaAnnotation(schemaNamespace, contentDefinition.Documentation)
             };
 
-            if (propertyDefinition.ArrayItemDefinition != null && propertyDefinition.MergeContent)
+            var arrayContentDefinition = contentDefinition as ArrayContentDefiniton;
+
+            if (arrayContentDefinition != null && contentDefinition.MergeContent)
             {
-                schemaElement.Name = propertyDefinition.ArrayItemDefinition.Name.LocalName;
+                schemaElement.Name = arrayContentDefinition.Item.Content.Name.LocalName;
 
-                if (propertyDefinition.ArrayItemDefinition.IsOptional)
-                    schemaElement.MinOccurs = 0;
+                if (arrayContentDefinition.Item.MinOccurs != 1u)
+                    schemaElement.MinOccurs = arrayContentDefinition.Item.MinOccurs;
+                
+                if (!arrayContentDefinition.Item.MaxOccurs.HasValue)
+                    schemaElement.MaxOccursString = "unbounded";
+                else if (arrayContentDefinition.Item.MaxOccurs.Value != 1u)
+                    schemaElement.MaxOccurs = arrayContentDefinition.Item.MaxOccurs.Value;
 
-                schemaElement.IsNillable = propertyDefinition.ArrayItemDefinition.IsNullable;
+                schemaElement.IsNillable = arrayContentDefinition.Item.Content.IsNullable;
 
-                schemaElement.MaxOccursString = "unbounded";
-
-                SetSchemaElementType(schemaElement, schemaNamespace, propertyDefinition.ArrayItemDefinition, referencedTypes);
+                SetSchemaElementType(schemaElement, schemaNamespace, arrayContentDefinition.Item.Content, referencedTypes);
 
                 return schemaElement;
             }
 
-            if (propertyDefinition.IsOptional)
+            if (contentDefinition.IsOptional)
                 schemaElement.MinOccurs = 0;
 
-            schemaElement.IsNillable = propertyDefinition.IsNullable;
+            schemaElement.IsNillable = contentDefinition.IsNullable;
 
-            if (propertyDefinition.ArrayItemDefinition == null)
+            if (arrayContentDefinition == null)
             {
-                SetSchemaElementType(schemaElement, schemaNamespace, propertyDefinition, referencedTypes);
+                SetSchemaElementType(schemaElement, schemaNamespace, contentDefinition, referencedTypes);
                 return schemaElement;
             }
 
-            if (propertyDefinition.TypeName != null)
+            if (contentDefinition.TypeName != null)
             {
-                var typeDefinition = schemaTypeDefinitions[propertyDefinition.TypeName];
+                var typeDefinition = schemaTypeDefinitions[contentDefinition.TypeName];
                 schemaElement.SchemaTypeName = new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
                 if (referencedTypes.ContainsKey(schemaElement.SchemaTypeName))
                     referencedTypes.Add(schemaElement.SchemaTypeName, null);
@@ -792,15 +799,20 @@ namespace XRoadLib
 
             var itemElement = new XmlSchemaElement
             {
-                Name = propertyDefinition.ArrayItemDefinition.Name.LocalName, MaxOccursString = "unbounded"
+                Name = arrayContentDefinition.Item.Content.Name.LocalName,
             };
 
-            if (propertyDefinition.ArrayItemDefinition.IsOptional)
-                itemElement.MinOccurs = 0;
+            if (arrayContentDefinition.Item.MinOccurs != 1)
+                itemElement.MinOccurs = arrayContentDefinition.Item.MinOccurs;
+                
+            if (!arrayContentDefinition.Item.MaxOccurs.HasValue)
+                itemElement.MaxOccursString = "unbounded";
+            else if (arrayContentDefinition.Item.MaxOccurs.Value != 1u)
+                itemElement.MaxOccurs = arrayContentDefinition.Item.MaxOccurs.Value;
 
-            itemElement.IsNillable = propertyDefinition.ArrayItemDefinition.IsNullable;
+            itemElement.IsNillable = arrayContentDefinition.Item.Content.IsNullable;
 
-            SetSchemaElementType(itemElement, schemaNamespace, propertyDefinition.ArrayItemDefinition, referencedTypes);
+            SetSchemaElementType(itemElement, schemaNamespace, arrayContentDefinition.Item.Content, referencedTypes);
 
             protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, ns => addRequiredImport(schemaNamespace, ns, null));
 

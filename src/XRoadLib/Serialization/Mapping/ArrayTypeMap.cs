@@ -22,18 +22,20 @@ namespace XRoadLib.Serialization.Mapping
             this.elementTypeMap = elementTypeMap;
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
                 return MoveNextAndReturn(reader, new T[0]);
 
             var items = new List<T>();
 
-            var parentDepth = definition.MergeContent ? reader.Depth - 1 : reader.Depth;
-            var itemDepth = parentDepth + 1;
-            var itemName = definition.ArrayItemDefinition.Name.LocalName;
+            var arrayContent = (ArrayContentDefiniton)content;
 
-            if (!definition.MergeContent)
+            var parentDepth = arrayContent.MergeContent ? reader.Depth - 1 : reader.Depth;
+            var itemDepth = parentDepth + 1;
+            var itemName = arrayContent.Item.Content.Name.LocalName;
+
+            if (!arrayContent.MergeContent)
                 reader.Read();
 
             while (parentDepth < reader.Depth)
@@ -46,10 +48,10 @@ namespace XRoadLib.Serialization.Mapping
 
                 if (reader.LocalName != itemName)
                 {
-                    if (definition.MergeContent)
+                    if (arrayContent.MergeContent)
                         break;
 
-                    if (!definition.ArrayItemDefinition.AcceptAnyName)
+                    if (!arrayContent.Item.AcceptsAnyName)
                         throw new Exception($"Invalid array item name {reader.LocalName}.");
                 }
 
@@ -62,7 +64,7 @@ namespace XRoadLib.Serialization.Mapping
 
                 var typeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? elementTypeMap;
 
-                var value = typeMap.Deserialize(reader, templateNode, definition.ArrayItemDefinition, message);
+                var value = typeMap.Deserialize(reader, templateNode, arrayContent.Item.Content, message);
 
                 items.Add((T)value);
             }
@@ -70,15 +72,15 @@ namespace XRoadLib.Serialization.Mapping
             return items.ToArray();
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
             var valueArray = (Array)value;
 
-            if (!(definition.Particle is RequestDefinition))
+            if (!(content.Particle is RequestDefinition))
                 message.Protocol.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
 
-            var arrayItemDefinition = definition.ArrayItemDefinition;
-            var itemName = arrayItemDefinition.Name.LocalName;
+            var arrayContent = (ArrayContentDefiniton)content;
+            var itemName = arrayContent.Item.Content.Name.LocalName;
 
             foreach (var valueItem in valueArray)
             {
@@ -87,7 +89,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (valueItem != null)
                 {
                     var typeMap = serializerCache != null ? serializerCache.GetTypeMap(valueItem.GetType()) : elementTypeMap;
-                    typeMap.Serialize(writer, templateNode, valueItem, arrayItemDefinition, message);
+                    typeMap.Serialize(writer, templateNode, valueItem, arrayContent.Item.Content, message);
                 }
                 else writer.WriteNilAttribute();
 

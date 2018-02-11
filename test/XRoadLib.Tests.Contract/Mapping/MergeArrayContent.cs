@@ -8,12 +8,12 @@ namespace XRoadLib.Tests.Contract.Mapping
     [XmlType(AnonymousType = true)]
     public class WrapperType : XRoadSerializable
     {
-        [XmlElement("Integer")]
-        [XRoadOptional]
+        [XmlArrayItem("Integer")]
+        [XRoadMergeContent]
         public int[] Integers { get; set; }
 
-        [XmlElement("String")]
-        [XRoadOptional]
+        [XmlArrayItem("String")]
+        [XRoadMergeContent]
         public string[] Strings { get; set; }
     }
 
@@ -25,7 +25,8 @@ namespace XRoadLib.Tests.Contract.Mapping
         [XmlElement(Order = 2, DataType = "date")]
         public DateTime EndDate { get; set; }
 
-        [XmlElement(Order = 3)]
+        [XmlArray(Order = 3)]
+        [XRoadMergeContent]
         public WrapperType[] Content { get; set; }
     }
 

@@ -20,7 +20,7 @@ namespace XRoadLib.Serialization.Mapping
         /// <summary>
         /// String deserialization logic.
         /// </summary>
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
                 return MoveNextAndReturn(reader, null);
@@ -33,9 +33,9 @@ namespace XRoadLib.Serialization.Mapping
         /// <summary>
         /// String serialization logic.
         /// </summary>
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            if (!(definition.Particle is RequestDefinition))
+            if (!(content.Particle is RequestDefinition))
                 message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteStringWithMode(value.ToString(), message.Protocol.Style.StringSerializationMode);

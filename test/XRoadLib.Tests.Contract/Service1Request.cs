@@ -1,21 +1,17 @@
-﻿using System.Xml.Serialization;
-using XRoadLib.Attributes;
+﻿using XRoadLib.Attributes;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
     public class Service1Request : XRoadSerializable
     {
-        [XmlElement(Order = 1)]
-        [XRoadOptional]
+        [XRoadXmlElement(Order = 1, IsOptional = true)]
         public ParamType1 Param1 { get; set; }
 
-        [XmlElement(Order = 2)]
-        [XRoadOptional]
+        [XRoadXmlElement(Order = 2, IsOptional = true)]
         public ParamType2 Param2 { get; set; }
 
-        [XmlElement(Order = 3)]
-        [XRoadOptional]
+        [XRoadXmlElement(Order = 3, IsOptional = true)]
         public ParamType3 Param3 { get; set; }
     }
 }

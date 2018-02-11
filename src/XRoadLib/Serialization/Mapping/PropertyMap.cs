@@ -33,7 +33,7 @@ namespace XRoadLib.Serialization.Mapping
             if (availableFilters == null)
                 return;
 
-            foreach (var availableFilter in availableFilters.Where(f => Definition.DeclaringTypeDefinition.Type.IsFilterableField(Definition.Content.RuntimeName, f)))
+            foreach (var availableFilter in availableFilters.Where(f => Definition.DeclaringTypeDefinition.Type.IsFilterableField(Definition.RuntimeName, f)))
                 filters.Add(availableFilter);
         }
 

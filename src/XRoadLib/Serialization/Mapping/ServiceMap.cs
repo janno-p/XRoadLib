@@ -94,7 +94,7 @@ namespace XRoadLib.Serialization.Mapping
             return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition.Content, message));
         }
 
-        private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, IContentDefinition contentDefinition, XRoadMessage message)
+        private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsNilElement())
             {
@@ -107,10 +107,10 @@ namespace XRoadLib.Serialization.Mapping
                 throw XRoadException.InvalidQuery($"Expected anonymous type, but `{typeAttribute}` was given.");
 
             var concreteTypeMap = typeMap;
-            if (!contentDefinition.IgnoreExplicitType)
+            if (!content.IgnoreExplicitType)
                 concreteTypeMap = (typeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 
-            return concreteTypeMap.Deserialize(reader, templateNode, contentDefinition, message);
+            return concreteTypeMap.Deserialize(reader, templateNode, content, message);
         }
 
         /// <inheritdoc />
@@ -190,7 +190,7 @@ namespace XRoadLib.Serialization.Mapping
         protected virtual object ProcessRequestValue(object value) => value;
         protected virtual object ProcessResponseValue(object value) => value;
 
-        private void SerializeValue(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message, IContentDefinition contentDefinition)
+        private void SerializeValue(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message, ContentDefinition content)
         {
             if (value == null)
             {
@@ -200,7 +200,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : typeMap;
 
-            concreteTypeMap.Serialize(writer, templateNode, value, contentDefinition, message);
+            concreteTypeMap.Serialize(writer, templateNode, value, content, message);
         }
 
         private static void SerializeFault(XmlWriter writer, IXRoadFault fault, IXRoadProtocol protocol)

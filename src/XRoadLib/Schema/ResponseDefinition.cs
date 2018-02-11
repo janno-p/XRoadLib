@@ -53,7 +53,7 @@ namespace XRoadLib.Schema
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = parameterInfo;
             
-            Content = new ContentDefinition(this, parameterInfo, parameterInfo?.ParameterType, "result");
+            Content = ContentDefinition.FromType(this, parameterInfo, parameterInfo?.ParameterType, "result");
         }
 
         /// <summary>

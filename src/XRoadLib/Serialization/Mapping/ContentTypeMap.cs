@@ -24,7 +24,7 @@ namespace XRoadLib.Serialization.Mapping
             return optimizedContentTypeMap;
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             var contentID = reader.GetAttribute("href");
 
@@ -64,21 +64,21 @@ namespace XRoadLib.Serialization.Mapping
             return attachment.ContentStream;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, IContentDefinition definition, XRoadMessage message)
+        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
             var attachment = new XRoadAttachment((Stream)value);
             message.AllAttachments.Add(attachment);
 
             if (message.BinaryMode == BinaryMode.Attachment)
             {
-                if (!(definition.Particle is RequestDefinition))
+                if (!(content.Particle is RequestDefinition))
                     message.Protocol.Style.WriteExplicitType(writer, encodedTypeName);
 
                 writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
                 return;
             }
 
-            if (!(definition.Particle is RequestDefinition))
+            if (!(content.Particle is RequestDefinition))
                 message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
 
             attachment.IsMultipartContent = false;

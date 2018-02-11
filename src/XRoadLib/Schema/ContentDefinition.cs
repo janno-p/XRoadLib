@@ -1,14 +1,10 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
-using System.Xml.Serialization;
-using XRoadLib.Attributes;
-using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
 {
-    public class ContentDefinition : Definition, IContentDefinition
+    public abstract class ContentDefinition : Definition
     {
         public ParticleDefinition Particle { get; }
 
@@ -18,11 +14,9 @@ namespace XRoadLib.Schema
 
         public bool IsNullable { get; set; }
 
-        public bool IsOptional { get; set; }
+        public virtual bool IsOptional { get; set; }
 
         public bool UseXop { get; set; }
-
-        public ArrayItemDefinition ArrayItemDefinition { get; set; }
 
         public int Order { get; set; } = -1;
 
@@ -30,80 +24,19 @@ namespace XRoadLib.Schema
 
         public Type RuntimeType { get; set; }
 
-        public string RuntimeName { get; }
-        
-        public string SerializedName => MergeContent ? ArrayItemDefinition.Name.LocalName : Name.LocalName;
+        public virtual XName SerializedName => Name;
 
-        public ContentDefinition(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName)
+        protected ContentDefinition(ParticleDefinition particle)
         {
             Particle = particle;
-            RuntimeName = runtimeName;
-            RuntimeType = runtimeType;
+        }
 
-            var elementAttribute = customAttributeProvider.GetSingleAttribute<XmlElementAttribute>();
-            var arrayAttribute = customAttributeProvider.GetSingleAttribute<XmlArrayAttribute>();
-            var arrayItemAttribute = customAttributeProvider.GetSingleAttribute<XmlArrayItemAttribute>();
-
-            if (elementAttribute != null && (arrayAttribute != null || arrayItemAttribute != null))
-                throw new Exception($"Property `{this}` should not define XmlElement and XmlArray(Item) attributes at the same time.");
-
-            XName qualifiedName = null;
-            XName itemQualifiedName = null;
-
-            if (RuntimeType.IsArray)
-            {
-                if (RuntimeType.GetArrayRank() > 1)
-                    throw new Exception($"Property `{this}` declares multi-dimensional array, which is not supported.");
-
-                var localName = (arrayAttribute?.ElementName).GetValueOrDefault(runtimeName);
-                var containerName = string.IsNullOrWhiteSpace(localName) ? null : XName.Get(localName, arrayAttribute?.Namespace ?? "");
-
-                if (elementAttribute != null)
-                    itemQualifiedName = XName.Get(elementAttribute.ElementName.GetValueOrDefault(runtimeName), elementAttribute.Namespace ?? "");
-                else if (arrayItemAttribute != null)
-                {
-                    qualifiedName = containerName;
-                    itemQualifiedName = XName.Get(arrayItemAttribute.ElementName.GetValueOrDefault(runtimeName), arrayItemAttribute.Namespace ?? "");
-                }
-                else
-                {
-                    qualifiedName = containerName;
-                    itemQualifiedName = XName.Get("item", "");
-                }
-            }
-            else
-            {
-                if (arrayAttribute != null || arrayItemAttribute != null)
-                    throw new Exception($"Property `{this}` should not define XmlArray(Item) attribute, because it's not array type.");
-                var name = (elementAttribute?.ElementName).GetValueOrDefault(runtimeName);
-                qualifiedName = string.IsNullOrWhiteSpace(name) ? null : XName.Get(name, elementAttribute?.Namespace ?? "");
-            }
-
-            var customTypeName = (elementAttribute?.DataType).GetValueOrDefault(arrayItemAttribute?.DataType);
-
-            Name = qualifiedName;
-            IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault() || (arrayAttribute?.IsNullable).GetValueOrDefault();
-            Order = (elementAttribute?.Order).GetValueOrDefault((arrayAttribute?.Order).GetValueOrDefault());
-            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(RuntimeType);
-            TypeName = customTypeName != null ? XName.Get(customTypeName, NamespaceConstants.XSD) : null;
-            IsOptional = customAttributeProvider.GetSingleAttribute<XRoadOptionalAttribute>() != null;
-            State = DefinitionState.Default;
-            Documentation = new DocumentationDefinition(customAttributeProvider);
-            MergeContent = customAttributeProvider.GetSingleAttribute<XRoadMergeContentAttribute>() != null || customAttributeProvider.GetSingleAttribute<XmlTextAttribute>() != null;
-
-            if (!RuntimeType.IsArray)
-                return;
-
-            MergeContent = MergeContent || elementAttribute != null;
-
-            ArrayItemDefinition = new ArrayItemDefinition(this)
-            {
-                Name = itemQualifiedName,
-                IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault(),
-                IsOptional = elementAttribute != null && IsOptional,
-                UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(RuntimeType.GetElementType()),
-                RuntimeType = RuntimeType.GetElementType(),
-            };
+        public static ContentDefinition FromType(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName)
+        {
+            if (runtimeType.IsArray)
+                return new ArrayContentDefiniton(particle, customAttributeProvider, runtimeType, runtimeName);
+            
+            return new SingularContentDefinition(particle, customAttributeProvider, runtimeType, runtimeName);
         }
     }
 }

@@ -19,12 +19,12 @@ namespace XRoadLib.Serialization.Mapping
             requiredPropertiesCount = new Lazy<int>(() => deserializationPropertyMaps.Count(x => !x.Value.Definition.Content.IsOptional));
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, IContentDefinition definition, XRoadMessage message)
+        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             var dtoObject = new T();
             dtoObject.SetTemplateMembers(templateNode.ChildNames);
 
-            var validateRequired = definition.Particle is RequestDefinition;
+            var validateRequired = content.Particle is RequestDefinition;
 
             if (contentPropertyMap != null)
             {
@@ -36,7 +36,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (reader.IsEmptyElement)
             {
-                ValidateRemainingProperties(existingPropertyNames, definition);
+                ValidateRemainingProperties(existingPropertyNames, content);
                 return MoveNextAndReturn(reader, dtoObject);
             }
 
@@ -66,7 +66,7 @@ namespace XRoadLib.Serialization.Mapping
             if (validateRequired && requiredCount < templateNode.CountRequiredNodes(message.Version))
                 throw XRoadException.MissingRequiredPropertyValues(GetMissingRequiredPropertyNames(dtoObject, templateNode, message));
 
-            ValidateRemainingProperties(existingPropertyNames, definition);
+            ValidateRemainingProperties(existingPropertyNames, content);
 
             return dtoObject;
         }
@@ -114,15 +114,15 @@ namespace XRoadLib.Serialization.Mapping
         {
             base.AddPropertyMap(propertyMap);
 
-            deserializationPropertyMaps.Add(propertyMap.Definition.Content.SerializedName, propertyMap);
+            deserializationPropertyMaps.Add(propertyMap.Definition.Content.SerializedName.LocalName, propertyMap);
         }
 
-        private void ValidateRemainingProperties(ICollection<string> existingPropertyNames, IContentDefinition contentDefinition)
+        private void ValidateRemainingProperties(ICollection<string> existingPropertyNames, ContentDefinition content)
         {
             if (existingPropertyNames.Count == requiredPropertiesCount.Value)
                 return;
 
-            var typeName = Definition?.Name ?? ((contentDefinition as ArrayItemDefinition)?.WrapperDefinition.Particle as PropertyDefinition)?.DeclaringTypeDefinition?.Name;
+            var typeName = Definition?.Name ?? ((content.Particle as ArrayItemDefinition)?.Array as PropertyDefinition)?.DeclaringTypeDefinition?.Name;
             var missingProperties = deserializationPropertyMaps.Where(kv => !existingPropertyNames.Contains(kv.Key) && !kv.Value.Definition.Content.IsOptional).Select(kv => $"`{kv.Key}`").ToList();
 
             var propertyMessage = string.Join(", ", missingProperties);
