@@ -2,10 +2,7 @@
 
 open Fake
 open Fake.Git
-open Fake.AssemblyInfoFile
 open Fake.ReleaseNotesHelper
-open Fake.Testing.NUnit3
-open Fake.UserInputHelper
 open System
 open System.IO
 
@@ -180,7 +177,7 @@ let generateHelp' fail debug =
         buildDocumentationTarget args "Default"
         traceImportant "Help generated"
     with
-    | e when not fail ->
+    | _ when not fail ->
         traceImportant "generating help documentation failed"
 
 let generateHelp fail =
@@ -211,7 +208,7 @@ Target "GenerateHelpDebug" (fun _ ->
 )
 
 Target "KeepRunning" (fun _ ->
-    use watcher = !! "docs/content/**/*.*" |> WatchChanges (fun changes ->
+    use watcher = !! "docs/content/**/*.*" |> WatchChanges (fun _ ->
          generateHelp' true true
     )
 
