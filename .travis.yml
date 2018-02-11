@@ -1,25 +1,4 @@
 language: csharp
-
-sudo: required
-dist: trusty
-
-env:
-  matrix:
-    - FRAMEWORK=netcoreapp2.0 FRAMEWORKPATH= TESTCOMMAND="dotnet test test/XRoadLib.Tests/XRoadLib.Tests.csproj --framework netcoreapp2.0 --configuration Debug"
-    - FRAMEWORK=net452 FRAMEWORKPATH=/property:FrameworkPathOverride=/usr/lib/mono/4.5/ TESTCOMMAND="mono /home/travis/.nuget/packages/xunit.runner.console.2.3.0/tools/net452/xunit.console.exe test/XRoadLib.Tests/bin/Debug/net452/XRoadLib.Tests.dll"
-
-before_install:
-  - sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
-  - curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-  - sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-  - sudo apt-get update
-  - sudo apt -y install nuget
-  - sudo apt-get -y install dotnet-sdk-2.0.0
-  - nuget install xunit.runner.console -Version 2.3.0 -OutputDirectory /home/travis/.nuget/packages
-
-script:
-  - which mono
-  - dotnet --info
-  - dotnet restore test/XRoadLib.Tests/XRoadLib.Tests.csproj
-  - dotnet build test/XRoadLib.Tests/XRoadLib.Tests.csproj --framework $FRAMEWORK --configuration Debug $FRAMEWORKPATH
-  - $TESTCOMMAND
+sudo: false
+dist: precise
+script: ./build.sh RunTests

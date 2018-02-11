@@ -1,16 +1,16 @@
 RESTRICTION: >= net452
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.63.2)
+    FAKE (4.64.4)
     FSharp.Compiler.Service (2.0.0.6)
     FSharp.Formatting (2.14.4)
       FSharp.Compiler.Service (2.0.0.6)
       FSharpVSPowerTools.Core (>= 2.3 < 2.4)
     FSharpVSPowerTools.Core (2.3)
       FSharp.Compiler.Service (>= 2.0.0.3)
-    Octokit (0.27)
+    Octokit (0.28)
     SourceLink.Fake (1.1)
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (e672bab0bef3a196e1c72a832b26521cf9428116)
+    modules/Octokit/Octokit.fsx (43d68ede74f15158defc18fab7745c142972a8cf)
       Octokit (>= 0.20)

@@ -4,16 +4,5 @@ branches:
     - master
 init:
   - git config --global core.autocrlf true
-environment:
-  matrix:
-    - FRAMEWORK: netcoreapp2.0
-    - FRAMEWORK: net452
-configuration: Release
-build: off
-before_test:
-  - ps: appveyor DownloadFile https://download.microsoft.com/download/0/F/D/0FD852A4-7EA1-4E2A-983A-0484AC19B92C/dotnet-sdk-2.0.0-win-x64.exe -FileName "C:\dotnet.exe"
-  - cmd: call C:\dotnet.exe /install /quiet /norestart
-  - cmd: dotnet --info
-  - cmd: dotnet restore test\XRoadLib.Tests\XRoadLib.Tests.csproj
 test_script:
-  - cmd: dotnet test test\XRoadLib.Tests\XRoadLib.Tests.csproj --framework %FRAMEWORK% --configuration Debug
+  - ./build.cmd RunTests
