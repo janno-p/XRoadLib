@@ -14,7 +14,7 @@ namespace XRoadLib.Handler
     /// <inheritdoc />
     public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
-        private readonly ICollection<IXRoadProtocol> supportedProtocols;
+        private readonly ICollection<IServiceManager> serviceManagers;
 
         /// <summary>
         /// Temporary file storage location.
@@ -29,11 +29,11 @@ namespace XRoadLib.Handler
         /// <summary>
         /// Initialize new service request handler with protocols it can handle.
         /// </summary>
-        protected ServiceRequestHandlerBase(IEnumerable<IXRoadProtocol> supportedProtocols)
+        protected ServiceRequestHandlerBase(IEnumerable<IServiceManager> serviceManagers)
         {
-            if (supportedProtocols == null)
-                throw new ArgumentNullException(nameof(supportedProtocols));
-            this.supportedProtocols = new List<IXRoadProtocol>(supportedProtocols);
+            if (serviceManagers == null)
+                throw new ArgumentNullException(nameof(serviceManagers));
+            this.serviceManagers = serviceManagers.ToList();
         }
 
         /// <summary>
@@ -83,18 +83,16 @@ namespace XRoadLib.Handler
         protected virtual void OnAfterSerialization(XRoadContextClassic context)
         { }
 
-        /// <summary>
-        /// Handle current X-Road operation.
-        /// </summary>
+        /// <inheritdoc />
         protected override void HandleRequest(XRoadContextClassic context)
         {
             if (context.HttpContext.Request.InputStream.Length == 0)
                 throw XRoadException.InvalidQuery("Empty request content");
 
-            context.Request.LoadRequest(context.HttpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), supportedProtocols);
-            if (context.Request.Protocol == null && context.Request.MetaServiceMap == null)
+            context.Request.LoadRequest(context.HttpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), serviceManagers);
+            if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
             {
-                var supportedProtocolsString = string.Join(", ", supportedProtocols.Select(x => $@"""{x.Name}"""));
+                var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));
                 throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
             }
 

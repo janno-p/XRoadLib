@@ -25,7 +25,7 @@ namespace XRoadLib.Serialization
 
         private static readonly byte[] newLine = { (byte)'\r', (byte)'\n' };
 
-        private readonly ICollection<IXRoadProtocol> supportedProtocols;
+        private readonly ICollection<IServiceManager> serviceManagers;
         private readonly string storagePath;
         private readonly string contentTypeHeader;
 
@@ -33,12 +33,12 @@ namespace XRoadLib.Serialization
         private int? peekedByte;
         private long streamPosition;
 
-        public XRoadMessageReader(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
+        public XRoadMessageReader(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             this.contentTypeHeader = contentTypeHeader;
             this.storagePath = storagePath;
             this.stream = stream;
-            this.supportedProtocols = new List<IXRoadProtocol>(supportedProtocols);
+            this.serviceManagers = serviceManagers.ToList();
         }
 
         public void Read(XRoadMessage target, bool isResponse = false)
@@ -60,19 +60,18 @@ namespace XRoadLib.Serialization
 
             using (var reader = XmlReader.Create(target.ContentStream, new XmlReaderSettings { CloseInput = false }))
             {
-                var protocol = ParseXRoadProtocol(reader);
+                var protocol = DetectServiceManager(reader);
                 ParseXRoadHeader(target, reader, protocol);
 
                 target.RootElementName = ParseMessageRootElementName(reader);
 
-                if (target.Protocol == null && target.RootElementName != null)
-                    target.Protocol = supportedProtocols.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
+                if (target.ServiceManager == null && target.RootElementName != null)
+                    target.ServiceManager = serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
 
                 target.MetaServiceMap = GetMetaServiceMap(target.RootElementName);
             }
 
-            var xrh4 = target.Header as IXRoadHeader40;
-            if (xrh4 != null && xrh4.ProtocolVersion?.Trim() != "4.0")
+            if (target.Header is IXRoadHeader40 xrh4 && xrh4.ProtocolVersion?.Trim() != "4.0")
                 throw XRoadException.InvalidQuery($"Unsupported X-Road v6 protocol version value `{xrh4.ProtocolVersion ?? string.Empty}`.");
 
             if (target.IsMultipartContainer)
@@ -122,8 +121,7 @@ namespace XRoadLib.Serialization
                     continue;
                 }
 
-                string partID, partTransferEncoding;
-                ExtractMultipartHeader(target.ContentEncoding, out partID, out partTransferEncoding);
+                ExtractMultipartHeader(target.ContentEncoding, out var partID, out var partTransferEncoding);
 
                 var targetStream = target.ContentStream;
                 if (targetStream.Length > 0 || (!string.IsNullOrEmpty(multipartStartContentID) && !multipartStartContentID.Contains(partID)))
@@ -147,8 +145,7 @@ namespace XRoadLib.Serialization
 
             while (true)
             {
-                byte[] buffer;
-                var chunkStop = ReadChunkOrLine(out buffer, BUFFER_SIZE);
+                var chunkStop = ReadChunkOrLine(out var buffer, BUFFER_SIZE);
 
                 if (boundaryMarker != null && BufferStartsWith(buffer, boundaryMarker))
                     return buffer;
@@ -199,8 +196,7 @@ namespace XRoadLib.Serialization
 
             while (true)
             {
-                byte[] buffer;
-                var chunkStop = ReadChunkOrLine(out buffer, BUFFER_SIZE);
+                var chunkStop = ReadChunkOrLine(out var buffer, BUFFER_SIZE);
 
                 Array.Resize(ref chunk, chunk.Length + buffer.Length);
                 Array.Copy(buffer, chunk, buffer.Length);
@@ -373,44 +369,31 @@ namespace XRoadLib.Serialization
             return keyValuePair.Substring(fromIndx, toIndx - fromIndx).Trim();
         }
 
-        private static string NormalizeCharset(string charset)
-        {
-            if (charset == null)
-                return null;
-
-            charset = charset.ToLower().Replace("cp", "");
-
-            if (charset.StartsWith("125"))
-                charset = "windows-" + charset;
-
-            return charset;
-        }
-
-        private IXRoadProtocol ParseXRoadProtocol(XmlReader reader)
+        private IServiceManager DetectServiceManager(XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
                 throw XRoadException.InvalidQuery("Päringus puudub SOAP-ENV:Envelope element.");
 
-            return supportedProtocols.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
+            return serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }
 
-        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IXRoadProtocol protocol)
+        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IServiceManager serviceManager)
         {
             if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
                 return;
 
-            var header = protocol?.HeaderDefinition.CreateInstance();
+            var header = serviceManager?.CreateHeader();
             var unresolved = new List<XElement>();
 
             while (reader.MoveToElement(2))
             {
-                if (protocol == null)
+                if (serviceManager == null)
                 {
-                    protocol = supportedProtocols.SingleOrDefault(p => p.IsHeaderNamespace(reader.NamespaceURI));
-                    header = protocol?.HeaderDefinition.CreateInstance();
+                    serviceManager = serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(reader.NamespaceURI));
+                    header = serviceManager?.CreateHeader();
                 }
 
-                if (protocol == null || header == null || !protocol.IsHeaderNamespace(reader.NamespaceURI))
+                if (serviceManager == null || header == null || !serviceManager.IsHeaderNamespace(reader.NamespaceURI))
                 {
                     unresolved.Add((XElement)XNode.ReadFrom(reader));
                     continue;
@@ -423,7 +406,7 @@ namespace XRoadLib.Serialization
 
             target.Header = header;
             target.UnresolvedHeaders = unresolved;
-            target.Protocol = protocol;
+            target.ServiceManager = serviceManager;
         }
 
         private static IServiceMap GetMetaServiceMap(XName rootElementName)

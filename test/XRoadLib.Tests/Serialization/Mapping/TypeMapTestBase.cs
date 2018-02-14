@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Text;
 using System.Xml;
-using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Tests.Contract.Configuration;
@@ -22,7 +21,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
             using (var reader = XmlReader.Create(textReader))
             {
                 while (reader.Read() && reader.NodeType != XmlNodeType.Element) { }
-                using (var message = Globals.XRoadProtocol20.CreateMessage())
+                using (var message = Globals.ServiceManager20.CreateMessage())
                     return typeMap.Deserialize(reader, null, Globals.GetTestDefinition(typeMap.Definition.Type), message);
             }
         }

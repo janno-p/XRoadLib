@@ -17,19 +17,19 @@ namespace XRoadLib.Handler
     /// </summary>
     public class XRoadRequestHandler : XRoadHandlerBase
     {
-        private readonly ICollection<IXRoadProtocol> supportedProtocols;
+        private readonly ICollection<IServiceManager> serviceManagers;
         private readonly string storagePath;
 
         /// <summary>
         /// Initialize new service request handler with X-Road message protocols
         /// it should be able to handle and storage path of temporary files.
         /// </summary>
-        public XRoadRequestHandler(IEnumerable<IXRoadProtocol> supportedProtocols, string storagePath)
+        public XRoadRequestHandler(IEnumerable<IServiceManager> serviceManagers, string storagePath)
         {
-            if (supportedProtocols == null)
-                throw new ArgumentNullException(nameof(supportedProtocols));
+            if (serviceManagers == null)
+                throw new ArgumentNullException(nameof(serviceManagers));
 
-            this.supportedProtocols = supportedProtocols.ToList();
+            this.serviceManagers = this.serviceManagers.ToList();
             this.storagePath = string.IsNullOrWhiteSpace(storagePath) ? Path.GetTempPath() : storagePath;
         }
 
@@ -43,10 +43,10 @@ namespace XRoadLib.Handler
                 if (httpContext.Request.Body.CanSeek && httpContext.Request.Body.Length == 0)
                     throw XRoadException.InvalidQuery("Empty request content");
 
-                context.Request.LoadRequest(httpContext, storagePath, supportedProtocols);
-                if (context.Request.Protocol == null && context.Request.MetaServiceMap == null)
+                context.Request.LoadRequest(httpContext, storagePath, serviceManagers);
+                if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
                 {
-                    var supportedProtocolsString = string.Join(", ", supportedProtocols.Select(x => $@"""{x.Name}"""));
+                    var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));
                     throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
                 }
 

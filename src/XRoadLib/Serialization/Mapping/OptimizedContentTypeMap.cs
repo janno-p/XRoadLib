@@ -36,7 +36,7 @@ namespace XRoadLib.Serialization.Mapping
             message.AllAttachments.Add(attachment);
 
             if (!(content.Particle is RequestDefinition))
-                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
+                message.Style.WriteExplicitType(writer, Definition.Name);
 
             writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);
             //writer.WriteAttributeString(PrefixConstants.XMIME, "contentType", NamespaceConstants.XMIME, "application/octet-stream");

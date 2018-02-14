@@ -18,25 +18,25 @@ namespace XRoadLib.Serialization
         private readonly Assembly contractAssembly;
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly ICollection<string> availableFilters;
+        private readonly string producerNamespace;
 
         private readonly ConcurrentDictionary<Type, ITypeMap> customTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
         private readonly ConcurrentDictionary<XName, IServiceMap> serviceMaps = new ConcurrentDictionary<XName, IServiceMap>();
         private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
         private readonly ConcurrentDictionary<Type, ITypeMap> runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
-        public IXRoadProtocol Protocol { get; }
         public uint? Version { get; }
 
         // public IEnumerable<string> AvailableFilters { get { return availableFilters; } set { availableFilters = value != null ? new List<string>(value) : null; } }
 
-        public SerializerCache(IXRoadProtocol protocol, SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
+        public SerializerCache(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
             this.schemaDefinitionProvider = schemaDefinitionProvider;
 
             availableFilters = schemaDefinitionProvider.ProtocolDefinition.EnabledFilters;
             contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
+            producerNamespace = schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace;
 
-            Protocol = protocol;
             Version = version;
 
             AddSystemType<DateTime>("dateTime", x => new DateTimeTypeMap(x));
@@ -63,7 +63,7 @@ namespace XRoadLib.Serialization
 
         public IServiceMap GetServiceMap(string operationName)
         {
-            return GetServiceMap(XName.Get(operationName, Protocol.ProducerNamespace));
+            return GetServiceMap(XName.Get(operationName, producerNamespace));
         }
 
         public IServiceMap GetServiceMap(XName qualifiedName)
@@ -278,7 +278,7 @@ namespace XRoadLib.Serialization
             }
 
             if (ReferenceEquals(type.GetTypeInfo().Assembly, contractAssembly))
-                return XName.Get(type.Name, Protocol.ProducerNamespace);
+                return XName.Get(type.Name, producerNamespace);
 
             throw XRoadException.AndmetüübileVastavNimeruumPuudub(type.FullName);
         }

@@ -77,7 +77,7 @@ namespace XRoadLib.Serialization.Mapping
             var valueArray = (Array)value;
 
             if (!(content.Particle is RequestDefinition))
-                message.Protocol.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
+                message.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
 
             var arrayContent = (ArrayContentDefiniton)content;
             var itemName = arrayContent.Item.Content.Name.LocalName;

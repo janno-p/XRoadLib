@@ -33,11 +33,6 @@ namespace XRoadLib.Schema
         private readonly ISet<string> headerNamespaces = new HashSet<string>();
 
         /// <summary>
-        /// Create new instance of header object.
-        /// </summary>
-        public Func<IXRoadHeader> CreateInstance { get; private set; }
-
-        /// <summary>
         /// Names of SOAP header elements required by service description.
         /// </summary>
         public ISet<XName> RequiredHeaders { get; } = new SortedSet<XName>(new XNameComparer());
@@ -52,7 +47,6 @@ namespace XRoadLib.Schema
         /// </summary>
         public IHeaderDefinitionBuilder<THeader> Use<THeader>() where THeader : IXRoadHeader, new()
         {
-            CreateInstance = () => new THeader();
             return new HeaderDefinitionBuilder<THeader>(this);
         }
 

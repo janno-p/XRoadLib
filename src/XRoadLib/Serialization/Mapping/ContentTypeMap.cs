@@ -72,14 +72,14 @@ namespace XRoadLib.Serialization.Mapping
             if (message.BinaryMode == BinaryMode.Attachment)
             {
                 if (!(content.Particle is RequestDefinition))
-                    message.Protocol.Style.WriteExplicitType(writer, encodedTypeName);
+                    message.Style.WriteExplicitType(writer, encodedTypeName);
 
                 writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
                 return;
             }
 
             if (!(content.Particle is RequestDefinition))
-                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
+                message.Style.WriteExplicitType(writer, Definition.Name);
 
             attachment.IsMultipartContent = false;
             attachment.WriteAsBase64(writer);

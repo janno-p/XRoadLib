@@ -19,6 +19,9 @@
     <PackageReference Include="xunit" Version="2.3.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <Reference Include="System.Web.Services" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net452' ">
     <Reference Include="/usr/lib/mono/4.5.2-api/Facades/System.Runtime.dll" />
     <Reference Include="/usr/lib/mono/4.5.2-api/Facades/System.Threading.Tasks.dll" />

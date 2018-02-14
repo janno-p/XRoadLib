@@ -12,9 +12,9 @@ namespace XRoadLib.Tests.Serialization
 {
     public class ArrayTest
     {
-        private static readonly IXRoadProtocol protocol = Globals.XRoadProtocol31;
+        private static readonly IServiceManager serviceManager = Globals.ServiceManager31;
 
-        private readonly ISerializerCache serializerCache = protocol.GetSerializerCache(1u);
+        private readonly ISerializerCache serializerCache = serviceManager.GetSerializer(1u);
 
         private readonly MergeArrayContentRequest request = new MergeArrayContentRequest
         {
@@ -32,7 +32,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanSerializeMergedArrayContent()
         {
             var doc = SerializeMessage(request);
-            Assert.Equal(XName.Get("MergeArrayContent", Globals.XRoadProtocol31.ProducerNamespace), doc.Root.Name);
+            Assert.Equal(XName.Get("MergeArrayContent", Globals.ServiceManager31.ProducerNamespace), doc.Root.Name);
             Assert.Single(doc.Root.Elements());
 
             var req = doc.Root.Elements("request").Single();
@@ -101,7 +101,7 @@ namespace XRoadLib.Tests.Serialization
         {
             var serviceMap = serializerCache.GetServiceMap("MergeArrayContent");
 
-            using (var message = new XRoadMessage(protocol, null))
+            using (var message = new XRoadMessage(serviceManager, null))
             using (var stream = new MemoryStream())
             {
                 using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false }))
@@ -121,7 +121,7 @@ namespace XRoadLib.Tests.Serialization
             var serviceMap = serializerCache.GetServiceMap("MergeArrayContent");
             var doc2 = new XDocument(new XElement("envelope", new XElement("body", document.Root)));
 
-            using (var message = new XRoadMessage(protocol, null))
+            using (var message = new XRoadMessage(serviceManager, null))
             using (var reader = doc2.CreateReader())
             {
                 Enumerable.Range(0, 3).ToList().ForEach(i => reader.MoveToElement(i));

@@ -168,7 +168,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("bibopp", xhr3.EncryptedCert);
         }
 
-        public static Tuple<IXRoadHeader, IList<XElement>, IXRoadProtocol> ParseHeader(string xml)
+        public static Tuple<IXRoadHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
         {
             return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD);
         }
@@ -178,7 +178,7 @@ namespace XRoadLib.Tests.Serialization
             var tuple = ParseHeader($"<xrd:{name}>{value}</xrd:{name}>");
             Assert.NotNull(tuple.Item1);
             Assert.IsType<XRoadHeader31>(tuple.Item1);
-            Assert.Same(Globals.XRoadProtocol31, tuple.Item3);
+            Assert.Same(Globals.ServiceManager31, tuple.Item3);
             return (IXRoadHeader31)tuple.Item1;
         }
     }

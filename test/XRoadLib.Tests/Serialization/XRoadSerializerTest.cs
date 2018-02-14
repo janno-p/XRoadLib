@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
@@ -25,7 +24,7 @@ namespace XRoadLib.Tests.Serialization
 
         private static void SerializeWithContext<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, bool isMultipart, Action<XRoadMessage, string> f)
         {
-            var message = Globals.XRoadProtocol20.CreateMessage();
+            var message = Globals.ServiceManager20.CreateMessage();
             message.IsMultipartContainer = true;
             message.BinaryMode = BinaryMode.Attachment;
 
@@ -40,7 +39,7 @@ namespace XRoadLib.Tests.Serialization
                     writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC);
                     writer.WriteAttributeString("xmlns", PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
                     writer.WriteAttributeString("xmlns", PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
-                    writer.WriteAttributeString("xmlns", "tns", NamespaceConstants.XMLNS, Globals.XRoadProtocol20.ProducerNamespace);
+                    writer.WriteAttributeString("xmlns", "tns", NamespaceConstants.XMLNS, Globals.ServiceManager20.ProducerNamespace);
                 }
 
                 writer.WriteStartElement(elementName);
@@ -51,7 +50,7 @@ namespace XRoadLib.Tests.Serialization
                 var operationDefinition = new OperationDefinition("Method", null, methodInfo);
                 var requestDefinition = new RequestDefinition(operationDefinition);
 
-                var typeMap = Globals.XRoadProtocol20.GetSerializerCache(dtoVersion).GetTypeMap(typeof(T));
+                var typeMap = Globals.ServiceManager20.GetSerializer(dtoVersion).GetTypeMap(typeof(T));
                 typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition.Content, message);
 
                 writer.WriteEndElement();

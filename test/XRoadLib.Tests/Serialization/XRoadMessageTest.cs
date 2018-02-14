@@ -9,11 +9,11 @@ namespace XRoadLib.Tests.Serialization
 {
     public class XRoadMessageTest
     {
-        private readonly IXRoadProtocol[] supportedProtocols =
+        private readonly IServiceManager[] serviceManagers =
         {
-            Globals.XRoadProtocol20,
-            Globals.XRoadProtocol31,
-            Globals.XRoadProtocol40
+            Globals.ServiceManager20,
+            Globals.ServiceManager31,
+            Globals.ServiceManager40
         };
 
         [Fact]
@@ -45,7 +45,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanReadEmptyContentWithoutAttachments()
         {
             using (var stream = new MemoryStream())
-            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), supportedProtocols))
+            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), serviceManagers))
             using (var message = new XRoadMessage())
             {
                 reader.Read(message, false);
@@ -67,7 +67,7 @@ namespace XRoadLib.Tests.Serialization
                 streamWriter.Flush();
 
                 stream.Position = 0L;
-                using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), supportedProtocols))
+                using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), serviceManagers))
                 using (var message = new XRoadMessage())
                 {
                     reader.Read(message, false);
@@ -113,7 +113,7 @@ namespace XRoadLib.Tests.Serialization
                 var contentTypeHeader = "multipart/related; type=\"application/xml+xop\"; start=\"rQI0gpIFuQMxlrqBj3qHKw==\"; boundary=\"5e7a8827-5850-45be-9a1e-8bbf6aff5da7\"";
 
                 stream.Position = 0L;
-                using (var reader = new XRoadMessageReader(stream, contentTypeHeader, Path.GetTempPath(), supportedProtocols))
+                using (var reader = new XRoadMessageReader(stream, contentTypeHeader, Path.GetTempPath(), serviceManagers))
                 using (var message = new XRoadMessage())
                 {
                     reader.Read(message, false);

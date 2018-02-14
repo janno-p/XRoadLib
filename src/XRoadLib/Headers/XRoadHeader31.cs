@@ -1,7 +1,8 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
+using XRoadLib.Schema;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Headers
 {
@@ -13,14 +14,10 @@ namespace XRoadLib.Headers
         private readonly XRoadClientIdentifier client = new XRoadClientIdentifier();
         private readonly XRoadServiceIdentifier service = new XRoadServiceIdentifier();
 
-        /// <summary>
-        /// Identifies X-Road client.
-        /// </summary>
+        /// <inheritdoc />
         XRoadClientIdentifier IXRoadHeader.Client => client;
 
-        /// <summary>
-        /// Identifies X-Road operation.
-        /// </summary>
+        /// <inheritdoc />
         XRoadServiceIdentifier IXRoadHeader.Service => service;
 
         /// <summary>
@@ -33,27 +30,27 @@ namespace XRoadLib.Headers
         /// </summary>
         public virtual string Issue { get; set; }
 
-        /// <summary>
-        /// Protocol version of the X-Road message.
-        /// </summary>
+        /// <inheritdoc />
         string IXRoadHeader.ProtocolVersion => "3.1";
 
-        /// <summary>
-        /// Asutuse DNS-nimi.
-        /// </summary>
-        public virtual string Consumer  { get { return client.MemberCode; } set { client.MemberCode = value; } }
+        /// <inheritdoc />
+        public virtual string Consumer
+        {
+            get => client.MemberCode;
+            set => client.MemberCode = value;
+        }
 
-        /// <summary>
-        /// Andmekogu DNS-nimi.
-        /// </summary>
-        public virtual string Producer { get { return service.SubsystemCode; } set { service.SubsystemCode = value; } }
+        /// <inheritdoc />
+        public virtual string Producer
+        {
+            get => service.SubsystemCode;
+            set => service.SubsystemCode = value;
+        }
 
-        /// <summary>
-        /// Kutsutava teenuse nimi.
-        /// </summary>
+        /// <inheritdoc />
         public virtual string ServiceName
         {
-            get { return service.ToFullName(); }
+            get => service.ToFullName();
             set
             {
                 var serviceValue = XRoadServiceIdentifier.FromString(value);
@@ -67,70 +64,37 @@ namespace XRoadLib.Headers
         /// </summary>
         public virtual string Id { get; set; }
 
-        /// <summary>
-        /// Asutuse registrikood, mille nimel teenust kasutatakse (kasutusel juriidilise isiku portaalis).
-        /// </summary>
+        /// <inheritdoc />
         public virtual string Unit { get; set; }
 
-        /// <summary>
-        /// Teenuse kasutaja ametikoht.
-        /// </summary>
+        /// <inheritdoc />
         public virtual string Position { get; set; }
 
-        /// <summary>
-        /// Teenuse kasutaja nimi.
-        /// </summary>
+        /// <inheritdoc />
         public virtual string UserName { get; set; }
 
-        /// <summary>
-        /// Teenuse kasutamise asünkroonsus. Kui väärtus on "true", siis sooritab turvaserver päringu asünkroonselt.
-        /// </summary>
+        /// <inheritdoc />
         public virtual bool? Async { get; set; }
 
-        /// <summary>
-        /// Teenuse kasutaja autentimise viis. Võimalikud variandid on:
-        /// • ID-CARD – ID-kaardiga autenditud;
-        /// • CERT – muu sertifikaadiga autenditud;
-        /// • EXTERNAL – panga kaudu autenditud;
-        /// • PASSWORD – kasutajatunnuse ja parooliga autenditud.
-        /// Autentimise viisi järel võib sulgudes olla täpsustus (näiteks panga kaudu autentimisel panga tunnus infosüsteemis).
-        /// </summary>
+        /// <inheritdoc />
         public virtual string Authenticator { get; set; }
 
-        /// <summary>
-        /// Teenuse kasutamise eest makstud summa.
-        /// </summary>
+        /// <inheritdoc />
         public virtual string Paid { get; set; }
 
-        /// <summary>
-        /// Kui asutusele on X-tee keskuse poolt antud päringute salastamise õigus ja andmekogu on nõus päringut
-        /// salastama, siis selle elemendi olemasolul päringu päises andmekogu turvaserver krüpteerib päringu logi,
-        /// kasutades selleks X-tee keskuse salastusvõtit.
-        /// </summary>
+        /// <inheritdoc />
         public virtual string Encrypt { get; set; }
 
-        /// <summary>
-        /// Päringu sooritaja ID-kaardi autentimissertifikaat DER-kujul base64 kodeerituna. Selle elemendi olemasolu
-        /// päringu päises väljendab soovi päringu logi salastamiseks asutuse turvaserveris päringu sooritaja ID-kaardi
-        /// autentimisvõtmega. Seda välja kasutatakse ainult kodaniku päringute portaalis.
-        /// </summary>
+        /// <inheritdoc />
         public virtual string EncryptCert { get; set; }
 
-        /// <summary>
-        /// Kui päringu välja päises oli element encrypt ja päringulogi salastamine õnnestus, siis vastuse päisesse
-        /// lisatakse tühi element encrypted.
-        /// </summary>
+        /// <inheritdoc />
         public virtual string Encrypted { get; set; }
 
-        /// <summary>
-        /// Kui päringu päises oli element encryptCert ja päringulogi salastamine õnnestus, siis vastuse päisesesse
-        /// lisatakse tühi element encryptedCert.
-        /// </summary>
+        /// <inheritdoc />
         public virtual string EncryptedCert { get; set; }
 
-        /// <summary>
-        /// Try to read current position in XML reader as X-Road header element.
-        /// </summary>
+        /// <inheritdoc />
         public virtual void ReadHeaderValue(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.XROAD)
@@ -207,43 +171,39 @@ namespace XRoadLib.Headers
             throw XRoadException.InvalidQuery($"Unexpected X-Road header element `{reader.GetXName()}`.");
         }
 
-        /// <summary>
-        /// Check if all required SOAP headers are present and in correct format.
-        /// </summary>
+        /// <inheritdoc />
         public virtual void Validate()
         { }
 
-        /// <summary>
-        /// Serializes X-Road message SOAP headers to XML.
-        /// </summary>
-        public virtual void WriteTo(XmlWriter writer, IXRoadProtocol protocol)
+        /// <inheritdoc />
+        public virtual void WriteTo(XmlWriter writer, Style style, HeaderDefinition definition)
         {
             if (writer.LookupPrefix(NamespaceConstants.XROAD) == null)
                 writer.WriteAttributeString("xmlns", PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD);
 
-            Action<string, object, XName> writeHeaderValue = (elementName, value, typeName) =>
+            void WriteHeaderValue(string elementName, object value, XName typeName)
             {
                 var name = XName.Get(elementName, NamespaceConstants.XROAD);
-                if (protocol.HeaderDefinition.RequiredHeaders.Contains(name) || value != null)
-                    protocol.Style.WriteHeaderElement(writer, name, value, typeName);
-            };
+                if (definition.RequiredHeaders.Contains(name) || value != null)
+                    style.WriteHeaderElement(writer, name, value, typeName);
+            }
 
-            writeHeaderValue("consumer", Consumer, XmlTypeConstants.String);
-            writeHeaderValue("producer", Producer, XmlTypeConstants.String);
-            writeHeaderValue("userId", UserId, XmlTypeConstants.String);
-            writeHeaderValue("issue", Issue, XmlTypeConstants.String);
-            writeHeaderValue("service", ServiceName, XmlTypeConstants.String);
-            writeHeaderValue("id", Id, XmlTypeConstants.String);
-            writeHeaderValue("unit", Unit, XmlTypeConstants.String);
-            writeHeaderValue("position", Position, XmlTypeConstants.String);
-            writeHeaderValue("userName", UserName, XmlTypeConstants.String);
-            writeHeaderValue("async", Async, XmlTypeConstants.Boolean);
-            writeHeaderValue("authenticator", Authenticator, XmlTypeConstants.String);
-            writeHeaderValue("paid", Paid, XmlTypeConstants.String);
-            writeHeaderValue("encrypt", Encrypt, XmlTypeConstants.String);
-            writeHeaderValue("encryptCert", EncryptCert, XmlTypeConstants.Base64);
-            writeHeaderValue("encrypted", Encrypted, XmlTypeConstants.String);
-            writeHeaderValue("encryptedCert", EncryptedCert, XmlTypeConstants.String);
+            WriteHeaderValue("consumer", Consumer, XmlTypeConstants.String);
+            WriteHeaderValue("producer", Producer, XmlTypeConstants.String);
+            WriteHeaderValue("userId", UserId, XmlTypeConstants.String);
+            WriteHeaderValue("issue", Issue, XmlTypeConstants.String);
+            WriteHeaderValue("service", ServiceName, XmlTypeConstants.String);
+            WriteHeaderValue("id", Id, XmlTypeConstants.String);
+            WriteHeaderValue("unit", Unit, XmlTypeConstants.String);
+            WriteHeaderValue("position", Position, XmlTypeConstants.String);
+            WriteHeaderValue("userName", UserName, XmlTypeConstants.String);
+            WriteHeaderValue("async", Async, XmlTypeConstants.Boolean);
+            WriteHeaderValue("authenticator", Authenticator, XmlTypeConstants.String);
+            WriteHeaderValue("paid", Paid, XmlTypeConstants.String);
+            WriteHeaderValue("encrypt", Encrypt, XmlTypeConstants.String);
+            WriteHeaderValue("encryptCert", EncryptCert, XmlTypeConstants.Base64);
+            WriteHeaderValue("encrypted", Encrypted, XmlTypeConstants.String);
+            WriteHeaderValue("encryptedCert", EncryptedCert, XmlTypeConstants.String);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace XRoadLib.Tests.Serialization
 {
     public static class ParseXRoadHeaderHelper
     {
-        public static Tuple<IXRoadHeader, IList<XElement>, IXRoadProtocol> ParseHeader(string xml, string ns)
+        public static Tuple<IXRoadHeader, IList<XElement>, IServiceManager> ParseHeader(string xml, string ns)
         {
             using (var stream = new MemoryStream())
             using (var streamWriter = new StreamWriter(stream, Encoding.UTF8))
@@ -23,11 +23,11 @@ namespace XRoadLib.Tests.Serialization
                 streamWriter.Flush();
 
                 stream.Position = 0;
-                using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), new[] { Globals.XRoadProtocol20, Globals.XRoadProtocol31, Globals.XRoadProtocol40 }))
+                using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager20, Globals.ServiceManager31, Globals.ServiceManager40 }))
                 using (var msg = new XRoadMessage())
                 {
-                    reader.Read(msg, false);
-                    return Tuple.Create(msg.Header, msg.UnresolvedHeaders, msg.Protocol);
+                    reader.Read(msg);
+                    return Tuple.Create(msg.Header, msg.UnresolvedHeaders, msg.ServiceManager);
                 }
             }
         }

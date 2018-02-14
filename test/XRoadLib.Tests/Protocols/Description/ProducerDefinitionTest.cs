@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using XRoadLib.Extensions;
 using XRoadLib.Tests.Contract;
 using Xunit;
 
@@ -22,7 +23,7 @@ namespace XRoadLib.Tests.Protocols.Description
         [Fact]
         public void EmptyServiceDescription()
         {
-            var doc = GetDocument(Globals.XRoadProtocol31, 1);
+            var doc = GetDocument(Globals.ServiceManager31, 1);
             var port = GetPort(doc, xroad);
 
             var address = port.Elements(xroad("address")).SingleOrDefault();
@@ -37,7 +38,7 @@ namespace XRoadLib.Tests.Protocols.Description
         [Fact]
         public void EmptyLegacyFormatServiceDescription()
         {
-            var doc = GetDocument(Globals.XRoadProtocol20, 1);
+            var doc = GetDocument(Globals.ServiceManager20, 1);
             var port = GetPort(doc, xtee);
 
             var address = port.Elements(xtee("address")).SingleOrDefault();
@@ -53,7 +54,7 @@ namespace XRoadLib.Tests.Protocols.Description
         public void ShouldDefineServiceLocationIfGiven()
         {
             var url = "http://TURVASERVER/cgi-bin/consumer_proxy";
-            var doc = GetDocument(Globals.XRoadProtocol31, 1);
+            var doc = GetDocument(Globals.ServiceManager31, 1);
             var port = GetPort(doc, xroad);
             Assert.Equal(url, port.Elements(soap("address")).Single().Attribute("location").Value);
         }
@@ -61,7 +62,7 @@ namespace XRoadLib.Tests.Protocols.Description
         [Fact]
         public void ShouldDefineServiceTitle()
         {
-            var doc = GetDocument(Globals.XRoadProtocol31, 1);
+            var doc = GetDocument(Globals.ServiceManager31, 1);
             var port = GetPort(doc, xroad);
 
             var titleElements = port.Elements(xroad("title")).ToList();
@@ -96,7 +97,7 @@ namespace XRoadLib.Tests.Protocols.Description
         [Fact]
         public void CanDefineServiceTitleForLegacyService()
         {
-            var doc = GetDocument(Globals.XRoadProtocol20, 1);
+            var doc = GetDocument(Globals.ServiceManager20, 1);
             var port = GetPort(doc, xtee);
 
             var titleElements = port.Elements(xtee("title")).ToList();
@@ -131,7 +132,7 @@ namespace XRoadLib.Tests.Protocols.Description
         [Fact]
         public void AnonymousTypeShouldBeNestedUnderContainerType()
         {
-            var doc = GetDocument(Globals.XRoadProtocol31, 1u);
+            var doc = GetDocument(Globals.ServiceManager31, 1u);
             var definitions = doc.Elements(wsdl("definitions")).Single();
             var types = definitions.Elements(wsdl("types")).Single();
             var schema = types.Elements(xsd("schema")).Single();
@@ -189,11 +190,11 @@ namespace XRoadLib.Tests.Protocols.Description
             return port;
         }
 
-        private XDocument GetDocument(IXRoadProtocol protocol, uint version)
+        private static XDocument GetDocument(IServiceManager serviceManager, uint version)
         {
             using (var stream = new MemoryStream())
             {
-                protocol.WriteServiceDescription(stream, version);
+                serviceManager.CreateServiceDescription(version).SaveTo(stream);
                 stream.Position = 0;
                 return XDocument.Load(stream);
             }

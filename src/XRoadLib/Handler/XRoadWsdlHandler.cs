@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.AspNetCore.Http;
+using XRoadLib.Extensions;
 
 namespace XRoadLib.Handler
 {
@@ -10,16 +11,16 @@ namespace XRoadLib.Handler
     /// </summary>
     public class XRoadWsdlHandler : XRoadHandlerBase
     {
-        private readonly IXRoadProtocol protocol;
+        private readonly IServiceManager serviceManager;
 
         /// <summary>
         /// Initialize new handler for certain protocol.
         /// </summary>
-        public XRoadWsdlHandler(IXRoadProtocol protocol)
+        public XRoadWsdlHandler(IServiceManager serviceManager)
         {
-            if (protocol == null)
-                throw new ArgumentNullException(nameof(protocol));
-            this.protocol = protocol;
+            if (serviceManager == null)
+                throw new ArgumentNullException(nameof(serviceManager));
+            this.serviceManager = serviceManager;
         }
 
         /// <summary>
@@ -27,7 +28,8 @@ namespace XRoadLib.Handler
         /// </summary>
         public override void HandleRequest(HttpContext context)
         {
-            protocol.WriteServiceDescription(context.Response.Body);
+            serviceManager.CreateServiceDescription()
+                          .SaveTo(context.Response.Body);
         }
     }
 }

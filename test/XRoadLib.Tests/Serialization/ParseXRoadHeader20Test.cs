@@ -175,7 +175,7 @@ namespace XRoadLib.Tests.Serialization
             var tuple = ParseXRoadHeaderHelper.ParseHeader($"<xrd:{name}>{value}</xrd:{name}>", NamespaceConstants.XTEE);
             Assert.NotNull(tuple.Item1);
             Assert.IsType<XRoadHeader20>(tuple.Item1);
-            Assert.Same(Globals.XRoadProtocol20, tuple.Item3);
+            Assert.Same(Globals.ServiceManager20, tuple.Item3);
             return (IXRoadHeader20)tuple.Item1;
         }
     }

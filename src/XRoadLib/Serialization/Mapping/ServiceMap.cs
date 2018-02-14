@@ -1,5 +1,4 @@
 ﻿using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -154,7 +153,7 @@ namespace XRoadLib.Serialization.Mapping
             if (!ResponseDefinition.ContainsNonTechnicalFault && fault != null)
             {
                 writer.WriteStartElement(ResponseDefinition.FaultName);
-                SerializeFault(writer, fault, message.Protocol);
+                message.Style.SerializeFault(writer, fault);
                 writer.WriteEndElement();
             }
             else if (outputTypeMap != null)
@@ -164,7 +163,7 @@ namespace XRoadLib.Serialization.Mapping
                 else writer.WriteStartElement(ResponseDefinition.ResponseElementName, "");
 
                 if (fault != null)
-                    SerializeFault(writer, fault, message.Protocol);
+                    message.Style.SerializeFault(writer, fault);
                 else if (outputTypeMap != null)
                 {
                     var addWrapperElement = HasWrapperResultElement;
@@ -201,19 +200,6 @@ namespace XRoadLib.Serialization.Mapping
             var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : typeMap;
 
             concreteTypeMap.Serialize(writer, templateNode, value, content, message);
-        }
-
-        private static void SerializeFault(XmlWriter writer, IXRoadFault fault, IXRoadProtocol protocol)
-        {
-            writer.WriteStartElement("faultCode");
-            protocol.Style.WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));
-            writer.WriteValue(fault.FaultCode);
-            writer.WriteEndElement();
-
-            writer.WriteStartElement("faultString");
-            protocol.Style.WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));
-            writer.WriteValue(fault.FaultString);
-            writer.WriteEndElement();
         }
 
         private void CopyRequestToResponse(XmlWriter writer, XmlReader reader)

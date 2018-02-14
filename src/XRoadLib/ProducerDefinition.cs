@@ -26,8 +26,6 @@ namespace XRoadLib
     /// </summary>
     public sealed class ProducerDefinition
     {
-        private readonly Assembly contractAssembly;
-        private readonly IXRoadProtocol protocol;
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly uint? version;
 
@@ -56,30 +54,29 @@ namespace XRoadLib
 
         /// <summary>
         /// Initialize builder with contract details.
-        /// <param name="protocol">X-Road protocol to use when generating service description.</param>
         /// <param name="schemaDefinitionProvider">Provides overrides for default presentation format.</param>
         /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
         /// </summary>
-        public ProducerDefinition(IXRoadProtocol protocol, SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
+        public ProducerDefinition(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
-            this.protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             this.schemaDefinitionProvider = schemaDefinitionProvider ?? throw new ArgumentNullException(nameof(schemaDefinitionProvider));
 
             this.version = version;
-            contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
 
             portType = new PortType { Name = "PortTypeName" };
+
+            var producerNamespace = schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace;
 
             binding = new Binding
             {
                 Name = "BindingName",
-                Type = new XmlQualifiedName(portType.Name, protocol.ProducerNamespace)
+                Type = new XmlQualifiedName(portType.Name, producerNamespace)
             };
 
             servicePort = new Port
             {
                 Name = "PortName",
-                Binding = new XmlQualifiedName(binding.Name, protocol.ProducerNamespace)
+                Binding = new XmlQualifiedName(binding.Name, producerNamespace)
             };
 
             service = new Service
@@ -129,15 +126,6 @@ namespace XRoadLib
             addGlobalNamespace(NamespaceConstants.XSD);
         }
 
-        /// <summary>
-        /// Outputs service description to specified stream.
-        /// </summary>
-        public void SaveTo(Stream stream)
-        {
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Indent = true, IndentChars = "  ", NewLineChars = "\r\n" }))
-                WriteServiceDescription(writer);
-        }
-
         private void CollectTypes()
         {
             AddSystemType<DateTime>("dateTime");
@@ -161,12 +149,16 @@ namespace XRoadLib
             AddSystemType<Stream>("hexBinary");
             AddSystemType<Stream>("base64");
 
-            var typeDefinitions = contractAssembly.GetTypes()
-                                                  .Where(type => type.IsXRoadSerializable() || (type.GetTypeInfo().IsEnum && type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>() != null))
-                                                  .Where(type => !version.HasValue || type.GetTypeInfo().ExistsInVersion(version.Value))
-                                                  .Select(type => schemaDefinitionProvider.GetTypeDefinition(type))
-                                                  .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default)
-                                                  .ToList();
+            var typeDefinitions =
+                schemaDefinitionProvider
+                    .ProtocolDefinition
+                    .ContractAssembly
+                    .GetTypes()
+                    .Where(type => type.IsXRoadSerializable() || (type.GetTypeInfo().IsEnum && type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>() != null))
+                    .Where(type => !version.HasValue || type.GetTypeInfo().ExistsInVersion(version.Value))
+                    .Select(type => schemaDefinitionProvider.GetTypeDefinition(type))
+                    .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default)
+                    .ToList();
 
             foreach (var typeDefinition in typeDefinitions)
             {
@@ -189,13 +181,16 @@ namespace XRoadLib
 
         private IEnumerable<OperationDefinition> GetOperationDefinitions(string targetNamespace)
         {
-            return contractAssembly.GetServiceContracts()
-                                   .SelectMany(x => x.Value
-                                                     .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
-                                                     .Select(op => schemaDefinitionProvider.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), version)))
-                                   .Where(def => def.State == DefinitionState.Default)
-                                   .OrderBy(def => def.Name.LocalName.ToLower())
-                                   .ToList();
+            return schemaDefinitionProvider
+                   .ProtocolDefinition
+                   .ContractAssembly
+                   .GetServiceContracts()
+                   .SelectMany(x => x.Value
+                                     .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
+                                     .Select(op => schemaDefinitionProvider.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), version)))
+                   .Where(def => def.State == DefinitionState.Default)
+                   .OrderBy(def => def.Name.LocalName.ToLower())
+                   .ToList();
         }
 
         private IEnumerable<XmlSchema> BuildSchemas(string targetNamespace, MessageCollection messages)
@@ -218,7 +213,7 @@ namespace XRoadLib
                 var requestElement = CreateRequestElement();
                 AddCustomAttributes(requestDefinition.Content, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
-                if (protocol.Style.UseElementInMessagePart)
+                if (schemaDefinitionProvider.ProtocolDefinition.Style.UseElementInMessagePart)
                 {
                     if (requestDefinition.Content.MergeContent)
                     {
@@ -273,7 +268,7 @@ namespace XRoadLib
 
                 AddCustomAttributes(responseDefinition.Content, responseElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
-                if (protocol.Style.UseElementInMessagePart)
+                if (schemaDefinitionProvider.ProtocolDefinition.Style.UseElementInMessagePart)
                 {
                     var responseRequestElement = requestElement;
                     if (requestDefinition.RequestElementName != responseDefinition.RequestElementName)
@@ -293,7 +288,7 @@ namespace XRoadLib
 
                 var inputMessage = new Message { Name = operationDefinition.InputMessageName };
 
-                if (protocol.Style.UseElementInMessagePart)
+                if (schemaDefinitionProvider.ProtocolDefinition.Style.UseElementInMessagePart)
                     inputMessage.Parts.Add(new MessagePart { Name = "body", Element = new XmlQualifiedName(operationDefinition.Name.LocalName, operationDefinition.Name.NamespaceName) });
                 else
                 {
@@ -308,7 +303,7 @@ namespace XRoadLib
 
                 var outputMessage = new Message { Name = operationDefinition.OutputMessageName };
 
-                if (protocol.Style.UseElementInMessagePart)
+                if (schemaDefinitionProvider.ProtocolDefinition.Style.UseElementInMessagePart)
                     outputMessage.Parts.Add(new MessagePart { Name = "body", Element = new XmlQualifiedName($"{operationDefinition.Name.LocalName}Response", operationDefinition.Name.NamespaceName) });
                 else
                 {
@@ -549,7 +544,7 @@ namespace XRoadLib
 #if NETSTANDARD2_0
             AddOperationContentBinding(soapPart.Extensions, x => x);
 #else
-            AddOperationContentBinding(soapPart.Extensions, protocol.Style.CreateSoapHeader);
+            AddOperationContentBinding(soapPart.Extensions, schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapHeader);
 #endif
 
             var filePart = new MimePart { Extensions = { new MimeContentBinding { Part = "file", Type = "application/binary" } } };
@@ -576,7 +571,7 @@ namespace XRoadLib
             if (operationVersionBinding != null)
                 operationBinding.Extensions.Add(operationVersionBinding);
 
-            operationBinding.Extensions.Add(protocol.Style.CreateSoapOperationBinding());
+            operationBinding.Extensions.Add(schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapOperationBinding());
 
             binding.Operations.Add(operationBinding);
         }
@@ -586,8 +581,8 @@ namespace XRoadLib
             where THeader : ServiceDescriptionFormatExtension
 #endif
         {
-            extensions.Add(protocol.Style.CreateSoapBodyBinding(protocol.ProducerNamespace));
-            foreach (var headerBinding in headerDefinition.RequiredHeaders.Select(name => protocol.Style.CreateSoapHeaderBinding(name, headerDefinition.MessageName, protocol.ProducerNamespace)).Select(projectionFunc))
+            extensions.Add(schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapBodyBinding(schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace));
+            foreach (var headerBinding in headerDefinition.RequiredHeaders.Select(name => schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapHeaderBinding(name, headerDefinition.MessageName, schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace)).Select(projectionFunc))
                 extensions.Add(headerBinding);
         }
 
@@ -669,7 +664,7 @@ namespace XRoadLib
                     .Select(doc => CreateXrdDocumentationElement("notes", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
                 .Concat(documentationDefinition
                     .TechNotes
-                    .Select(doc => CreateXrdDocumentationElement(protocol.ProtocolDefinition.TechNotesElementName, doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
+                    .Select(doc => CreateXrdDocumentationElement(schemaDefinitionProvider.ProtocolDefinition.TechNotesElementName, doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
                 .Cast<XmlNode>();
 
             var appInfo = new XmlSchemaAppInfo { Markup = markup.ToArray() };
@@ -681,7 +676,7 @@ namespace XRoadLib
         {
             addRequiredImport(schemaNamespace, NamespaceConstants.XMIME, null);
 
-            schemaElement.UnhandledAttributes = new[] { protocol.Style.CreateExpectedContentType("application/octet-stream") };
+            schemaElement.UnhandledAttributes = new[] { schemaDefinitionProvider.ProtocolDefinition.Style.CreateExpectedContentType("application/octet-stream") };
         }
 
         private TypeDefinition GetContentTypeDefinition(ContentDefinition contentDefinition)
@@ -814,14 +809,14 @@ namespace XRoadLib
 
             SetSchemaElementType(itemElement, schemaNamespace, arrayContentDefinition.Item.Content, referencedTypes);
 
-            protocol.Style.AddItemElementToArrayElement(schemaElement, itemElement, ns => addRequiredImport(schemaNamespace, ns, null));
+            schemaDefinitionProvider.ProtocolDefinition.Style.AddItemElementToArrayElement(schemaElement, itemElement, ns => addRequiredImport(schemaNamespace, ns, null));
 
             return schemaElement;
         }
 
-        private void WriteServiceDescription(XmlWriter writer)
+        public ServiceDescription GetServiceDescription()
         {
-            var serviceDescription = new ServiceDescription { TargetNamespace = protocol.ProducerNamespace };
+            var serviceDescription = new ServiceDescription { TargetNamespace = schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace };
 
             var standardHeader = new Message { Name = headerDefinition.MessageName };
 
@@ -830,12 +825,12 @@ namespace XRoadLib
 
             serviceDescription.Messages.Add(standardHeader);
 
-            foreach (var schema in BuildSchemas(protocol.ProducerNamespace, serviceDescription.Messages))
+            foreach (var schema in BuildSchemas(schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace, serviceDescription.Messages))
                 serviceDescription.Types.Schemas.Add(schema);
 
             serviceDescription.PortTypes.Add(portType);
 
-            binding.Extensions.Add(protocol.Style.CreateSoapBinding());
+            binding.Extensions.Add(schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapBinding());
             serviceDescription.Bindings.Add(binding);
 
             servicePort.Extensions.Add(new SoapAddressBinding { Location = "http://INSERT_CORRECT_SERVICE_URL" });
@@ -846,17 +841,14 @@ namespace XRoadLib
 
             schemaDefinitionProvider.ExportServiceDescription(serviceDescription);
 
-            writer.WriteStartDocument();
-            serviceDescription.Write(writer);
-            writer.WriteEndDocument();
-            writer.Flush();
+            return serviceDescription;
         }
 
         private void AddServiceDescriptionNamespaces(DocumentableItem serviceDescription)
         {
             foreach (var tuple in getGlobalNamespaces())
                 serviceDescription.Namespaces.Add(tuple.Item1, tuple.Item2);
-            serviceDescription.Namespaces.Add(PrefixConstants.TARGET, protocol.ProducerNamespace);
+            serviceDescription.Namespaces.Add(PrefixConstants.TARGET, schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace);
         }
 
         private IEnumerable<PropertyDefinition> GetDescriptionProperties(TypeDefinition typeDefinition)
@@ -934,7 +926,7 @@ namespace XRoadLib
                 documentationElement.AppendChild(CreateXrdDocumentationElement("notes", title.LanguageCode, title.Value, _ => { }));
 
             foreach (var title in documentationDefinition.TechNotes)
-                documentationElement.AppendChild(CreateXrdDocumentationElement(protocol.ProtocolDefinition.TechNotesElementName, title.LanguageCode, title.Value, _ => { }));
+                documentationElement.AppendChild(CreateXrdDocumentationElement(schemaDefinitionProvider.ProtocolDefinition.TechNotesElementName, title.LanguageCode, title.Value, _ => { }));
 
             return documentationElement;
         }

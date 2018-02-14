@@ -10,6 +10,7 @@ using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
 using XRoadLib.Extensions;
 using XRoadLib.Headers;
+using XRoadLib.Styles;
 
 #if NETSTANDARD2_0
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,8 @@ namespace XRoadLib.Serialization
     /// </summary>
     public class XRoadMessage : IAttachmentManager
     {
+        public IServiceManager ServiceManager { get; internal set; }
+        
         /// <summary>
         /// Expected content type of message with SOAP attachments.
         /// </summary>
@@ -72,9 +75,9 @@ namespace XRoadLib.Serialization
         public Stream ContentStream { get; set; }
 
         /// <summary>
-        /// X-Road message protocol version used to serialize/deserialize this message.
+        /// X-Road message style used to serialize/deserialize this message.
         /// </summary>
-        public IXRoadProtocol Protocol { get; set; }
+        public Style Style => ServiceManager.Style;
 
         /// <summary>
         /// X-Road protocol compliant header values extracted from SOAP header of
@@ -127,7 +130,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Operation version of current X-Road message.
         /// </summary>
-        public uint Version => Header == null || Header.Service == null || !Header.Service.Version.HasValue ? 0u : Header.Service.Version.Value;
+        public uint Version => Header?.Service?.Version ?? 0u;
 
         /// <summary>
         /// X-Road message template request element root node.
@@ -148,10 +151,10 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Initializes new empty X-Road message for request serialization.
         /// </summary>
-        public XRoadMessage(IXRoadProtocol protocol, IXRoadHeader header)
+        public XRoadMessage(IServiceManager serviceManager, IXRoadHeader header)
             : this(new MemoryStream())
         {
-            Protocol = protocol;
+            ServiceManager = serviceManager;
             Header = header;
         }
 
@@ -176,9 +179,9 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
+        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
-            LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, supportedProtocols);
+            LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
         }
 
 #else
@@ -186,9 +189,9 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(System.Web.HttpContext httpContext, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
+        public void LoadRequest(System.Web.HttpContext httpContext, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
-            LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, supportedProtocols);
+            LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
         }
 
 #endif
@@ -196,34 +199,34 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IXRoadProtocol protocol)
+        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
         {
-            LoadRequest(stream, contentTypeHeader, storagePath, new [] { protocol });
+            LoadRequest(stream, contentTypeHeader, storagePath, new [] { serviceManager });
         }
 
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
+        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
-            using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, supportedProtocols))
+            using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, serviceManagers))
                 reader.Read(this);
         }
 
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
-        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IXRoadProtocol protocol)
+        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
         {
-            LoadResponse(stream, contentTypeHeader, storagePath, new [] { protocol });
+            LoadResponse(stream, contentTypeHeader, storagePath, new [] { serviceManager });
         }
 
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
-        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IXRoadProtocol> supportedProtocols)
+        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
-            using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, supportedProtocols))
+            using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, serviceManagers))
                 reader.Read(this, true);
         }
 
@@ -301,7 +304,7 @@ namespace XRoadLib.Serialization
         /// </summary>
         public void Copy(XRoadMessage message)
         {
-            Protocol = message.Protocol;
+            ServiceManager = message.ServiceManager;
             Header = message.Header;
         }
 
@@ -310,7 +313,7 @@ namespace XRoadLib.Serialization
         /// </summary>
         public ISerializerCache GetSerializerCache()
         {
-            return Protocol?.GetSerializerCache(Version);
+            return ServiceManager?.GetSerializer(Version);
         }
 
         /// <summary>

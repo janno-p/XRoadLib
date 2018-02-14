@@ -1,30 +1,28 @@
 ﻿#if !NETSTANDARD2_0
 
+using XRoadLib.Extensions;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Handler
 {
-    /// <summary>
-    /// Handler of X-Road service description.
-    /// </summary>
+    /// <inheritdoc />
     public class ServiceDescriptionHandlerBase : ServiceHandlerBase
     {
         /// <summary>
         /// X-Road protocol which description is provided by handler.
         /// </summary>
-        protected virtual IXRoadProtocol Protocol => null;
+        protected virtual IServiceManager ServiceManager => null;
 
         /// <summary>
         /// DTO version of the service description.
         /// </summary>
         protected virtual uint? Version => null;
 
-        /// <summary>
-        /// Handles service description request.
-        /// </summary>
+        /// <inheritdoc />
         protected override void HandleRequest(XRoadContextClassic context)
         {
-            Protocol.WriteServiceDescription(context.HttpContext.Response.OutputStream, Version);
+            ServiceManager.CreateServiceDescription(Version)
+                          .SaveTo(context.HttpContext.Response.OutputStream);
         }
     }
 }

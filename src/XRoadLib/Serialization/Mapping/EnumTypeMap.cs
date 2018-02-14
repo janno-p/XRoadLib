@@ -45,7 +45,7 @@ namespace XRoadLib.Serialization.Mapping
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
             if (!(content.Particle is RequestDefinition))
-                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
+                message.Style.WriteExplicitType(writer, Definition.Name);
 
             if (!serializationMapping.TryGetValue((int)value, out var enumerationValue))
                 throw new MissingFieldException($"Cannot map value `{value}` to enumeration type `{Definition.Name}`.");

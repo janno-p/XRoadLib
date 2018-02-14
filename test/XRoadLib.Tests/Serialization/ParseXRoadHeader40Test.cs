@@ -102,7 +102,7 @@ namespace XRoadLib.Tests.Serialization
         {
             var tuple = ParseHeader(minimalValidHeader(""));
             Assert.NotNull(tuple.Item1);
-            Assert.Same(Globals.XRoadProtocol40, tuple.Item3);
+            Assert.Same(Globals.ServiceManager40, tuple.Item3);
             Assert.NotNull(tuple.Item1.Client);
             Assert.Equal("EE", tuple.Item1.Client.XRoadInstance);
             Assert.Equal("GOV", tuple.Item1.Client.MemberClass);
@@ -139,7 +139,7 @@ namespace XRoadLib.Tests.Serialization
         {
             var tuple = ParseHeader(@"<x /><xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><y /><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion><z />");
             Assert.NotNull(tuple.Item1);
-            Assert.Same(Globals.XRoadProtocol40, tuple.Item3);
+            Assert.Same(Globals.ServiceManager40, tuple.Item3);
             Assert.NotNull(tuple.Item1.Client);
             Assert.Equal("EE", tuple.Item1.Client.XRoadInstance);
             Assert.Equal("GOV", tuple.Item1.Client.MemberClass);
@@ -358,13 +358,13 @@ namespace XRoadLib.Tests.Serialization
         {
             var tuple = ParseHeader(minimalValidHeader(@"<x:userId xmlns:x=""http://x-road.ee/xsd/x-road.xsd"">Mr. X</x:userId>"));
             Assert.NotNull(tuple.Item1);
-            Assert.Same(Globals.XRoadProtocol40, tuple.Item3);
+            Assert.Same(Globals.ServiceManager40, tuple.Item3);
             Assert.Equal(1, tuple.Item2.Count);
             Assert.Equal("userId", tuple.Item2[0].Name.LocalName);
             Assert.Equal(NamespaceConstants.XROAD, tuple.Item2[0].Name.NamespaceName);
         }
 
-        public static Tuple<IXRoadHeader, IList<XElement>, IXRoadProtocol> ParseHeader(string xml)
+        public static Tuple<IXRoadHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
         {
             return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD_V4);
         }

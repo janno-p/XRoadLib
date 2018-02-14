@@ -36,9 +36,9 @@ namespace XRoadLib.Serialization.Mapping
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
             if (!(content.Particle is RequestDefinition))
-                message.Protocol.Style.WriteExplicitType(writer, Definition.Name);
+                message.Style.WriteExplicitType(writer, Definition.Name);
 
-            writer.WriteStringWithMode(value.ToString(), message.Protocol.Style.StringSerializationMode);
+            writer.WriteStringWithMode(value.ToString(), message.Style.StringSerializationMode);
         }
     }
 }

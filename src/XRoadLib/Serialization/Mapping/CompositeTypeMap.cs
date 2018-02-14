@@ -22,7 +22,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            message.Protocol.Style.WriteType(writer, Definition, content.RuntimeType, content.Particle is RequestDefinition);
+            message.Style.WriteType(writer, Definition, content.RuntimeType, content.Particle is RequestDefinition);
 
             if (contentPropertyMap != null)
             {

@@ -22,11 +22,11 @@ namespace XRoadLib
             this.next = next;
             this.options = options;
 
-            if (!options.SupportedProtocols.Any())
+            if (!options.ServiceManagers.Any())
                 throw new ArgumentException("At least one supported protocol definition is required.", nameof(options));
 
-            wsdlHandler = new Lazy<IXRoadHandler>(() => options.WsdlHandler != null ? (IXRoadHandler)services.GetRequiredService(options.WsdlHandler) : new XRoadWsdlHandler(options.SupportedProtocols.FirstOrDefault()));
-            requestHandler = new Lazy<IXRoadHandler>(() => options.RequestHandler != null ? (IXRoadHandler)services.GetRequiredService(options.RequestHandler) : new XRoadRequestHandler(options.SupportedProtocols, options.StoragePath));
+            wsdlHandler = new Lazy<IXRoadHandler>(() => options.WsdlHandler != null ? (IXRoadHandler)services.GetRequiredService(options.WsdlHandler) : new XRoadWsdlHandler(options.ServiceManagers.FirstOrDefault()));
+            requestHandler = new Lazy<IXRoadHandler>(() => options.RequestHandler != null ? (IXRoadHandler)services.GetRequiredService(options.RequestHandler) : new XRoadRequestHandler(options.ServiceManagers, options.StoragePath));
         }
 
         public async Task Invoke(HttpContext context)

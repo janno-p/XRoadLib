@@ -17,8 +17,8 @@ namespace XRoadLib.Tests.Serialization
     {
         private const uint DTO_VERSION = 3;
 
-        private static readonly ISerializerCache serializerCache20 = Globals.XRoadProtocol20.GetSerializerCache(DTO_VERSION);
-        private static readonly ISerializerCache serializerCache31 = Globals.XRoadProtocol31.GetSerializerCache(DTO_VERSION);
+        private static readonly ISerializerCache serializerCache20 = Globals.ServiceManager20.GetSerializer(DTO_VERSION);
+        private static readonly ISerializerCache serializerCache31 = Globals.ServiceManager31.GetSerializer(DTO_VERSION);
         private static readonly IServiceMap serviceMap20 = serializerCache20.GetServiceMap("Service1");
         private static readonly IServiceMap serviceMap31 = serializerCache31.GetServiceMap("Service1");
 
@@ -425,7 +425,7 @@ namespace XRoadLib.Tests.Serialization
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             {
                 writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
-                writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, Globals.XRoadProtocol20.ProducerNamespace);
+                writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, Globals.ServiceManager20.ProducerNamespace);
                 writer.WriteLine(@"<AnonymousProperty>");
                 writer.WriteLine(@"<Property1 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">1</Property1>", NamespaceConstants.XSD);
                 writer.WriteLine(@"<Property2 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">2</Property2>", NamespaceConstants.XSD);
@@ -465,7 +465,7 @@ namespace XRoadLib.Tests.Serialization
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             {
                 writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
-                writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, Globals.XRoadProtocol20.ProducerNamespace);
+                writer.WriteLine(@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{0}"" xmlns:tns=""{1}"">", NamespaceConstants.XSI, Globals.ServiceManager20.ProducerNamespace);
                 writer.WriteLine(@"<AnonymousProperty xsi:type=""Test"">");
                 writer.WriteLine(@"<Property1 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">1</Property1>", NamespaceConstants.XSD);
                 writer.WriteLine(@"<Property2 xsi:type=""xsd:string"" xmlns:xsd=""{0}"">2</Property2>", NamespaceConstants.XSD);
@@ -492,15 +492,15 @@ namespace XRoadLib.Tests.Serialization
         private object DeserializeRequest20(string templateXml, string contentXml)
         {
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
-            return DeserializeRequest(templateXml, contentXml, Globals.XRoadProtocol20, (msgr, xmlr) =>
+            return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager20, (msgr, xmlr) =>
             {
-                var message = Globals.XRoadProtocol20.CreateMessage();
+                var message = Globals.ServiceManager20.CreateMessage();
                 message.XmlTemplate = template;
 
                 using (message)
                 {
                     msgr.Read(message, false);
-                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol20.ProducerNamespace));
+                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.ServiceManager20.ProducerNamespace));
                     return serviceMap20.DeserializeRequest(xmlr, message);
                 }
             });
@@ -509,21 +509,21 @@ namespace XRoadLib.Tests.Serialization
         private object DeserializeRequest31(string templateXml, string contentXml)
         {
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
-            return DeserializeRequest(templateXml, contentXml, Globals.XRoadProtocol31, (msgr, xmlr) =>
+            return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager31, (msgr, xmlr) =>
             {
-                var message = Globals.XRoadProtocol31.CreateMessage();
+                var message = Globals.ServiceManager31.CreateMessage();
                 message.XmlTemplate = template;
 
                 using (message)
                 {
                     msgr.Read(message, false);
-                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.XRoadProtocol31.ProducerNamespace));
+                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.ServiceManager31.ProducerNamespace));
                     return serviceMap31.DeserializeRequest(xmlr, message);
                 }
             });
         }
 
-        private object DeserializeRequest(string templateXml, string contentXml, IXRoadProtocol protocol, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
+        private object DeserializeRequest(string templateXml, string contentXml, IServiceManager protocol, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream))

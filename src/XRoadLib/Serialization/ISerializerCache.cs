@@ -10,8 +10,6 @@ namespace XRoadLib.Serialization
     {
         uint? Version { get; }
 
-        IXRoadProtocol Protocol { get; }
-
         IServiceMap GetServiceMap(string operationName);
 
         IServiceMap GetServiceMap(XName qualifiedName);

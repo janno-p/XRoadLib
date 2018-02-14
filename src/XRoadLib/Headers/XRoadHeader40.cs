@@ -1,7 +1,8 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
+using XRoadLib.Schema;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Headers
 {
@@ -304,7 +305,7 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.
         /// </summary>
-        public virtual void WriteTo(XmlWriter writer, IXRoadProtocol protocol)
+        public virtual void WriteTo(XmlWriter writer, Style style, HeaderDefinition definition)
         {
             if (writer.LookupPrefix(NamespaceConstants.XROAD_V4) == null)
                 writer.WriteAttributeString("xmlns", PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4);
@@ -312,7 +313,7 @@ namespace XRoadLib.Headers
             if (writer.LookupPrefix(NamespaceConstants.XROAD_V4_ID) == null)
                 writer.WriteAttributeString("xmlns", PrefixConstants.ID, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4_ID);
 
-            if (protocol.HeaderDefinition.RequiredHeaders.Contains(XName.Get("client", NamespaceConstants.XROAD_V4)) || Client != null)
+            if (definition.RequiredHeaders.Contains(XName.Get("client", NamespaceConstants.XROAD_V4)) || Client != null)
             {
                 var element = new XElement(XName.Get("client", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), string.IsNullOrWhiteSpace(Client.SubsystemCode) ? "MEMBER" : "SUBSYSTEM"),
@@ -324,7 +325,7 @@ namespace XRoadLib.Headers
                 element.WriteTo(writer);
             }
 
-            if (protocol.HeaderDefinition.RequiredHeaders.Contains(XName.Get("service", NamespaceConstants.XROAD_V4)) || Service != null)
+            if (definition.RequiredHeaders.Contains(XName.Get("service", NamespaceConstants.XROAD_V4)) || Service != null)
             {
                 var element = new XElement(XName.Get("service", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), "SERVICE"),
@@ -339,7 +340,7 @@ namespace XRoadLib.Headers
                 element.WriteTo(writer);
             }
 
-            if (protocol.HeaderDefinition.RequiredHeaders.Contains(XName.Get("centralService", NamespaceConstants.XROAD_V4)) || CentralService != null)
+            if (definition.RequiredHeaders.Contains(XName.Get("centralService", NamespaceConstants.XROAD_V4)) || CentralService != null)
             {
                 var element = new XElement(XName.Get("centralService", NamespaceConstants.XROAD_V4),
                     new XAttribute(XName.Get("objectType", NamespaceConstants.XROAD_V4_ID), "CENTRALSERVICE"),
@@ -348,17 +349,16 @@ namespace XRoadLib.Headers
                 element.WriteTo(writer);
             }
 
-            Action<string, object, XName> writeHeaderValue = (elementName, value, typeName) =>
+            void WriteHeaderValue(string elementName, object value, XName typeName)
             {
                 var name = XName.Get(elementName, NamespaceConstants.XROAD_V4);
-                if (protocol.HeaderDefinition.RequiredHeaders.Contains(name) || value != null)
-                    protocol.Style.WriteHeaderElement(writer, name, value, typeName);
-            };
+                if (definition.RequiredHeaders.Contains(name) || value != null) style.WriteHeaderElement(writer, name, value, typeName);
+            }
 
-            writeHeaderValue("id", Id, XmlTypeConstants.String);
-            writeHeaderValue("userId", UserId, XmlTypeConstants.String);
-            writeHeaderValue("issue", Issue, XmlTypeConstants.String);
-            writeHeaderValue("protocolVersion", ProtocolVersion, XmlTypeConstants.String);
+            WriteHeaderValue("id", Id, XmlTypeConstants.String);
+            WriteHeaderValue("userId", UserId, XmlTypeConstants.String);
+            WriteHeaderValue("issue", Issue, XmlTypeConstants.String);
+            WriteHeaderValue("protocolVersion", ProtocolVersion, XmlTypeConstants.String);
         }
     }
 }

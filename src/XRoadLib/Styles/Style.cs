@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
@@ -6,6 +8,7 @@ using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using System.Xml.Schema;
+using XRoadLib.Headers;
 
 namespace XRoadLib.Styles
 {
@@ -127,6 +130,31 @@ namespace XRoadLib.Styles
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, producerNamespace);
+        }
+
+        public virtual void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
+        {
+            writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
+
+            header?.WriteTo(writer, this, definition);
+
+            foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
+                additionalHeader.WriteTo(writer);
+
+            writer.WriteEndElement();
+        }
+        
+        public virtual void SerializeFault(XmlWriter writer, IXRoadFault fault)
+        {
+            writer.WriteStartElement("faultCode");
+            WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));
+            writer.WriteValue(fault.FaultCode);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("faultString");
+            WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));
+            writer.WriteValue(fault.FaultString);
+            writer.WriteEndElement();
         }
     }
 }
