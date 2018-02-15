@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
@@ -355,7 +356,7 @@ namespace XRoadLib
                     }
 
                     schemaType.Name = typeDefinition.Name.LocalName;
-                    schemaType.Annotation = CreateSchemaAnnotation(typeDefinition.Name.NamespaceName, typeDefinition.Documentation);
+                    schemaType.Annotation = CreateSchemaAnnotation(typeDefinition.Name.NamespaceName, typeDefinition.Documentation, schemaType.Name);
 
                     AddSchemaType(schemaTypes, typeDefinition.Name.NamespaceName, schemaType);
 
@@ -374,7 +375,7 @@ namespace XRoadLib
                 {
                     Name = faultDefinition.Name.LocalName,
                     Particle = CreateFaultSequence(),
-                    Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition.Documentation)
+                    Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition.Documentation, faultDefinition.Name.LocalName)
                 });
 
             return schemaTypes
@@ -522,7 +523,7 @@ namespace XRoadLib
         {
             portType.Operations.Add(new Operation
             {
-                DocumentationElement = CreateDocumentationElement(operationDefinition.Documentation),
+                DocumentationElement = CreateDocumentationElement(operationDefinition.Documentation, operationDefinition.Name.LocalName),
                 Name = operationDefinition.Name.LocalName,
                 Messages =
                 {
@@ -654,21 +655,34 @@ namespace XRoadLib
             return new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
         }
 
-        private XmlSchemaAnnotation CreateSchemaAnnotation(string schemaNamespace, DocumentationDefinition documentationDefinition)
+        private IList<XRoadTitleAttribute> GetTitlesOrDefault(DocumentationDefinition documentationDefinition, string defaultTitle)
         {
-            if (documentationDefinition.IsEmpty)
+            if (documentationDefinition.Titles.Any())
+                return documentationDefinition.Titles;
+
+            var titles = new List<XRoadTitleAttribute>();
+
+            if (schemaDefinitionProvider.ProtocolDefinition.GenerateFakeXRoadDocumentation)
+                titles.Add(new XRoadTitleAttribute(defaultTitle));
+
+            return titles;
+        }
+
+        private XmlSchemaAnnotation CreateSchemaAnnotation(string schemaNamespace, DocumentationDefinition documentationDefinition, string defaultTitle)
+        {
+            if (documentationDefinition.IsEmpty && (!schemaDefinitionProvider.ProtocolDefinition.GenerateFakeXRoadDocumentation || string.IsNullOrWhiteSpace(defaultTitle)))
                 return null;
 
-            var markup = documentationDefinition
-                .Titles
-                .Select(doc => CreateXrdDocumentationElement("title", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null)))
-                .Concat(documentationDefinition
-                    .Notes
-                    .Select(doc => CreateXrdDocumentationElement("notes", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
-                .Concat(documentationDefinition
-                    .TechNotes
-                    .Select(doc => CreateXrdDocumentationElement(schemaDefinitionProvider.ProtocolDefinition.TechNotesElementName, doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
-                .Cast<XmlNode>();
+            var markup =
+                GetTitlesOrDefault(documentationDefinition, defaultTitle)
+                    .Select(doc => CreateXrdDocumentationElement("title", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null)))
+                    .Concat(documentationDefinition
+                            .Notes
+                            .Select(doc => CreateXrdDocumentationElement("notes", doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
+                    .Concat(documentationDefinition
+                            .TechNotes
+                            .Select(doc => CreateXrdDocumentationElement(schemaDefinitionProvider.ProtocolDefinition.TechNotesElementName, doc.LanguageCode, doc.Value, ns => addRequiredImport(schemaNamespace, ns, null))))
+                    .Cast<XmlNode>();
 
             var appInfo = new XmlSchemaAppInfo { Markup = markup.ToArray() };
 
@@ -721,7 +735,8 @@ namespace XRoadLib
                 schemaType = new XmlSchemaComplexType();
                 schemaTypeName = AddComplexTypeContent((XmlSchemaComplexType)schemaType, schemaNamespace, typeDefinition, referencedTypes);
             }
-            schemaType.Annotation = CreateSchemaAnnotation(schemaNamespace, typeDefinition.Documentation);
+
+            schemaType.Annotation = CreateSchemaAnnotation(schemaNamespace, typeDefinition.Documentation, schemaTypeName?.Name ?? contentDefinition.RuntimeType.Name);
 
             if (schemaTypeName == null)
                 schemaElement.SchemaType = schemaType;
@@ -736,10 +751,11 @@ namespace XRoadLib
             {
                 var memberInfo = type.GetTypeInfo().GetMember(name).Single();
                 var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
+                var value = (attribute?.Name).GetValueOrDefault(name);
                 restriction.Facets.Add(new XmlSchemaEnumerationFacet
                 {
-                    Annotation = CreateSchemaAnnotation(schemaNamespace, new DocumentationDefinition(memberInfo)),
-                    Value = (attribute?.Name).GetValueOrDefault(name)
+                    Annotation = CreateSchemaAnnotation(schemaNamespace, new DocumentationDefinition(memberInfo), value),
+                    Value = value
                 });
             }
 
@@ -750,8 +766,7 @@ namespace XRoadLib
         {
             var schemaElement = new XmlSchemaElement
             {
-                Name = contentDefinition.Name?.LocalName,
-                Annotation = CreateSchemaAnnotation(schemaNamespace, contentDefinition.Documentation)
+                Name = contentDefinition.Name?.LocalName
             };
 
             var arrayContentDefinition = contentDefinition as ArrayContentDefiniton;
@@ -759,6 +774,7 @@ namespace XRoadLib
             if (arrayContentDefinition != null && contentDefinition.MergeContent)
             {
                 schemaElement.Name = arrayContentDefinition.Item.Content.Name.LocalName;
+                schemaElement.Annotation = CreateSchemaAnnotation(schemaNamespace, contentDefinition.Documentation, schemaElement.Name);
 
                 if (arrayContentDefinition.Item.MinOccurs != 1u)
                     schemaElement.MinOccurs = arrayContentDefinition.Item.MinOccurs;
@@ -774,6 +790,8 @@ namespace XRoadLib
 
                 return schemaElement;
             }
+
+            schemaElement.Annotation = CreateSchemaAnnotation(schemaNamespace, contentDefinition.Documentation, schemaElement.Name);
 
             if (contentDefinition.IsOptional)
                 schemaElement.MinOccurs = 0;
@@ -915,14 +933,14 @@ namespace XRoadLib
             return titleElement;
         }
 
-        private XmlElement CreateDocumentationElement(DocumentationDefinition documentationDefinition)
+        private XmlElement CreateDocumentationElement(DocumentationDefinition documentationDefinition, string defaultTitle)
         {
-            if (documentationDefinition.IsEmpty)
+            if (documentationDefinition.IsEmpty && (!schemaDefinitionProvider.ProtocolDefinition.GenerateFakeXRoadDocumentation || string.IsNullOrWhiteSpace(defaultTitle)))
                 return null;
 
             var documentationElement = document.CreateElement(PrefixConstants.WSDL, "documentation", NamespaceConstants.WSDL);
 
-            foreach (var title in documentationDefinition.Titles)
+            foreach (var title in GetTitlesOrDefault(documentationDefinition, defaultTitle))
                 documentationElement.AppendChild(CreateXrdDocumentationElement("title", title.LanguageCode, title.Value, _ => { }));
 
             foreach (var title in documentationDefinition.Notes)

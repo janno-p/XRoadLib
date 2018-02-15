@@ -45,5 +45,11 @@ namespace XRoadLib.Schema
         /// Defines technotes element name
         /// </summary>
         public string TechNotesElementName { get; set; } = "techNotes";
+
+        /// <summary>
+        /// Add fake documentation info for elements which do not have explicit documentation attributes defined.
+        /// Fixes MISP issue when missing documentation causes MISP to display empty labels.
+        /// </summary>
+        public bool GenerateFakeXRoadDocumentation { get; set; } = false;
     }
 }
