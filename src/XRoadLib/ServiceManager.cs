@@ -16,34 +16,6 @@ using XRoadLib.Styles;
 
 namespace XRoadLib
 {
-    public interface IServiceManager
-    {
-        string Name { get; }
-        
-        Style Style { get; }
-
-        /// <summary>
-        /// Test if given namespace is defined as SOAP header element namespace.
-        /// </summary>
-        bool IsHeaderNamespace(string namespaceName);
-
-        /// <summary>
-        /// Check if envelope defines given protocol schema.
-        /// </summary>
-        bool IsDefinedByEnvelope(XmlReader reader);
-
-        /// <summary>
-        /// Main namespace which defines current producer operations and types.
-        /// </summary>
-        string ProducerNamespace { get; }
-
-        ISerializer GetSerializer(uint? version = null);
-
-        IXRoadHeader CreateHeader();
-
-        ServiceDescription CreateServiceDescription(uint? version = null);
-    }
-    
     /// <summary>
     /// Manages available services and provides their definitions and serialization details.
     /// </summary>
@@ -52,15 +24,11 @@ namespace XRoadLib
     {
         private readonly IDictionary<uint, ISerializer> serializers = new Dictionary<uint, ISerializer>();
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
-        
-        /// <summary>
-        /// Used to uniquely identify service manager instance.
-        /// </summary>
+
+        /// <inheritdoc />
         public string Name { get; }
 
-        /// <summary>
-        /// XML document style of messages (RPC/Encoded or Document/Literal).
-        /// </summary>
+        /// <inheritdoc />
         public Style Style => ProtocolDefinition.Style;
 
         /// <inheritdoc />
@@ -152,10 +120,8 @@ namespace XRoadLib
             }
         }
 
-        /// <summary>
-        /// Generates new service description for specified services.
-        /// </summary>
-        public virtual ServiceDescription CreateServiceDescription(uint? version = null)
+        /// <inheritdoc />
+        public virtual ServiceDescription CreateServiceDescription(Func<XName, bool> operationFilter = null, uint? version = null)
         {
             if (!version.HasValue && ProtocolDefinition.SupportedVersions.Any())
                 throw new ArgumentNullException(nameof(version), "Version value is required to generate service description.");
@@ -163,11 +129,11 @@ namespace XRoadLib
             if (version.HasValue && !ProtocolDefinition.SupportedVersions.Contains(version.Value))
                 throw new ArgumentOutOfRangeException(nameof(version), $"Version {version.Value} is not supported.");
 
-            var producerDefinition = new ServiceDescriptionBuilder(schemaDefinitionProvider, version);
+            var producerDefinition = new ServiceDescriptionBuilder(schemaDefinitionProvider, operationFilter, version);
 
             return producerDefinition.GetServiceDescription();
         }
-        
+
         /// <summary>
         /// Initialize new X-Road message of this X-Road message protocol instance.
         /// </summary>
@@ -175,7 +141,7 @@ namespace XRoadLib
         {
             return new XRoadMessage(this, header ?? new THeader());
         }
-        
+
         /// <inheritdoc />
         public bool IsHeaderNamespace(string namespaceName) =>
             HeaderDefinition.IsHeaderNamespace(namespaceName);
@@ -184,9 +150,7 @@ namespace XRoadLib
         public bool IsDefinedByEnvelope(XmlReader reader) =>
             ProtocolDefinition.DetectEnvelope?.Invoke(reader) ?? false;
 
-        /// <summary>
-        /// Get runtime types lookup object.
-        /// </summary>
+        /// <inheritdoc />
         public virtual ISerializer GetSerializer(uint? version = null)
         {
             if (!serializers.Any())
@@ -205,7 +169,7 @@ namespace XRoadLib
 
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
         }
-        
+
         private void SetContractAssembly()
         {
             if (ProtocolDefinition.ContractAssembly == null)
@@ -220,7 +184,7 @@ namespace XRoadLib
             foreach (var dtoVersion in ProtocolDefinition.SupportedVersions)
                 serializers.Add(dtoVersion, new Serializer(schemaDefinitionProvider, dtoVersion));
         }
-        
+
         IXRoadHeader IServiceManager.CreateHeader() => new THeader();
     }
 }

@@ -28,6 +28,7 @@ namespace XRoadLib
     {
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly uint? version;
+        private readonly Func<XName, bool> operationFilter;
 
         private readonly Binding binding;
         private readonly PortType portType;
@@ -55,12 +56,13 @@ namespace XRoadLib
         /// <summary>
         /// Initialize builder with contract details.
         /// <param name="schemaDefinitionProvider">Provides overrides for default presentation format.</param>
+        /// <param name="operationFilter">Allows to filter operations which are presented in service description.</param>
         /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
         /// </summary>
-        public ServiceDescriptionBuilder(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
+        public ServiceDescriptionBuilder(SchemaDefinitionProvider schemaDefinitionProvider, Func<XName, bool> operationFilter = null, uint? version = null)
         {
             this.schemaDefinitionProvider = schemaDefinitionProvider ?? throw new ArgumentNullException(nameof(schemaDefinitionProvider));
-
+            this.operationFilter = operationFilter ?? (name => true);
             this.version = version;
 
             portType = new PortType { Name = "PortTypeName" };
@@ -188,6 +190,7 @@ namespace XRoadLib
                    .SelectMany(x => x.Value
                                      .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
                                      .Select(op => schemaDefinitionProvider.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), version)))
+                   .Where(def => operationFilter(def.Name))
                    .Where(def => def.State == DefinitionState.Default)
                    .OrderBy(def => def.Name.LocalName.ToLower())
                    .ToList();
@@ -384,7 +387,7 @@ namespace XRoadLib
                 .ToList();
         }
 
-        private XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseDefinition responseDefinition, XmlSchemaElement requestElement, XmlSchemaElement responseElement, FaultDefinition faultDefinition)
+        private static XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseDefinition responseDefinition, XmlSchemaElement requestElement, XmlSchemaElement responseElement, FaultDefinition faultDefinition)
         {
             if (responseDefinition.ContainsNonTechnicalFault)
                 return new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } };
@@ -511,7 +514,7 @@ namespace XRoadLib
                 return resultElement.SchemaTypeName;
 
             return resultType.IsArray
-                ? AddAdditionalTypeDefinition(resultType, $"ArrayOf{resultType.GetElementType().Name}", resultElement, schemaTypes)
+                ? AddAdditionalTypeDefinition(resultType, $"ArrayOf{resultType.GetElementType()?.Name ?? "Unknown"}", resultElement, schemaTypes)
                 : null;
         }
 

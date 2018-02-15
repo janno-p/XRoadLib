@@ -194,7 +194,7 @@ namespace XRoadLib.Tests.Protocols.Description
         {
             using (var stream = new MemoryStream())
             {
-                serviceManager.CreateServiceDescription(version).SaveTo(stream);
+                serviceManager.CreateServiceDescription(version: version).SaveTo(stream);
                 stream.Position = 0;
                 return XDocument.Load(stream);
             }

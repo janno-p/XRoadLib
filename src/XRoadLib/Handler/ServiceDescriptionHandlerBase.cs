@@ -21,7 +21,7 @@ namespace XRoadLib.Handler
         /// <inheritdoc />
         protected override void HandleRequest(XRoadContextClassic context)
         {
-            ServiceManager.CreateServiceDescription(Version)
+            ServiceManager.CreateServiceDescription(version: Version)
                           .SaveTo(context.HttpContext.Response.OutputStream);
         }
     }
