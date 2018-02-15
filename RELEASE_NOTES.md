@@ -1,3 +1,8 @@
+#### 1.1.1 - 15.02.2018
+
+* `MergeContentAttribute` should be usable on fields, parameters and return values.
+* Fix `UseXop` detection regression.
+
 #### 1.1.0 - 15.02.2018
 
 * Removed XRoadOptional attribute which is replaced by element, array and array item specific attributes.

@@ -13,13 +13,13 @@ namespace XRoadLib.Attributes
         /// Indicates if this element must occur in serialized XML or not.
         /// </summary>
         public bool IsOptional { get; set; }
-        
+
         /// <summary>
         /// Initializes a new instance of the XmlArrayAttribute class.
         /// </summary>
         public XRoadXmlArrayAttribute()
         { }
-        
+
         /// <summary>
         /// Initializes a new instance of the XmlArrayAttribute class and specifies the XML element name generated
         /// in the XML document instance.

@@ -36,7 +36,7 @@ namespace XRoadLib.Schema
             Name = XName.Get((arrayAttribute?.ElementName).GetStringOrDefault(runtimeName), arrayAttribute?.Namespace ?? "");
             IsNullable = (arrayAttribute?.IsNullable).GetValueOrDefault();
             Order = (arrayAttribute?.Order).GetValueOrDefault(-1);
-            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(RuntimeType);
+            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType);
             TypeName = (arrayItemAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.XSD));
             IsOptional = xroadArrayAttribute?.IsOptional == true;
             State = DefinitionState.Default;

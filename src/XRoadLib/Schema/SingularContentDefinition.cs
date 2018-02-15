@@ -22,7 +22,7 @@ namespace XRoadLib.Schema
             Name = XName.Get((elementAttribute?.ElementName).GetStringOrDefault(runtimeName), elementAttribute?.Namespace ?? "");
             IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault();
             Order = (elementAttribute?.Order).GetValueOrDefault(-1);
-            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(RuntimeType);
+            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType);
             TypeName = (elementAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.XSD));
             IsOptional = xroadElementAttribute?.IsOptional == true;
             State = DefinitionState.Default;
