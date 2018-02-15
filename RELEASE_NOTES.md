@@ -1,10 +1,13 @@
-#### 1.1.0 - Unreleased
+#### 1.1.0 - 15.02.2018
 
 * Removed XRoadOptional attribute which is replaced by element, array and array item specific attributes.
 * Added XRoadXmlElementAttribute which extends XmlElementAttribute to support `IsOptional` property.
 * Added XRoadXmlArrayAttribute which extends XmlArrayAttribute to support `IsOptional` property.
 * Added XRoadXmlArrayItemAttribute which extends XmlArrayItemAttribute to support `MinOccurs` and `MaxOccurs` properties.
 * Refactored `ContentDefinition` type to support better array definitions.
+* Refactored `XRoadRequest` and `XRoadProtocol` types into combined `ServiceManager` type.
+* Optionally add implicit X-Road title annotation via configuration setting.
+* Filter operations from service description.
 
 #### 1.0.3 - 27.10.2017
 * Fix regression in response element definition.
