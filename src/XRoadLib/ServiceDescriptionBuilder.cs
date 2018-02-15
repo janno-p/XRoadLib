@@ -24,7 +24,7 @@ namespace XRoadLib
     /// Extracts contract information from given assembly and presents it as
     /// service description XML document.
     /// </summary>
-    public sealed class ProducerDefinition
+    public sealed class ServiceDescriptionBuilder
     {
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly uint? version;
@@ -57,7 +57,7 @@ namespace XRoadLib
         /// <param name="schemaDefinitionProvider">Provides overrides for default presentation format.</param>
         /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
         /// </summary>
-        public ProducerDefinition(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
+        public ServiceDescriptionBuilder(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
             this.schemaDefinitionProvider = schemaDefinitionProvider ?? throw new ArgumentNullException(nameof(schemaDefinitionProvider));
 

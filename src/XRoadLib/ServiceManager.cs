@@ -129,7 +129,7 @@ namespace XRoadLib
                     operationServiceMap.SerializeRequest(writer, body, requestMessage, options?.RequestNamespace);
 
                     writer.WriteEndElement();
-                    
+
                     writer.WriteEndElement();
                     writer.WriteEndDocument();
                     writer.Flush();
@@ -163,7 +163,7 @@ namespace XRoadLib
             if (version.HasValue && !ProtocolDefinition.SupportedVersions.Contains(version.Value))
                 throw new ArgumentOutOfRangeException(nameof(version), $"Version {version.Value} is not supported.");
 
-            var producerDefinition = new ProducerDefinition(schemaDefinitionProvider, version);
+            var producerDefinition = new ServiceDescriptionBuilder(schemaDefinitionProvider, version);
 
             return producerDefinition.GetServiceDescription();
         }
