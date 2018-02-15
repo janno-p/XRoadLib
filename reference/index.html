@@ -45,17 +45,9 @@
     <tbody>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-ixroadprotocol.html">IXRoadProtocol</a>
+            <a href="xroadlib-iservicemanager.html">IServiceManager</a>
           </td>
-          <td class="xmldoc"><p>X-Road message protocol implementation details.</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="xroadlib-ixroadrequest.html">IXRoadRequest</a>
-          </td>
-          <td class="xmldoc"><p>X-Road request object which wraps single X-Road web request.</p>
+          <td class="xmldoc"><p>Handles service oriented tasks based on specific schema definition.</p>
 
 </td>
         </tr>
@@ -75,10 +67,24 @@
         </tr>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-producerdefinition.html">ProducerDefinition</a>
+            <a href="xroadlib-servicedescriptionbuilder.html">ServiceDescriptionBuilder</a>
           </td>
           <td class="xmldoc"><p>Extracts contract information from given assembly and presents it as
 service description XML document.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="xroadlib-serviceexecutionoptions.html">ServiceExecutionOptions</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="xroadlib-servicemanager-1.html">ServiceManager<'THeader></a>
+          </td>
+          <td class="xmldoc"><p>Manages available services and provides their definitions and serialization details.</p>
 
 </td>
         </tr>
@@ -96,17 +102,9 @@ service description XML document.</p>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-xroadprotocol.html">XRoadProtocol</a>
+            <a href="xroadlib-xroadwebrequest.html">XRoadWebRequest</a>
           </td>
-          <td class="xmldoc"><p>X-Road message protocol implementation details.</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="xroadlib-xroadrequest.html">XRoadRequest</a>
-          </td>
-          <td class="xmldoc"><p>X-Road request object which wraps single X-Road web request.</p>
+          <td class="xmldoc"><p>Helper methods to initialize X-Road web requests.</p>
 
 </td>
         </tr>
@@ -151,12 +149,6 @@ service description XML document.</p>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-attributes-xroadoptionalattribute.html">XRoadOptionalAttribute</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
             <a href="xroadlib-attributes-xroadremovecontractattribute.html">XRoadRemoveContractAttribute</a>
           </td>
           <td class="xmldoc"></td>
@@ -182,6 +174,31 @@ service description XML document.</p>
             <a href="xroadlib-attributes-xroadtitleattribute.html">XRoadTitleAttribute</a>
           </td>
           <td class="xmldoc"><p>Title of the service (for displaying to users)</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="xroadlib-attributes-xroadxmlarrayattribute.html">XRoadXmlArrayAttribute</a>
+          </td>
+          <td class="xmldoc"><p>Specifies that the serializer must serialize a particular class member as an array of XML elements.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="xroadlib-attributes-xroadxmlarrayitemattribute.html">XRoadXmlArrayItemAttribute</a>
+          </td>
+          <td class="xmldoc"><p>Represents an attribute that specifies the derived types that the serializer can place in a serialized array.</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="xroadlib-attributes-xroadxmlelementattribute.html">XRoadXmlElementAttribute</a>
+          </td>
+          <td class="xmldoc"><p>Indicates that a public field or property represents an XML element when the serializer serializes or
+deserializes the object that contains it.</p>
 
 </td>
         </tr>
@@ -246,6 +263,12 @@ message begins.</p>
         </tr>
         <tr>
           <td class="type-name">
+            <a href="xroadlib-extensions-servicedescriptionextensions.html">ServiceDescriptionExtensions</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="xroadlib-extensions-servicemapextensions.html">ServiceMapExtensions</a>
           </td>
           <td class="xmldoc"><p>Extension methods for IServiceMap.</p>
@@ -269,14 +292,6 @@ message begins.</p>
             <a href="xroadlib-extensions-xroadmessageextensions.html">XRoadMessageExtensions</a>
           </td>
           <td class="xmldoc"><p>Extension methods for XRoadMessage class.</p>
-
-</td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="xroadlib-extensions-xroadprotocolextensions.html">XRoadProtocolExtensions</a>
-          </td>
-          <td class="xmldoc"><p>Extension methods of XRoadProtocol type.</p>
 
 </td>
         </tr>
@@ -317,9 +332,7 @@ message begins.</p>
           <td class="type-name">
             <a href="xroadlib-extensions-protobuf-attributes-xroadprotobufserviceattribute.html">XRoadProtoBufServiceAttribute</a>
           </td>
-          <td class="xmldoc"><p>Defines operation method which uses protocol buffers for serialization.</p>
-
-</td>
+          <td class="xmldoc"></td>
         </tr>
     </tbody>
   </table>
@@ -355,9 +368,7 @@ message begins.</p>
           <td class="type-name">
             <a href="xroadlib-handler-servicedescriptionhandlerbase.html">ServiceDescriptionHandlerBase</a>
           </td>
-          <td class="xmldoc"><p>Handler of X-Road service description.</p>
-
-</td>
+          <td class="xmldoc"></td>
         </tr>
         <tr>
           <td class="type-name">
@@ -371,9 +382,7 @@ message begins.</p>
           <td class="type-name">
             <a href="xroadlib-handler-servicerequesthandlerbase.html">ServiceRequestHandlerBase</a>
           </td>
-          <td class="xmldoc"><p>Base class of service request handlers.</p>
-
-</td>
+          <td class="xmldoc"></td>
         </tr>
     </tbody>
   </table>
@@ -516,9 +525,13 @@ provider's security server.</p>
           <td class="type-name">
             <a href="xroadlib-schema-abstractschemaexporter.html">AbstractSchemaExporter</a>
           </td>
-          <td class="xmldoc"><p>Helper base class for various schema exporters.</p>
-
-</td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="xroadlib-schema-arraycontentdefiniton.html">ArrayContentDefiniton</a>
+          </td>
+          <td class="xmldoc"></td>
         </tr>
         <tr>
           <td class="type-name">
@@ -590,12 +603,6 @@ default settings.</p>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-schema-icontentdefinition.html">IContentDefinition</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
             <a href="xroadlib-schema-iheaderdefinitionbuilder-1.html">IHeaderDefinitionBuilder<'THeader></a>
           </td>
           <td class="xmldoc"><p>Allows to fluently configure headers mandatory elements.</p>
@@ -621,6 +628,12 @@ and definitions.</p>
         </tr>
         <tr>
           <td class="type-name">
+            <a href="xroadlib-schema-particledefinition.html">ParticleDefinition</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="xroadlib-schema-propertycomparer.html">PropertyComparer</a>
           </td>
           <td class="xmldoc"></td>
@@ -641,7 +654,7 @@ and definitions.</p>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-schema-requestvaluedefinition.html">RequestValueDefinition</a>
+            <a href="xroadlib-schema-requestdefinition.html">RequestDefinition</a>
           </td>
           <td class="xmldoc"><p>Specification for individual X-Road message request part.</p>
 
@@ -649,7 +662,7 @@ and definitions.</p>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-schema-responsevaluedefinition.html">ResponseValueDefinition</a>
+            <a href="xroadlib-schema-responsedefinition.html">ResponseDefinition</a>
           </td>
           <td class="xmldoc"><p>Configuration options for customizing response elements.</p>
 
@@ -667,9 +680,7 @@ and definitions.</p>
           <td class="type-name">
             <a href="xroadlib-schema-schemaexporterxroad20.html">SchemaExporterXRoad20</a>
           </td>
-          <td class="xmldoc"><p>Schema exporter for X-Road message protocol version 2.0.</p>
-
-</td>
+          <td class="xmldoc"></td>
         </tr>
         <tr>
           <td class="type-name">
@@ -683,9 +694,13 @@ and definitions.</p>
           <td class="type-name">
             <a href="xroadlib-schema-schemaexporterxroadlegacy.html">SchemaExporterXRoadLegacy</a>
           </td>
-          <td class="xmldoc"><p>Schema exporter for X-Road message protocol legacy version.</p>
-
-</td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="xroadlib-schema-singularcontentdefinition.html">SingularContentDefinition</a>
+          </td>
+          <td class="xmldoc"></td>
         </tr>
         <tr>
           <td class="type-name">
@@ -730,9 +745,11 @@ and definitions.</p>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-serialization-iserializercache.html">ISerializerCache</a>
+            <a href="xroadlib-serialization-iserializer.html">ISerializer</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Handles runtime operations for schema definition.</p>
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
@@ -760,7 +777,7 @@ and definitions.</p>
         </tr>
         <tr>
           <td class="type-name">
-            <a href="xroadlib-serialization-serializercache.html">SerializerCache</a>
+            <a href="xroadlib-serialization-serializer.html">Serializer</a>
           </td>
           <td class="xmldoc"></td>
         </tr>
@@ -977,9 +994,7 @@ and definitions.</p>
           <td class="type-name">
             <a href="xroadlib-serialization-mapping-listmethodsservicemap.html">ListMethodsServiceMap</a>
           </td>
-          <td class="xmldoc"><p>Virtual service map which implements <code>listMethods</code> request.</p>
-
-</td>
+          <td class="xmldoc"></td>
         </tr>
         <tr>
           <td class="type-name">
@@ -1003,9 +1018,7 @@ and definitions.</p>
           <td class="type-name">
             <a href="xroadlib-serialization-mapping-servicemap.html">ServiceMap</a>
           </td>
-          <td class="xmldoc"><p>Provides serialization/deserialization interface for X-Road operations.</p>
-
-</td>
+          <td class="xmldoc"></td>
         </tr>
         <tr>
           <td class="type-name">

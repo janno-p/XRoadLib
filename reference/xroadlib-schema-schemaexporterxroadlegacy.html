@@ -40,8 +40,6 @@
   <span>Namespace: XRoadLib.Schema</span><br />
 </p>
 <div class="xmldoc">
-<p>Schema exporter for X-Road message protocol legacy version.</p>
-
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -52,17 +50,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '441', 441)" onmouseover="showTip(event, '441', 441)">
+          <code onmouseout="hideTip(event, '443', 443)" onmouseover="showTip(event, '443', 443)">
             new(...)
           </code>
-          <div class="tip" id="441">
+          <div class="tip" id="443">
             <strong>Signature:</strong> (producerName:string * contractAssembly:Assembly * producerNamespace:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Initialize new legacy schema exporter.</p>
-
-
+          
         </td>
       </tr>
     </tbody>
@@ -76,10 +72,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '442', 442)" onmouseover="showTip(event, '442', 442)">
+          <code onmouseout="hideTip(event, '444', 444)" onmouseover="showTip(event, '444', 444)">
             ExportProtocolDefinition(...)
           </code>
-          <div class="tip" id="442">
+          <div class="tip" id="444">
             <strong>Signature:</strong> protocolDefinition:ProtocolDefinition -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -93,36 +89,31 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '443', 443)" onmouseover="showTip(event, '443', 443)">
-            ExportResponseValueDefinition(...)
+          <code onmouseout="hideTip(event, '445', 445)" onmouseover="showTip(event, '445', 445)">
+            ExportResponseDefinition(...)
           </code>
-          <div class="tip" id="443">
-            <strong>Signature:</strong> responseValueDefinition:ResponseValueDefinition -&gt; unit<br />
+          <div class="tip" id="445">
+            <strong>Signature:</strong> responseDefinition:ResponseDefinition -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Configure response elements of X-Road message protocol version 2.0 messages.</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '444', 444)" onmouseover="showTip(event, '444', 444)">
+          <code onmouseout="hideTip(event, '446', 446)" onmouseover="showTip(event, '446', 446)">
             ExportServiceDescription(...)
           </code>
-          <div class="tip" id="444">
+          <div class="tip" id="446">
             <strong>Signature:</strong> serviceDescription:ServiceDescription -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Allows each message protocol implementation to customize service description document
-before publishing.</p>
-
-
+          
         </td>
       </tr>
     </tbody>

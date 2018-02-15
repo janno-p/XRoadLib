@@ -32,6 +32,17 @@
       <div class="row">
         <div class="span9" id="main">
           
+<h4><a name="1-1-0-15-02-2018" class="anchor" href="#1-1-0-15-02-2018">1.1.0 - 15.02.2018</a></h4>
+<ul>
+<li>Removed XRoadOptional attribute which is replaced by element, array and array item specific attributes.</li>
+<li>Added XRoadXmlElementAttribute which extends XmlElementAttribute to support <code>IsOptional</code> property.</li>
+<li>Added XRoadXmlArrayAttribute which extends XmlArrayAttribute to support <code>IsOptional</code> property.</li>
+<li>Added XRoadXmlArrayItemAttribute which extends XmlArrayItemAttribute to support <code>MinOccurs</code> and <code>MaxOccurs</code> properties.</li>
+<li>Refactored <code>ContentDefinition</code> type to support better array definitions.</li>
+<li>Refactored <code>XRoadRequest</code> and <code>XRoadProtocol</code> types into combined <code>ServiceManager</code> type.</li>
+<li>Optionally add implicit X-Road title annotation via configuration setting.</li>
+<li>Filter operations from service description.</li>
+</ul>
 <h4><a name="1-0-3-27-10-2017" class="anchor" href="#1-0-3-27-10-2017">1.0.3 - 27.10.2017</a></h4>
 <ul>
 <li>Fix regression in response element definition.</li>
