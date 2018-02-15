@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Web.Services.Description;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Headers;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Styles;
 
@@ -57,6 +57,6 @@ namespace XRoadLib
         /// <param name="operationFilter">Allows to filter out unwanted operations which should not appear in service description.</param>
         /// <param name="version">Global DTO version of wanted service description.</param>
         /// <returns>Service description instance of current schema definition.</returns>
-        ServiceDescription CreateServiceDescription(Func<XName, bool> operationFilter = null, uint? version = null);
+        ServiceDescription CreateServiceDescription(Func<OperationDefinition, bool> operationFilter = null, uint? version = null);
     }
 }

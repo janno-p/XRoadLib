@@ -121,7 +121,7 @@ namespace XRoadLib
         }
 
         /// <inheritdoc />
-        public virtual ServiceDescription CreateServiceDescription(Func<XName, bool> operationFilter = null, uint? version = null)
+        public virtual ServiceDescription CreateServiceDescription(Func<OperationDefinition, bool> operationFilter = null, uint? version = null)
         {
             if (!version.HasValue && ProtocolDefinition.SupportedVersions.Any())
                 throw new ArgumentNullException(nameof(version), "Version value is required to generate service description.");

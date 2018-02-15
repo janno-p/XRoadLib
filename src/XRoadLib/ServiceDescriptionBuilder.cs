@@ -29,7 +29,7 @@ namespace XRoadLib
     {
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         private readonly uint? version;
-        private readonly Func<XName, bool> operationFilter;
+        private readonly Func<OperationDefinition, bool> operationFilter;
 
         private readonly Binding binding;
         private readonly PortType portType;
@@ -60,10 +60,10 @@ namespace XRoadLib
         /// <param name="operationFilter">Allows to filter operations which are presented in service description.</param>
         /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
         /// </summary>
-        public ServiceDescriptionBuilder(SchemaDefinitionProvider schemaDefinitionProvider, Func<XName, bool> operationFilter = null, uint? version = null)
+        public ServiceDescriptionBuilder(SchemaDefinitionProvider schemaDefinitionProvider, Func<OperationDefinition, bool> operationFilter = null, uint? version = null)
         {
             this.schemaDefinitionProvider = schemaDefinitionProvider ?? throw new ArgumentNullException(nameof(schemaDefinitionProvider));
-            this.operationFilter = operationFilter ?? (name => true);
+            this.operationFilter = operationFilter;
             this.version = version;
 
             portType = new PortType { Name = "PortTypeName" };
@@ -191,8 +191,7 @@ namespace XRoadLib
                    .SelectMany(x => x.Value
                                      .Where(op => !version.HasValue || op.ExistsInVersion(version.Value))
                                      .Select(op => schemaDefinitionProvider.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), version)))
-                   .Where(def => operationFilter(def.Name))
-                   .Where(def => def.State == DefinitionState.Default)
+                   .Where(operationFilter ?? (def => def.State == DefinitionState.Default))
                    .OrderBy(def => def.Name.LocalName.ToLower())
                    .ToList();
         }

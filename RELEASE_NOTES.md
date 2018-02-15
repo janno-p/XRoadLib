@@ -1,3 +1,7 @@
+#### 1.1.2 - 15.02.2018
+
+* Allow operation filter to override visibility of operations hidden by schema exporter.
+
 #### 1.1.1 - 15.02.2018
 
 * `MergeContentAttribute` should be usable on fields, parameters and return values.
