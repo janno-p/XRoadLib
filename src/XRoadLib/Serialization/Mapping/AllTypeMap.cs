@@ -13,8 +13,8 @@ namespace XRoadLib.Serialization.Mapping
         private readonly IDictionary<string, IPropertyMap> deserializationPropertyMaps = new Dictionary<string, IPropertyMap>();
         private readonly Lazy<int> requiredPropertiesCount;
 
-        public AllTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
-            : base(serializerCache, typeDefinition)
+        public AllTypeMap(ISerializer serializer, TypeDefinition typeDefinition)
+            : base(serializer, typeDefinition)
         {
             requiredPropertiesCount = new Lazy<int>(() => deserializationPropertyMaps.Count(x => !x.Value.Definition.Content.IsOptional));
         }

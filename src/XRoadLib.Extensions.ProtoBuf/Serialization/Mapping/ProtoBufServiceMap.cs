@@ -22,8 +22,8 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
         private readonly WriteValueMethod writeRequestMethod;
         private readonly WriteValueMethod writeResponseMethod;
 
-        public ProtoBufServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
-            : base(serializerCache, operationDefinition, requestDefinition, responseDefinition, inputTypeMap, outputTypeMap)
+        public ProtoBufServiceMap(ISerializer serializer, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
+            : base(serializer, operationDefinition, requestDefinition, responseDefinition, inputTypeMap, outputTypeMap)
         {
             var requestType = RequestDefinition.ParameterInfo?.ParameterType;
             var responseType = ResponseDefinition.ParameterInfo?.ParameterType;

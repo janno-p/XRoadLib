@@ -11,14 +11,14 @@ namespace XRoadLib.Serialization.Mapping
 
     public class ArrayTypeMap<T> : TypeMap, IArrayTypeMap
     {
-        private readonly ISerializerCache serializerCache;
+        private readonly ISerializer serializer;
 
         private readonly ITypeMap elementTypeMap;
 
-        public ArrayTypeMap(ISerializerCache serializerCache, CollectionDefinition collectionDefinition, ITypeMap elementTypeMap)
+        public ArrayTypeMap(ISerializer serializer, CollectionDefinition collectionDefinition, ITypeMap elementTypeMap)
             : base(collectionDefinition)
         {
-            this.serializerCache = serializerCache;
+            this.serializer = serializer;
             this.elementTypeMap = elementTypeMap;
         }
 
@@ -62,7 +62,7 @@ namespace XRoadLib.Serialization.Mapping
                     continue;
                 }
 
-                var typeMap = serializerCache.GetTypeMapFromXsiType(reader) ?? elementTypeMap;
+                var typeMap = serializer.GetTypeMapFromXsiType(reader) ?? elementTypeMap;
 
                 var value = typeMap.Deserialize(reader, templateNode, arrayContent.Item.Content, message);
 
@@ -88,7 +88,7 @@ namespace XRoadLib.Serialization.Mapping
 
                 if (valueItem != null)
                 {
-                    var typeMap = serializerCache != null ? serializerCache.GetTypeMap(valueItem.GetType()) : elementTypeMap;
+                    var typeMap = serializer != null ? serializer.GetTypeMap(valueItem.GetType()) : elementTypeMap;
                     typeMap.Serialize(writer, templateNode, valueItem, arrayContent.Item.Content, message);
                 }
                 else writer.WriteNilAttribute();

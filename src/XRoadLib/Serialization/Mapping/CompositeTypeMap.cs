@@ -9,15 +9,15 @@ namespace XRoadLib.Serialization.Mapping
 {
     public abstract class CompositeTypeMap<T> : TypeMap, ICompositeTypeMap where T : class, IXRoadSerializable, new()
     {
-        protected readonly ISerializerCache serializerCache;
+        protected readonly ISerializer serializer;
         protected readonly IList<IPropertyMap> propertyMaps = new List<IPropertyMap>();
 
         protected IPropertyMap contentPropertyMap;
 
-        protected CompositeTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
+        protected CompositeTypeMap(ISerializer serializer, TypeDefinition typeDefinition)
             : base(typeDefinition)
         {
-            this.serializerCache = serializerCache;
+            this.serializer = serializer;
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
@@ -45,7 +45,7 @@ namespace XRoadLib.Serialization.Mapping
             if (propertyMaps.Count > 0)
                 return;
 
-            var createdPropertyMaps = propertyDefinitions.Select(x => new PropertyMap(serializerCache, x.Item1, x.Item2, availableFilters))
+            var createdPropertyMaps = propertyDefinitions.Select(x => new PropertyMap(serializer, x.Item1, x.Item2, availableFilters))
                                                          .ToList();
 
             if (createdPropertyMaps.Count == 1 && createdPropertyMaps[0].Definition.Content.MergeContent && createdPropertyMaps[0].Definition.Content is SingularContentDefinition)

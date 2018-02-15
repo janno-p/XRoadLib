@@ -311,10 +311,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Get type lookup object which is used to serialize or deserialize current X-Road message.
         /// </summary>
-        public ISerializerCache GetSerializerCache()
-        {
-            return ServiceManager?.GetSerializer(Version);
-        }
+        public ISerializer GetSerializer() => ServiceManager?.GetSerializer(Version);
 
         /// <summary>
         /// Enable filtering for X-Road message, using the filter specified by name.

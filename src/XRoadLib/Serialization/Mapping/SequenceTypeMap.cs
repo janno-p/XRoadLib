@@ -9,8 +9,8 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class SequenceTypeMap<T> : CompositeTypeMap<T> where T : class, IXRoadSerializable, new()
     {
-        public SequenceTypeMap(ISerializerCache serializerCache, TypeDefinition typeDefinition)
-            : base(serializerCache, typeDefinition)
+        public SequenceTypeMap(ISerializer serializer, TypeDefinition typeDefinition)
+            : base(serializer, typeDefinition)
         { }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)

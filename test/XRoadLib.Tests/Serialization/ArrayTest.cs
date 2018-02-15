@@ -14,7 +14,7 @@ namespace XRoadLib.Tests.Serialization
     {
         private static readonly IServiceManager serviceManager = Globals.ServiceManager31;
 
-        private readonly ISerializerCache serializerCache = serviceManager.GetSerializer(1u);
+        private readonly ISerializer serializer = serviceManager.GetSerializer(1u);
 
         private readonly MergeArrayContentRequest request = new MergeArrayContentRequest
         {
@@ -99,7 +99,7 @@ namespace XRoadLib.Tests.Serialization
 
         private XDocument SerializeMessage(object request)
         {
-            var serviceMap = serializerCache.GetServiceMap("MergeArrayContent");
+            var serviceMap = serializer.GetServiceMap("MergeArrayContent");
 
             using (var message = new XRoadMessage(serviceManager, null))
             using (var stream = new MemoryStream())
@@ -118,7 +118,7 @@ namespace XRoadLib.Tests.Serialization
 
         private object DeserializeMessage(XDocument document)
         {
-            var serviceMap = serializerCache.GetServiceMap("MergeArrayContent");
+            var serviceMap = serializer.GetServiceMap("MergeArrayContent");
             var doc2 = new XDocument(new XElement("envelope", new XElement("body", document.Root)));
 
             using (var message = new XRoadMessage(serviceManager, null))

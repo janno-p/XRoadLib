@@ -37,7 +37,7 @@ namespace XRoadLib
         /// </summary>
         string ProducerNamespace { get; }
 
-        ISerializerCache GetSerializer(uint? version = null);
+        ISerializer GetSerializer(uint? version = null);
 
         IXRoadHeader CreateHeader();
 
@@ -50,7 +50,7 @@ namespace XRoadLib
     public class ServiceManager<THeader> : IServiceManager
         where THeader : class, IXRoadHeader, new()
     {
-        private readonly IDictionary<uint, ISerializerCache> serializerCaches = new Dictionary<uint, ISerializerCache>();
+        private readonly IDictionary<uint, ISerializer> serializers = new Dictionary<uint, ISerializer>();
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
         
         /// <summary>
@@ -125,7 +125,7 @@ namespace XRoadLib
 
                     writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
 
-                    operationServiceMap = options?.ServiceMap ?? requestMessage.GetSerializerCache().GetServiceMap(XName.Get(header.Service.ServiceCode, ProducerNamespace));
+                    operationServiceMap = options?.ServiceMap ?? requestMessage.GetSerializer().GetServiceMap(XName.Get(header.Service.ServiceCode, ProducerNamespace));
                     operationServiceMap.SerializeRequest(writer, body, requestMessage, options?.RequestNamespace);
 
                     writer.WriteEndElement();
@@ -187,21 +187,21 @@ namespace XRoadLib
         /// <summary>
         /// Get runtime types lookup object.
         /// </summary>
-        public virtual ISerializerCache GetSerializer(uint? version = null)
+        public virtual ISerializer GetSerializer(uint? version = null)
         {
-            if (!serializerCaches.Any())
+            if (!serializers.Any())
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) is not configured with contract assembly.");
 
             if (!ProtocolDefinition.SupportedVersions.Any())
-                return serializerCaches.Single().Value;
+                return serializers.Single().Value;
 
             if (!version.HasValue)
                 throw new Exception($"This protocol instance (message protocol version `{Name}`) requires specific version value.");
 
             var serializerVersion = version.Value > 0u ? version.Value : ProtocolDefinition.SupportedVersions.Max();
 
-            if (serializerCaches.TryGetValue(serializerVersion, out var versioningSerializerCache))
-                return versioningSerializerCache;
+            if (serializers.TryGetValue(serializerVersion, out var versioningSerializer))
+                return versioningSerializer;
 
             throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
         }
@@ -213,12 +213,12 @@ namespace XRoadLib
 
             if (!ProtocolDefinition.SupportedVersions.Any())
             {
-                serializerCaches.Add(0, new SerializerCache(schemaDefinitionProvider));
+                serializers.Add(0, new Serializer(schemaDefinitionProvider));
                 return;
             }
 
             foreach (var dtoVersion in ProtocolDefinition.SupportedVersions)
-                serializerCaches.Add(dtoVersion, new SerializerCache(schemaDefinitionProvider, dtoVersion));
+                serializers.Add(dtoVersion, new Serializer(schemaDefinitionProvider, dtoVersion));
         }
         
         IXRoadHeader IServiceManager.CreateHeader() => new THeader();

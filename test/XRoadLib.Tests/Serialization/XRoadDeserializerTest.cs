@@ -17,10 +17,10 @@ namespace XRoadLib.Tests.Serialization
     {
         private const uint DTO_VERSION = 3;
 
-        private static readonly ISerializerCache serializerCache20 = Globals.ServiceManager20.GetSerializer(DTO_VERSION);
-        private static readonly ISerializerCache serializerCache31 = Globals.ServiceManager31.GetSerializer(DTO_VERSION);
-        private static readonly IServiceMap serviceMap20 = serializerCache20.GetServiceMap("Service1");
-        private static readonly IServiceMap serviceMap31 = serializerCache31.GetServiceMap("Service1");
+        private static readonly ISerializer serializer20 = Globals.ServiceManager20.GetSerializer(DTO_VERSION);
+        private static readonly ISerializer serializer31 = Globals.ServiceManager31.GetSerializer(DTO_VERSION);
+        private static readonly IServiceMap serviceMap20 = serializer20.GetServiceMap("Service1");
+        private static readonly IServiceMap serviceMap31 = serializer31.GetServiceMap("Service1");
 
         [Fact]
         public void CanHandleOptionalParameters()
@@ -440,7 +440,7 @@ namespace XRoadLib.Tests.Serialization
                 {
                     Assert.True(reader.MoveToElement(0));
 
-                    var typeMap = serializerCache31.GetTypeMap(typeof(ContainerType));
+                    var typeMap = serializer31.GetTypeMap(typeof(ContainerType));
                     using (var message = new XRoadMessage())
                     {
                         var entity = typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message);
@@ -479,7 +479,7 @@ namespace XRoadLib.Tests.Serialization
                 using (var reader = XmlReader.Create(stream))
                 {
                     Assert.True(reader.MoveToElement(0));
-                    var typeMap = serializerCache31.GetTypeMap(typeof(ContainerType));
+                    var typeMap = serializer31.GetTypeMap(typeof(ContainerType));
                     using (var message = new XRoadMessage())
                     {
                         var exception = Assert.Throws<XRoadException>(() => typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message));

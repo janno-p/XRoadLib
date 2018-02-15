@@ -8,7 +8,7 @@ namespace XRoadLib.Serialization.Mapping
     /// <inheritdoc />
     public class ServiceMap : IServiceMap
     {
-        private readonly ISerializerCache serializerCache;
+        private readonly ISerializer serializer;
         private readonly ITypeMap inputTypeMap;
         private readonly ITypeMap outputTypeMap;
 
@@ -28,16 +28,16 @@ namespace XRoadLib.Serialization.Mapping
 
         /// <summary>
         /// Initializes new ServiceMap entity using settings specified in operationDefinition.
-        /// <param name="serializerCache">Provides TypeMap lookup.</param>
+        /// <param name="serializer">Provides TypeMap lookup.</param>
         /// <param name="operationDefinition">Operation which this ServiceMap represents.</param>
         /// <param name="requestDefinition">Defines operation request message.</param>
         /// <param name="responseDefinition">Defines operation response message.</param>
         /// <param name="inputTypeMap">Default TypeMap of the operation request root element.</param>
         /// <param name="outputTypeMap"> Default TypeMap of the operation response root element.</param>
         /// </summary>
-        public ServiceMap(ISerializerCache serializerCache, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
+        public ServiceMap(ISerializer serializer, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
         {
-            this.serializerCache = serializerCache;
+            this.serializer = serializer;
 
             RequestDefinition = requestDefinition;
             ResponseDefinition = responseDefinition;
@@ -107,7 +107,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = typeMap;
             if (!content.IgnoreExplicitType)
-                concreteTypeMap = (typeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
+                concreteTypeMap = (typeMap.Definition.IsInheritable ? serializer.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 
             return concreteTypeMap.Deserialize(reader, templateNode, content, message);
         }
@@ -197,7 +197,7 @@ namespace XRoadLib.Serialization.Mapping
                 return;
             }
 
-            var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(value.GetType()) : typeMap;
+            var concreteTypeMap = typeMap.Definition.IsInheritable ? serializer.GetTypeMap(value.GetType()) : typeMap;
 
             concreteTypeMap.Serialize(writer, templateNode, value, content, message);
         }

@@ -10,16 +10,16 @@ namespace XRoadLib.Serialization.Mapping
     public class PropertyMap : IPropertyMap
     {
         private readonly ISet<string> filters = new HashSet<string>();
-        private readonly ISerializerCache serializerCache;
+        private readonly ISerializer serializer;
         private readonly ITypeMap typeMap;
         private readonly GetValueMethod getValueMethod;
         private readonly SetValueMethod setValueMethod;
 
         public PropertyDefinition Definition { get; }
 
-        public PropertyMap(ISerializerCache serializerCache, PropertyDefinition propertyDefinition, ITypeMap typeMap, IEnumerable<string> availableFilters)
+        public PropertyMap(ISerializer serializer, PropertyDefinition propertyDefinition, ITypeMap typeMap, IEnumerable<string> availableFilters)
         {
-            this.serializerCache = serializerCache;
+            this.serializer = serializer;
 
             this.typeMap = typeMap is IContentTypeMap contentTypeMap && propertyDefinition.Content.UseXop
                 ? contentTypeMap.GetOptimizedContentTypeMap()
@@ -49,7 +49,7 @@ namespace XRoadLib.Serialization.Mapping
             if (typeMap.Definition.IsAnonymous && !(typeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
                 throw XRoadException.InvalidQuery($"Expected anonymous type, but `{typeAttribute}` was given.");
 
-            var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializerCache.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
+            var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializer.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 
             var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, Definition.Content, message);
             if (propertyValue == null)
@@ -77,7 +77,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (propertyValue != null)
             {
-                var concreteTypeMap = typeMap.Definition.IsInheritable ? serializerCache.GetTypeMap(propertyValue.GetType()) : typeMap;
+                var concreteTypeMap = typeMap.Definition.IsInheritable ? serializer.GetTypeMap(propertyValue.GetType()) : typeMap;
                 concreteTypeMap.Serialize(writer, templateNode, propertyValue, Definition.Content, message);
             }
 

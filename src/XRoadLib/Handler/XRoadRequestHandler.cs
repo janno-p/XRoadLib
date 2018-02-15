@@ -123,7 +123,7 @@ namespace XRoadLib.Handler
                 return;
             }
 
-            context.ServiceMap = context.Request.GetSerializerCache().GetServiceMap(context.Request.RootElementName);
+            context.ServiceMap = context.Request.GetSerializer().GetServiceMap(context.Request.RootElementName);
             context.Response.BinaryMode = context.ServiceMap.OperationDefinition.OutputBinaryMode;
 
             var serviceObject = GetServiceObject(context);

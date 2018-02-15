@@ -13,7 +13,7 @@ using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Serialization
 {
-    public sealed class SerializerCache : ISerializerCache
+    public sealed class Serializer : ISerializer
     {
         private readonly Assembly contractAssembly;
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
@@ -29,7 +29,7 @@ namespace XRoadLib.Serialization
 
         // public IEnumerable<string> AvailableFilters { get { return availableFilters; } set { availableFilters = value != null ? new List<string>(value) : null; } }
 
-        public SerializerCache(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
+        public Serializer(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
             this.schemaDefinitionProvider = schemaDefinitionProvider;
 
