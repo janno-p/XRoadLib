@@ -36,8 +36,7 @@ namespace XRoadLib.Schema
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = methodParameters.SingleOrDefault();
 
-            if (ParameterInfo != null)
-                Content = ContentDefinition.FromType(this, ParameterInfo, ParameterInfo.ParameterType, "request");
+            Content = ContentDefinition.FromType(this, ParameterInfo, ParameterInfo?.ParameterType, "request");
         }
 
         /// <summary>

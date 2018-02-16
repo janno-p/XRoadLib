@@ -33,6 +33,9 @@ namespace XRoadLib.Schema
 
         public static ContentDefinition FromType(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName)
         {
+            if (customAttributeProvider == null)
+                return new EmptyContentDefinition(particle, runtimeName);
+
             if (runtimeType.IsArray)
                 return new ArrayContentDefiniton(particle, customAttributeProvider, runtimeType, runtimeName);
             

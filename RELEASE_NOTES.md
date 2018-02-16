@@ -1,3 +1,10 @@
+#### 1.1.3 - 16.02.2018
+
+* Common definition for all protocol versions.
+* Move more properties and methods to service manager interface.
+* EmptyContentDefinition type.
+* More service execution options.
+
 #### 1.1.2 - 15.02.2018
 
 * Allow operation filter to override visibility of operations hidden by schema exporter.

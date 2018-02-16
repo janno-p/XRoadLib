@@ -9,7 +9,7 @@ namespace XRoadLib.Headers
     /// <summary>
     /// Details of X-Road message protocol version 3.1 header.
     /// </summary>
-    public class XRoadHeader31 : IXRoadHeader, IXRoadHeader31
+    public class XRoadHeader31 : IXRoadHeader, IXRoadHeader<XRoadHeader31>, IXRoadHeader31
     {
         private readonly XRoadClientIdentifier client = new XRoadClientIdentifier();
         private readonly XRoadServiceIdentifier service = new XRoadServiceIdentifier();
@@ -204,6 +204,28 @@ namespace XRoadLib.Headers
             WriteHeaderValue("encryptCert", EncryptCert, XmlTypeConstants.Base64);
             WriteHeaderValue("encrypted", Encrypted, XmlTypeConstants.String);
             WriteHeaderValue("encryptedCert", EncryptedCert, XmlTypeConstants.String);
+        }
+
+        public XRoadHeader31 InitFrom(XRoadCommonHeader commonHeader)
+        {
+            Consumer = commonHeader.Client.MemberCode;
+            Producer = commonHeader.Service.MemberCode;
+            UserId = commonHeader.UserId;
+            Issue = commonHeader.Issue;
+            ServiceName = commonHeader.Service.ToFullName();
+            Id = commonHeader.Id;
+            Unit = commonHeader.Unit;
+            Position = commonHeader.Position;
+            UserName = commonHeader.UserName;
+            Async = commonHeader.Async;
+            Authenticator = commonHeader.Authenticator;
+            Paid = commonHeader.Paid;
+            Encrypt = commonHeader.Encrypt;
+            EncryptCert = commonHeader.EncryptCert;
+            Encrypted = commonHeader.Encrypted;
+            EncryptedCert = commonHeader.EncryptedCert;
+
+            return this;
         }
     }
 }

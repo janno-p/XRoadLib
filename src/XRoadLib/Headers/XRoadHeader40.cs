@@ -9,7 +9,7 @@ namespace XRoadLib.Headers
     /// <summary>
     /// Implements default X-Road message protocol version 4.0 SOAP header.
     /// </summary>
-    public class XRoadHeader40 : IXRoadHeader, IXRoadHeader40
+    public class XRoadHeader40 : IXRoadHeader, IXRoadHeader<XRoadHeader40>, IXRoadHeader40
     {
         /// <summary>
         /// Client identity.
@@ -359,6 +359,18 @@ namespace XRoadLib.Headers
             WriteHeaderValue("userId", UserId, XmlTypeConstants.String);
             WriteHeaderValue("issue", Issue, XmlTypeConstants.String);
             WriteHeaderValue("protocolVersion", ProtocolVersion, XmlTypeConstants.String);
+        }
+
+        public XRoadHeader40 InitFrom(XRoadCommonHeader commonHeader)
+        {
+            Client = commonHeader.Client;
+            Service = commonHeader.Service;
+            UserId = commonHeader.UserId;
+            Issue = commonHeader.Issue;
+            ProtocolVersion = commonHeader.ProtocolVersion;
+            Id = commonHeader.Id;
+
+            return this;
         }
     }
 }

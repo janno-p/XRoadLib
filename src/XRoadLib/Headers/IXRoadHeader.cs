@@ -54,4 +54,9 @@ namespace XRoadLib.Headers
         /// </summary>
         void WriteTo(XmlWriter writer, Style style, HeaderDefinition headerDefinition);
     }
+
+    public interface IXRoadHeader<out THeader>
+    {
+        THeader InitFrom(XRoadCommonHeader commonHeader);
+    }
 }

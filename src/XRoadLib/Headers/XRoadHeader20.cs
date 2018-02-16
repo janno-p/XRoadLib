@@ -9,7 +9,7 @@ namespace XRoadLib.Headers
     /// <summary>
     /// Details of X-Road message protocol version 2.0 header.
     /// </summary>
-    public class XRoadHeader20 : IXRoadHeader, IXRoadHeader20
+    public class XRoadHeader20 : IXRoadHeader, IXRoadHeader<XRoadHeader20>, IXRoadHeader20
     {
         private readonly XRoadClientIdentifier client = new XRoadClientIdentifier();
         private readonly XRoadServiceIdentifier service = new XRoadServiceIdentifier();
@@ -213,6 +213,28 @@ namespace XRoadLib.Headers
             WriteHeaderValue("salastada_sertifikaadiga", SalastadaSertifikaadiga, XmlTypeConstants.Base64);
             WriteHeaderValue("salastatud", Salastatud, XmlTypeConstants.String);
             WriteHeaderValue("salastatud_sertifikaadiga", SalastatudSertifikaadiga, XmlTypeConstants.String);
+        }
+
+        public XRoadHeader20 InitFrom(XRoadCommonHeader commonHeader)
+        {
+            Asutus = commonHeader.Client.MemberCode;
+            Andmekogu = commonHeader.Service.MemberCode;
+            Isikukood = commonHeader.UserId;
+            Toimik = commonHeader.Issue;
+            Nimi = commonHeader.Service.ToFullName();
+            Id = commonHeader.Id;
+            Allasutus = commonHeader.Unit;
+            Amet = commonHeader.Position;
+            AmetnikNimi = commonHeader.UserName;
+            Asünkroonne = commonHeader.Async;
+            Autentija = commonHeader.Authenticator;
+            Makstud = commonHeader.Paid;
+            Salastada = commonHeader.Encrypt;
+            SalastadaSertifikaadiga = commonHeader.EncryptCert;
+            Salastatud = commonHeader.Encrypted;
+            SalastatudSertifikaadiga = commonHeader.EncryptedCert;
+
+            return this;
         }
     }
 }

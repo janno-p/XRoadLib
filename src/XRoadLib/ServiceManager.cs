@@ -20,7 +20,7 @@ namespace XRoadLib
     /// Manages available services and provides their definitions and serialization details.
     /// </summary>
     public class ServiceManager<THeader> : IServiceManager
-        where THeader : class, IXRoadHeader, new()
+        where THeader : class, IXRoadHeader, IXRoadHeader<THeader>, new()
     {
         private readonly IDictionary<uint, ISerializer> serializers = new Dictionary<uint, ISerializer>();
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
@@ -34,15 +34,15 @@ namespace XRoadLib
         /// <inheritdoc />
         public string ProducerNamespace => ProtocolDefinition.ProducerNamespace;
 
-        /// <summary>
-        /// Header definition of the protocol.
-        /// </summary>
+        /// <inheritdoc />
         public HeaderDefinition HeaderDefinition { get; }
 
-        /// <summary>
-        /// Protocol specification.
-        /// </summary>
+        /// <inheritdoc />
         public ProtocolDefinition ProtocolDefinition { get; }
+
+        /// <inheritdoc />
+        public IXRoadHeader ConvertHeader(XRoadCommonHeader commonHeader) =>
+            new THeader().InitFrom(commonHeader);
 
         /// <summary>
         /// Initializes new X-Road service manager instance.
@@ -66,6 +66,10 @@ namespace XRoadLib
 
             SetContractAssembly();
         }
+
+        /// <inheritdoc />
+        public virtual TResult Execute<TResult>(WebRequest webRequest, object body, XRoadCommonHeader commonHeader, ServiceExecutionOptions options = null) =>
+            Execute<TResult>(webRequest, body, new THeader().InitFrom(commonHeader), options);
 
         /// <summary>
         /// Executes X-Road operation on endpoint specified by WebRequest parameter.
@@ -93,7 +97,8 @@ namespace XRoadLib
 
                     writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
 
-                    operationServiceMap = options?.ServiceMap ?? requestMessage.GetSerializer().GetServiceMap(XName.Get(header.Service.ServiceCode, ProducerNamespace));
+                    var operationName = XName.Get(options?.OperationName ?? header.Service.ServiceCode, ProducerNamespace);
+                    operationServiceMap = options?.ServiceMap ?? GetSerializer(options?.Version ?? requestMessage.Version).GetServiceMap(operationName);
                     operationServiceMap.SerializeRequest(writer, body, requestMessage, options?.RequestNamespace);
 
                     writer.WriteEndElement();
