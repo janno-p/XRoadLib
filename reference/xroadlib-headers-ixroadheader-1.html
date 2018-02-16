@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Int32TypeMap - XRoadLib</title>
+    <title>IXRoadHeader<'THeader> - XRoadLib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Janno Põldma"/>
@@ -35,34 +35,12 @@
 
 
 
-<h1>Int32TypeMap</h1>
+<h1>IXRoadHeader<'THeader></h1>
 <p>
-  <span>Namespace: XRoadLib.Serialization.Mapping</span><br />
+  <span>Namespace: XRoadLib.Headers</span><br />
 </p>
 <div class="xmldoc">
 </div>
-  <h3>Constructors</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '633', 633)" onmouseover="showTip(event, '633', 633)">
-            new(typeDefinition)
-          </code>
-          <div class="tip" id="633">
-            <strong>Signature:</strong> typeDefinition:TypeDefinition -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-    </tbody>
-  </table>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
@@ -72,26 +50,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '634', 634)" onmouseover="showTip(event, '634', 634)">
-            Deserialize(...)
+          <code onmouseout="hideTip(event, '173', 173)" onmouseover="showTip(event, '173', 173)">
+            InitFrom(commonHeader)
           </code>
-          <div class="tip" id="634">
-            <strong>Signature:</strong> (reader:XmlReader * templateNode:IXmlTemplateNode * content:ContentDefinition * message:XRoadMessage) -&gt; obj<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '635', 635)" onmouseover="showTip(event, '635', 635)">
-            Serialize(...)
-          </code>
-          <div class="tip" id="635">
-            <strong>Signature:</strong> (writer:XmlWriter * templateNode:IXmlTemplateNode * value:obj * content:ContentDefinition * message:XRoadMessage) -&gt; unit<br />
+          <div class="tip" id="173">
+            <strong>Signature:</strong> commonHeader:XRoadCommonHeader -&gt; &#39;THeader<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>

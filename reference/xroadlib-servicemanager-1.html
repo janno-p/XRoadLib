@@ -52,10 +52,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
             new(name, schemaExporter)
           </code>
-          <div class="tip" id="16">
+          <div class="tip" id="22">
             <strong>Signature:</strong> (name:string * schemaExporter:ISchemaExporter) -&gt; unit<br />
                       </div>
         </td>
@@ -77,10 +77,25 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
+            ConvertHeader(commonHeader)
+          </code>
+          <div class="tip" id="23">
+            <strong>Signature:</strong> commonHeader:XRoadCommonHeader -&gt; IXRoadHeader<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
             CreateMessage(header)
           </code>
-          <div class="tip" id="17">
+          <div class="tip" id="24">
             <strong>Signature:</strong> header:&#39;THeader -&gt; XRoadMessage<br />
                       </div>
         </td>
@@ -93,10 +108,10 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
             CreateServiceDescription(...)
           </code>
-          <div class="tip" id="18">
+          <div class="tip" id="25">
             <strong>Signature:</strong> (operationFilter:Func&lt;OperationDefinition,bool&gt; * version:Nullable&lt;uint32&gt;) -&gt; ServiceDescription<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -108,10 +123,25 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
             Execute(...)
           </code>
-          <div class="tip" id="19">
+          <div class="tip" id="26">
+            <strong>Signature:</strong> (webRequest:WebRequest * body:obj * commonHeader:XRoadCommonHeader * options:ServiceExecutionOptions) -&gt; &#39;TResult<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
+            Execute(...)
+          </code>
+          <div class="tip" id="27">
             <strong>Signature:</strong> (webRequest:WebRequest * body:obj * header:&#39;THeader * options:ServiceExecutionOptions) -&gt; &#39;TResult<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -125,10 +155,10 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
             GetSerializer(version)
           </code>
-          <div class="tip" id="20">
+          <div class="tip" id="28">
             <strong>Signature:</strong> version:Nullable&lt;uint32&gt; -&gt; ISerializer<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -140,26 +170,25 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
             HeaderDefinition
           </code>
-          <div class="tip" id="21">
+          <div class="tip" id="29">
             <strong>Signature:</strong> HeaderDefinition<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Header definition of the protocol.</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
             IsDefinedByEnvelope(reader)
           </code>
-          <div class="tip" id="22">
+          <div class="tip" id="30">
             <strong>Signature:</strong> reader:XmlReader -&gt; bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -171,10 +200,10 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
+          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
             IsHeaderNamespace(namespaceName)
           </code>
-          <div class="tip" id="23">
+          <div class="tip" id="31">
             <strong>Signature:</strong> namespaceName:string -&gt; bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -186,10 +215,10 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
             Name
           </code>
-          <div class="tip" id="24">
+          <div class="tip" id="32">
             <strong>Signature:</strong> string<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -201,10 +230,10 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
             ProducerNamespace
           </code>
-          <div class="tip" id="25">
+          <div class="tip" id="33">
             <strong>Signature:</strong> string<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -216,26 +245,25 @@ Identifies service manager instance.Schema customization provider.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
+          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
             ProtocolDefinition
           </code>
-          <div class="tip" id="26">
+          <div class="tip" id="34">
             <strong>Signature:</strong> ProtocolDefinition<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Protocol specification.</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
+          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
             Style
           </code>
-          <div class="tip" id="27">
+          <div class="tip" id="35">
             <strong>Signature:</strong> Style<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
