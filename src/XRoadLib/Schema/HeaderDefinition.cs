@@ -96,8 +96,8 @@ namespace XRoadLib.Schema
         {
             public int Compare(XName x, XName y)
             {
-                var ns = string.Compare(x.NamespaceName, y.NamespaceName);
-                return ns != 0 ? ns : string.Compare(x.LocalName, y.LocalName);
+                var ns = string.Compare(x.NamespaceName, y.NamespaceName, StringComparison.OrdinalIgnoreCase);
+                return ns != 0 ? ns : string.Compare(x.LocalName, y.LocalName, StringComparison.OrdinalIgnoreCase);
             }
         }
     }

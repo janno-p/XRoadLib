@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace XRoadLib.Schema
 {
@@ -23,10 +24,10 @@ namespace XRoadLib.Schema
             var xName = x.SerializedName;
             var yName = y.SerializedName;
 
-            var namespaceValue = string.CompareOrdinal(xName?.NamespaceName ?? "", yName?.NamespaceName ?? "");
+            var namespaceValue = string.Compare(xName?.NamespaceName ?? "", yName?.NamespaceName ?? "", StringComparison.OrdinalIgnoreCase);
 
             return namespaceValue == 0
-                ? string.CompareOrdinal(xName?.LocalName ?? "", yName?.LocalName ?? "")
+                ? string.Compare(xName?.LocalName ?? "", yName?.LocalName ?? "", StringComparison.OrdinalIgnoreCase)
                 : namespaceValue;
         }
     }

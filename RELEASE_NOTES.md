@@ -1,3 +1,7 @@
+#### 1.1.4 - Unreleased
+
+* Fix default property comparer.
+
 #### 1.1.3 - 16.02.2018
 
 * Common definition for all protocol versions.
