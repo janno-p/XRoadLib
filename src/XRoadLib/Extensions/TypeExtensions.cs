@@ -35,18 +35,22 @@ namespace XRoadLib.Extensions
             return false;
         }
 
+        private static IEnumerable<PropertyDefinition> GetTypeProperties(this Type type, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition)
+        {
+            return type.GetTypeInfo()
+                       .GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                       .Where(prop => !prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null)
+                       .Where(prop => !version.HasValue || prop.ExistsInVersion(version.Value))
+                       .Select(createDefinition)
+                       .ToList();
+        }
+
         public static IEnumerable<PropertyDefinition> GetPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition)
         {
             if (comparer == null)
                 throw new ArgumentNullException(nameof(comparer));
 
-            var properties = type.GetTypeInfo()
-                                 .GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-                                 .Where(prop => !prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null)
-                                 .Where(prop => !version.HasValue || prop.ExistsInVersion(version.Value))
-                                 .Select(createDefinition);
-
-            return new SortedSet<PropertyDefinition>(properties, comparer);
+            return GetTypeProperties(type, version, createDefinition).OrderBy(x => x, comparer);
         }
 
         public static IEnumerable<PropertyDefinition> GetAllPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition)

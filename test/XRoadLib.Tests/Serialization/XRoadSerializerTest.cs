@@ -79,6 +79,31 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
+        public void CanSerializeTypeWithIdenticalPropertyNamesWhenCaseIgnored()
+        {
+            var cls = new IgnoreCaseClass
+            {
+                ObjektID = 3,
+                Objektid = new [] { 1L, 2, 3 }
+            };
+
+            var expected = "<keha>" +
+                           "<Objektid xsi:type=\"SOAP-ENC:Array\" SOAP-ENC:arrayType=\"xsd:long[3]\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
+                           "<item xsi:type=\"xsd:long\">1</item>" +
+                           "<item xsi:type=\"xsd:long\">2</item>" +
+                           "<item xsi:type=\"xsd:long\">3</item>" +
+                           "</Objektid>" +
+                           "<ObjektID xsi:type=\"xsd:long\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">3</ObjektID>" +
+                           "</keha>";
+
+            SerializeWithContext("keha", cls, 1u, true, false, (msg, xml) =>
+            {
+                Assert.Equal(expected, xml);
+                Assert.Equal(0, msg.AllAttachments.Count);
+            });
+        }
+
+        [Fact]
         public void CanSerializeArrayContentInEnvelope()
         {
             var value = new[] { 5, 4, 3 };
