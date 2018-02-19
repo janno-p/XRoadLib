@@ -1,4 +1,4 @@
-#### 1.1.4 - Unreleased
+#### 1.1.4 - 19.02.2018
 
 * Fix default property comparer.
 
