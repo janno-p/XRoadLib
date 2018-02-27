@@ -5,7 +5,6 @@ set -o pipefail
 
 cd `dirname $0`
 
-PAKET_BOOTSTRAPPER_EXE=.paket/paket.bootstrapper.exe
 PAKET_EXE=.paket/paket.exe
 FAKE_EXE=packages/FAKE/tools/FAKE.exe
 
@@ -24,8 +23,6 @@ function run() {
     "$@"
   fi
 }
-
-run $PAKET_BOOTSTRAPPER_EXE
 
 if [[ "$OS" != "Windows_NT" ]] &&
        [ ! -e ~/.config/.mono/certs ]
