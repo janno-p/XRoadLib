@@ -71,8 +71,9 @@ Target "BuildRelease" (fun _ ->
 Target "CopyBinaries" (fun _ ->
     productProjects
     |> Seq.map (fun f -> Path.GetDirectoryName(f))
-    |> Seq.filter (fun d -> Directory.Exists(d </> "bin" </> "Release" </> "net452"))
-    |> Seq.map (fun d -> (d </> "bin" </> "Release" </> "net452", "bin" </> DirectoryInfo(d).Name))
+    |> Seq.allPairs ["net452"; "net461"]
+    |> Seq.filter (fun (fw, d) -> Directory.Exists(d </> "bin" </> "Release" </> fw))
+    |> Seq.map (fun (fw, d) -> (d </> "bin" </> "Release" </> fw, "bin" </> DirectoryInfo(d).Name))
     |> Seq.iter (fun (fromDir, toDir) -> CopyDir toDir fromDir (fun _ -> true))
 )
 

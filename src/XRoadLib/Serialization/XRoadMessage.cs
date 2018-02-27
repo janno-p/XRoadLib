@@ -12,7 +12,7 @@ using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Styles;
 
-#if NETSTANDARD2_0
+#if !NET452
 using Microsoft.AspNetCore.Http;
 #endif
 
@@ -174,8 +174,7 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
-#if NETSTANDARD2_0
-
+#if !NET452
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
@@ -183,9 +182,9 @@ namespace XRoadLib.Serialization
         {
             LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
         }
+#endif
 
-#else
-
+#if !NETSTANDARD2_0
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
@@ -193,7 +192,6 @@ namespace XRoadLib.Serialization
         {
             LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
         }
-
 #endif
 
         /// <summary>
@@ -230,7 +228,7 @@ namespace XRoadLib.Serialization
                 reader.Read(this, true);
         }
 
-#if NETSTANDARD2_0
+#if !NET452
 
         /// <summary>
         /// Serializes X-Road message into specified HTTP context response.
@@ -243,9 +241,9 @@ namespace XRoadLib.Serialization
             using (var writer = new XRoadMessageWriter(outputStream))
                 writer.Write(this, contentType => httpContext.Response.ContentType = contentType, appendHeader);
         }
+#endif
 
-#else
-
+#if !NETSTANDARD2_0
         /// <summary>
         /// Serializes X-Road message into specified HTTP context response.
         /// </summary>
@@ -258,7 +256,6 @@ namespace XRoadLib.Serialization
             using (var writer = new XRoadMessageWriter(outputStream))
                 writer.Write(this, contentType => httpContext.Response.ContentType = contentType, appendHeader);
         }
-
 #endif
 
         /// <summary>

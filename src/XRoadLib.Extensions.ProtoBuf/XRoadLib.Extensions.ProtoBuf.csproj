@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>XRoadLib.Extensions.ProtoBuf</AssemblyName>
     <AssemblyTitle>XRoadLib.Extensions.ProtoBuf</AssemblyTitle>
-    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net452;net461;netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
@@ -19,6 +19,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net452' ">
     <FrameworkPathOverride>/usr/lib/mono/4.5.2-api</FrameworkPathOverride>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net461' ">
+    <FrameworkPathOverride>/usr/lib/mono/4.6.1-api</FrameworkPathOverride>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <AssemblyOriginatorKeyFile>../XRoadLib.snk</AssemblyOriginatorKeyFile>

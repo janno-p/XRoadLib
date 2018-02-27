@@ -1,4 +1,4 @@
-#if NETSTANDARD2_0
+#if !NET452
 
 using System;
 using Microsoft.AspNetCore.Http;

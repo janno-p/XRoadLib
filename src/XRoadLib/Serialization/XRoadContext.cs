@@ -61,7 +61,7 @@ namespace XRoadLib.Serialization
         }
     }
 
-#if NETSTANDARD2_0
+#if !NET452
 
     /// <summary>
     /// X-Road context of classical AspNetCore applications.
@@ -75,9 +75,9 @@ namespace XRoadLib.Serialization
             : base(httpContext)
         { }
     }
+#endif
 
-#else
-
+#if !NETSTANDARD2_0
     /// <summary>
     /// X-Road context of classical ASP.NET applications.
     /// </summary>
@@ -90,6 +90,5 @@ namespace XRoadLib.Serialization
             : base(httpContext)
         { }
     }
-
 #endif
 }
