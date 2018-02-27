@@ -1,3 +1,7 @@
+#### 1.1.6 - 27.02.2018
+
+* Fix regression in enum deserialization.
+
 #### 1.1.5 - 27.02.2018
 
 * Fix enum deserialization of self-closing element tags.

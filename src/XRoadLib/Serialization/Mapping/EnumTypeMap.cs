@@ -31,14 +31,16 @@ namespace XRoadLib.Serialization.Mapping
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
-            var stringValue = reader.IsEmptyElement ? "" : reader.ReadElementContentAsString();
+            var isEmptyElement = reader.IsEmptyElement;
+
+            var stringValue = isEmptyElement ? "" : reader.ReadElementContentAsString();
 
             if (!deserializationMapping.TryGetValue(stringValue, out var enumerationValue))
                 throw new MissingFieldException($"Unexpected value `{stringValue}` for enumeration type `{Definition.Name}`.");
 
             var result = Enum.ToObject(Definition.Type, enumerationValue);
 
-            return reader.IsEmptyElement ? MoveNextAndReturn(reader, result) : result;
+            return isEmptyElement ? MoveNextAndReturn(reader, result) : result;
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
