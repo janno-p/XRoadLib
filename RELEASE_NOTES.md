@@ -1,3 +1,7 @@
+#### 1.1.7 - 27.02.2018
+
+* Separate net461 packaging.
+
 #### 1.1.6 - 27.02.2018
 
 * Fix regression in enum deserialization.
