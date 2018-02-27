@@ -25,5 +25,20 @@ namespace XRoadLib.Tests.Serialization.Mapping
                     return typeMap.Deserialize(reader, null, Globals.GetTestDefinition(typeMap.Definition.Type), message);
             }
         }
+
+        protected static object DeserializeEmptyValue(ITypeMap typeMap)
+        {
+            var writer = new StringBuilder();
+            writer.AppendLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
+            writer.AppendLine("<value />");
+
+            using (var textReader = new StringReader(writer.ToString()))
+            using (var reader = XmlReader.Create(textReader))
+            {
+                while (reader.Read() && reader.NodeType != XmlNodeType.Element) { }
+                using (var message = Globals.ServiceManager20.CreateMessage())
+                    return typeMap.Deserialize(reader, null, Globals.GetTestDefinition(typeMap.Definition.Type), message);
+            }
+        }
     }
 }

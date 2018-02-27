@@ -1,3 +1,7 @@
+#### 1.1.5 - 27.02.2018
+
+* Fix enum deserialization of self-closing element tags.
+
 #### 1.1.4 - 19.02.2018
 
 * Fix default property comparer.

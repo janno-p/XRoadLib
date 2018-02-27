@@ -489,7 +489,7 @@ namespace XRoadLib.Tests.Serialization
             }
         }
 
-        private object DeserializeRequest20(string templateXml, string contentXml)
+        private static object DeserializeRequest20(string templateXml, string contentXml)
         {
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
             return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager20, (msgr, xmlr) =>
@@ -506,7 +506,7 @@ namespace XRoadLib.Tests.Serialization
             });
         }
 
-        private object DeserializeRequest31(string templateXml, string contentXml)
+        private static object DeserializeRequest31(string templateXml, string contentXml)
         {
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
             return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager31, (msgr, xmlr) =>
@@ -523,7 +523,7 @@ namespace XRoadLib.Tests.Serialization
             });
         }
 
-        private object DeserializeRequest(string templateXml, string contentXml, IServiceManager protocol, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
+        private static object DeserializeRequest(string templateXml, string contentXml, IServiceManager protocol, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream))
