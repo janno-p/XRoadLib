@@ -52,11 +52,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '170', 170)" onmouseover="showTip(event, '170', 170)">
+          <code onmouseout="hideTip(event, '179', 179)" onmouseover="showTip(event, '179', 179)">
             HandleException(...)
           </code>
-          <div class="tip" id="170">
-            <strong>Signature:</strong> (httpContext:HttpContext * exception:exn * faultCode:FaultCode * faultString:string * faultActor:string * details:string) -&gt; unit<br />
+          <div class="tip" id="179">
+            <strong>Signature:</strong> (httpContext:XRoadContext * exception:exn * faultCode:FaultCode * faultString:string * faultActor:string * details:string) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
@@ -69,16 +69,33 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '171', 171)" onmouseover="showTip(event, '171', 171)">
+          <code onmouseout="hideTip(event, '180', 180)" onmouseover="showTip(event, '180', 180)">
             HandleRequest(context)
           </code>
-          <div class="tip" id="171">
-            <strong>Signature:</strong> context:HttpContext -&gt; unit<br />
+          <div class="tip" id="180">
+            <strong>Signature:</strong> context:XRoadContext -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
           <p>Handles X-Road message service request.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '181', 181)" onmouseover="showTip(event, '181', 181)">
+            ServiceManager
+          </code>
+          <div class="tip" id="181">
+            <strong>Signature:</strong> IServiceManager<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          <p>Provides services which this handler instance supports.</p>
 
 
         </td>

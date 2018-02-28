@@ -52,11 +52,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '181', 181)" onmouseover="showTip(event, '181', 181)">
-            new()
+          <code onmouseout="hideTip(event, '191', 191)" onmouseover="showTip(event, '191', 191)">
+            new(serviceManager)
           </code>
-          <div class="tip" id="181">
-            <strong>Signature:</strong> unit -&gt; unit<br />
+          <div class="tip" id="191">
+            <strong>Signature:</strong> serviceManager:IServiceManager -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -74,35 +74,46 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '182', 182)" onmouseover="showTip(event, '182', 182)">
+          <code onmouseout="hideTip(event, '192', 192)" onmouseover="showTip(event, '192', 192)">
             HandleException(...)
           </code>
-          <div class="tip" id="182">
-            <strong>Signature:</strong> (context:HttpContext * exception:exn * faultCode:FaultCode * faultString:string * faultActor:string * details:string) -&gt; unit<br />
+          <div class="tip" id="192">
+            <strong>Signature:</strong> (context:XRoadContext * exception:exn * faultCode:FaultCode * faultString:string * faultActor:string * details:string) -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Handle exception that occured while handling X-Road message service request.</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '183', 183)" onmouseover="showTip(event, '183', 183)">
+          <code onmouseout="hideTip(event, '193', 193)" onmouseover="showTip(event, '193', 193)">
             HandleRequest(context)
           </code>
-          <div class="tip" id="183">
-            <strong>Signature:</strong> context:HttpContext -&gt; unit<br />
+          <div class="tip" id="193">
+            <strong>Signature:</strong> context:XRoadContext -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-          <p>Handles X-Road message service request.</p>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
 
-
+          <code onmouseout="hideTip(event, '194', 194)" onmouseover="showTip(event, '194', 194)">
+            ServiceManager
+          </code>
+          <div class="tip" id="194">
+            <strong>Signature:</strong> IServiceManager<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
         </td>
       </tr>
     </tbody>

@@ -73,11 +73,11 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
-            AddRequestHandler()
+            RequestHandler()
           </code>
           <div class="tip" id="56">
             <strong>Signature:</strong> unit -&gt; unit<br />
-                          <strong>Type parameters:</strong> 'T          </div>
+                      </div>
         </td>
         <td class="xmldoc">
           
@@ -87,11 +87,11 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
-            AddWsdlHandler()
+            RequestPath()
           </code>
           <div class="tip" id="57">
             <strong>Signature:</strong> unit -&gt; unit<br />
-                          <strong>Type parameters:</strong> 'T          </div>
+                      </div>
         </td>
         <td class="xmldoc">
           
@@ -101,7 +101,7 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
-            ContractAssembly()
+            ServiceManager()
           </code>
           <div class="tip" id="58">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -115,7 +115,7 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
-            RequestHandler()
+            StoragePath()
           </code>
           <div class="tip" id="59">
             <strong>Signature:</strong> unit -&gt; unit<br />
@@ -129,11 +129,11 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
-            RequestPath()
+            WithRequestHandler(path)
           </code>
           <div class="tip" id="60">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-                      </div>
+            <strong>Signature:</strong> path:string -&gt; XRoadLibOptions<br />
+                          <strong>Type parameters:</strong> 'T          </div>
         </td>
         <td class="xmldoc">
           
@@ -143,10 +143,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
-            ServiceManagers()
+            WithRequestHandler(requestHandler, path)
           </code>
           <div class="tip" id="61">
-            <strong>Signature:</strong> unit -&gt; unit<br />
+            <strong>Signature:</strong> (requestHandler:IXRoadHandler * path:string) -&gt; XRoadLibOptions<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -157,10 +157,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
-            StoragePath()
+            WithRequestHandler(requestHandler, path)
           </code>
           <div class="tip" id="62">
-            <strong>Signature:</strong> unit -&gt; unit<br />
+            <strong>Signature:</strong> (requestHandler:Func&lt;IServiceProvider,IXRoadHandler&gt; * path:string) -&gt; XRoadLibOptions<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -171,10 +171,10 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
-            WsdlHandler()
+            WithRequestPath(path)
           </code>
           <div class="tip" id="63">
-            <strong>Signature:</strong> unit -&gt; unit<br />
+            <strong>Signature:</strong> path:string -&gt; XRoadLibOptions<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -185,9 +185,135 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
-            WsdlPath()
+            WithServiceManager(path)
           </code>
           <div class="tip" id="64">
+            <strong>Signature:</strong> path:string -&gt; XRoadLibOptions<br />
+                          <strong>Type parameters:</strong> 'T          </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+            WithServiceManager(serviceManager, path)
+          </code>
+          <div class="tip" id="65">
+            <strong>Signature:</strong> (serviceManager:IServiceManager * path:string) -&gt; XRoadLibOptions<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+            WithServiceManager(serviceManager, path)
+          </code>
+          <div class="tip" id="66">
+            <strong>Signature:</strong> (serviceManager:Func&lt;IServiceProvider,IServiceManager&gt; * path:string) -&gt; XRoadLibOptions<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+            WithStoragePath(path)
+          </code>
+          <div class="tip" id="67">
+            <strong>Signature:</strong> path:DirectoryInfo -&gt; XRoadLibOptions<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+            WithWsdlHandler(path)
+          </code>
+          <div class="tip" id="68">
+            <strong>Signature:</strong> path:string -&gt; XRoadLibOptions<br />
+                          <strong>Type parameters:</strong> 'T          </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
+            WithWsdlHandler(wsdlHandler, path)
+          </code>
+          <div class="tip" id="69">
+            <strong>Signature:</strong> (wsdlHandler:IXRoadHandler * path:string) -&gt; XRoadLibOptions<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
+            WithWsdlHandler(wsdlHandler, path)
+          </code>
+          <div class="tip" id="70">
+            <strong>Signature:</strong> (wsdlHandler:Func&lt;IServiceProvider,IXRoadHandler&gt; * path:string) -&gt; XRoadLibOptions<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
+            WithWsdlPath(path)
+          </code>
+          <div class="tip" id="71">
+            <strong>Signature:</strong> path:string -&gt; XRoadLibOptions<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
+            WsdlHandler()
+          </code>
+          <div class="tip" id="72">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
+            WsdlPath()
+          </code>
+          <div class="tip" id="73">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
