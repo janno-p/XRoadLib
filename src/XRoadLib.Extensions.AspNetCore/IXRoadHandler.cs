@@ -1,10 +1,7 @@
-#if !NET452
-
-using System;
-using XRoadLib.Serialization;
+﻿using System;
 using XRoadLib.Soap;
 
-namespace XRoadLib.Handler
+namespace XRoadLib.Extensions.AspNetCore
 {
     /// <summary>
     /// General interface of X-Road message handlers.
@@ -27,5 +24,3 @@ namespace XRoadLib.Handler
         void HandleException(XRoadContext httpContext, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details);
     }
 }
-
-#endif

@@ -1,12 +1,9 @@
-#if !NET452
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using XRoadLib.Handler;
 using XRoadLib.Serialization;
 
-namespace XRoadLib
+namespace XRoadLib.Extensions.AspNetCore
 {
     public class XRoadLibMiddleware
     {
@@ -80,5 +77,3 @@ namespace XRoadLib
         }
     }
 }
-
-#endif

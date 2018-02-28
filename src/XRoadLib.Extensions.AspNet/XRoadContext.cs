@@ -1,18 +1,20 @@
 ﻿using System;
 using System.IO;
+using System.Web;
+using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 
-namespace XRoadLib.Serialization
+namespace XRoadLib.Extensions.AspNet
 {
     /// <summary>
-    /// Combines X-Road message protocol request and response into single object.
+    /// X-Road context of classical ASP.NET applications.
     /// </summary>
-    public abstract class XRoadContext<THttpContext> : IDisposable
+    public class XRoadContext : IDisposable
     {
         /// <summary>
         /// HTTP context this X-Road context is bound to.
         /// </summary>
-        public THttpContext HttpContext { get; }
+        public HttpContext HttpContext { get; }
 
         /// <summary>
         /// X-Road request message.
@@ -45,9 +47,9 @@ namespace XRoadLib.Serialization
         public Exception Exception { get; set; }
 
         /// <summary>
-        /// Intializes new X-Road message context.
+        /// Initialize new X-Road context instance.
         /// </summary>
-        public XRoadContext(THttpContext httpContext)
+        public XRoadContext(HttpContext httpContext)
         {
             HttpContext = httpContext;
             Request = new XRoadMessage();
@@ -60,35 +62,4 @@ namespace XRoadLib.Serialization
             Request?.Dispose();
         }
     }
-
-#if !NET452
-
-    /// <summary>
-    /// X-Road context of classical AspNetCore applications.
-    /// </summary>
-    public class XRoadContext : XRoadContext<Microsoft.AspNetCore.Http.HttpContext>
-    {
-        /// <summary>
-        /// Initialize new X-Road context instance.
-        /// </summary>
-        public XRoadContext(Microsoft.AspNetCore.Http.HttpContext httpContext)
-            : base(httpContext)
-        { }
-    }
-#endif
-
-#if !NETSTANDARD2_0
-    /// <summary>
-    /// X-Road context of classical ASP.NET applications.
-    /// </summary>
-    public class XRoadContextClassic : XRoadContext<System.Web.HttpContext>
-    {
-        /// <summary>
-        /// Initialize new X-Road context instance.
-        /// </summary>
-        public XRoadContextClassic(System.Web.HttpContext httpContext)
-            : base(httpContext)
-        { }
-    }
-#endif
 }

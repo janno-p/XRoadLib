@@ -6,7 +6,7 @@ using XRoadLib.Schema;
 
 namespace XRoadLib.Serialization
 {
-    internal class XRoadMessageWriter : IDisposable
+    public class XRoadMessageWriter : IDisposable
     {
         public const string NEW_LINE = "\r\n";
         

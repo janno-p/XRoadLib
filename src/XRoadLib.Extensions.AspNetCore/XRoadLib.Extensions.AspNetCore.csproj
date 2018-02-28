@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>XRoadLib.Extensions.ProtoBuf</AssemblyName>
-    <AssemblyTitle>XRoadLib.Extensions.ProtoBuf</AssemblyTitle>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <AssemblyName>XRoadLib.Extensions.AspNetCore</AssemblyName>
+    <AssemblyTitle>XRoadLib.Extensions.AspNetCore</AssemblyTitle>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
@@ -10,15 +10,12 @@
   <PropertyGroup>
     <Authors>Janno Põldma</Authors>
     <Copyright>Copyright © 2018</Copyright>
-    <Description>XRoadLib extension to use Google Protocol Buffers with X-Road messages</Description>
-    <PackageId>XRoadLib.Extensions.ProtoBuf</PackageId>
-    <PackageTags>x-tee;x-road;xtee;xroad;protocol;buffers</PackageTags>
+    <Description>XRoadLib extension to use X-Road messages on ASP.NET Core platform</Description>
+    <PackageId>XRoadLib.Extensions.AspNetCore</PackageId>
+    <PackageTags>x-tee;x-road;xtee;xroad;aspnetcore;asp.net,core,net</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png</PackageIconUrl>
     <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
     <PackageLicenseUrl>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicenseUrl>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net45' ">
-    <FrameworkPathOverride>/usr/lib/mono/4.5-api</FrameworkPathOverride>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <AssemblyOriginatorKeyFile>../XRoadLib.snk</AssemblyOriginatorKeyFile>
@@ -29,6 +26,7 @@
     <ProjectReference Include="..\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
   </ItemGroup>
 </Project>

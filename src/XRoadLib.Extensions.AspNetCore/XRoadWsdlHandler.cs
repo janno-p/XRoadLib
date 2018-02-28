@@ -1,9 +1,4 @@
-#if !NET452
-
-using XRoadLib.Extensions;
-using XRoadLib.Serialization;
-
-namespace XRoadLib.Handler
+﻿namespace XRoadLib.Extensions.AspNetCore
 {
     /// <inheritdoc />
     /// <summary>
@@ -26,5 +21,3 @@ namespace XRoadLib.Handler
         }
     }
 }
-
-#endif

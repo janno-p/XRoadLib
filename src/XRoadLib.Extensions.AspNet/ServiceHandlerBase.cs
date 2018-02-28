@@ -1,13 +1,11 @@
-﻿#if !NETSTANDARD2_0
-
-using System;
+﻿using System;
 using System.Text;
-using System.Xml;
 using System.Web;
+using System.Xml;
 using XRoadLib.Serialization;
 using XRoadLib.Soap;
 
-namespace XRoadLib.Handler
+namespace XRoadLib.Extensions.AspNet
 {
     /// <summary>
     /// Base handler of various X-Road operations.
@@ -29,7 +27,7 @@ namespace XRoadLib.Handler
             httpContext.Request.InputStream.Position = 0;
             httpContext.Response.ContentType = $"text/xml; charset={encoding.HeaderName}";
 
-            using (var context = new XRoadContextClassic(httpContext))
+            using (var context = new XRoadContext(httpContext))
             {
                 try
                 {
@@ -45,17 +43,15 @@ namespace XRoadLib.Handler
         /// <summary>
         /// Handle current X-Road operation.
         /// </summary>
-        protected abstract void HandleRequest(XRoadContextClassic context);
+        protected abstract void HandleRequest(XRoadContext context);
 
         /// <summary>
         /// Handles all exceptions as technical SOAP faults.
         /// </summary>
-        protected virtual void OnExceptionOccured(XRoadContextClassic context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
+        protected virtual void OnExceptionOccured(XRoadContext context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
         {
             using (var writer = new XmlTextWriter(context.HttpContext.Response.OutputStream, encoding))
                 SoapMessageHelper.SerializeSoapFaultResponse(writer, faultCode, faultString, faultActor, details, exception);
         }
     }
 }
-
-#endif

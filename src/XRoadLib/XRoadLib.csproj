@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>XRoadLib</AssemblyName>
     <AssemblyTitle>XRoadLib</AssemblyTitle>
-    <TargetFrameworks>net452;net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
@@ -17,8 +17,8 @@
     <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
     <PackageLicenseUrl>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicenseUrl>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net452' ">
-    <FrameworkPathOverride>/usr/lib/mono/4.5.2-api</FrameworkPathOverride>
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net45' ">
+    <FrameworkPathOverride>/usr/lib/mono/4.5-api</FrameworkPathOverride>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net461' ">
     <FrameworkPathOverride>/usr/lib/mono/4.6.1-api</FrameworkPathOverride>
@@ -33,13 +33,10 @@
       <_Parameter1>XRoadLib.Tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' Or '$(TargetFramework)' == 'net461' ">
-    <Reference Include="System.Web" />
+  <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
     <Reference Include="System.Web.Services" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net461' ">
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
 </Project>

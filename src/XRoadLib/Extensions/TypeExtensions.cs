@@ -215,7 +215,7 @@ namespace XRoadLib.Extensions
             return Tuple.Create(methodContract, serviceAttribute);
         }
 
-        internal static string GetValueOrDefault(this string value, string defaultValue = null)
+        public static string GetValueOrDefault(this string value, string defaultValue = null)
         {
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }

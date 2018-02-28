@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Web.Services.Description;
 using XRoadLib.Headers;
-using XRoadLib.Styles;
 
 namespace XRoadLib.Schema
 {

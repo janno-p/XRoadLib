@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using XRoadLib.Headers;
 
 namespace XRoadLib.Schema
 {

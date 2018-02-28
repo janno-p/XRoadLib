@@ -1,11 +1,8 @@
-#if !NET452
-
-using System;
+﻿using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
-using XRoadLib.Handler;
 
-namespace XRoadLib
+namespace XRoadLib.Extensions.AspNetCore
 {
     public class XRoadLibOptions
     {
@@ -90,5 +87,3 @@ namespace XRoadLib
         }
     }
 }
-
-#endif

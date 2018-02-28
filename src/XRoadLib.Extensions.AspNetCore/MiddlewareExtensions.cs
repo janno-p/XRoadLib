@@ -1,9 +1,7 @@
-#if !NET452
-
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Builder;
 
-namespace XRoadLib.Extensions
+namespace XRoadLib.Extensions.AspNetCore
 {
     public static class MiddlewareExtensions
     {
@@ -18,5 +16,3 @@ namespace XRoadLib.Extensions
         }
     }
 }
-
-#endif

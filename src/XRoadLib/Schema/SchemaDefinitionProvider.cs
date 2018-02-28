@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Web.Services.Description;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Headers;
-using XRoadLib.Serialization;
-using XRoadLib.Serialization.Mapping;
 using XRoadLib.Styles;
 
 namespace XRoadLib.Schema

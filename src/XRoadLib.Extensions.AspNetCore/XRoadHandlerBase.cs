@@ -1,12 +1,10 @@
-#if !NET452
-
-using System;
+﻿using System;
 using System.IO;
 using System.Xml;
 using XRoadLib.Serialization;
 using XRoadLib.Soap;
 
-namespace XRoadLib.Handler
+namespace XRoadLib.Extensions.AspNetCore
 {
     /// <inheritdoc />
     /// <summary>
@@ -32,5 +30,3 @@ namespace XRoadLib.Handler
         }
     }
 }
-
-#endif

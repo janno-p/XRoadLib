@@ -1,9 +1,4 @@
-﻿#if !NETSTANDARD2_0
-
-using XRoadLib.Extensions;
-using XRoadLib.Serialization;
-
-namespace XRoadLib.Handler
+﻿namespace XRoadLib.Extensions.AspNet
 {
     /// <inheritdoc />
     public class ServiceDescriptionHandlerBase : ServiceHandlerBase
@@ -19,12 +14,10 @@ namespace XRoadLib.Handler
         protected virtual uint? Version => null;
 
         /// <inheritdoc />
-        protected override void HandleRequest(XRoadContextClassic context)
+        protected override void HandleRequest(XRoadContext context)
         {
             ServiceManager.CreateServiceDescription(version: Version)
                           .SaveTo(context.HttpContext.Response.OutputStream);
         }
     }
 }
-
-#endif

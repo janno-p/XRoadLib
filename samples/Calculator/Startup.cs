@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using XRoadLib;
-using XRoadLib.Extensions;
+using XRoadLib.Extensions.AspNetCore;
 using XRoadLib.Headers;
 using XRoadLib.Schema;
 

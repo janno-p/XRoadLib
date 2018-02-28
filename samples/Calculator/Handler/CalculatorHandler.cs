@@ -1,8 +1,7 @@
 using System;
 using System.IO;
 using XRoadLib;
-using XRoadLib.Handler;
-using XRoadLib.Serialization;
+using XRoadLib.Extensions.AspNetCore;
 
 namespace Calculator.Handler
 {

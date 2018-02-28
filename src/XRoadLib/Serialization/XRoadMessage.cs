@@ -8,13 +8,8 @@ using System.Xml.Linq;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
-using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Styles;
-
-#if !NET452
-using Microsoft.AspNetCore.Http;
-#endif
 
 namespace XRoadLib.Serialization
 {
@@ -174,34 +169,6 @@ namespace XRoadLib.Serialization
             return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
         }
 
-#if !NET452
-        /// <summary>
-        /// Loads X-Road message contents from request message.
-        /// </summary>
-        public void LoadRequest(HttpContext httpContext, string storagePath, IEnumerable<IServiceManager> serviceManagers)
-        {
-            LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
-        }
-
-        /// <summary>
-        /// Loads X-Road message contents from request message.
-        /// </summary>
-        public void LoadRequest(HttpContext httpContext, string storagePath, IServiceManager serviceManager)
-        {
-            LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, new [] { serviceManager });
-        }
-#endif
-
-#if !NETSTANDARD2_0
-        /// <summary>
-        /// Loads X-Road message contents from request message.
-        /// </summary>
-        public void LoadRequest(System.Web.HttpContext httpContext, string storagePath, IEnumerable<IServiceManager> serviceManagers)
-        {
-            LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
-        }
-#endif
-
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
@@ -235,36 +202,6 @@ namespace XRoadLib.Serialization
             using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, serviceManagers))
                 reader.Read(this, true);
         }
-
-#if !NET452
-
-        /// <summary>
-        /// Serializes X-Road message into specified HTTP context response.
-        /// </summary>
-        public void SaveTo(HttpContext httpContext)
-        {
-            var outputStream = httpContext.Response.Body;
-            var appendHeader = new Action<string, string>((k, v) => httpContext.Response.Headers[k] = v);
-
-            using (var writer = new XRoadMessageWriter(outputStream))
-                writer.Write(this, contentType => httpContext.Response.ContentType = contentType, appendHeader);
-        }
-#endif
-
-#if !NETSTANDARD2_0
-        /// <summary>
-        /// Serializes X-Road message into specified HTTP context response.
-        /// </summary>
-        public void SaveTo(System.Web.HttpContext httpContext)
-        {
-
-            var outputStream = httpContext.Response.OutputStream;
-            var appendHeader = new Action<string, string>(httpContext.Response.AppendHeader);
-
-            using (var writer = new XRoadMessageWriter(outputStream))
-                writer.Write(this, contentType => httpContext.Response.ContentType = contentType, appendHeader);
-        }
-#endif
 
         /// <summary>
         /// Serializes X-Road message into specified web request.
