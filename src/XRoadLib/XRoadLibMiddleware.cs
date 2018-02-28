@@ -29,44 +29,47 @@ namespace XRoadLib
             requestHandler = new Lazy<IXRoadHandler>(() => options.RequestHandler != null ? (IXRoadHandler)services.GetRequiredService(options.RequestHandler) : new XRoadRequestHandler(options.ServiceManagers, options.StoragePath));
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext httpContext)
         {
-            var handler = GetXRoadHandler(context);
+            var handler = GetXRoadHandler(httpContext);
             if (handler == null)
             {
-                await next.Invoke(context);
+                await next.Invoke(httpContext);
                 return;
             }
 
-            try
+            using (var context = new XRoadContext(httpContext))
             {
-                if (context.Request.Body.CanSeek)
-                    context.Request.Body.Position = 0;
-
-                context.Response.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
-
-                handler.HandleRequest(context);
-            }
-            catch (Exception exception)
-            {
-                if (context.Response.Body.CanSeek)
+                try
                 {
-                    context.Response.Body.Position = 0;
-                    context.Response.Body.SetLength(0);
-                }
+                    if (httpContext.Request.Body.CanSeek)
+                        httpContext.Request.Body.Position = 0;
 
-                handler.HandleException(context, exception, null, null, null, null);
+                    httpContext.Response.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
+
+                    handler.HandleRequest(context);
+                }
+                catch (Exception exception)
+                {
+                    if (httpContext.Response.Body.CanSeek)
+                    {
+                        httpContext.Response.Body.Position = 0;
+                        httpContext.Response.Body.SetLength(0);
+                    }
+
+                    handler.HandleException(context, exception, null, null, null, null);
+                }
             }
         }
 
-        private IXRoadHandler GetXRoadHandler(HttpContext context)
+        private IXRoadHandler GetXRoadHandler(HttpContext httpContext)
         {
-            var path = context.Request.Path.HasValue ? context.Request.Path.Value : null;
+            var path = httpContext.Request.Path.HasValue ? httpContext.Request.Path.Value : null;
 
-            if (context.Request.Method == "GET" && Equals(path, options.WsdlPath))
+            if (httpContext.Request.Method == "GET" && Equals(path, options.WsdlPath))
                 return wsdlHandler.Value;
 
-            if (context.Request.Method == "POST" && Equals(path, options.RequestPath))
+            if (httpContext.Request.Method == "POST" && Equals(path, options.RequestPath))
                 return requestHandler.Value;
 
             return null;

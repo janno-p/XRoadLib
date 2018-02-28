@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Microsoft.AspNetCore.Http;
 using XRoadLib.Events;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization;
@@ -36,27 +35,24 @@ namespace XRoadLib.Handler
         /// <summary>
         /// Handle incoming web request as X-Road service request.
         /// </summary>
-        public override void HandleRequest(HttpContext httpContext)
+        public override void HandleRequest(XRoadContext context)
         {
-            using (var context = new XRoadContext(httpContext))
+            if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
+                throw XRoadException.InvalidQuery("Empty request content");
+
+            context.Request.LoadRequest(context.HttpContext, storagePath, serviceManagers);
+            if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
             {
-                if (httpContext.Request.Body.CanSeek && httpContext.Request.Body.Length == 0)
-                    throw XRoadException.InvalidQuery("Empty request content");
-
-                context.Request.LoadRequest(httpContext, storagePath, serviceManagers);
-                if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
-                {
-                    var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));
-                    throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
-                }
-
-                context.Response.Copy(context.Request);
-                context.ServiceMap = context.Request.MetaServiceMap;
-
-                OnRequestLoaded(context);
-                InvokeServiceMethod(context);
-                SerializeXRoadResponse(context);
+                var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));
+                throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
             }
+
+            context.Response.Copy(context.Request);
+            context.ServiceMap = context.Request.MetaServiceMap;
+
+            OnRequestLoaded(context);
+            InvokeServiceMethod(context);
+            SerializeXRoadResponse(context);
         }
 
         /// <summary>

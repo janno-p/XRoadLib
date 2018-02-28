@@ -3,28 +3,24 @@
 using System;
 using System.IO;
 using System.Xml;
-using Microsoft.AspNetCore.Http;
 using XRoadLib.Serialization;
 using XRoadLib.Soap;
 
 namespace XRoadLib.Handler
 {
+    /// <inheritdoc />
     /// <summary>
     /// Base X-Road message handler for AspNetCore applications.
     /// </summary>
     public abstract class XRoadHandlerBase : IXRoadHandler
     {
-        /// <summary>
-        /// Handles X-Road message service request.
-        /// </summary>
-        public abstract void HandleRequest(HttpContext context);
+        /// <inheritdoc />
+        public abstract void HandleRequest(XRoadContext context);
 
-        /// <summary>
-        /// Handle exception that occured while handling X-Road message service request.
-        /// </summary>
-        public virtual void HandleException(HttpContext context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
+        /// <inheritdoc />
+        public virtual void HandleException(XRoadContext context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
         {
-            using (var writer = XmlWriter.Create(new StreamWriter(context.Response.Body, XRoadEncoding.UTF8)))
+            using (var writer = XmlWriter.Create(new StreamWriter(context.HttpContext.Response.Body, XRoadEncoding.UTF8)))
                 SoapMessageHelper.SerializeSoapFaultResponse(writer, faultCode, faultString, faultActor, details, exception);
         }
     }

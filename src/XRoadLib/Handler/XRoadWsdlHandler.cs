@@ -1,11 +1,12 @@
 #if !NET452
 
 using System;
-using Microsoft.AspNetCore.Http;
 using XRoadLib.Extensions;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Handler
 {
+    /// <inheritdoc />
     /// <summary>
     /// Handle X-Road service description request on AspNetCore platform.
     /// </summary>
@@ -18,18 +19,14 @@ namespace XRoadLib.Handler
         /// </summary>
         public XRoadWsdlHandler(IServiceManager serviceManager)
         {
-            if (serviceManager == null)
-                throw new ArgumentNullException(nameof(serviceManager));
-            this.serviceManager = serviceManager;
+            this.serviceManager = serviceManager ?? throw new ArgumentNullException(nameof(serviceManager));
         }
 
-        /// <summary>
-        /// Handle service description request.
-        /// </summary>
-        public override void HandleRequest(HttpContext context)
+        /// <inheritdoc />
+        public override void HandleRequest(XRoadContext context)
         {
             serviceManager.CreateServiceDescription()
-                          .SaveTo(context.Response.Body);
+                          .SaveTo(context.HttpContext.Response.Body);
         }
     }
 }

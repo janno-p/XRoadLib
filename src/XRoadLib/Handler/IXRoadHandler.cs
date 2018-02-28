@@ -1,7 +1,7 @@
 #if !NET452
 
 using System;
-using Microsoft.AspNetCore.Http;
+using XRoadLib.Serialization;
 using XRoadLib.Soap;
 
 namespace XRoadLib.Handler
@@ -14,12 +14,12 @@ namespace XRoadLib.Handler
         /// <summary>
         /// Handles X-Road message service request.
         /// </summary>
-        void HandleRequest(HttpContext context);
+        void HandleRequest(XRoadContext context);
 
         /// <summary>
         /// Handle exception that occured while handling X-Road message service request.
         /// </summary>
-        void HandleException(HttpContext httpContext, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details);
+        void HandleException(XRoadContext httpContext, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details);
     }
 }
 
