@@ -13,7 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' Or '$(TargetFramework)' == 'net461' ">
+  <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
     <Reference Include="System.Web.Services" />
   </ItemGroup>
 </Project>

@@ -2,28 +2,12 @@
   <PropertyGroup>
     <AssemblyName>XRoadLib.Extensions.AspNet</AssemblyName>
     <AssemblyTitle>XRoadLib.Extensions.AspNet</AssemblyTitle>
-    <TargetFrameworks>net45</TargetFrameworks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <TargetFrameworks>net452</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
-    <Authors>Janno Põldma</Authors>
-    <Copyright>Copyright © 2018</Copyright>
     <Description>XRoadLib extension to use X-Road messages on classical ASP.NET platform</Description>
     <PackageId>XRoadLib.Extensions.AspNet</PackageId>
     <PackageTags>x-tee;x-road;xtee;xroad;asp.net</PackageTags>
-    <PackageIconUrl>https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png</PackageIconUrl>
-    <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
-    <PackageLicenseUrl>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicenseUrl>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
-    <FrameworkPathOverride>/usr/lib/mono/4.5-api</FrameworkPathOverride>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <AssemblyOriginatorKeyFile>../XRoadLib.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\XRoadLib\XRoadLib.csproj" />

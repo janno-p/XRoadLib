@@ -2,37 +2,13 @@
   <PropertyGroup>
     <AssemblyName>XRoadLib</AssemblyName>
     <AssemblyTitle>XRoadLib</AssemblyTitle>
-    <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <TargetFrameworks>net452;net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
-    <Authors>Janno Põldma</Authors>
-    <Copyright>Copyright © 2018</Copyright>
     <Description>A .NET library for implementing service interfaces of X-Road providers using Code-First Development approach.</Description>
     <PackageId>XRoadLib</PackageId>
     <PackageTags>x-tee;x-road;xtee;xroad</PackageTags>
-    <PackageIconUrl>https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png</PackageIconUrl>
-    <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
-    <PackageLicenseUrl>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicenseUrl>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net45' ">
-    <FrameworkPathOverride>/usr/lib/mono/4.5-api</FrameworkPathOverride>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net461' ">
-    <FrameworkPathOverride>/usr/lib/mono/4.6.1-api</FrameworkPathOverride>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <AssemblyOriginatorKeyFile>../XRoadLib.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-  </PropertyGroup>
-  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>XRoadLib.Tests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
     <Reference Include="System.Web.Services" />
   </ItemGroup>
