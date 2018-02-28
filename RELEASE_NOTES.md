@@ -1,3 +1,8 @@
+#### 1.1.8 - 28.02.2018
+
+* Use `XRoadContext` parameter instead of `HttpContext` in AspNetCore application X-Road handler virtual methods.
+* Improved AspNetCore middleware configuration options.
+
 #### 1.1.7 - 27.02.2018
 
 * Separate net461 packaging.
