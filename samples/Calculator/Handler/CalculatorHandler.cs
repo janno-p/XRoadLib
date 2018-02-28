@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.IO;
 using XRoadLib;
 using XRoadLib.Handler;
 using XRoadLib.Serialization;
@@ -10,8 +10,8 @@ namespace Calculator.Handler
     {
         private readonly IServiceProvider serviceProvider;
 
-        public CalculatorHandler(IServiceProvider serviceProvider, IEnumerable<IServiceManager> serviceManagers, string storagePath)
-            : base(serviceManagers, storagePath)
+        public CalculatorHandler(IServiceProvider serviceProvider, IServiceManager serviceManager, DirectoryInfo storagePath)
+            : base(serviceManager, storagePath)
         {
             this.serviceProvider = serviceProvider;
         }

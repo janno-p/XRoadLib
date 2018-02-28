@@ -182,6 +182,14 @@ namespace XRoadLib.Serialization
         {
             LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
         }
+
+        /// <summary>
+        /// Loads X-Road message contents from request message.
+        /// </summary>
+        public void LoadRequest(HttpContext httpContext, string storagePath, IServiceManager serviceManager)
+        {
+            LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, new [] { serviceManager });
+        }
 #endif
 
 #if !NETSTANDARD2_0

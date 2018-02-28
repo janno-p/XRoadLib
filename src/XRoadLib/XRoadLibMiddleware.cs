@@ -1,10 +1,8 @@
 #if !NET452
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using XRoadLib.Handler;
 using XRoadLib.Serialization;
 
@@ -22,11 +20,15 @@ namespace XRoadLib
             this.next = next;
             this.options = options;
 
-            if (!options.ServiceManagers.Any())
-                throw new ArgumentException("At least one supported protocol definition is required.", nameof(options));
+            if (options.WsdlHandler != null)
+                wsdlHandler = new Lazy<IXRoadHandler>(() => options.WsdlHandler(services));
+            else if (options.ServiceManager != null)
+                wsdlHandler = new Lazy<IXRoadHandler>(() => new XRoadWsdlHandler(options.ServiceManager(services)));
 
-            wsdlHandler = new Lazy<IXRoadHandler>(() => options.WsdlHandler != null ? (IXRoadHandler)services.GetRequiredService(options.WsdlHandler) : new XRoadWsdlHandler(options.ServiceManagers.FirstOrDefault()));
-            requestHandler = new Lazy<IXRoadHandler>(() => options.RequestHandler != null ? (IXRoadHandler)services.GetRequiredService(options.RequestHandler) : new XRoadRequestHandler(options.ServiceManagers, options.StoragePath));
+            if (options.RequestHandler != null)
+                requestHandler = new Lazy<IXRoadHandler>(() => options.RequestHandler(services));
+            else if (options.ServiceManager != null)
+                requestHandler = new Lazy<IXRoadHandler>(() => new XRoadRequestHandler(options.ServiceManager(services), options.StoragePath));
         }
 
         public async Task Invoke(HttpContext httpContext)

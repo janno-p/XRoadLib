@@ -9,14 +9,12 @@ namespace XRoadLib.Extensions
     {
         public static IApplicationBuilder UseXRoadLib(this IApplicationBuilder builder)
         {
-            return builder.UseXRoadLib(options => {});
+            return builder.UseXRoadLib(options => options);
         }
 
-        public static IApplicationBuilder UseXRoadLib(this IApplicationBuilder builder, Action<XRoadLibOptions> optionBuilder)
+        public static IApplicationBuilder UseXRoadLib(this IApplicationBuilder builder, Func<XRoadLibOptions, XRoadLibOptions> optionBuilder)
         {
-            var options = new XRoadLibOptions();
-            optionBuilder(options);
-            return builder.UseMiddleware<XRoadLibMiddleware>(options);
+            return builder.UseMiddleware<XRoadLibMiddleware>(optionBuilder(new XRoadLibOptions()));
         }
     }
 }

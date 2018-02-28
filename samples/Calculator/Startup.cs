@@ -15,15 +15,14 @@ namespace Calculator
 {
     public class Startup
     {
-        private readonly IServiceManager serviceManager = new ServiceManager<XRoadHeader40>("4.0", new DefaultSchemaExporter("http://calculator.x-road.eu/", typeof(Startup).GetTypeInfo().Assembly));
-
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ICalculate, CalculateWebService>();
             services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
-            services.AddSingleton(provider => new CalculatorHandler(provider, new[] { serviceManager }, null));
+            services.AddSingleton<IServiceManager>(new ServiceManager<XRoadHeader40>("4.0", new DefaultSchemaExporter("http://calculator.x-road.eu/", typeof(Startup).GetTypeInfo().Assembly)));
+            services.AddSingleton(provider => new CalculatorHandler(provider, provider.GetRequiredService<IServiceManager>(), null));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,11 +31,7 @@ namespace Calculator
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-            app.UseXRoadLib(options =>
-            {
-                options.AddRequestHandler<CalculatorHandler>();
-                options.ServiceManagers.Add(serviceManager);
-            });
+            app.UseXRoadLib(options => options.WithRequestHandler<CalculatorHandler>());
 
             app.Run(async context =>
             {

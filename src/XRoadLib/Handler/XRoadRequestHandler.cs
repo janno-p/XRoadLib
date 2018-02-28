@@ -1,9 +1,7 @@
 #if !NET452
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using XRoadLib.Events;
 using XRoadLib.Extensions;
@@ -16,20 +14,17 @@ namespace XRoadLib.Handler
     /// </summary>
     public class XRoadRequestHandler : XRoadHandlerBase
     {
-        private readonly ICollection<IServiceManager> serviceManagers;
-        private readonly string storagePath;
+        private readonly IServiceManager serviceManager;
+        private readonly DirectoryInfo storagePath;
 
         /// <summary>
         /// Initialize new service request handler with X-Road message protocols
         /// it should be able to handle and storage path of temporary files.
         /// </summary>
-        public XRoadRequestHandler(IEnumerable<IServiceManager> serviceManagers, string storagePath)
+        public XRoadRequestHandler(IServiceManager serviceManager, DirectoryInfo storagePath)
         {
-            if (serviceManagers == null)
-                throw new ArgumentNullException(nameof(serviceManagers));
-
-            this.serviceManagers = this.serviceManagers.ToList();
-            this.storagePath = string.IsNullOrWhiteSpace(storagePath) ? Path.GetTempPath() : storagePath;
+            this.serviceManager = serviceManager ?? throw new ArgumentNullException(nameof(serviceManager));
+            this.storagePath = storagePath ?? new DirectoryInfo(Path.GetTempPath());
         }
 
         /// <summary>
@@ -40,12 +35,9 @@ namespace XRoadLib.Handler
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
                 throw XRoadException.InvalidQuery("Empty request content");
 
-            context.Request.LoadRequest(context.HttpContext, storagePath, serviceManagers);
+            context.Request.LoadRequest(context.HttpContext, storagePath.FullName, serviceManager);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
-            {
-                var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));
-                throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
-            }
+                throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {serviceManager.Name}.");
 
             context.Response.Copy(context.Request);
             context.ServiceMap = context.Request.MetaServiceMap;
@@ -190,7 +182,7 @@ namespace XRoadLib.Handler
                 if (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
                     writer.WriteAttributes(reader, true);
 
-                context.ServiceMap.SerializeResponse(writer, context.Result, context.Response, reader, null);
+                context.ServiceMap.SerializeResponse(writer, context.Result, context.Response, reader);
 
                 writer.WriteEndDocument();
                 writer.Flush();
