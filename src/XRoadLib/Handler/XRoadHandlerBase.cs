@@ -14,6 +14,13 @@ namespace XRoadLib.Handler
     /// </summary>
     public abstract class XRoadHandlerBase : IXRoadHandler
     {
+        public IServiceManager ServiceManager { get; }
+
+        protected XRoadHandlerBase(IServiceManager serviceManager)
+        {
+            ServiceManager = serviceManager ?? throw new ArgumentNullException(nameof(serviceManager));
+        }
+
         /// <inheritdoc />
         public abstract void HandleRequest(XRoadContext context);
 

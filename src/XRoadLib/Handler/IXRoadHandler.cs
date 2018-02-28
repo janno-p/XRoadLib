@@ -12,6 +12,11 @@ namespace XRoadLib.Handler
     public interface IXRoadHandler
     {
         /// <summary>
+        /// Provides services which this handler instance supports.
+        /// </summary>
+        IServiceManager ServiceManager { get; }
+
+        /// <summary>
         /// Handles X-Road message service request.
         /// </summary>
         void HandleRequest(XRoadContext context);

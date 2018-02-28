@@ -14,7 +14,6 @@ namespace XRoadLib.Handler
     /// </summary>
     public class XRoadRequestHandler : XRoadHandlerBase
     {
-        private readonly IServiceManager serviceManager;
         private readonly DirectoryInfo storagePath;
 
         /// <summary>
@@ -22,8 +21,8 @@ namespace XRoadLib.Handler
         /// it should be able to handle and storage path of temporary files.
         /// </summary>
         public XRoadRequestHandler(IServiceManager serviceManager, DirectoryInfo storagePath)
+            : base(serviceManager)
         {
-            this.serviceManager = serviceManager ?? throw new ArgumentNullException(nameof(serviceManager));
             this.storagePath = storagePath ?? new DirectoryInfo(Path.GetTempPath());
         }
 
@@ -35,9 +34,9 @@ namespace XRoadLib.Handler
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
                 throw XRoadException.InvalidQuery("Empty request content");
 
-            context.Request.LoadRequest(context.HttpContext, storagePath.FullName, serviceManager);
+            context.Request.LoadRequest(context.HttpContext, storagePath.FullName, ServiceManager);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
-                throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {serviceManager.Name}.");
+                throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {ServiceManager.Name}.");
 
             context.Response.Copy(context.Request);
             context.ServiceMap = context.Request.MetaServiceMap;

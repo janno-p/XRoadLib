@@ -24,6 +24,8 @@ namespace XRoadLib
                 wsdlHandler = new Lazy<IXRoadHandler>(() => options.WsdlHandler(services));
             else if (options.ServiceManager != null)
                 wsdlHandler = new Lazy<IXRoadHandler>(() => new XRoadWsdlHandler(options.ServiceManager(services)));
+            else if (options.RequestHandler != null)
+                wsdlHandler = new Lazy<IXRoadHandler>(() => new XRoadWsdlHandler(options.RequestHandler(services).ServiceManager));
 
             if (options.RequestHandler != null)
                 requestHandler = new Lazy<IXRoadHandler>(() => options.RequestHandler(services));
@@ -69,10 +71,10 @@ namespace XRoadLib
             var path = httpContext.Request.Path.HasValue ? httpContext.Request.Path.Value : null;
 
             if (httpContext.Request.Method == "GET" && Equals(path, options.WsdlPath))
-                return wsdlHandler.Value;
+                return wsdlHandler?.Value;
 
             if (httpContext.Request.Method == "POST" && Equals(path, options.RequestPath))
-                return requestHandler.Value;
+                return requestHandler?.Value;
 
             return null;
         }
