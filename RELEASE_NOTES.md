@@ -1,6 +1,7 @@
 #### 1.2.0 - Unreleased
 
-* Separate packages for Asp.Net and Asp.Net Core platform support.
+* Separated packages for Asp.Net and Asp.Net Core platform support.
+* Removed `System.Web.Services` dependency.
 
 #### 1.1.8 - 28.02.2018
 
