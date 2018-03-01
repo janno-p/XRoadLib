@@ -1,4 +1,4 @@
-#### 1.2.0 - Unreleased
+#### 1.2.0-alpha001 - Unreleased
 
 * Separated packages for Asp.Net and Asp.Net Core platform support.
 * Removed `System.Web.Services` dependency.
