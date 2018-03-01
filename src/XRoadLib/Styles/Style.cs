@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -9,6 +8,7 @@ using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using System.Xml.Schema;
 using XRoadLib.Headers;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Styles
 {
@@ -82,13 +82,6 @@ namespace XRoadLib.Styles
         /// Create header binding binding for current style.
         /// </summary>
         public abstract SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace);
-
-#if !NETSTANDARD2_0
-        /// <summary>
-        /// Create SOAP header element.
-        /// </summary>
-        public abstract XmlElement CreateSoapHeader(SoapHeaderBinding binding);
-#endif
 
         /// <summary>
         /// Add expected content type attribute for binary content.

@@ -1,3 +1,7 @@
+#### 1.2.0 - Unreleased
+
+* Separate packages for Asp.Net and Asp.Net Core platform support.
+
 #### 1.1.8 - 28.02.2018
 
 * Use `XRoadContext` parameter instead of `HttpContext` in AspNetCore application X-Road handler virtual methods.

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -13,11 +12,9 @@ using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
-
-#if NETSTANDARD2_0
-using MessageCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.Message>;
-using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<System.Web.Services.Description.ServiceDescriptionFormatExtension>;
-#endif
+using XRoadLib.Wsdl;
+using MessageCollection = System.Collections.Generic.ICollection<XRoadLib.Wsdl.Message>;
+using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<XRoadLib.Wsdl.ServiceDescriptionFormatExtension>;
 
 namespace XRoadLib
 {
@@ -544,11 +541,7 @@ namespace XRoadLib
 
             addGlobalNamespace(NamespaceConstants.MIME);
 
-#if NETSTANDARD2_0
             AddOperationContentBinding(soapPart.Extensions, x => x);
-#else
-            AddOperationContentBinding(soapPart.Extensions, schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapHeader);
-#endif
 
             var filePart = new MimePart { Extensions = { new MimeContentBinding { Part = "file", Type = "application/binary" } } };
 
@@ -580,9 +573,7 @@ namespace XRoadLib
         }
 
         private void AddOperationContentBinding<THeader>(ServiceDescriptionFormatExtensionCollection extensions, Func<SoapHeaderBinding, THeader> projectionFunc)
-#if NETSTANDARD2_0
             where THeader : ServiceDescriptionFormatExtension
-#endif
         {
             extensions.Add(schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapBodyBinding(schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace));
             foreach (var headerBinding in headerDefinition.RequiredHeaders.Select(name => schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapHeaderBinding(name, headerDefinition.MessageName, schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace)).Select(projectionFunc))
@@ -895,24 +886,11 @@ namespace XRoadLib
             schemaTypes.Add(Tuple.Create(namespaceName, schemaType));
         }
 
-        private
-#if NETSTANDARD2_0
-            XRoadOperationVersionBinding
-#else
-            XmlElement
-#endif
-                CreateXRoadOperationVersionBinding(OperationDefinition operationDefinition)
+        private XRoadOperationVersionBinding CreateXRoadOperationVersionBinding(OperationDefinition operationDefinition)
         {
-            if (operationDefinition.Version == 0)
-                return null;
-
-#if NETSTANDARD2_0
-            return new XRoadOperationVersionBinding(xRoadPrefix, xRoadNamespace) { Version = $"v{operationDefinition.Version}" };
-#else
-            var addressElement = document.CreateElement(xRoadPrefix, "version", xRoadNamespace);
-            addressElement.InnerText = $"v{operationDefinition.Version}";
-            return addressElement;
-#endif
+            return operationDefinition.Version == 0 ?
+                null :
+                new XRoadOperationVersionBinding(xRoadPrefix, xRoadNamespace) { Version = $"v{operationDefinition.Version}" };
         }
 
         private XmlElement CreateXrdDocumentationElement(string name, string languageCode, string value, Action<string> addSchemaImport)

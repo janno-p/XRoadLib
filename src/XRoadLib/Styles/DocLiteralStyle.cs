@@ -1,26 +1,13 @@
 ﻿using System;
-using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Styles
 {
     public class DocLiteralStyle : Style
     {
-#if !NETSTANDARD2_0
-        public override XmlElement CreateSoapHeader(SoapHeaderBinding binding)
-        {
-            var element = document.CreateElement(PrefixConstants.SOAP, "header", NamespaceConstants.SOAP);
-
-            element.SetAttribute("message", $"{PrefixConstants.TARGET}:{binding.Message.Name}");
-            element.SetAttribute("part", binding.Part);
-            element.SetAttribute("use", "literal");
-
-            return element;
-        }
-#endif
-
         public override void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, Action<string> addSchemaImport)
         {
             arrayElement.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { itemElement } } };

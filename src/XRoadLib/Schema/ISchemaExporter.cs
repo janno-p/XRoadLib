@@ -1,4 +1,4 @@
-﻿using System.Web.Services.Description;
+﻿using XRoadLib.Wsdl;
 
 namespace XRoadLib.Schema
 {

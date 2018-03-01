@@ -1,6 +1,6 @@
 using System.Reflection;
-using System.Web.Services.Description;
 using XRoadLib.Headers;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Schema
 {

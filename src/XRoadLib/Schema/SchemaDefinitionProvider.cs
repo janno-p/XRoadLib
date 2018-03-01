@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using System.Web.Services.Description;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Styles;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Schema
 {

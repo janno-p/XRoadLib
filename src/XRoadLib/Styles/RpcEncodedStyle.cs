@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Linq;
-using XRoadLib.Extensions;
 using System.Xml.Schema;
+using XRoadLib.Extensions;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Styles
 {
@@ -19,21 +19,6 @@ namespace XRoadLib.Styles
             writer.WriteTypeAttribute("Array", NamespaceConstants.SOAP_ENC);
             writer.WriteArrayTypeAttribute(itemQualifiedName, arraySize);
         }
-
-#if !NETSTANDARD2_0
-        public override XmlElement CreateSoapHeader(SoapHeaderBinding binding)
-        {
-            var element = document.CreateElement(PrefixConstants.SOAP, "header", NamespaceConstants.SOAP);
-
-            element.SetAttribute("message", $"{PrefixConstants.TARGET}:{binding.Message.Name}");
-            element.SetAttribute("part", binding.Part);
-            element.SetAttribute("use", "encoded");
-            element.SetAttribute("namespace", binding.Namespace);
-            element.SetAttribute("encodingStyle", binding.Encoding);
-
-            return element;
-        }
-#endif
 
         private XmlAttribute CreateArrayTypeAttribute(XName qualifiedName)
         {

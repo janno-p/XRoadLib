@@ -1,19 +1,11 @@
 using System.Reflection;
-using System.Web.Services.Description;
-
-#if !NETSTANDARD2_0
-using System.Xml;
-#endif
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Schema
 {
     /// <inheritdoc />
     public abstract class SchemaExporterXRoadLegacy : AbstractSchemaExporter
     {
-#if !NETSTANDARD2_0
-        private readonly XmlDocument document = new XmlDocument();
-#endif
-
         private readonly Assembly contractAssembly;
 
         /// <summary>
@@ -44,12 +36,7 @@ namespace XRoadLib.Schema
 
             serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
 
-#if NETSTANDARD2_0
             var address = new XRoadAddressBinding(XRoadPrefix, XRoadNamespace) { Producer = producerName };
-#else
-            var address = document.CreateElement(XRoadPrefix, "address", XRoadNamespace);
-            address.SetAttribute("producer", producerName);
-#endif
 
             var servicePort = serviceDescription.Services[0].Ports[0];
             servicePort.Extensions.Add(address);
@@ -71,24 +58,11 @@ namespace XRoadLib.Schema
         /// </summary>
         protected void AddXRoadTitle(Port servicePort, string language, string title)
         {
-#if NETSTANDARD2_0
-            var titleBinding = new XRoadTitleBinding(XRoadPrefix, XRoadNamespace)
+            servicePort.Extensions.Add(new XRoadTitleBinding(XRoadPrefix, XRoadNamespace)
             {
                 Language = language,
                 Text = title
-            };
-#else
-            var titleBinding = document.CreateElement(XRoadPrefix, "title", XRoadNamespace);
-            titleBinding.InnerText = title;
-
-            if (!string.IsNullOrWhiteSpace(language))
-            {
-                var attribute = document.CreateAttribute("xml", "lang", NamespaceConstants.XML);
-                attribute.Value = language;
-                titleBinding.Attributes.Append(attribute);
-            }
-#endif
-            servicePort.Extensions.Add(titleBinding);
+            });
         }
 
         /// <summary>

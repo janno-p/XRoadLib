@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Reflection;
-using System.Web.Services.Description;
 using System.Xml;
 using XRoadLib.Schema;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Tests.Contract.Configuration
 {

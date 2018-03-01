@@ -1,6 +1,6 @@
 ﻿using System.IO;
-using System.Web.Services.Description;
 using System.Xml;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Extensions
 {
