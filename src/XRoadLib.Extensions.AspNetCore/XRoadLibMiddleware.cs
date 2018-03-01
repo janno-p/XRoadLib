@@ -14,8 +14,6 @@ namespace XRoadLib.Extensions.AspNetCore
 
         public XRoadLibMiddleware(RequestDelegate next, IServiceProvider serviceProvider, XRoadHandlerRegistry registry, XRoadLibOptions options)
         {
-            Console.WriteLine("===== test =====");
-
             this.next = next;
             this.options = options;
             this.registry = registry;
