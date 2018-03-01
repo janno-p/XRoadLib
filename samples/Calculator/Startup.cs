@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Calculator.Contract;
-using Calculator.Handler;
 using Calculator.WebService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,23 +14,29 @@ namespace Calculator
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ICalculate, CalculateWebService>();
             services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
-            services.AddSingleton<IServiceManager>(new ServiceManager<XRoadHeader40>("4.0", new DefaultSchemaExporter("http://calculator.x-road.eu/", typeof(Startup).GetTypeInfo().Assembly)));
-            services.AddSingleton(provider => new CalculatorHandler(provider, provider.GetRequiredService<IServiceManager>(), null));
+
+            services.AddXRoadLib(opt =>
+            {
+                var serviceManager = new ServiceManager<XRoadHeader40>(
+                    "4.0",
+                    new DefaultSchemaExporter("http://calculator.x-road.eu/", typeof(Startup).GetTypeInfo().Assembly)
+                );
+                
+                opt.AddRequestHandler("/", serviceManager)
+                   .AddWsdlHandler("/", serviceManager);
+            });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseXRoadLib();
+
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
-
-            app.UseXRoadLib(options => options.WithRequestHandler<CalculatorHandler>());
 
             app.Run(async context =>
             {

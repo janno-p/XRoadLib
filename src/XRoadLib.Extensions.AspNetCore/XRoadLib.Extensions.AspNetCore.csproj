@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>XRoadLib.Extensions.AspNetCore</AssemblyName>
     <AssemblyTitle>XRoadLib.Extensions.AspNetCore</AssemblyTitle>

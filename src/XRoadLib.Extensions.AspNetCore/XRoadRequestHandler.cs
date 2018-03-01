@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using Microsoft.Extensions.DependencyInjection;
 using XRoadLib.Events;
 
 namespace XRoadLib.Extensions.AspNetCore
@@ -10,16 +11,18 @@ namespace XRoadLib.Extensions.AspNetCore
     /// </summary>
     public class XRoadRequestHandler : XRoadHandlerBase
     {
-        private readonly DirectoryInfo storagePath;
+        protected readonly IServiceProvider serviceProvider;
+        
+        public DirectoryInfo StoragePath { get; set; }
 
         /// <summary>
         /// Initialize new service request handler with X-Road message protocols
         /// it should be able to handle and storage path of temporary files.
         /// </summary>
-        public XRoadRequestHandler(IServiceManager serviceManager, DirectoryInfo storagePath)
+        public XRoadRequestHandler(IServiceProvider serviceProvider, IServiceManager serviceManager)
             : base(serviceManager)
         {
-            this.storagePath = storagePath ?? new DirectoryInfo(Path.GetTempPath());
+            this.serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -30,7 +33,7 @@ namespace XRoadLib.Extensions.AspNetCore
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
                 throw XRoadException.InvalidQuery("Empty request content");
 
-            context.Request.LoadRequest(context.HttpContext, storagePath.FullName, ServiceManager);
+            context.Request.LoadRequest(context.HttpContext, GetStorageOrTempPath().FullName, ServiceManager);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
                 throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {ServiceManager.Name}.");
 
@@ -56,7 +59,11 @@ namespace XRoadLib.Extensions.AspNetCore
         /// </summary>
         protected virtual object GetServiceObject(XRoadContext context)
         {
-            return null;
+            var operationDefinition = context.ServiceMap.OperationDefinition;
+
+            var service = serviceProvider.GetRequiredService(operationDefinition.MethodInfo.DeclaringType);
+
+            return service ?? throw XRoadException.UnknownOperation(operationDefinition.Name);
         }
 
         /// <summary>
@@ -186,6 +193,11 @@ namespace XRoadLib.Extensions.AspNetCore
             context.Response.SaveTo(context.HttpContext);
 
             OnAfterSerialization(context);
+        }
+
+        private DirectoryInfo GetStorageOrTempPath()
+        {
+            return StoragePath ?? new DirectoryInfo(Path.GetTempPath());
         }
     }
 }
