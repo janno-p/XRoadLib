@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace XRoadLib.Extensions.AspNetCore
 {
-    public static class ServiceCollectionExtensions
+    public static class XRoadLibServiceCollectionExtensions
     {
         public static IServiceCollection AddXRoadLib(this IServiceCollection serviceCollection, Action<XRoadHandlerRegistry> initializer = null)
         {

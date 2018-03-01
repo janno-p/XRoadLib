@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 
 namespace XRoadLib.Extensions.AspNetCore
 {
-    public static class MiddlewareExtensions
+    public static class XRoadLibMiddlewareExtensions
     {
         public static IApplicationBuilder UseXRoadLib(this IApplicationBuilder builder)
         {
