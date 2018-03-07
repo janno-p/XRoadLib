@@ -1,3 +1,7 @@
+#### 1.2.1 - 07.03.2018
+
+* Namespace imports should not contain defined schemas.
+
 #### 1.2.0 - 07.03.2018
 
 * Fix common header mapping to legacy header types.

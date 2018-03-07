@@ -118,7 +118,7 @@ namespace XRoadLib
 
             getRequiredImports = ns => requiredImports.Where(x => x.Item1 == ns).Select(x => x.Item2).ToList();
 
-            getImportedSchemas = () => requiredImports.Select(x => x.Item2).Where(x => x != null).ToList();
+            getImportedSchemas = () => requiredImports.Select(x => x.Item2).Where(x => x != null && schemaLocations[x] != null).ToList();
 
             xRoadPrefix = schemaDefinitionProvider.GetXRoadPrefix();
             xRoadNamespace = schemaDefinitionProvider.GetXRoadNamespace();
@@ -399,11 +399,18 @@ namespace XRoadLib
             if (!importedSchemas.Any())
                 return null;
 
-            var schema = new XmlSchema();
+            var schema = CreateXmlSchema();
             foreach (var importedSchema in getImportedSchemas())
                 schema.Includes.Add(new XmlSchemaImport { Namespace = importedSchema, SchemaLocation = schemaLocations[importedSchema] });
 
             return schema;
+        }
+
+        private static XmlSchema CreateXmlSchema()
+        {
+            var namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(PrefixConstants.XSD, NamespaceConstants.XSD);
+            return new XmlSchema { Namespaces = namespaces };
         }
 
         private static XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseDefinition responseDefinition, XmlSchemaElement requestElement, XmlSchemaElement responseElement, FaultDefinition faultDefinition)
@@ -474,7 +481,8 @@ namespace XRoadLib
         {
             var namespaceTypes = schemaTypes.Where(x => x.Item1 == schemaNamespace).Select(x => x.Item2).ToList();
 
-            var schema = new XmlSchema { TargetNamespace = schemaNamespace };
+            var schema = CreateXmlSchema();
+            schema.TargetNamespace = schemaNamespace;
 
             foreach (var namespaceType in namespaceTypes.OrderBy(x => x.Name.ToLower()))
                 schema.Items.Add(namespaceType);
