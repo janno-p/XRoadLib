@@ -1,4 +1,4 @@
-#### 1.2.0 - Unreleased
+#### 1.2.0 - 07.03.2018
 
 * Fix common header mapping to legacy header types.
 * Fix missing namespace imports when no usages in schemas.
