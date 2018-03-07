@@ -34,7 +34,8 @@ namespace XRoadLib.Schema
         {
             base.ExportServiceDescription(serviceDescription);
 
-            serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
+            if (!serviceDescription.Namespaces.ContainsKey(XRoadPrefix))
+                serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
 
             var address = new XRoadAddressBinding(XRoadPrefix, XRoadNamespace) { Producer = producerName };
 

@@ -1,6 +1,5 @@
 using System.Reflection;
 using XRoadLib.Headers;
-using XRoadLib.Wsdl;
 
 namespace XRoadLib.Schema
 {
@@ -25,15 +24,6 @@ namespace XRoadLib.Schema
         public SchemaExporterXRoad31(string producerName, Assembly contractAssembly, string producerNamespace = null)
             : base(producerName, contractAssembly, producerNamespace ?? $"http://{producerName}.x-road.ee/producer/")
         { }
-
-        /// <summary>
-        /// Allows each message protocol implementation to customize service description document
-        /// before publishing.
-        /// </summary>
-        public override void ExportServiceDescription(ServiceDescription serviceDescription)
-        {
-            base.ExportServiceDescription(serviceDescription);
-        }
 
         /// <summary>
         /// Configure SOAP header of the messages.

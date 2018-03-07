@@ -218,7 +218,7 @@ namespace XRoadLib.Headers
         public XRoadHeader20 InitFrom(XRoadCommonHeader commonHeader)
         {
             Asutus = commonHeader.Client.MemberCode;
-            Andmekogu = commonHeader.Service.MemberCode;
+            Andmekogu = commonHeader.Service.SubsystemCode;
             Isikukood = commonHeader.UserId;
             Toimik = commonHeader.Issue;
             Nimi = commonHeader.Service.ToFullName();

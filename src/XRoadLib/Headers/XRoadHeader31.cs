@@ -209,7 +209,7 @@ namespace XRoadLib.Headers
         public XRoadHeader31 InitFrom(XRoadCommonHeader commonHeader)
         {
             Consumer = commonHeader.Client.MemberCode;
-            Producer = commonHeader.Service.MemberCode;
+            Producer = commonHeader.Service.SubsystemCode;
             UserId = commonHeader.UserId;
             Issue = commonHeader.Issue;
             ServiceName = commonHeader.Service.ToFullName();

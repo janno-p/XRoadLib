@@ -41,6 +41,7 @@ namespace XRoadLib
 
         private readonly Action<string, string, ISchemaExporter> addRequiredImport;
         private readonly Func<string, IList<string>> getRequiredImports;
+        private readonly Func<IList<string>> getImportedSchemas;
 
         private readonly Func<string, bool> addGlobalNamespace;
         private readonly Func<IList<Tuple<string, string>>> getGlobalNamespaces;
@@ -116,6 +117,8 @@ namespace XRoadLib
             };
 
             getRequiredImports = ns => requiredImports.Where(x => x.Item1 == ns).Select(x => x.Item2).ToList();
+
+            getImportedSchemas = () => requiredImports.Select(x => x.Item2).Where(x => x != null).ToList();
 
             xRoadPrefix = schemaDefinitionProvider.GetXRoadPrefix();
             xRoadNamespace = schemaDefinitionProvider.GetXRoadNamespace();
@@ -374,7 +377,7 @@ namespace XRoadLib
                     Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition.Documentation, faultDefinition.Name.LocalName)
                 });
 
-            return schemaTypes
+            var schemas = schemaTypes
                 .Select(x => x.Item1)
                 .Where(x => x != NamespaceConstants.XSD && x != targetNamespace)
                 .Distinct()
@@ -382,6 +385,25 @@ namespace XRoadLib
                 .Select(x => BuildSchemaForNamespace(x, schemaTypes, null))
                 .Concat(new [] { BuildSchemaForNamespace(targetNamespace, schemaTypes, schemaElements) })
                 .ToList();
+
+            var importSchema = GetNamespaceImportSchema();
+            if (importSchema != null)
+                schemas.Insert(0, importSchema);
+
+            return schemas;
+        }
+
+        private XmlSchema GetNamespaceImportSchema()
+        {
+            var importedSchemas = getImportedSchemas();
+            if (!importedSchemas.Any())
+                return null;
+
+            var schema = new XmlSchema();
+            foreach (var importedSchema in getImportedSchemas())
+                schema.Includes.Add(new XmlSchemaImport { Namespace = importedSchema, SchemaLocation = schemaLocations[importedSchema] });
+
+            return schema;
         }
 
         private static XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseDefinition responseDefinition, XmlSchemaElement requestElement, XmlSchemaElement responseElement, FaultDefinition faultDefinition)
@@ -465,12 +487,8 @@ namespace XRoadLib
                 schema.Namespaces.Add("tns", schema.TargetNamespace);
 
             var n = 1;
-            foreach (var namespaceImport in getRequiredImports(schema.TargetNamespace))
-            {
-                schema.Includes.Add(new XmlSchemaImport { Namespace = namespaceImport, SchemaLocation = schemaLocations[namespaceImport] });
-                if (!addGlobalNamespace(namespaceImport))
-                    schema.Namespaces.Add($"ns{n++}", namespaceImport);
-            }
+            foreach (var namespaceImport in getRequiredImports(schema.TargetNamespace).Where(ns => !addGlobalNamespace(ns)))
+                schema.Namespaces.Add($"ns{n++}", namespaceImport);
 
             return schema;
         }
@@ -832,7 +850,10 @@ namespace XRoadLib
             var standardHeader = new Message { Name = headerDefinition.MessageName };
 
             foreach (var requiredHeader in headerDefinition.RequiredHeaders)
+            {
                 standardHeader.Parts.Add(new MessagePart { Name = requiredHeader.LocalName, Element = new XmlQualifiedName(requiredHeader.LocalName, requiredHeader.NamespaceName) });
+                addRequiredImport(serviceDescription.TargetNamespace, requiredHeader.NamespaceName, null);
+            }
 
             serviceDescription.Messages.Add(standardHeader);
 

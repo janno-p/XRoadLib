@@ -1,4 +1,9 @@
-#### 1.2.0-alpha001 - Unreleased
+#### 1.2.0 - Unreleased
+
+* Fix common header mapping to legacy header types.
+* Fix missing namespace imports when no usages in schemas.
+
+#### 1.2.0-alpha001 - 01.03.2018
 
 * Separated packages for Asp.Net and Asp.Net Core platform support.
 * Removed `System.Web.Services` dependency.
