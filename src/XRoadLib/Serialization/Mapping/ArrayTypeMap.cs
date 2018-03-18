@@ -24,12 +24,12 @@ namespace XRoadLib.Serialization.Mapping
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
-            if (reader.IsEmptyElement)
+            var arrayContent = (ArrayContentDefiniton)content;
+
+            if (reader.IsEmptyElement && !arrayContent.MergeContent)
                 return MoveNextAndReturn(reader, new T[0]);
 
             var items = new List<T>();
-
-            var arrayContent = (ArrayContentDefiniton)content;
 
             var parentDepth = arrayContent.MergeContent ? reader.Depth - 1 : reader.Depth;
             var itemDepth = parentDepth + 1;
@@ -76,7 +76,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             var valueArray = (Array)value;
 
-            if (!(content.Particle is RequestDefinition))
+            if (!(content.Particle is RequestDefinition) && !content.MergeContent)
                 message.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
 
             var arrayContent = (ArrayContentDefiniton)content;

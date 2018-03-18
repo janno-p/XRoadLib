@@ -14,4 +14,10 @@ namespace XRoadLib.Tests.Contract
         [XRoadService("Service2")]
         int Service2(ContainerType request);
     }
+
+    public interface IService3
+    {
+        [XRoadService("Service3")]
+        int Service3(TestMergedArrayContent request);
+    }
 }

@@ -23,7 +23,7 @@ namespace XRoadLib.Serialization.Mapping
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return MoveNextAndReturn(reader, null);
+                return MoveNextAndReturn(reader, "");
 
             var value = reader.ReadElementContentAsString();
 

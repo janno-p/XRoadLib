@@ -22,7 +22,7 @@ namespace XRoadLib.Tests.Serialization
             { }
         }
 
-        private static void SerializeWithContext<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, bool isMultipart, Action<XRoadMessage, string> f)
+        private static void SerializeWithContext<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, Action<XRoadMessage, string> f)
         {
             var message = Globals.ServiceManager20.CreateMessage();
             message.IsMultipartContainer = true;
@@ -96,7 +96,7 @@ namespace XRoadLib.Tests.Serialization
                            "<ObjektID xsi:type=\"xsd:long\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">3</ObjektID>" +
                            "</keha>";
 
-            SerializeWithContext("keha", cls, 1u, true, false, (msg, xml) =>
+            SerializeWithContext("keha", cls, 1u, true, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -114,7 +114,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<item xsi:type=\"xsd:int\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">3</item>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 1u, true, false, (msg, xml) =>
+            SerializeWithContext("keha", value, 1u, true, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -133,7 +133,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<item p2:type=\"p3:int\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">3</item>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -143,7 +143,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeBooleanFalseValue()
         {
-            SerializeWithContext("keha", false, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", false, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>false</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -153,7 +153,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeBooleanTrueValue()
         {
-            SerializeWithContext("keha", true, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", true, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>true</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -163,7 +163,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeDateTimeValue()
         {
-            SerializeWithContext("keha", new DateTime(2000, 10, 12, 4, 14, 55, 989), 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", new DateTime(2000, 10, 12, 4, 14, 55, 989), 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>2000-10-12T04:14:55.989</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -173,7 +173,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeDecimalValue()
         {
-            SerializeWithContext("keha", 0.4M, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", 0.4M, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>0.4</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -183,7 +183,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeFloatValue()
         {
-            SerializeWithContext("keha", 0.1f, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", 0.1f, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>0.1</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -193,7 +193,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeIntValue()
         {
-            SerializeWithContext("keha", 44345, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", 44345, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>44345</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -203,7 +203,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeShortValue()
         {
-            SerializeWithContext("keha", (short)445, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", (short)445, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>445</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -213,7 +213,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeLongValue()
         {
-            SerializeWithContext("keha", 44345L, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", 44345L, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>44345</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -232,7 +232,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<item p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">3</item>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -242,7 +242,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeShortDateTimeValue()
         {
-            SerializeWithContext("keha", new DateTime(2000, 10, 12), 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", new DateTime(2000, 10, 12), 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>2000-10-12T00:00:00</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -252,7 +252,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeStringValue()
         {
-            SerializeWithContext("keha", "someString", 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", "someString", 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>someString</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -276,7 +276,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<Loodud p2:type=\"p3:dateTime\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2000-12-12T12:12:12</Loodud>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -295,7 +295,7 @@ namespace XRoadLib.Tests.Serialization
                              + "<Sisu p2:type=\"p3:base64Binary\" href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\" />"
                              + "</keha>";
 
-                SerializeWithContext("keha", value, 2u, false, true, (msg, xml) =>
+                SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
                 {
                     Assert.Equal(expected, xml);
                     Assert.Equal(1, msg.AllAttachments.Count);
@@ -315,7 +315,7 @@ namespace XRoadLib.Tests.Serialization
                              + "<Sisu p2:type=\"p3:hexBinary\" href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\" />"
                              + "</keha>";
 
-                SerializeWithContext("keha", value, 2u, false, true, (msg, xml) =>
+                SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
                 {
                     Assert.Equal(expected, xml);
                     Assert.Equal(1, msg.AllAttachments.Count);
@@ -333,7 +333,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<ttIsik.dSyn p2:type=\"p3:date\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2012-11-26</ttIsik.dSyn>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -367,7 +367,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<StaticProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">6</StaticProperty>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -398,7 +398,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<StaticProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">6</StaticProperty>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 1u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", value, 1u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -429,7 +429,34 @@ namespace XRoadLib.Tests.Serialization
                          + "<KnownProperty p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">value</KnownProperty>"
                          + "</keha>";
 
-            SerializeWithContext("keha", entity, 2u, false, false, (msg, xml) =>
+            SerializeWithContext("keha", entity, 2u, false, (msg, xml) =>
+            {
+                Assert.Equal(expected, xml);
+                Assert.Equal(0, msg.AllAttachments.Count);
+            });
+        }
+
+        [Fact]
+        public void CanSerializeMergedArrayContent()
+        {
+            var entity = new TestMergedArrayContent
+            {
+                Value = "Song",
+                Codes = new[] { "One", "Two", "Three" },
+                Value2 = "Joy"
+            };
+
+            const string expected =
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                + "<keha>"
+                + "<Value p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Song</Value>"
+                + "<Code p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">One</Code>"
+                + "<Code p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Two</Code>"
+                + "<Code p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Three</Code>"
+                + "<Value2 p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Joy</Value2>"
+                + "</keha>";
+
+            SerializeWithContext("keha", entity, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);

@@ -21,6 +21,7 @@ namespace XRoadLib.Tests.Serialization
         private static readonly ISerializer serializer31 = Globals.ServiceManager31.GetSerializer(DTO_VERSION);
         private static readonly IServiceMap serviceMap20 = serializer20.GetServiceMap("Service1");
         private static readonly IServiceMap serviceMap31 = serializer31.GetServiceMap("Service1");
+        private static readonly IServiceMap service3Map31 = serializer31.GetServiceMap("Service3");
 
         [Fact]
         public void CanHandleOptionalParameters()
@@ -489,10 +490,40 @@ namespace XRoadLib.Tests.Serialization
             }
         }
 
+        [Fact]
+        public void CanDeserializedMergedArrayWithEmptyContent()
+        {
+            var contentXml = "<request xmlns:tns=\"http://test-producer.x-road.ee/producer/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                             + "  <Value />"
+                             + "  <Code />"
+                             + "  <Code />"
+                             + "  <Code />"
+                             + "  <Value2>Joy</Value2>"
+                             + "</request>";
+
+            var inputObject = DeserializeRequest31(null, contentXml, service3Map31, "Service3");
+            Assert.IsType<TestMergedArrayContent>(inputObject);
+
+            var request = (TestMergedArrayContent)inputObject;
+            Assert.True(request.IsSpecified("Value"));
+            Assert.True(request.IsSpecified("Codes"));
+            Assert.True(request.IsSpecified("Value2"));
+
+            Assert.NotNull(request.Value);
+            Assert.Equal("", request.Value);
+
+            Assert.NotNull(request.Codes);
+            Assert.Equal(3, request.Codes.Length);
+            Assert.Equal(request.Codes, new[] { "", "", "" });
+
+            Assert.NotNull(request.Value2);
+            Assert.Equal("Joy", request.Value2);
+        }
+
         private static object DeserializeRequest20(string templateXml, string contentXml)
         {
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
-            return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager20, (msgr, xmlr) =>
+            return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager20, "Service1", (msgr, xmlr) =>
             {
                 var message = Globals.ServiceManager20.CreateMessage();
                 message.XmlTemplate = template;
@@ -506,24 +537,25 @@ namespace XRoadLib.Tests.Serialization
             });
         }
 
-        private static object DeserializeRequest31(string templateXml, string contentXml)
+        private static object DeserializeRequest31(string templateXml, string contentXml, IServiceMap serviceMap = null, string serviceName = "Service1")
         {
-            var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
-            return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager31, (msgr, xmlr) =>
+            serviceMap = serviceMap ?? serviceMap31;
+            var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod(serviceName));
+            return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager31, serviceName, (msgr, xmlr) =>
             {
                 var message = Globals.ServiceManager31.CreateMessage();
                 message.XmlTemplate = template;
 
                 using (message)
                 {
-                    msgr.Read(message, false);
-                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.ServiceManager31.ProducerNamespace));
-                    return serviceMap31.DeserializeRequest(xmlr, message);
+                    msgr.Read(message);
+                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get(serviceName, Globals.ServiceManager31.ProducerNamespace));
+                    return serviceMap.DeserializeRequest(xmlr, message);
                 }
             });
         }
 
-        private static object DeserializeRequest(string templateXml, string contentXml, IServiceManager protocol, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
+        private static object DeserializeRequest(string templateXml, string contentXml, IServiceManager protocol, string serviceName, Func<XRoadMessageReader, XmlReader, object> deserializeMessage)
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream))
@@ -531,9 +563,9 @@ namespace XRoadLib.Tests.Serialization
                 writer.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");
                 writer.WriteLine($"<soapenv:Envelope xmlns:soapenv=\"{NamespaceConstants.SOAP_ENV}\" soapenv:encodingStyle=\"{NamespaceConstants.SOAP_ENC}\">");
                 writer.WriteLine(@"<soapenv:Body>");
-                writer.WriteLine($"<tns:Service1 xmlns:tns=\"{protocol.ProducerNamespace}\">");
+                writer.WriteLine($"<tns:{serviceName} xmlns:tns=\"{protocol.ProducerNamespace}\">");
                 writer.WriteLine(contentXml);
-                writer.WriteLine("@</tns:Service1>");
+                writer.WriteLine($"@</tns:{serviceName}>");
                 writer.WriteLine("@</soapenv:Body>");
                 writer.WriteLine("@</soapenv:Envelope>");
                 writer.Flush();
