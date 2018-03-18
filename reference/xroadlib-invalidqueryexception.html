@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>TypeMap - XRoadLib</title>
+    <title>InvalidQueryException - XRoadLib</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Janno Põldma"/>
@@ -35,11 +35,13 @@
 
 
 
-<h1>TypeMap</h1>
+<h1>InvalidQueryException</h1>
 <p>
-  <span>Namespace: XRoadLib.Serialization.Mapping</span><br />
+  <span>Namespace: XRoadLib</span><br />
 </p>
 <div class="xmldoc">
+<p>Describes everything that is wrong with current X-Road request message.</p>
+
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -50,64 +52,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '674', 674)" onmouseover="showTip(event, '674', 674)">
-            new(typeDefinition)
+          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+            new(message)
           </code>
-          <div class="tip" id="674">
-            <strong>Signature:</strong> typeDefinition:TypeDefinition -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <h3>Instance members</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '675', 675)" onmouseover="showTip(event, '675', 675)">
-            Definition
-          </code>
-          <div class="tip" id="675">
-            <strong>Signature:</strong> TypeDefinition<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '676', 676)" onmouseover="showTip(event, '676', 676)">
-            Deserialize(...)
-          </code>
-          <div class="tip" id="676">
-            <strong>Signature:</strong> (reader:XmlReader * templateNode:IXmlTemplateNode * content:ContentDefinition * message:XRoadMessage) -&gt; obj<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '677', 677)" onmouseover="showTip(event, '677', 677)">
-            Serialize(...)
-          </code>
-          <div class="tip" id="677">
-            <strong>Signature:</strong> (writer:XmlWriter * templateNode:IXmlTemplateNode * value:obj * content:ContentDefinition * message:XRoadMessage) -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
+          <div class="tip" id="14">
+            <strong>Signature:</strong> message:string -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">

@@ -32,6 +32,16 @@
       <div class="row">
         <div class="span9" id="main">
           
+<h4><a name="1-2-2-18-03-2018" class="anchor" href="#1-2-2-18-03-2018">1.2.2 - 18.03.2018</a></h4>
+<ul>
+<li>Fix duplicate namespace imports issue in generated service description.</li>
+<li>Fix empty string tag deserialization (returns empty string instead of null).</li>
+<li>Fix deserialization of array with merged content and empty values.</li>
+<li>New exception type <code>SchemaDefinitionException</code> which describes issues in schema definitions on server side.</li>
+<li>New exception type <code>ContractViolationException</code> which describes issues in incoming requests where message differs from service description.</li>
+<li>New exception type <code>InvalidQueryException</code> which describes propblems with messages which break SOAP specification.</li>
+<li>Refactor usage of existing exception types to use introduced exception types.</li>
+</ul>
 <h4><a name="1-2-1-07-03-2018" class="anchor" href="#1-2-1-07-03-2018">1.2.1 - 07.03.2018</a></h4>
 <ul>
 <li>Namespace imports should not contain defined schemas.</li>
