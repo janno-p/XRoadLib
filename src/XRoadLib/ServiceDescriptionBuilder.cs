@@ -118,7 +118,7 @@ namespace XRoadLib
 
             getRequiredImports = ns => requiredImports.Where(x => x.Item1 == ns).Select(x => x.Item2).ToList();
 
-            getImportedSchemas = () => requiredImports.Select(x => x.Item2).Where(x => x != null && schemaLocations[x] != null).ToList();
+            getImportedSchemas = () => requiredImports.Select(x => x.Item2).Where(x => x != null && schemaLocations[x] != null).Distinct().ToList();
 
             xRoadPrefix = schemaDefinitionProvider.GetXRoadPrefix();
             xRoadNamespace = schemaDefinitionProvider.GetXRoadNamespace();
@@ -400,7 +400,7 @@ namespace XRoadLib
                 return null;
 
             var schema = CreateXmlSchema();
-            foreach (var importedSchema in getImportedSchemas())
+            foreach (var importedSchema in importedSchemas)
                 schema.Includes.Add(new XmlSchemaImport { Namespace = importedSchema, SchemaLocation = schemaLocations[importedSchema] });
 
             return schema;
