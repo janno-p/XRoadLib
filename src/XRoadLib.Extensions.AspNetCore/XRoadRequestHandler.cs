@@ -31,11 +31,11 @@ namespace XRoadLib.Extensions.AspNetCore
         public override void HandleRequest(XRoadContext context)
         {
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
-                throw XRoadException.InvalidQuery("Empty request content");
+                throw new InvalidXRoadQueryException("Empty request content");
 
             context.Request.LoadRequest(context.HttpContext, GetStorageOrTempPath().FullName, ServiceManager);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
-                throw XRoadException.InvalidQuery($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {ServiceManager.Name}.");
+                throw new InvalidXRoadQueryException($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {ServiceManager.Name}.");
 
             context.Response.Copy(context.Request);
             context.ServiceMap = context.Request.MetaServiceMap;

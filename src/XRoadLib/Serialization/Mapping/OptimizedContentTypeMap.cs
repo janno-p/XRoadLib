@@ -17,11 +17,11 @@ namespace XRoadLib.Serialization.Mapping
         public object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (!reader.ReadToDescendant("Include", NamespaceConstants.XOP))
-                throw XRoadException.InvalidQuery("Missing `xop:Include` reference to multipart content.");
+                throw new InvalidXRoadQueryException("Missing `xop:Include` reference to multipart content.");
 
             var contentID = reader.GetAttribute("href");
             if (string.IsNullOrWhiteSpace(contentID))
-                throw XRoadException.InvalidQuery("Missing `href` attribute to multipart content.");
+                throw new InvalidXRoadQueryException("Missing `href` attribute to multipart content.");
 
             var attachment = message.GetAttachment(contentID.Substring(4));
             if (attachment == null)

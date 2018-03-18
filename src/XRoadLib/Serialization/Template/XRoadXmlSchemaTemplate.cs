@@ -12,8 +12,8 @@ namespace XRoadLib.Serialization.Template
         private readonly XmlSchemaElement requestElement;
         private readonly XmlSchemaElement responseElement;
 
-        public IDictionary<string, Type> ParameterTypes { get { throw new NotImplementedException(); } }
-        public IEnumerable<IXmlTemplateNode> ParameterNodes { get { throw new NotImplementedException(); } }
+        public IDictionary<string, Type> ParameterTypes => throw new NotImplementedException();
+        public IEnumerable<IXmlTemplateNode> ParameterNodes => throw new NotImplementedException();
         public IXmlTemplateNode RequestNode => new XRoadXmlSchemaTemplateNode(requestElement, schema);
         public IXmlTemplateNode ResponseNode => new XRoadXmlSchemaTemplateNode(responseElement, schema);
 
@@ -30,11 +30,6 @@ namespace XRoadLib.Serialization.Template
                                     .Single(e => e.Name == elementName);
         }
 
-        public IXmlTemplateNode GetParameterNode(string parameterName)
-        {
-            throw new NotImplementedException();
-        }
-
         private class XRoadXmlSchemaTemplateNode : IXmlTemplateNode
         {
             private static readonly XmlQualifiedName arrayTypeName = new XmlQualifiedName("Array", NamespaceConstants.SOAP_ENC);
@@ -43,16 +38,10 @@ namespace XRoadLib.Serialization.Template
             private readonly XmlSchemaElement nodeElement;
             private readonly IDictionary<string, XmlSchemaElement> childElements = new Dictionary<string, XmlSchemaElement>();
 
-            public IXmlTemplateNode this[string childNodeName, uint version]
-            {
-                get
-                {
-                    XmlSchemaElement childElement;
-                    return childElements.TryGetValue(childNodeName, out childElement)
-                        ? new XRoadXmlSchemaTemplateNode(childElement, schema)
-                        : null;
-                }
-            }
+            public IXmlTemplateNode this[string childNodeName, uint version] =>
+                childElements.TryGetValue(childNodeName, out var childElement)
+                    ? new XRoadXmlSchemaTemplateNode(childElement, schema)
+                    : null;
 
             public bool IsRequired => !nodeElement.IsNillable;
             public string Name => nodeElement.Name;
@@ -65,12 +54,10 @@ namespace XRoadLib.Serialization.Template
 
                 nodeElement = element;
 
-                var complexType = element.SchemaType as XmlSchemaComplexType;
-                if (complexType != null)
+                if (element.SchemaType is XmlSchemaComplexType complexType)
                 {
                     var complexContent = complexType.ContentModel as XmlSchemaComplexContent;
-                    var restriction = complexContent?.Content as XmlSchemaComplexContentRestriction;
-                    if (restriction != null && restriction.BaseTypeName == arrayTypeName)
+                    if (complexContent?.Content is XmlSchemaComplexContentRestriction restriction && restriction.BaseTypeName == arrayTypeName)
                         AddChildElements(((XmlSchemaSequence)restriction.Particle).Items.Cast<XmlSchemaElement>().Single());
                 }
 
@@ -91,19 +78,21 @@ namespace XRoadLib.Serialization.Template
                                        .OfType<XmlSchemaType>()
                                        .Single(tp => tp.Name == element.SchemaTypeName.Name);
 
-                var complexType = schemaType as XmlSchemaComplexType;
-                if (complexType == null)
+                if (!(schemaType is XmlSchemaComplexType complexType))
                     return;
 
-                var choice = complexType.Particle as XmlSchemaChoice;
-                if (choice != null)
-                    foreach (var childElement in choice.Items.Cast<XmlSchemaSequence>().SelectMany(s => s.Items.Cast<XmlSchemaElement>()))
-                        childElements.Add(childElement.Name, childElement);
+                switch (complexType.Particle)
+                {
+                    case XmlSchemaChoice choice:
+                        foreach (var childElement in choice.Items.Cast<XmlSchemaSequence>().SelectMany(s => s.Items.Cast<XmlSchemaElement>()))
+                            childElements.Add(childElement.Name, childElement);
+                        break;
 
-                var sequence = complexType.Particle as XmlSchemaSequence;
-                if (sequence != null)
-                    foreach (var childElement in sequence.Items.Cast<XmlSchemaElement>())
-                        childElements.Add(childElement.Name, childElement);
+                    case XmlSchemaSequence sequence:
+                        foreach (var childElement in sequence.Items.Cast<XmlSchemaElement>())
+                            childElements.Add(childElement.Name, childElement);
+                        break;
+                }
             }
 
             public string Namespace => schema.TargetNamespace;

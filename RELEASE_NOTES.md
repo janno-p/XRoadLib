@@ -1,3 +1,9 @@
+#### 1.2.2 - Unreleased
+
+* Fix duplicate namespace imports issue in generated service description.
+* Fix empty string tag deserialization (returns empty string instead of null).
+* Fix deserialization of array with merged content and empty values.
+
 #### 1.2.1 - 07.03.2018
 
 * Namespace imports should not contain defined schemas.

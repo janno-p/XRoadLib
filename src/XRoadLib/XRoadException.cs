@@ -10,7 +10,7 @@ namespace XRoadLib
     {
         public FaultCode FaultCode { get; }
 
-        private XRoadException(FaultCode faultCode, string message)
+        protected XRoadException(FaultCode faultCode, string message)
             : base(message)
         {
             FaultCode = faultCode;
@@ -75,11 +75,6 @@ namespace XRoadLib
         public static XRoadException ToetamataKodeering(string kodeering)
         {
             return new XRoadException(new ClientFaultCode("UnsupportedContentTransferEncoding"), $"Kodeering `{kodeering}` ei ole rakenduse poolt toetatud.");
-        }
-
-        public static XRoadException InvalidQuery(string message)
-        {
-            return new XRoadException(new ClientFaultCode("InvalidQuery"), message);
         }
 
         public static XRoadException UndefinedContract(string operationName)

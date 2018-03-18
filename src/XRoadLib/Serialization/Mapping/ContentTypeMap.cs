@@ -31,7 +31,7 @@ namespace XRoadLib.Serialization.Mapping
             if (string.IsNullOrWhiteSpace(contentID))
             {
                 if (message.IsMultipartContainer)
-                    throw XRoadException.InvalidQuery("Missing `href` attribute to multipart content.");
+                    throw new InvalidXRoadQueryException("Missing `href` attribute to multipart content.");
 
                 var tempAttachment = new XRoadAttachment(new MemoryStream()) { IsMultipartContent = false };
                 message.AllAttachments.Add(tempAttachment);

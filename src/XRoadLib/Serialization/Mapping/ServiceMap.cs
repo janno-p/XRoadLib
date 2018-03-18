@@ -58,7 +58,7 @@ namespace XRoadLib.Serialization.Mapping
             var requestName = RequestDefinition.RequestElementName;
 
             if (!RequestDefinition.Content.MergeContent && !reader.MoveToElement(3, requestName))
-                throw XRoadException.InvalidQuery($"Päringus puudub X-tee `{requestName}` element.");
+                throw new InvalidXRoadQueryException($"Request wrapper element `{requestName}` was not found in incoming SOAP message.");
 
             return RequestDefinition.ParameterInfo != null
                 ? ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestDefinition.Content, message))
@@ -74,7 +74,7 @@ namespace XRoadLib.Serialization.Mapping
             if (OperationDefinition.CopyRequestPartToResponse)
             {
                 if (!reader.MoveToElement(3, requestName))
-                    throw XRoadException.InvalidQuery($"Expected payload element `{requestName}` was not found in SOAP message.");
+                    throw new InvalidXRoadQueryException($"Expected payload element `{requestName}` was not found in SOAP message.");
                 reader.Read();
             }
 
@@ -84,11 +84,11 @@ namespace XRoadLib.Serialization.Mapping
                 return reader.ReadXRoadFault(4);
 
             if (!hasResponseElement || reader.LocalName != responseName)
-                throw XRoadException.InvalidQuery($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
+                throw new InvalidXRoadQueryException($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
 
             var hasWrapperElement = HasWrapperResultElement;
             if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.Content.Name.LocalName, ResponseDefinition.Content.Name.NamespaceName))
-                throw XRoadException.InvalidQuery($"Expected result wrapper element `{ResponseDefinition.Content.Name}` was not found in SOAP message.");
+                throw new InvalidXRoadQueryException($"Expected result wrapper element `{ResponseDefinition.Content.Name}` was not found in SOAP message.");
 
             return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition.Content, message));
         }
@@ -103,7 +103,7 @@ namespace XRoadLib.Serialization.Mapping
 
             string typeAttribute;
             if (typeMap.Definition.IsAnonymous && !(typeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
-                throw XRoadException.InvalidQuery($"Expected anonymous type, but `{typeAttribute}` was given.");
+                throw new InvalidXRoadQueryException($"Expected anonymous type, but `{typeAttribute}` was given.");
 
             var concreteTypeMap = typeMap;
             if (!content.IgnoreExplicitType)

@@ -126,11 +126,10 @@ namespace XRoadLib.Serialization.Mapping
             var missingProperties = deserializationPropertyMaps.Where(kv => !existingPropertyNames.Contains(kv.Key) && !kv.Value.Definition.Content.IsOptional).Select(kv => $"`{kv.Key}`").ToList();
 
             var propertyMessage = string.Join(", ", missingProperties);
-            var errorMessage = missingProperties.Count > 1
-                ? $"Elements {propertyMessage} are required by type `{typeName}` definition."
-                : $"Element {propertyMessage} is required by type `{typeName}` definition.";
+            if (missingProperties.Count > 0)
+                throw new InvalidXRoadQueryException($"Elements {propertyMessage} are required by type `{typeName}` definition.");
 
-            throw XRoadException.InvalidQuery(errorMessage);
+            throw new InvalidXRoadQueryException($"Element {propertyMessage} is required by type `{typeName}` definition.");
         }
     }
 }

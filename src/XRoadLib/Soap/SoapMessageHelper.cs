@@ -55,11 +55,11 @@ namespace XRoadLib.Soap
             var fault = new SoapFault();
 
             if (reader.IsEmptyElement || !reader.MoveToElement(depth, "faultcode"))
-                throw XRoadException.InvalidQuery("SOAP Fault must have `faultcode` element.");
+                throw new InvalidXRoadQueryException("SOAP Fault must have `faultcode` element.");
             fault.FaultCode = reader.ReadElementContentAsString();
 
             if (!reader.MoveToElement(depth, "faultstring"))
-                throw XRoadException.InvalidQuery("SOAP Fault must have `faultstring` element.");
+                throw new InvalidXRoadQueryException("SOAP Fault must have `faultstring` element.");
             fault.FaultString = reader.ReadElementContentAsString();
 
             var success = reader.MoveToElement(depth);
@@ -76,7 +76,7 @@ namespace XRoadLib.Soap
             }
 
             if (success)
-                throw XRoadException.InvalidQuery($"Unexpected element `{reader.GetXName()}` in SOAP Fault element.");
+                throw new InvalidXRoadQueryException($"Unexpected element `{reader.GetXName()}` in SOAP Fault element.");
 
             return fault;
         }
