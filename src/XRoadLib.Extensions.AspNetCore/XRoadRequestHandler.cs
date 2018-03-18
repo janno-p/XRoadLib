@@ -12,7 +12,7 @@ namespace XRoadLib.Extensions.AspNetCore
     public class XRoadRequestHandler : XRoadHandlerBase
     {
         protected readonly IServiceProvider serviceProvider;
-        
+
         public DirectoryInfo StoragePath { get; set; }
 
         /// <summary>
@@ -31,11 +31,11 @@ namespace XRoadLib.Extensions.AspNetCore
         public override void HandleRequest(XRoadContext context)
         {
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
-                throw new InvalidXRoadQueryException("Empty request content");
+                throw new InvalidQueryException("Empty request content");
 
             context.Request.LoadRequest(context.HttpContext, GetStorageOrTempPath().FullName, ServiceManager);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
-                throw new InvalidXRoadQueryException($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {ServiceManager.Name}.");
+                throw new InvalidQueryException($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {ServiceManager.Name}.");
 
             context.Response.Copy(context.Request);
             context.ServiceMap = context.Request.MetaServiceMap;
@@ -63,7 +63,7 @@ namespace XRoadLib.Extensions.AspNetCore
 
             var service = serviceProvider.GetRequiredService(operationDefinition.MethodInfo.DeclaringType);
 
-            return service ?? throw XRoadException.UnknownOperation(operationDefinition.Name);
+            return service ?? throw new SchemaDefinitionException($"Operation {operationDefinition.Name} is not implemented by contract.");
         }
 
         /// <summary>

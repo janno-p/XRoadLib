@@ -61,7 +61,7 @@ namespace XRoadLib.Serialization.Template
 
             var documentNode = parameterNodes[index];
             if (documentNode == null)
-                throw XRoadException.ParameterUndefinedInTemplate(parameterName);
+                throw new SchemaDefinitionException($"Service template does not define parameter named `{parameterName}`.");
 
             return new XRoadRequestTemplateNode(parameterName, documentNode);
         }

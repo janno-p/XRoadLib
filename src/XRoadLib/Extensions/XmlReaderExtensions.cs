@@ -43,7 +43,7 @@ namespace XRoadLib.Extensions
                     return false;
 
                 default:
-                    throw new XmlException($"Invalid {qnXsiNil} attribute value: `{value}`");
+                    throw new InvalidQueryException($"Invalid {qnXsiNil} attribute value: `{value}`");
             }
         }
 
@@ -64,7 +64,7 @@ namespace XRoadLib.Extensions
 
             var typeNamespace = reader.LookupNamespace(namespacePrefix);
             if (typeNamespace == null)
-                throw new InvalidXRoadQueryException($"Undefined namespace prefix `{namespacePrefix}` given in XML message for element `{reader.LocalName}` xsi:type.");
+                throw new InvalidQueryException($"Undefined namespace prefix `{namespacePrefix}` given in XML message for element `{reader.LocalName}` xsi:type.");
 
             if (isArrayType)
                 typeName = typeName.Substring(0, typeName.LastIndexOf('['));
@@ -104,7 +104,7 @@ namespace XRoadLib.Extensions
 
             var content = reader.ReadElementContentAsString();
             if (!string.IsNullOrEmpty(content))
-                throw new InvalidXRoadQueryException($@"An element labeled with `xsi:nil=""true""` must be empty, but had `{content}` as content.");
+                throw new InvalidQueryException($@"An element labeled with `xsi:nil=""true""` must be empty, but had `{content}` as content.");
 
             reader.ReadToEndElement();
         }
@@ -155,10 +155,10 @@ namespace XRoadLib.Extensions
         public static void MoveToBody(this XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
-                throw new InvalidXRoadQueryException($"Element `{NamespaceConstants.SOAP}:Envelope` is missing from request content.");
+                throw new InvalidQueryException($"Element `{NamespaceConstants.SOAP}:Envelope` is missing from request content.");
 
             if (!reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
-                throw new InvalidXRoadQueryException($"Element `{NamespaceConstants.SOAP}:Body` is missing from request content.");
+                throw new InvalidQueryException($"Element `{NamespaceConstants.SOAP}:Body` is missing from request content.");
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace XRoadLib.Extensions
             reader.MoveToBody();
 
             if (!reader.MoveToElement(2, rootElementName.LocalName, rootElementName.NamespaceName))
-                throw new InvalidXRoadQueryException("Payload is missing from request content.");
+                throw new InvalidQueryException("Payload is missing from request content.");
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization
 {
@@ -80,7 +81,7 @@ namespace XRoadLib.Serialization
         {
             var operationDefinition = GetOperationDefinition(contractAssembly, qualifiedName);
             if (operationDefinition == null || qualifiedName.NamespaceName != operationDefinition.Name.NamespaceName)
-                throw XRoadException.UnknownOperation(qualifiedName);
+                throw new ContractViolationException(ClientFaultCode.UnknownOperation, $"The operation {qualifiedName} is not defined by contract.");
 
             var requestDefinition = schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
             var inputTypeMap = GetContentDefinitionTypeMap(requestDefinition.Content, null);
@@ -146,7 +147,7 @@ namespace XRoadLib.Serialization
         private ITypeMap AddTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
             if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.GetTypeInfo().ExistsInVersion(Version.Value))
-                throw XRoadException.UnknownType(runtimeType.ToString());
+                throw new SchemaDefinitionException($"The runtime type `{runtimeType.Name}` is not defined for DTO version `{Version.Value}`.");
 
             var typeDefinition = schemaDefinitionProvider.GetTypeDefinition(runtimeType);
 
@@ -175,8 +176,8 @@ namespace XRoadLib.Serialization
             if (!ReferenceEquals(typeDefinition.Type.GetTypeInfo().Assembly, contractAssembly))
                 return null;
 
-            if (!typeDefinition.Type.GetTypeInfo().IsEnum && !typeDefinition.Type.GetTypeInfo().IsAbstract && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
-                throw XRoadException.NoDefaultConstructorForType(typeDefinition.Type.Name);
+            if (typeDefinition.IsCompositeType && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
+                throw new SchemaDefinitionException($"The runtime type '{typeDefinition.Type.Name}' does not have default constructor.");
 
             if (typeDefinition.Type.GetTypeInfo().IsEnum)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(EnumTypeMap), typeDefinition);
@@ -205,10 +206,10 @@ namespace XRoadLib.Serialization
                 return null;
 
             if (qualifiedName.NamespaceName != typeDefinition.Name.NamespaceName)
-                throw XRoadException.UnknownType(qualifiedName.ToString());
+                throw new ContractViolationException(ClientFaultCode.UnknownType, $"The referenced type `{qualifiedName}` is not defined by contract.");
 
-            if (!typeDefinition.Type.GetTypeInfo().IsEnum && !typeDefinition.Type.GetTypeInfo().IsAbstract && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
-                throw XRoadException.NoDefaultConstructorForType(typeDefinition.Name);
+            if (typeDefinition.IsCompositeType && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
+                throw new SchemaDefinitionException($"The runtime type '{typeDefinition.Name}' does not define default constructor.");
 
             ITypeMap typeMap;
 
@@ -256,7 +257,7 @@ namespace XRoadLib.Serialization
             if (typeDefinition != null)
                 return typeDefinition;
 
-            throw XRoadException.UnknownType(qualifiedName.ToString());
+            throw new ContractViolationException(ClientFaultCode.UnknownType, $"The referenced type `{qualifiedName}` is not defined by contract.");
         }
 
         public XName GetXmlTypeName(Type type)
@@ -280,7 +281,7 @@ namespace XRoadLib.Serialization
             if (ReferenceEquals(type.GetTypeInfo().Assembly, contractAssembly))
                 return XName.Get(type.Name, producerNamespace);
 
-            throw XRoadException.AndmetüübileVastavNimeruumPuudub(type.FullName);
+            throw new SchemaDefinitionException($"XML namespace of runtime type `{type.FullName}` is undefined.");
         }
 
         private void AddSystemType<T>(string typeName, Func<TypeDefinition, ITypeMap> createTypeMap)

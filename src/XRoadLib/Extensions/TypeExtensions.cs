@@ -48,7 +48,7 @@ namespace XRoadLib.Extensions
         public static IEnumerable<PropertyDefinition> GetPropertiesSorted(this Type type, IComparer<PropertyDefinition> comparer, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition)
         {
             if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
+                throw new SchemaDefinitionException($"Property comparer of runtime type `{type.FullName}` is undefined.");
 
             return GetTypeProperties(type, version, createDefinition).OrderBy(x => x, comparer);
         }
@@ -117,7 +117,7 @@ namespace XRoadLib.Extensions
                              .ToList();
         }
 
-        internal static bool IsVersionInRange(uint version, uint? versionAdded, uint? versionRemoved)
+        private static bool IsVersionInRange(uint version, uint? versionAdded, uint? versionRemoved)
         {
             return version >= versionAdded.GetValueOrDefault() && version < versionRemoved.GetValueOrDefault(uint.MaxValue);
         }
@@ -202,15 +202,11 @@ namespace XRoadLib.Extensions
                                         .ToList();
 
             if (methodContracts.Count > 1)
-                throw XRoadException.AmbiguousMatch(operationName);
+                throw new SchemaDefinitionException($"Unable to detect unique service contract for operation `{operationName}` (method implements multiple service contracts).");
 
             var methodContract = methodContracts.SingleOrDefault();
-
-            if (methodContract == null || !serviceContracts.TryGetValue(methodContract, out var serviceContract))
-                throw XRoadException.UndefinedContract(operationName);
-
-            if (!serviceContract.TryGetValue(operationName, out var serviceAttribute))
-                throw XRoadException.UndefinedContract(operationName);
+            if (methodContract == null || !serviceContracts.TryGetValue(methodContract, out var serviceContract) || !serviceContract.TryGetValue(operationName, out var serviceAttribute))
+                throw new SchemaDefinitionException($"Operation `{operationName}` does not implement any known service contract.");
 
             return Tuple.Create(methodContract, serviceAttribute);
         }

@@ -4,6 +4,7 @@ using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -52,7 +53,7 @@ namespace XRoadLib.Serialization.Mapping
                         break;
 
                     if (!arrayContent.Item.AcceptsAnyName)
-                        throw new Exception($"Invalid array item name {reader.LocalName}.");
+                        throw new ContractViolationException(ClientFaultCode.UnexpectedElement, $"Invalid array item name {reader.LocalName}.");
                 }
 
                 if (reader.IsNilElement())

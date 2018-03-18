@@ -31,7 +31,7 @@ namespace XRoadLib.Serialization.Mapping
             if (string.IsNullOrWhiteSpace(contentID))
             {
                 if (message.IsMultipartContainer)
-                    throw new InvalidXRoadQueryException("Missing `href` attribute to multipart content.");
+                    throw new InvalidQueryException("Missing `href` attribute to multipart content.");
 
                 var tempAttachment = new XRoadAttachment(new MemoryStream()) { IsMultipartContent = false };
                 message.AllAttachments.Add(tempAttachment);
@@ -54,7 +54,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var attachment = message.GetAttachment(contentID.Substring(4));
             if (attachment == null)
-                throw XRoadException.PäringusPuudubAttachment(contentID);
+                throw new InvalidQueryException($"MIME multipart message does not contain message part with ID `{contentID}`.");
 
             if (reader.IsEmptyElement)
                 return MoveNextAndReturn(reader, attachment.ContentStream);

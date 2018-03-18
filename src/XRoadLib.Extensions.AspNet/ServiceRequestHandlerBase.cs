@@ -28,9 +28,7 @@ namespace XRoadLib.Extensions.AspNet
         /// </summary>
         protected ServiceRequestHandlerBase(IEnumerable<IServiceManager> serviceManagers)
         {
-            if (serviceManagers == null)
-                throw new ArgumentNullException(nameof(serviceManagers));
-            this.serviceManagers = serviceManagers.ToList();
+            this.serviceManagers = serviceManagers?.ToList() ?? throw new ArgumentNullException(nameof(serviceManagers));
         }
 
         /// <summary>
@@ -84,13 +82,13 @@ namespace XRoadLib.Extensions.AspNet
         protected override void HandleRequest(XRoadContext context)
         {
             if (context.HttpContext.Request.InputStream.Length == 0)
-                throw new InvalidXRoadQueryException("Empty request content");
+                throw new InvalidQueryException("Empty request content");
 
             context.Request.LoadRequest(context.HttpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), serviceManagers);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
             {
                 var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));
-                throw new InvalidXRoadQueryException($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
+                throw new InvalidQueryException($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
             }
 
             context.Response.Copy(context.Request);

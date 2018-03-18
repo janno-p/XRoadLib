@@ -31,8 +31,8 @@ namespace XRoadLib.Headers
         /// </summary>
         public string SubsystemCode { get; set; } // Optional
 
-        string IXRoadIdentifier.ServiceCode { get { throw new NotImplementedException(); } }
-        string IXRoadIdentifier.ServiceVersion { get { throw new NotImplementedException(); } }
+        string IXRoadIdentifier.ServiceCode => throw new NotImplementedException();
+        string IXRoadIdentifier.ServiceVersion => throw new NotImplementedException();
 
         /// <summary>
         /// X-Road client identifier type: MEMBER or SUBSYSTEM.

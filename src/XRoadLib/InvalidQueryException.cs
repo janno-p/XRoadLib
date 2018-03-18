@@ -5,10 +5,10 @@ namespace XRoadLib
     /// <summary>
     /// Describes everything that is wrong with current X-Road request message.
     /// </summary>
-    public class InvalidXRoadQueryException : XRoadException
+    public class InvalidQueryException : XRoadException
     {
-        public InvalidXRoadQueryException(string message)
-            : base(new ClientFaultCode("InvalidQuery"), message)
+        public InvalidQueryException(string message)
+            : base(ClientFaultCode.InvalidQuery, message)
         { }
     }
 }

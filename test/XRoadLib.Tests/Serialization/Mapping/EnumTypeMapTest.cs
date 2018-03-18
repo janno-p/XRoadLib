@@ -20,21 +20,21 @@ namespace XRoadLib.Tests.Serialization.Mapping
         [Fact]
         public void CannotDeserializeUnknownValue()
         {
-            var ex = Assert.Throws<MissingFieldException>(() => deserializeValue("Random"));
+            var ex = Assert.Throws<ContractViolationException>(() => deserializeValue("Random"));
             Assert.Equal("Unexpected value `Random` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
         }
 
         [Fact]
         public void CannotDeserializeEmptyValue()
         {
-            var ex = Assert.Throws<MissingFieldException>(() => deserializeValue(""));
+            var ex = Assert.Throws<ContractViolationException>(() => deserializeValue(""));
             Assert.Equal("Unexpected value `` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
         }
 
         [Fact]
         public void CannotDeserializeSelfClosingEmptyValue()
         {
-            var ex = Assert.Throws<MissingFieldException>(() => DeserializeEmptyValue(typeMap));
+            var ex = Assert.Throws<ContractViolationException>(() => DeserializeEmptyValue(typeMap));
             Assert.Equal("Unexpected value `` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
         }
     }

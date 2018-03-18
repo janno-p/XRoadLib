@@ -20,10 +20,10 @@ namespace XRoadLib.Serialization
         protected void Enable<TValue>(Expression<Func<T, TValue>> expression)
         {
             if (!(expression.Body is MemberExpression memberExpression))
-                throw new ArgumentException($"MemberExpression expected, but was {expression.Body.GetType().Name} ({GetType().Name}).");
+                throw new SchemaDefinitionException($"MemberExpression expected, but was {expression.Body.GetType().Name} ({GetType().Name}).");
 
             if (memberExpression.Expression != expression.Parameters[0])
-                throw new ArgumentException($"Only parameter members should be used in mapping definition ({GetType().Name}).");
+                throw new SchemaDefinitionException($"Only parameter members should be used in mapping definition ({GetType().Name}).");
 
             enabledProperties.Add(memberExpression.Member.Name);
         }

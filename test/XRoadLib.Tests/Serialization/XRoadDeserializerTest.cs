@@ -297,7 +297,7 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param3>"
                            + "</keha>";
 
-            var exception = Assert.Throws<XRoadException>(() => DeserializeRequest20(templateXml, contentXml));
+            var exception = Assert.Throws<InvalidQueryException>(() => DeserializeRequest20(templateXml, contentXml));
             Assert.Equal("The type '{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Subject' is abstract, type attribute is required to specify target type.", exception.Message);
         }
 
@@ -415,8 +415,8 @@ namespace XRoadLib.Tests.Serialization
                            + "  </Param1>"
                            + "</keha>";
 
-            var exception = Assert.Throws<XRoadException>(() => DeserializeRequest20(templateXml, contentXml));
-            Assert.Equal("MIME multipart message does not contain content with ID `cid:KcGPT5EOP0BC0DXQ5wmEFA==`.", exception.Message);
+            var exception = Assert.Throws<InvalidQueryException>(() => DeserializeRequest20(templateXml, contentXml));
+            Assert.Equal("MIME multipart message does not contain message part with ID `cid:KcGPT5EOP0BC0DXQ5wmEFA==`.", exception.Message);
         }
 
         [Fact]
@@ -483,7 +483,7 @@ namespace XRoadLib.Tests.Serialization
                     var typeMap = serializer31.GetTypeMap(typeof(ContainerType));
                     using (var message = new XRoadMessage())
                     {
-                        var exception = Assert.Throws<XRoadException>(() => typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message));
+                        var exception = Assert.Throws<ContractViolationException>(() => typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message));
                         Assert.Equal("Expected anonymous type, but `Test` was given.", exception.Message);
                     }
                 }

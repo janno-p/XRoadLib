@@ -166,7 +166,7 @@ namespace XRoadLib
             foreach (var typeDefinition in typeDefinitions)
             {
                 if (schemaTypeDefinitions.ContainsKey(typeDefinition.Name))
-                    throw new Exception($"Multiple type definitions for same name `{typeDefinition.Name}`.");
+                    throw new SchemaDefinitionException($"Multiple type definitions for same name `{typeDefinition.Name}`.");
 
                 schemaTypeDefinitions.Add(typeDefinition.Name, typeDefinition);
                 runtimeTypeDefinitions.Add(typeDefinition.Type, typeDefinition);
@@ -450,7 +450,7 @@ namespace XRoadLib
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new NotImplementedException();
             }
 
             return new XmlSchemaComplexType { Particle = complexTypeSequence };
@@ -617,7 +617,7 @@ namespace XRoadLib
                 var propertyContent = propertyDefinition.Content;
 
                 if (propertyContent.MergeContent && propertyDefinitions.Count > 1 && propertyContent is SingularContentDefinition)
-                    throw new Exception($"Property {propertyDefinition} of type {typeDefinition} cannot be merged, because there are more than 1 properties present.");
+                    throw new SchemaDefinitionException($"Property {propertyDefinition} of type {typeDefinition} cannot be merged, because there are more than 1 properties present.");
 
                 var contentElement = CreateContentElement(propertyContent, schemaNamespace, referencedTypes);
 
@@ -664,7 +664,7 @@ namespace XRoadLib
                 return new XmlQualifiedName(name.LocalName, name.NamespaceName);
 
             if (!runtimeTypeDefinitions.TryGetValue(type, out var typeDefinition))
-                throw new Exception($"Unrecognized type `{type.FullName}`.");
+                throw new SchemaDefinitionException($"Unrecognized type `{type.FullName}`.");
 
             addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName, null);
 

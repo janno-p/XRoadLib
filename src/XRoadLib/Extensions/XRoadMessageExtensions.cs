@@ -26,7 +26,7 @@ namespace XRoadLib.Extensions
                 reader.MoveToBody();
 
                 if (!reader.MoveToElement(2))
-                    throw new InvalidXRoadQueryException("No payload element in SOAP message.");
+                    throw new InvalidQueryException("No payload element in SOAP message.");
 
                 if (reader.NamespaceURI == NamespaceConstants.SOAP_ENV && reader.LocalName == "Fault")
                     throw new SoapFaultException(SoapMessageHelper.DeserializeSoapFault(reader));

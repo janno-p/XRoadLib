@@ -21,7 +21,7 @@ namespace XRoadLib.Extensions
 
                 var responseName = serviceMap.ResponseDefinition.ResponseElementName;
                 if (!reader.MoveToElement(3, responseName))
-                    throw new InvalidXRoadQueryException($"X-Road fault should be wrapped inside `{responseName}` element.");
+                    throw new InvalidQueryException($"X-Road fault should be wrapped inside `{responseName}` element.");
 
                 return reader.ReadXRoadFault(4);
             }

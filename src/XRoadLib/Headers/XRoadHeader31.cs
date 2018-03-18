@@ -168,7 +168,7 @@ namespace XRoadLib.Headers
                 }
             }
 
-            throw new InvalidXRoadQueryException($"Unexpected X-Road header element `{reader.GetXName()}`.");
+            throw new InvalidQueryException($"Unexpected X-Road header element `{reader.GetXName()}`.");
         }
 
         /// <inheritdoc />

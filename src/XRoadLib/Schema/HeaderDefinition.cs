@@ -71,13 +71,12 @@ namespace XRoadLib.Schema
 
             public IHeaderDefinitionBuilder<THeader> WithRequiredHeader<TValue>(Expression<Func<THeader, TValue>> expression)
             {
-                var memberExpression = expression.Body as MemberExpression;
-                if (memberExpression == null)
-                    throw new ArgumentException($"Only MemberExpression is allowed to use for SOAP header definition, but was {expression.Body.GetType().Name} ({GetType().Name}).", nameof(expression));
+                if (!(expression.Body is MemberExpression memberExpression))
+                    throw new SchemaDefinitionException($"Only MemberExpression is allowed to use for SOAP header definition, but was {expression.Body.GetType().Name} ({GetType().Name}).");
 
                 var attribute = memberExpression.Member.GetSingleAttribute<XmlElementAttribute>() ?? memberExpression.Member.DeclaringType.GetElementAttributeFromInterface(memberExpression.Member as PropertyInfo);
                 if (string.IsNullOrWhiteSpace(attribute?.ElementName))
-                    throw new ArgumentException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.", nameof(expression));
+                    throw new SchemaDefinitionException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.");
 
                 headerDefinition.RequiredHeaders.Add(XName.Get(attribute.ElementName, attribute.Namespace));
 

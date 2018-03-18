@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace XRoadLib.Extensions
 {
@@ -8,7 +7,7 @@ namespace XRoadLib.Extensions
         internal static string GetOperationNameFromMethodInfo(this MethodInfo methodInfo)
         {
             if (methodInfo.DeclaringType == null)
-                throw new ArgumentException("Declaring type is missing.", nameof(methodInfo));
+                throw new SchemaDefinitionException($"Declaring type of method `{methodInfo.Name}` is not defined.");
 
             if (methodInfo.DeclaringType.Name.StartsWith("I") && methodInfo.DeclaringType.Name.Length > 1 && char.IsUpper(methodInfo.DeclaringType.Name[1]))
                 return methodInfo.DeclaringType.Name.Substring(1);

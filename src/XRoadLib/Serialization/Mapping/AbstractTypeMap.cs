@@ -13,7 +13,7 @@ namespace XRoadLib.Serialization.Mapping
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
-            throw XRoadException.TypeAttributeRequired(Definition.Name.ToString());
+            throw new InvalidQueryException($"The type '{Definition.Name}' is abstract, type attribute is required to specify target type.");
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)

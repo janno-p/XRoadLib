@@ -14,7 +14,7 @@ namespace XRoadLib.Schema
             : base(particle)
         {
             if (customAttributeProvider.GetXmlArrayAttribute() != null || customAttributeProvider.GetXmlArrayItemAttribute() != null)
-                throw new Exception($"Singe content property `{particle} ({runtimeName})` should not use XmlArray or XmlArrayItem attributes in definition.");
+                throw new SchemaDefinitionException($"Single content property `{particle} ({runtimeName})` should not use XmlArray or XmlArrayItem attributes in definition.");
 
             var elementAttribute = customAttributeProvider.GetXmlElementAttribute();
             var xroadElementAttribute = elementAttribute as XRoadXmlElementAttribute;

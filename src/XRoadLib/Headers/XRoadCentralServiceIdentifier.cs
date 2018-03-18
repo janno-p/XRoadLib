@@ -15,16 +15,16 @@ namespace XRoadLib.Headers
         /// </summary>
         public string XRoadInstance { get; set; }
 
-        string IXRoadIdentifier.MemberClass { get { throw new NotImplementedException(); } }
-        string IXRoadIdentifier.MemberCode { get { throw new NotImplementedException(); } }
-        string IXRoadIdentifier.SubsystemCode { get { throw new NotImplementedException(); } }
+        string IXRoadIdentifier.MemberClass => throw new NotImplementedException();
+        string IXRoadIdentifier.MemberCode => throw new NotImplementedException();
+        string IXRoadIdentifier.SubsystemCode => throw new NotImplementedException();
 
         /// <summary>
         /// X-Road central service name.
         /// </summary>
         public string ServiceCode { get; set; }
 
-        string IXRoadIdentifier.ServiceVersion { get { throw new NotImplementedException(); } }
+        string IXRoadIdentifier.ServiceVersion => throw new NotImplementedException();
 
         /// <summary>
         /// Must be assigned to CENTRALSERVICE.

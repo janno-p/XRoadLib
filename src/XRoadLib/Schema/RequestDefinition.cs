@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 
 namespace XRoadLib.Schema
@@ -31,7 +30,7 @@ namespace XRoadLib.Schema
         {
             var methodParameters = declaringOperationDefinition.MethodInfo.GetParameters();
             if (methodParameters.Length > 1)
-                throw new Exception($"Invalid X-Road operation contract `{declaringOperationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
+                throw new SchemaDefinitionException($"Invalid X-Road operation contract `{declaringOperationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
 
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = methodParameters.SingleOrDefault();

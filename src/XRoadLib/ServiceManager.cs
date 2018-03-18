@@ -129,10 +129,10 @@ namespace XRoadLib
         public virtual ServiceDescription CreateServiceDescription(Func<OperationDefinition, bool> operationFilter = null, uint? version = null)
         {
             if (!version.HasValue && ProtocolDefinition.SupportedVersions.Any())
-                throw new ArgumentNullException(nameof(version), "Version value is required to generate service description.");
+                throw new SchemaDefinitionException("Version value is required to generate service description.");
 
             if (version.HasValue && !ProtocolDefinition.SupportedVersions.Contains(version.Value))
-                throw new ArgumentOutOfRangeException(nameof(version), $"Version {version.Value} is not supported.");
+                throw new SchemaDefinitionException($"Version {version.Value} is not supported.");
 
             var producerDefinition = new ServiceDescriptionBuilder(schemaDefinitionProvider, operationFilter, version);
 
@@ -159,26 +159,26 @@ namespace XRoadLib
         public virtual ISerializer GetSerializer(uint? version = null)
         {
             if (!serializers.Any())
-                throw new Exception($"This protocol instance (message protocol version `{Name}`) is not configured with contract assembly.");
+                throw new SchemaDefinitionException($"This protocol instance (message protocol version `{Name}`) is not configured with contract assembly.");
 
             if (!ProtocolDefinition.SupportedVersions.Any())
                 return serializers.Single().Value;
 
             if (!version.HasValue)
-                throw new Exception($"This protocol instance (message protocol version `{Name}`) requires specific version value.");
+                throw new SchemaDefinitionException($"This protocol instance (message protocol version `{Name}`) requires specific version value.");
 
             var serializerVersion = version.Value > 0u ? version.Value : ProtocolDefinition.SupportedVersions.Max();
 
             if (serializers.TryGetValue(serializerVersion, out var versioningSerializer))
                 return versioningSerializer;
 
-            throw new ArgumentException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.", nameof(version));
+            throw new SchemaDefinitionException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.");
         }
 
         private void SetContractAssembly()
         {
             if (ProtocolDefinition.ContractAssembly == null)
-                throw new Exception("SchemaExporter must define contract assembly of types and operations.");
+                throw new SchemaDefinitionException("SchemaExporter must define contract assembly of types and operations.");
 
             if (!ProtocolDefinition.SupportedVersions.Any())
             {

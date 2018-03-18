@@ -4,6 +4,7 @@ using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -47,7 +48,7 @@ namespace XRoadLib.Serialization.Mapping
 
             string typeAttribute;
             if (typeMap.Definition.IsAnonymous && !(typeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
-                throw new InvalidXRoadQueryException($"Expected anonymous type, but `{typeAttribute}` was given.");
+                throw new ContractViolationException(ClientFaultCode.UnknownType, $"Expected anonymous type, but `{typeAttribute}` was given.");
 
             var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializer.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
 

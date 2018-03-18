@@ -23,7 +23,7 @@ namespace XRoadLib.Schema
             : base(particle)
         {
             if (customAttributeProvider.GetXmlElementAttribute() != null)
-                throw new Exception($"Array content property `{particle} ({runtimeName})` should not use XmlElement attribute in definition.");
+                throw new SchemaDefinitionException($"Array content property `{particle} ({runtimeName})` should not use XmlElement attribute in definition.");
 
             var arrayAttribute = customAttributeProvider.GetXmlArrayAttribute();
             var xroadArrayAttribute = arrayAttribute as XRoadXmlArrayAttribute;
@@ -31,7 +31,7 @@ namespace XRoadLib.Schema
             var arrayItemAttribute = customAttributeProvider.GetXmlArrayItemAttribute();
             
             if (runtimeType.GetArrayRank() > 1)
-                throw new Exception($"Property `{particle}` declares multi-dimensional array, which is not supported.");
+                throw new SchemaDefinitionException($"Property `{particle}` declares multi-dimensional array, which is not supported.");
 
             Name = XName.Get((arrayAttribute?.ElementName).GetStringOrDefault(runtimeName), arrayAttribute?.Namespace ?? "");
             IsNullable = (arrayAttribute?.IsNullable).GetValueOrDefault();

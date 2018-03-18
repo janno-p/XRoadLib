@@ -9,6 +9,7 @@ using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization
 {
@@ -72,7 +73,7 @@ namespace XRoadLib.Serialization
             }
 
             if (target.Header is IXRoadHeader40 xrh4 && xrh4.ProtocolVersion?.Trim() != "4.0")
-                throw new InvalidXRoadQueryException($"Unsupported X-Road v6 protocol version value `{xrh4.ProtocolVersion ?? string.Empty}`.");
+                throw new InvalidQueryException($"Unsupported X-Road v6 protocol version value `{xrh4.ProtocolVersion ?? string.Empty}`.");
 
             if (target.IsMultipartContainer)
                 target.BinaryMode = BinaryMode.Attachment;
@@ -86,8 +87,8 @@ namespace XRoadLib.Serialization
             if (target.RootElementName == null || string.IsNullOrWhiteSpace(target.Header?.Service?.ServiceCode))
                 return;
 
-            if (!Equals(target.RootElementName.LocalName, target.Header.Service.ServiceCode))
-                throw new InvalidXRoadQueryException($"X-Road operation name `{target.Header.Service.ServiceCode}` does not match request wrapper element name `{target.RootElementName}`.");
+            if (!Equals(target.RootElementName.LocalName, target.Header?.Service?.ServiceCode))
+                throw new InvalidQueryException($"X-Road operation name `{target.Header?.Service?.ServiceCode}` does not match request wrapper element name `{target.RootElementName}`.");
         }
 
         public void Dispose()
@@ -151,7 +152,7 @@ namespace XRoadLib.Serialization
                     return buffer;
 
                 if (boundaryMarker != null && chunkStop == ChunkStop.EndOfStream)
-                    throw XRoadException.MultipartManusegaSõnumiOotamatuLõpp();
+                    throw new InvalidQueryException("Unexpected end of MIME multipart message: the end marker of message part was not found in incoming request.");
 
                 if (decoder != null)
                     buffer = decoder(buffer, useEncoding);
@@ -306,7 +307,7 @@ namespace XRoadLib.Serialization
                     return DecodeFromBase64;
 
                 default:
-                    throw XRoadException.ToetamataKodeering(contentTransferEncoding);
+                    throw new ContractViolationException(ClientFaultCode.UnsupportedContentTransferEncoding, $"Content transfer encoding `{contentTransferEncoding}` is not supported by the adapter.");
             }
         }
 
@@ -372,7 +373,7 @@ namespace XRoadLib.Serialization
         private IServiceManager DetectServiceManager(XmlReader reader)
         {
             if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
-                throw new InvalidXRoadQueryException("X-Road SOAP request is missing SOAP-ENV:Envelope element.");
+                throw new InvalidQueryException("X-Road SOAP request is missing SOAP-ENV:Envelope element.");
 
             return serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }

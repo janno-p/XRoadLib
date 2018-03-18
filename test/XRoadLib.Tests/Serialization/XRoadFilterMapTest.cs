@@ -73,14 +73,14 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CannotHandleNestedProperties()
         {
-            var exception = Assert.Throws<ArgumentException>(() => new BrokenMap());
+            var exception = Assert.Throws<SchemaDefinitionException>(() => new BrokenMap());
             Assert.Equal("Only parameter members should be used in mapping definition (BrokenMap).", exception.Message);
         }
 
         [Fact]
         public void CannotHandleNonMemberExpressions()
         {
-            var exception = Assert.Throws<ArgumentException>(() => new Broken2Map());
+            var exception = Assert.Throws<SchemaDefinitionException>(() => new Broken2Map());
             Assert.Equal("MemberExpression expected, but was ConstantExpression (Broken2Map).", exception.Message);
         }
     }

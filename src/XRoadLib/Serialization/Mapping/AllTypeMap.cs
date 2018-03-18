@@ -5,6 +5,7 @@ using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -64,7 +65,7 @@ namespace XRoadLib.Serialization.Mapping
             }
 
             if (validateRequired && requiredCount < templateNode.CountRequiredNodes(message.Version))
-                throw XRoadException.MissingRequiredPropertyValues(GetMissingRequiredPropertyNames(dtoObject, templateNode, message));
+                throw new ContractViolationException(ClientFaultCode.ParameterRequired, $"Service input is missing required parameters: {GetMissingRequiredPropertyNames(dtoObject, templateNode, message)}.");
 
             ValidateRemainingProperties(existingPropertyNames, content);
 
@@ -84,7 +85,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var isNull = reader.IsNilElement();
             if (validateRequired && isNull && propertyNode.IsRequired)
-                throw XRoadException.MissingRequiredPropertyValues(Enumerable.Repeat(propertyMap.Definition.Content.Name.LocalName, 1));
+                throw new ContractViolationException(ClientFaultCode.ParameterRequired, $"Service input is missing required parameters: {propertyMap.Definition.Content.Name.LocalName}.");
 
             if ((isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message)) && !string.IsNullOrWhiteSpace(templateName))
                 dtoObject.OnMemberDeserialized(templateName);
@@ -107,7 +108,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             return deserializationPropertyMaps.TryGetValue(reader.LocalName, out var propertyMap)
                 ? propertyMap
-                : throw XRoadException.UnknownProperty(reader.LocalName, Definition.Name);
+                : throw new ContractViolationException(ClientFaultCode.UnknownProperty, $"Type `{Definition.Name}` does not define property `{reader.LocalName}` (property names are case-sensitive).");
         }
 
         protected override void AddPropertyMap(IPropertyMap propertyMap)
@@ -127,9 +128,9 @@ namespace XRoadLib.Serialization.Mapping
 
             var propertyMessage = string.Join(", ", missingProperties);
             if (missingProperties.Count > 0)
-                throw new InvalidXRoadQueryException($"Elements {propertyMessage} are required by type `{typeName}` definition.");
+                throw new InvalidQueryException($"Elements {propertyMessage} are required by type `{typeName}` definition.");
 
-            throw new InvalidXRoadQueryException($"Element {propertyMessage} is required by type `{typeName}` definition.");
+            throw new InvalidQueryException($"Element {propertyMessage} is required by type `{typeName}` definition.");
         }
     }
 }

@@ -57,7 +57,7 @@ namespace XRoadLib.Serialization.Mapping
             foreach (var propertyMap in createdPropertyMaps)
             {
                 if (propertyMap.Definition.Content.MergeContent && propertyMap.Definition.Content is SingularContentDefinition)
-                    throw new Exception($"Property {propertyMap.Definition} of type {Definition} cannot be merged, because mixed element content is not allowed.");
+                    throw new SchemaDefinitionException($"Property {propertyMap.Definition} of type {Definition} cannot be merged, because mixed element content is not allowed.");
 
                 AddPropertyMap(propertyMap);
             }

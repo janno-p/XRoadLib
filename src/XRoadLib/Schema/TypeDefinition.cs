@@ -24,6 +24,8 @@ namespace XRoadLib.Schema
 
         public bool IsInheritable => !IsAnonymous && !IsSimpleType;
 
+        public bool IsCompositeType => !Type.GetTypeInfo().IsEnum && !Type.GetTypeInfo().IsAbstract;
+
         public TypeDefinition(Type type)
         {
             Documentation = new DocumentationDefinition(type.GetTypeInfo());
