@@ -1,8 +1,12 @@
-#### 1.2.2 - Unreleased
+#### 1.2.2 - 18.03.2018
 
 * Fix duplicate namespace imports issue in generated service description.
 * Fix empty string tag deserialization (returns empty string instead of null).
 * Fix deserialization of array with merged content and empty values.
+* New exception type `SchemaDefinitionException` which describes issues in schema definitions on server side.
+* New exception type `ContractViolationException` which describes issues in incoming requests where message differs from service description.
+* New exception type `InvalidQueryException` which describes propblems with messages which break SOAP specification.
+* Refactor usage of existing exception types to use introduced exception types.
 
 #### 1.2.1 - 07.03.2018
 
