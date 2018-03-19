@@ -1,3 +1,7 @@
+#### 1.2.4 - 19.03.2018
+
+* Fix regression.
+
 #### 1.2.3 - 19.03.2018
 
 * More specific contract violation exceptions.

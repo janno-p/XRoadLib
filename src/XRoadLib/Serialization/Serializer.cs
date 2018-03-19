@@ -138,7 +138,7 @@ namespace XRoadLib.Serialization
             if (!xmlTypeMaps.TryGetValue(qualifiedName, out var typeMaps))
                 typeMaps = AddTypeMap(particleDefinition, qualifiedName);
 
-            return particleDefinition is ArrayItemDefinition ? typeMaps?.Item2 : typeMaps?.Item1;
+            return particleDefinition.Content is ArrayContentDefiniton ? typeMaps?.Item2 : typeMaps?.Item1;
         }
 
         private ITypeMap AddTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps)
