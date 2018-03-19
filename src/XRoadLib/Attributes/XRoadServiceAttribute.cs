@@ -38,17 +38,29 @@ namespace XRoadLib.Attributes
         /// <summary>
         /// X-Road service version which first defined given operation.
         /// </summary>
-        public virtual uint AddedInVersion { get { return addedInVersion.GetValueOrDefault(1u); } set { addedInVersion = value; } }
+        public virtual uint AddedInVersion { get => addedInVersion.GetValueOrDefault(1u); set => addedInVersion = value; }
 
         /// <summary>
         /// X-Road service version which removed given operation.
         /// </summary>
-        public virtual uint RemovedInVersion { get { return removedInVersion.GetValueOrDefault(uint.MaxValue); } set { removedInVersion = value; } }
+        public virtual uint RemovedInVersion { get => removedInVersion.GetValueOrDefault(uint.MaxValue); set => removedInVersion = value; }
 
         /// <summary>
         /// Provides extension specific customizations for the schema.
         /// </summary>
         public virtual ISchemaExporter SchemaExporter { get; } = null;
+
+        /// <summary>
+        /// Attachment serialization mode for service input. Available options are `Xml` (binary is serialized inside XML document
+        /// using base64 encoding) or `Attachment` (binary is serialized using MTOM/XOP or mime multipart attachment)
+        /// </summary>
+        public virtual BinaryMode InputBinaryMode { get; set; } = BinaryMode.Xml;
+
+        /// <summary>
+        /// Attachment serialization mode for service output. Available options are `Xml` (binary is serialized inside XML document
+        /// using base64 encoding) or `Attachment` (binary is serialized using MTOM/XOP or mime multipart attachment)
+        /// </summary>
+        public virtual BinaryMode OutputBinaryMode { get; set; }= BinaryMode.Xml;
 
         /// <summary>
         /// Initializes new operation definition.

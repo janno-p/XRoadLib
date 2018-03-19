@@ -73,8 +73,8 @@ namespace XRoadLib.Schema
 
             Name = qualifiedName;
             IsAbstract = (attribute?.IsAbstract).GetValueOrDefault();
-            InputBinaryMode = BinaryMode.Xml;
-            OutputBinaryMode = BinaryMode.Xml;
+            InputBinaryMode = (attribute?.InputBinaryMode).GetValueOrDefault(BinaryMode.Xml);
+            OutputBinaryMode = (attribute?.OutputBinaryMode).GetValueOrDefault(BinaryMode.Xml);
             State = (attribute?.IsHidden).GetValueOrDefault() ? DefinitionState.Hidden : DefinitionState.Default;
             Version = version.GetValueOrDefault(attribute?.AddedInVersion ?? 0u);
             CopyRequestPartToResponse = true;

@@ -1,6 +1,7 @@
-#### 1.2.3 - Unreleased
+#### 1.2.3 - 19.03.2018
 
 * More specific contract violation exceptions.
+* Operation input/output binary serialization mode configurable via `XRoadServiceAttribute` attribute.
 
 #### 1.2.2 - 18.03.2018
 
