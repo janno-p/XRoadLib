@@ -4,7 +4,6 @@ using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -58,7 +57,7 @@ namespace XRoadLib.Serialization.Mapping
             return entity;
         }
 
-        private static void ReadPropertyValue(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode propertyNode, XRoadMessage message, bool validateRequired, T dtoObject)
+        private void ReadPropertyValue(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode propertyNode, XRoadMessage message, bool validateRequired, T dtoObject)
         {
             if (propertyNode == null)
             {
@@ -68,7 +67,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var isNull = reader.IsNilElement();
             if (validateRequired && isNull && propertyNode.IsRequired)
-                throw new ContractViolationException(ClientFaultCode.ParameterRequired, $"Service input is missing required parameters: {propertyMap.Definition.Content.Name.LocalName}.");
+                throw new ParameterRequiredException(Definition, propertyMap.Definition);
 
             var templateName = propertyMap.Definition.TemplateName;
             if ((isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message)) && !string.IsNullOrWhiteSpace(templateName))
@@ -92,16 +91,16 @@ namespace XRoadLib.Serialization.Mapping
                     return propertyNode;
 
                 if (!propertyMap.Definition.Content.IsOptional)
-                    throw new ContractViolationException(ClientFaultCode.UnexpectedElement, $"Expected element `{propertyName}` while deserializing type `{Definition.Name}`, but element `{reader.LocalName}` was found instead.");
+                    throw new UnexpectedElementException(Definition, propertyMap.Definition, reader.LocalName);
 
                 if (validateRequired && propertyNode != null && propertyNode.IsRequired)
-                    throw new ContractViolationException(ClientFaultCode.ParameterRequired, $"Service input is missing required parameters: {propertyName}.");
+                    throw new ParameterRequiredException(Definition, propertyMap.Definition);
             }
 
             if (propertyMap == null)
                 throw new InvalidQueryException($"Element `{reader.LocalName}` was unexpected at given location while deserializing type `{Definition.Name}`.");
 
-            throw new ContractViolationException(ClientFaultCode.UnexpectedElement, $"Expected element `{propertyMap.Definition.Content.SerializedName.LocalName}` while deserializing type `{Definition.Name}`, but element `{reader.LocalName}` was found instead.");
+            throw new UnexpectedElementException(Definition, propertyMap.Definition, reader.LocalName);
         }
 
         private void ValidateRemainingProperties(IEnumerator<IPropertyMap> properties, ContentDefinition content)

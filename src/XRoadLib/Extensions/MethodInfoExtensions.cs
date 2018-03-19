@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using XRoadLib.Schema;
 
 namespace XRoadLib.Extensions
 {

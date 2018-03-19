@@ -7,7 +7,6 @@ using System.Xml.Serialization;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -37,7 +36,7 @@ namespace XRoadLib.Serialization.Mapping
             var stringValue = isEmptyElement ? "" : reader.ReadElementContentAsString();
 
             if (!deserializationMapping.TryGetValue(stringValue, out var enumerationValue))
-                throw new ContractViolationException(ClientFaultCode.UnexpectedValue, $"Unexpected value `{stringValue}` for enumeration type `{Definition.Name}`.");
+                throw new UnexpectedValueException($"Unexpected value `{stringValue}` for enumeration type `{Definition.Name}`.", Definition, stringValue);
 
             var result = Enum.ToObject(Definition.Type, enumerationValue);
 
@@ -50,7 +49,7 @@ namespace XRoadLib.Serialization.Mapping
                 message.Style.WriteExplicitType(writer, Definition.Name);
 
             if (!serializationMapping.TryGetValue((int)value, out var enumerationValue))
-                throw new ContractViolationException(ClientFaultCode.UnexpectedValue, $"Cannot map value `{value}` to enumeration type `{Definition.Name}`.");
+                throw new UnexpectedValueException($"Cannot map value `{value}` to enumeration type `{Definition.Name}`.", Definition, value);
 
             writer.WriteValue(enumerationValue);
         }

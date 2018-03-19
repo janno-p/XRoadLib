@@ -3,6 +3,8 @@ using System.IO;
 using System.Xml;
 using Microsoft.Extensions.DependencyInjection;
 using XRoadLib.Events;
+using XRoadLib.Schema;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions.AspNetCore
 {

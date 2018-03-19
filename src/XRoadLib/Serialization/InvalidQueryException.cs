@@ -1,6 +1,6 @@
 ﻿using XRoadLib.Soap;
 
-namespace XRoadLib
+namespace XRoadLib.Serialization
 {
     /// <summary>
     /// Describes everything that is wrong with current X-Road request message.

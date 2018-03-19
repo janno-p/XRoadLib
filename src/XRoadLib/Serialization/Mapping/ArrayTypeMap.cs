@@ -4,7 +4,6 @@ using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -53,7 +52,7 @@ namespace XRoadLib.Serialization.Mapping
                         break;
 
                     if (!arrayContent.Item.AcceptsAnyName)
-                        throw new ContractViolationException(ClientFaultCode.UnexpectedElement, $"Invalid array item name {reader.LocalName}.");
+                        throw new UnexpectedElementException($"Invalid array item name {reader.LocalName}.", Definition, arrayContent.Item, reader.LocalName);
                 }
 
                 if (reader.IsNilElement())
@@ -63,7 +62,7 @@ namespace XRoadLib.Serialization.Mapping
                     continue;
                 }
 
-                var typeMap = serializer.GetTypeMapFromXsiType(reader) ?? elementTypeMap;
+                var typeMap = serializer.GetTypeMapFromXsiType(reader, arrayContent.Item) ?? elementTypeMap;
 
                 var value = typeMap.Deserialize(reader, templateNode, arrayContent.Item.Content, message);
 

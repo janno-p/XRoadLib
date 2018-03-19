@@ -1,4 +1,5 @@
 ﻿using System;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Tests.Contract;
 using Xunit;
@@ -20,22 +21,28 @@ namespace XRoadLib.Tests.Serialization.Mapping
         [Fact]
         public void CannotDeserializeUnknownValue()
         {
-            var ex = Assert.Throws<ContractViolationException>(() => deserializeValue("Random"));
+            var ex = Assert.Throws<UnexpectedValueException>(() => deserializeValue("Random"));
             Assert.Equal("Unexpected value `Random` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
+            Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
+            Assert.True(ex.Value.Equals("Random"));
         }
 
         [Fact]
         public void CannotDeserializeEmptyValue()
         {
-            var ex = Assert.Throws<ContractViolationException>(() => deserializeValue(""));
+            var ex = Assert.Throws<UnexpectedValueException>(() => deserializeValue(""));
             Assert.Equal("Unexpected value `` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
+            Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
+            Assert.True(ex.Value.Equals(""));
         }
 
         [Fact]
         public void CannotDeserializeSelfClosingEmptyValue()
         {
-            var ex = Assert.Throws<ContractViolationException>(() => DeserializeEmptyValue(typeMap));
+            var ex = Assert.Throws<UnexpectedValueException>(() => DeserializeEmptyValue(typeMap));
             Assert.Equal("Unexpected value `` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
+            Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
+            Assert.True(ex.Value.Equals(""));
         }
     }
 }

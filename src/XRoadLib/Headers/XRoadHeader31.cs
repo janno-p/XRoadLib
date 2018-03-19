@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
+using XRoadLib.Serialization;
 using XRoadLib.Styles;
 
 namespace XRoadLib.Headers

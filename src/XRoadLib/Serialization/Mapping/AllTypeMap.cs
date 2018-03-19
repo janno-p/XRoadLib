@@ -5,7 +5,6 @@ using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -65,14 +64,17 @@ namespace XRoadLib.Serialization.Mapping
             }
 
             if (validateRequired && requiredCount < templateNode.CountRequiredNodes(message.Version))
-                throw new ContractViolationException(ClientFaultCode.ParameterRequired, $"Service input is missing required parameters: {GetMissingRequiredPropertyNames(dtoObject, templateNode, message)}.");
+            {
+                var properties = GetMissingRequiredProperties(dtoObject, templateNode, message).ToList();
+                throw new ParameterRequiredException(Definition, properties);
+            }
 
             ValidateRemainingProperties(existingPropertyNames, content);
 
             return dtoObject;
         }
 
-        private static bool ReadPropertyValue(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired, T dtoObject)
+        private bool ReadPropertyValue(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired, T dtoObject)
         {
             var templateName = propertyMap.Definition.TemplateName;
 
@@ -85,7 +87,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var isNull = reader.IsNilElement();
             if (validateRequired && isNull && propertyNode.IsRequired)
-                throw new ContractViolationException(ClientFaultCode.ParameterRequired, $"Service input is missing required parameters: {propertyMap.Definition.Content.Name.LocalName}.");
+                throw new ParameterRequiredException(Definition, propertyMap.Definition);
 
             if ((isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message)) && !string.IsNullOrWhiteSpace(templateName))
                 dtoObject.OnMemberDeserialized(templateName);
@@ -95,20 +97,20 @@ namespace XRoadLib.Serialization.Mapping
             return propertyNode.IsRequired;
         }
 
-        private static IEnumerable<string> GetMissingRequiredPropertyNames(IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
+        private IEnumerable<PropertyDefinition> GetMissingRequiredProperties(IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
         {
             return templateNode.ChildNames
                                .Select(n => templateNode[n, message.Version])
                                .Where(n => n.IsRequired)
                                .Where(n => !dtoObject.IsSpecified(n.Name))
-                               .Select(n => n.Name);
+                               .Select(n => deserializationPropertyMaps[n.Name].Definition);
         }
 
         private IPropertyMap GetPropertyMap(XmlReader reader)
         {
             return deserializationPropertyMaps.TryGetValue(reader.LocalName, out var propertyMap)
                 ? propertyMap
-                : throw new ContractViolationException(ClientFaultCode.UnknownProperty, $"Type `{Definition.Name}` does not define property `{reader.LocalName}` (property names are case-sensitive).");
+                : throw new UnknownPropertyException($"Type `{Definition.Name}` does not define property `{reader.LocalName}` (property names are case-sensitive).", Definition, reader.LocalName);
         }
 
         protected override void AddPropertyMap(IPropertyMap propertyMap)

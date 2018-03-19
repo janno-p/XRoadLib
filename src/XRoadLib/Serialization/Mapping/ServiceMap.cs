@@ -1,8 +1,8 @@
 ﻿using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization.Mapping
 {
@@ -62,7 +62,7 @@ namespace XRoadLib.Serialization.Mapping
                 throw new InvalidQueryException($"Request wrapper element `{requestName}` was not found in incoming SOAP message.");
 
             return RequestDefinition.ParameterInfo != null
-                ? ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestDefinition.Content, message))
+                ? ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestDefinition, message))
                 : null;
         }
 
@@ -91,10 +91,10 @@ namespace XRoadLib.Serialization.Mapping
             if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.Content.Name.LocalName, ResponseDefinition.Content.Name.NamespaceName))
                 throw new InvalidQueryException($"Expected result wrapper element `{ResponseDefinition.Content.Name}` was not found in SOAP message.");
 
-            return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition.Content, message));
+            return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition, message));
         }
 
-        private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, ParticleDefinition particleDefinition, XRoadMessage message)
         {
             if (reader.IsNilElement())
             {
@@ -102,15 +102,15 @@ namespace XRoadLib.Serialization.Mapping
                 return null;
             }
 
-            string typeAttribute;
-            if (typeMap.Definition.IsAnonymous && !(typeMap is IArrayTypeMap) && (typeAttribute = reader.GetAttribute("type", NamespaceConstants.XSI)) != null)
-                throw new ContractViolationException(ClientFaultCode.UnknownType, $"Expected anonymous type, but `{typeAttribute}` was given.");
+            XName typeAttribute;
+            if (typeMap.Definition.IsAnonymous && !(typeMap is IArrayTypeMap) && (typeAttribute = reader.GetTypeAttributeValue()) != null)
+                throw new UnknownTypeException($"Expected anonymous type, but `{typeAttribute}` was given.", particleDefinition, typeMap.Definition, typeAttribute);
 
             var concreteTypeMap = typeMap;
-            if (!content.IgnoreExplicitType)
-                concreteTypeMap = (typeMap.Definition.IsInheritable ? serializer.GetTypeMapFromXsiType(reader) : null) ?? typeMap;
+            if (!particleDefinition.Content.IgnoreExplicitType)
+                concreteTypeMap = (typeMap.Definition.IsInheritable ? serializer.GetTypeMapFromXsiType(reader, particleDefinition) : null) ?? typeMap;
 
-            return concreteTypeMap.Deserialize(reader, templateNode, content, message);
+            return concreteTypeMap.Deserialize(reader, templateNode, particleDefinition.Content, message);
         }
 
         /// <inheritdoc />

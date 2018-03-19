@@ -3,7 +3,9 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
@@ -476,6 +478,8 @@ namespace XRoadLib.Tests.Serialization
                 writer.WriteLine(@"</entity>");
                 writer.Flush();
 
+                var anonymousProperty = typeof(ContainerType).GetProperty(nameof(ContainerType.AnonymousProperty));
+
                 stream.Position = 0;
                 using (var reader = XmlReader.Create(stream))
                 {
@@ -483,8 +487,13 @@ namespace XRoadLib.Tests.Serialization
                     var typeMap = serializer31.GetTypeMap(typeof(ContainerType));
                     using (var message = new XRoadMessage())
                     {
-                        var exception = Assert.Throws<ContractViolationException>(() => typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message));
+                        var exception = Assert.Throws<UnknownTypeException>(() => typeMap.Deserialize(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message));
                         Assert.Equal("Expected anonymous type, but `Test` was given.", exception.Message);
+                        Assert.True(exception.TypeDefinition.IsAnonymous);
+                        Assert.Same(exception.TypeDefinition.Type, anonymousProperty?.PropertyType);
+                        Assert.IsType<PropertyDefinition>(exception.ParticleDefinition);
+                        Assert.Same(((PropertyDefinition)exception.ParticleDefinition).PropertyInfo, anonymousProperty);
+                        Assert.Equal(exception.QualifiedName, XName.Get("Test"));
                     }
                 }
             }

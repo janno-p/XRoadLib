@@ -10,7 +10,6 @@ using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization
 {
@@ -27,8 +26,6 @@ namespace XRoadLib.Serialization
         private readonly ConcurrentDictionary<Type, ITypeMap> runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
         public uint? Version { get; }
-
-        // public IEnumerable<string> AvailableFilters { get { return availableFilters; } set { availableFilters = value != null ? new List<string>(value) : null; } }
 
         public Serializer(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
@@ -81,10 +78,10 @@ namespace XRoadLib.Serialization
         {
             var operationDefinition = GetOperationDefinition(contractAssembly, qualifiedName);
             if (operationDefinition == null || qualifiedName.NamespaceName != operationDefinition.Name.NamespaceName)
-                throw new ContractViolationException(ClientFaultCode.UnknownOperation, $"The operation {qualifiedName} is not defined by contract.");
+                throw new UnknownOperationException(qualifiedName);
 
             var requestDefinition = schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
-            var inputTypeMap = GetContentDefinitionTypeMap(requestDefinition.Content, null);
+            var inputTypeMap = GetParticleDefinitionTypeMap(requestDefinition, null);
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
             var responseDefinition = outputTuple.Item1;
@@ -115,10 +112,10 @@ namespace XRoadLib.Serialization
                                 .SingleOrDefault(d => d.State != DefinitionState.Ignored);
         }
 
-        public ITypeMap GetTypeMapFromXsiType(XmlReader reader)
+        public ITypeMap GetTypeMapFromXsiType(XmlReader reader, ParticleDefinition particleDefinition)
         {
-            var typeValue = reader.GetTypeAttributeValue();
-            return typeValue == null ? null : GetTypeMap(typeValue.Item1, typeValue.Item2);
+            var qualifiedName = reader.GetTypeAttributeValue();
+            return qualifiedName == null ? null : GetTypeMap(particleDefinition, qualifiedName);
         }
 
         public ITypeMap GetTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps = null)
@@ -133,15 +130,15 @@ namespace XRoadLib.Serialization
                 : AddTypeMap(normalizedType, partialTypeMaps);
         }
 
-        public ITypeMap GetTypeMap(XName qualifiedName, bool isArray)
+        public ITypeMap GetTypeMap(ParticleDefinition particleDefinition, XName qualifiedName)
         {
             if (qualifiedName == null)
                 return null;
 
             if (!xmlTypeMaps.TryGetValue(qualifiedName, out var typeMaps))
-                typeMaps = AddTypeMap(qualifiedName);
+                typeMaps = AddTypeMap(particleDefinition, qualifiedName);
 
-            return isArray ? typeMaps?.Item2 : typeMaps?.Item1;
+            return particleDefinition is ArrayItemDefinition ? typeMaps?.Item2 : typeMaps?.Item1;
         }
 
         private ITypeMap AddTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps)
@@ -199,14 +196,14 @@ namespace XRoadLib.Serialization
             return runtimeTypeMaps.GetOrAdd(runtimeType, compositeTypeMap);
         }
 
-        private Tuple<ITypeMap, ITypeMap> AddTypeMap(XName qualifiedName)
+        private Tuple<ITypeMap, ITypeMap> AddTypeMap(ParticleDefinition particleDefinition, XName qualifiedName)
         {
-            var typeDefinition = GetRuntimeTypeDefinition(qualifiedName);
+            var typeDefinition = GetRuntimeTypeDefinition(particleDefinition, qualifiedName);
             if (typeDefinition == null)
                 return null;
 
             if (qualifiedName.NamespaceName != typeDefinition.Name.NamespaceName)
-                throw new ContractViolationException(ClientFaultCode.UnknownType, $"The referenced type `{qualifiedName}` is not defined by contract.");
+                throw new UnknownTypeException(particleDefinition, typeDefinition, qualifiedName);
 
             if (typeDefinition.IsCompositeType && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
                 throw new SchemaDefinitionException($"The runtime type '{typeDefinition.Name}' does not define default constructor.");
@@ -241,7 +238,7 @@ namespace XRoadLib.Serialization
             return xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
         }
 
-        private TypeDefinition GetRuntimeTypeDefinition(XName qualifiedName)
+        private TypeDefinition GetRuntimeTypeDefinition(ParticleDefinition particleDefinition, XName qualifiedName)
         {
             if (!qualifiedName.NamespaceName.StartsWith("http://"))
             {
@@ -257,7 +254,7 @@ namespace XRoadLib.Serialization
             if (typeDefinition != null)
                 return typeDefinition;
 
-            throw new ContractViolationException(ClientFaultCode.UnknownType, $"The referenced type `{qualifiedName}` is not defined by contract.");
+            throw new UnknownTypeException(particleDefinition, null, qualifiedName);
         }
 
         public XName GetXmlTypeName(Type type)
@@ -310,17 +307,17 @@ namespace XRoadLib.Serialization
                                  .Where(d => d.Content.State != DefinitionState.Ignored)
                                  .Select(p =>
                                  {
-                                     var typeMap = GetContentDefinitionTypeMap(p.Content, partialTypeMaps);
+                                     var typeMap = GetParticleDefinitionTypeMap(p, partialTypeMaps);
                                      p.Content.TypeName = typeMap.Definition.Name;
                                      return Tuple.Create(p, typeMap);
                                  });
         }
 
-        private ITypeMap GetContentDefinitionTypeMap(ContentDefinition content, IDictionary<Type, ITypeMap> partialTypeMaps)
+        private ITypeMap GetParticleDefinitionTypeMap(ParticleDefinition particleDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
-            return content.TypeName == null
-                ? GetTypeMap(content.RuntimeType, partialTypeMaps)
-                : GetTypeMap(content.TypeName, content.RuntimeType.IsArray);
+            return particleDefinition.Content.TypeName == null
+                ? GetTypeMap(particleDefinition.Content.RuntimeType, partialTypeMaps)
+                : GetTypeMap(particleDefinition, particleDefinition.Content.TypeName);
         }
 
         private ITypeMap GetCustomTypeMap(Type typeMapType)
@@ -342,7 +339,7 @@ namespace XRoadLib.Serialization
             if (returnDefinition.Content.State == DefinitionState.Ignored)
                 return null;
 
-            var outputTypeMap = GetContentDefinitionTypeMap(returnDefinition.Content, null);
+            var outputTypeMap = GetParticleDefinitionTypeMap(returnDefinition, null);
             if (outputTypeMap != null)
                 returnDefinition.Content.TypeName = outputTypeMap.Definition.Name;
 

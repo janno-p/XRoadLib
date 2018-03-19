@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Serialization
@@ -35,16 +36,17 @@ namespace XRoadLib.Serialization
         /// in XmlReader instance.
         /// </summary>
         /// <param name="reader">XmlReader instance which parses current XML document.</param>
+        /// <param name="particleDefinition"></param>
         /// <returns>Type serialization details.</returns>
-        ITypeMap GetTypeMapFromXsiType(XmlReader reader);
+        ITypeMap GetTypeMapFromXsiType(XmlReader reader, ParticleDefinition particleDefinition);
 
         /// <summary>
         /// Get type serialization info using qualified type name.
         /// </summary>
+        /// <param name="particleDefinition">Request array serialization info.</param>
         /// <param name="qualifiedName">Qualified name of serializable type.</param>
-        /// <param name="isArray">Request array serialization info.</param>
         /// <returns>Type serialization details.</returns>
-        ITypeMap GetTypeMap(XName qualifiedName, bool isArray);
+        ITypeMap GetTypeMap(ParticleDefinition particleDefinition, XName qualifiedName);
 
         /// <summary>
         /// Get type serialization info for specified runtime type.

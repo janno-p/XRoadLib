@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using XRoadLib.Extensions;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Soap
 {

@@ -9,7 +9,6 @@ using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
-using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization
 {
@@ -307,7 +306,7 @@ namespace XRoadLib.Serialization
                     return DecodeFromBase64;
 
                 default:
-                    throw new ContractViolationException(ClientFaultCode.UnsupportedContentTransferEncoding, $"Content transfer encoding `{contentTransferEncoding}` is not supported by the adapter.");
+                    throw new UnsupportedContentTransferEncodingException(contentTransferEncoding);
             }
         }
 

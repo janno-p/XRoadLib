@@ -1,3 +1,7 @@
+#### 1.2.3 - Unreleased
+
+* More specific contract violation exceptions.
+
 #### 1.2.2 - 18.03.2018
 
 * Fix duplicate namespace imports issue in generated service description.

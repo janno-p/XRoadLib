@@ -1,4 +1,5 @@
 ﻿using System;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using Xunit;
 

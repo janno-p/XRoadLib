@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Serialization;
@@ -47,12 +46,12 @@ namespace XRoadLib.Extensions
             }
         }
 
-        internal static Tuple<XName, bool> GetTypeAttributeValue(this XmlReader reader)
+        internal static XName GetTypeAttributeValue(this XmlReader reader)
         {
             return GetTypeAttributeValue(reader, qnXsiType);
         }
 
-        private static Tuple<XName, bool> GetTypeAttributeValue(XmlReader reader, XName attributeName, bool isArrayType = false)
+        private static XName GetTypeAttributeValue(XmlReader reader, XName attributeName, bool isArrayType = false)
         {
             var typeValue = reader.GetAttribute(attributeName.LocalName, attributeName.NamespaceName);
             if (typeValue == null)
@@ -71,7 +70,7 @@ namespace XRoadLib.Extensions
 
             var qualifiedName = XName.Get(typeName, typeNamespace);
 
-            return qualifiedName != qnSoapEncArray ? Tuple.Create(qualifiedName, isArrayType) : GetTypeAttributeValue(reader, qnSoapEncArrayType, true);
+            return qualifiedName != qnSoapEncArray ? qualifiedName : GetTypeAttributeValue(reader, qnSoapEncArrayType, true);
         }
 
         /// <summary>

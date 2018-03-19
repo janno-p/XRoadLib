@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using XRoadLib.Headers;
+using XRoadLib.Serialization;
 using Xunit;
 
 namespace XRoadLib.Tests.Serialization

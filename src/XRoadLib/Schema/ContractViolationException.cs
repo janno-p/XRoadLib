@@ -1,6 +1,6 @@
 ﻿using XRoadLib.Soap;
 
-namespace XRoadLib
+namespace XRoadLib.Schema
 {
     public class ContractViolationException : XRoadException
     {
