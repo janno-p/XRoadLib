@@ -52,13 +52,13 @@ namespace XRoadLib.Attributes
 
         /// <summary>
         /// Attachment serialization mode for service input. Available options are `Xml` (binary is serialized inside XML document
-        /// using base64 encoding) or `Attachment` (binary is serialized using MTOM/XOP or mime multipart attachment)
+        /// using base64 encoding or MTOM optimization) or `Attachment` (binary is serialized as mime multipart attachment)
         /// </summary>
         public virtual BinaryMode InputBinaryMode { get; set; } = BinaryMode.Xml;
 
         /// <summary>
         /// Attachment serialization mode for service output. Available options are `Xml` (binary is serialized inside XML document
-        /// using base64 encoding) or `Attachment` (binary is serialized using MTOM/XOP or mime multipart attachment)
+        /// using base64 encoding or MTOM optimization) or `Attachment` (binary is serialized as mime multipart attachment)
         /// </summary>
         public virtual BinaryMode OutputBinaryMode { get; set; }= BinaryMode.Xml;
 
