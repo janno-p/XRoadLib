@@ -20,6 +20,11 @@ namespace XRoadLib.Attributes
         public uint? MaxOccurs { get; set; }
 
         /// <summary>
+        /// Use MTOM/XOP standard for binary content serialization (default value is `true`).
+        /// </summary>
+        public bool UseXop { get; set; } = true;
+
+        /// <summary>
         /// Initializes a new instance of the XmlArrayItemAttribute class.
         /// </summary>
         public XRoadXmlArrayItemAttribute()

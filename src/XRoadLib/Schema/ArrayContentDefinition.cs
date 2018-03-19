@@ -29,14 +29,15 @@ namespace XRoadLib.Schema
             var xroadArrayAttribute = arrayAttribute as XRoadXmlArrayAttribute;
 
             var arrayItemAttribute = customAttributeProvider.GetXmlArrayItemAttribute();
-            
+            var xroadArrayItemAttribute = arrayItemAttribute as XRoadXmlArrayItemAttribute;
+
             if (runtimeType.GetArrayRank() > 1)
                 throw new SchemaDefinitionException($"Property `{particle}` declares multi-dimensional array, which is not supported.");
 
             Name = XName.Get((arrayAttribute?.ElementName).GetStringOrDefault(runtimeName), arrayAttribute?.Namespace ?? "");
             IsNullable = (arrayAttribute?.IsNullable).GetValueOrDefault();
             Order = (arrayAttribute?.Order).GetValueOrDefault(-1);
-            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType);
+            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
             TypeName = (arrayItemAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.XSD));
             IsOptional = xroadArrayAttribute?.IsOptional == true;
             State = DefinitionState.Default;

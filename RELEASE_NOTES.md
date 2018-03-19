@@ -2,6 +2,7 @@
 
 * More specific contract violation exceptions.
 * Operation input/output binary serialization mode configurable via `XRoadServiceAttribute` attribute.
+* Property MTOM/XOP serialization configurable via `XRoadXmlElementAttribute` and `XRoadXmlArrayItemAttribute` attributes.
 
 #### 1.2.2 - 18.03.2018
 

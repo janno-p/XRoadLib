@@ -22,7 +22,7 @@ namespace XRoadLib.Schema
             Name = XName.Get((elementAttribute?.ElementName).GetStringOrDefault(runtimeName), elementAttribute?.Namespace ?? "");
             IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault();
             Order = (elementAttribute?.Order).GetValueOrDefault(-1);
-            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType);
+            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadElementAttribute?.UseXop).GetValueOrDefault(true);
             TypeName = (elementAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.XSD));
             IsOptional = xroadElementAttribute?.IsOptional == true;
             State = DefinitionState.Default;
@@ -34,9 +34,11 @@ namespace XRoadLib.Schema
         public SingularContentDefinition(ParticleDefinition particle, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName)
             : base(particle)
         {
+            var xroadArrayItemAttribute = arrayItemAttribute as XRoadXmlArrayItemAttribute;
+
             Name = XName.Get((arrayItemAttribute?.ElementName).GetStringOrDefault(runtimeName), arrayItemAttribute?.Namespace ?? "");
             IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault();
-            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType);
+            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
             TypeName = (arrayItemAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.XSD));
             State = DefinitionState.Default;
             RuntimeType = runtimeType;
