@@ -1,3 +1,7 @@
+#### 1.2.5 - 20.03.2018
+
+* Fix error messages.
+
 #### 1.2.4 - 19.03.2018
 
 * Fix regression.
