@@ -14,7 +14,7 @@ namespace XRoadLib.Schema
         }
 
         public UnknownOperationException(XName qualifiedName)
-            : this($"The operation {qualifiedName} is not defined by contract.", qualifiedName)
+            : this($"The operation `{qualifiedName}` is not defined by contract.", qualifiedName)
         { }
     }
 }

@@ -17,11 +17,11 @@ namespace XRoadLib.Schema
         }
 
         public ParameterRequiredException(TypeDefinition typeDefinition, IList<PropertyDefinition> missingParameters)
-            : this($"Service input is missing required parameters: {missingParameters.Select(x => x.Content.SerializedName.LocalName)}.", typeDefinition, missingParameters)
+            : this($"Service input is missing required parameters: {string.Join(", ", missingParameters.Select(x => $"`{x.Content.SerializedName.LocalName}`"))}.", typeDefinition, missingParameters)
         { }
 
         public ParameterRequiredException(TypeDefinition typeDefinition, PropertyDefinition missingParameter)
-            : this($"Service input is missing required parameters: {missingParameter.Content.SerializedName.LocalName}.", typeDefinition, new List<PropertyDefinition> { missingParameter })
+            : this($"Service input is missing required parameters: `{missingParameter.Content.SerializedName.LocalName}`.", typeDefinition, new List<PropertyDefinition> { missingParameter })
         { }
     }
 }
