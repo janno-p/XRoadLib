@@ -40,10 +40,14 @@ namespace XRoadLib.Serialization
             var contentID = Convert.ToBase64String(MD5.Create().ComputeHash(source.ContentStream));
 
             var contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_SOAP;
+            var startInfo = string.Empty;
             if (source.BinaryMode == BinaryMode.Xml)
+            {
                 contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_XOP;
+                startInfo = $@"start-info=""{XRoadMessage.MULTIPART_CONTENT_TYPE_SOAP}""; ";
+            }
 
-            setContentType(string.Format("multipart/related; type=\"{2}\"; start=\"{0}\"; boundary=\"{1}\"", contentID, boundaryMarker, contentTypeType));
+            setContentType($@"multipart/related; type=""{contentTypeType}""; start=""{contentID}""; {startInfo}boundary=""{boundaryMarker}""");
             appendHeader("MIME-Version", "1.0");
 
             source.ContentStream.Position = 0;

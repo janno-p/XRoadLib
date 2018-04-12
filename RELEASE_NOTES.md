@@ -1,3 +1,7 @@
+#### 1.2.6 - 12.04.2018
+
+* Add `start-info` token to MTOM/XOP message `Content-Type` header.
+
 #### 1.2.5 - 20.03.2018
 
 * Fix error messages.
