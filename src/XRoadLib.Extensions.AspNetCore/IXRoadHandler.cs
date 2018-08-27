@@ -6,7 +6,7 @@ namespace XRoadLib.Extensions.AspNetCore
     /// <summary>
     /// General interface of X-Road message handlers.
     /// </summary>
-    public interface IXRoadHandler
+    public interface IXRoadHandler : IDisposable
     {
         /// <summary>
         /// Provides services which this handler instance supports.

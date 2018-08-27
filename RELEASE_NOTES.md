@@ -1,3 +1,8 @@
+#### 1.2.7 - Unreleased
+
+* Disposable X-Road handlers
+* Use `Microsoft.AspNetCore.Routing` package for mapping requests.
+
 #### 1.2.6 - 12.04.2018
 
 * Add `start-info` token to MTOM/XOP message `Content-Type` header.

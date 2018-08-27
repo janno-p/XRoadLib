@@ -1,42 +1,28 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace XRoadLib.Extensions.AspNetCore
 {
     public static class XRoadLibServiceCollectionExtensions
     {
-        public static IServiceCollection AddXRoadLib(this IServiceCollection serviceCollection, Action<XRoadHandlerRegistry> initializer = null)
+        public static IServiceCollection AddXRoadLib(this IServiceCollection services)
+            => AddXRoadLib(services, _ => {});
+
+        public static IServiceCollection AddXRoadLib(this IServiceCollection services, Action<XRoadLibOptions> configureOptions)
         {
-            return serviceCollection.AddXRoadLib(null, initializer);
-        }
+            if (services == null)
+                throw new ArgumentNullException(nameof(services));
 
-        public static IServiceCollection AddXRoadLib<T>(this IServiceCollection serviceCollection, Action<XRoadHandlerRegistry> initializer = null)
-        {
-            return serviceCollection.AddXRoadLib(typeof(T).GetTypeInfo().Assembly, initializer);
-        }
+            if (configureOptions == null)
+                throw new ArgumentNullException(nameof(configureOptions));
 
-        public static IServiceCollection AddXRoadLib(this IServiceCollection serviceCollection, Assembly assembly, Action<XRoadHandlerRegistry> initializer = null)
-        {
-            var registry = new XRoadHandlerRegistry();
+            services.AddRouting();
 
-            initializer?.Invoke(registry);
+            var options = new XRoadLibOptions();
 
-            if (assembly != null)
-                RegisterAssemblyDefinedHandlers(serviceCollection, registry, assembly);
+            configureOptions(options);
 
-            return serviceCollection.AddSingleton(registry);
-        }
-
-        private static void RegisterAssemblyDefinedHandlers(IServiceCollection serviceCollection, XRoadHandlerRegistry registry, Assembly assembly)
-        {
-            foreach (var handlerType in assembly.GetExportedTypes().Where(t => Attribute.IsDefined(t, typeof(XRoadHandlerAttribute))))
-            {
-                var attribute = handlerType.GetCustomAttribute<XRoadHandlerAttribute>();
-                serviceCollection.AddTransient(handlerType);
-                registry.AddHandler(attribute.HttpMethod, attribute.Route, serviceProvider => (IXRoadHandler)serviceProvider.GetRequiredService(handlerType));
-            }
+            return services.AddSingleton(options);
         }
     }
 }

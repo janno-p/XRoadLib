@@ -28,5 +28,8 @@ namespace XRoadLib.Extensions.AspNetCore
             using (var writer = XmlWriter.Create(new StreamWriter(context.HttpContext.Response.Body, XRoadEncoding.UTF8)))
                 SoapMessageHelper.SerializeSoapFaultResponse(writer, faultCode, faultString, faultActor, details, exception);
         }
+
+        public virtual void Dispose()
+        { }
     }
 }
