@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions.AspNetCore
@@ -29,31 +30,54 @@ namespace XRoadLib.Extensions.AspNetCore
                 return;
             }
 
-            var handler = handlerFactory(serviceProvider);
-            if (handler is XRoadRequestHandler requestHandler)
-                requestHandler.StoragePath = options.StoragePath;
-
-            using (var context = new XRoadContext(httpContext))
+            using (var scope = serviceProvider.CreateScope())
             {
-                try
-                {
-                    if (httpContext.Request.Body.CanSeek)
-                        httpContext.Request.Body.Position = 0;
+                var handler = handlerFactory(scope.ServiceProvider);
 
-                    httpContext.Response.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
-
-                    handler.HandleRequest(context);
-                }
-                catch (Exception exception)
+                using (new HandlerDisposer(handler))
                 {
-                    if (httpContext.Response.Body.CanSeek)
+                    if (handler is XRoadRequestHandler requestHandler)
+                        requestHandler.StoragePath = options.StoragePath;
+
+                    using (var context = new XRoadContext(httpContext))
                     {
-                        httpContext.Response.Body.Position = 0;
-                        httpContext.Response.Body.SetLength(0);
-                    }
+                        try
+                        {
+                            if (httpContext.Request.Body.CanSeek)
+                                httpContext.Request.Body.Position = 0;
 
-                    handler.HandleException(context, exception, null, null, null, null);
+                            httpContext.Response.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
+
+                            handler.HandleRequest(context);
+                        }
+                        catch (Exception exception)
+                        {
+                            if (httpContext.Response.Body.CanSeek)
+                            {
+                                httpContext.Response.Body.Position = 0;
+                                httpContext.Response.Body.SetLength(0);
+                            }
+
+                            handler.HandleException(context, exception, null, null, null, null);
+                        }
+                    }
                 }
+            }
+        }
+
+        private class HandlerDisposer : IDisposable
+        {
+            private readonly IXRoadHandler handler;
+
+            public HandlerDisposer(IXRoadHandler handler)
+            {
+                this.handler = handler;
+            }
+
+            void IDisposable.Dispose()
+            {
+                if (handler is IDisposable disposable)
+                    disposable.Dispose();
             }
         }
     }
