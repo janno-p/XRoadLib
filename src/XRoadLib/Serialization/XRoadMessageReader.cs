@@ -395,6 +395,7 @@ namespace XRoadLib.Serialization
                 {
                     serviceManager = serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(reader.NamespaceURI));
                     header = serviceManager?.CreateHeader();
+                    xRoadHeader = header as IXRoadHeader;
                 }
 
                 if (serviceManager == null || xRoadHeader == null || !serviceManager.IsHeaderNamespace(reader.NamespaceURI))
