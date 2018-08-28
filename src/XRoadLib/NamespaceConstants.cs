@@ -23,6 +23,11 @@ namespace XRoadLib
         public const string SOAP = "http://schemas.xmlsoap.org/wsdl/soap/";
 
         /// <summary>
+        /// Namespace for describing SOAP 1.2 messages.
+        /// </summary>
+        public const string SOAP12 = "http://schemas.xmlsoap.org/wsdl/soap12/";
+
+        /// <summary>
         /// Defines encoding style to be used with RPC/Encoded SOAP messages.
         /// </summary>
         public const string SOAP_ENC = "http://schemas.xmlsoap.org/soap/encoding/";
