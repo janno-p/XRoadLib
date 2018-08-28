@@ -16,11 +16,7 @@ using XRoadLib.Wsdl;
 
 namespace XRoadLib
 {
-    /// <summary>
-    /// Manages available services and provides their definitions and serialization details.
-    /// </summary>
-    public class ServiceManager<THeader> : IServiceManager
-        where THeader : class, ISoapHeader, new()
+    public class ServiceManager : IServiceManager
     {
         private readonly IDictionary<uint, ISerializer> serializers = new Dictionary<uint, ISerializer>();
         private readonly SchemaDefinitionProvider schemaDefinitionProvider;
@@ -110,19 +106,6 @@ namespace XRoadLib
                 }
             }
         }
-            //Execute<TResult>(webRequest, body, new THeader().InitFrom(commonHeader), options);
-
-        /// <summary>
-        /// Executes X-Road operation on endpoint specified by WebRequest parameter.
-        /// </summary>
-        /// <param name="webRequest">WebRequest used to transfer X-Road messages.</param>
-        /// <param name="body">Soap body part of outgoing serialized X-Road message.</param>
-        /// <param name="header">Soap header part of outgoing serialized X-Road message.</param>
-        /// <param name="options">Additional options to configure service call execution.</param>
-        /// <typeparam name="TResult">Expected result type of the operation.</typeparam>
-        /// <returns>Deserialized value of X-Road response message Soap body.</returns>
-        public virtual TResult Execute<TResult>(WebRequest webRequest, object body, THeader header, ServiceExecutionOptions options = null) =>
-            (TResult)((IServiceManager)this).Execute(webRequest, body, header, options);
 
         /// <inheritdoc />
         public virtual ServiceDescription CreateServiceDescription(Func<OperationDefinition, bool> operationFilter = null, uint? version = null)
@@ -136,14 +119,6 @@ namespace XRoadLib
             var producerDefinition = new ServiceDescriptionBuilder(schemaDefinitionProvider, operationFilter, version);
 
             return producerDefinition.GetServiceDescription();
-        }
-
-        /// <summary>
-        /// Initialize new X-Road message of this X-Road message protocol instance.
-        /// </summary>
-        public XRoadMessage CreateMessage(THeader header = null)
-        {
-            return new XRoadMessage(this, header ?? new THeader());
         }
 
         /// <inheritdoc />
@@ -189,6 +164,45 @@ namespace XRoadLib
                 serializers.Add(dtoVersion, new Serializer(schemaDefinitionProvider, dtoVersion));
         }
 
-        ISoapHeader IServiceManager.CreateHeader() => new THeader();
+        protected virtual ISoapHeader CreateHeader() =>
+            null;
+
+        ISoapHeader IServiceManager.CreateHeader() =>
+            CreateHeader();
+    }
+
+    /// <summary>
+    /// Manages available services and provides their definitions and serialization details.
+    /// </summary>
+    public class ServiceManager<THeader> : ServiceManager
+        where THeader : class, ISoapHeader, new()
+    {
+        /// <inheritdoc cref="ServiceManager" />
+        public ServiceManager(string name, ISchemaExporter schemaExporter)
+            : base(name, schemaExporter)
+        { }
+
+        /// <summary>
+        /// Executes X-Road operation on endpoint specified by WebRequest parameter.
+        /// </summary>
+        /// <param name="webRequest">WebRequest used to transfer X-Road messages.</param>
+        /// <param name="body">Soap body part of outgoing serialized X-Road message.</param>
+        /// <param name="header">Soap header part of outgoing serialized X-Road message.</param>
+        /// <param name="options">Additional options to configure service call execution.</param>
+        /// <typeparam name="TResult">Expected result type of the operation.</typeparam>
+        /// <returns>Deserialized value of X-Road response message Soap body.</returns>
+        public virtual TResult Execute<TResult>(WebRequest webRequest, object body, THeader header, ServiceExecutionOptions options = null) =>
+            (TResult)((IServiceManager)this).Execute(webRequest, body, header, options);
+
+        /// <summary>
+        /// Initialize new X-Road message of this X-Road message protocol instance.
+        /// </summary>
+        public XRoadMessage CreateMessage(THeader header = null)
+        {
+            return new XRoadMessage(this, header ?? new THeader());
+        }
+
+        protected override ISoapHeader CreateHeader() =>
+            new THeader();
     }
 }

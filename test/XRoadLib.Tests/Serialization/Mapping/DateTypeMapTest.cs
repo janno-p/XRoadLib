@@ -30,14 +30,22 @@ namespace XRoadLib.Tests.Serialization.Mapping
         public void CannotDeserializeWrongFormat()
         {
             var exception = Assert.Throws<FormatException>(() => deserializeValue("2013-08-40"));
+#if NETCOREAPP2_1
+            Assert.Equal("String '2013-08-40' was not recognized as a valid DateTime.", exception.Message);
+#else
             Assert.Equal("String was not recognized as a valid DateTime.", exception.Message);
+#endif
         }
 
         [Fact]
         public void CannotDeserializeDateTimeFormat()
         {
             var exception = Assert.Throws<FormatException>(() => deserializeValue("2013-08-04T11:11:11"));
+#if NETCOREAPP2_1
+            Assert.Equal("String '2013-08-04T11:11:11' was not recognized as a valid DateTime.", exception.Message);
+#else
             Assert.Equal("String was not recognized as a valid DateTime.", exception.Message);
+#endif
         }
 
         [Fact]

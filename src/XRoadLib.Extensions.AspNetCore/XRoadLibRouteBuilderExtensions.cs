@@ -23,6 +23,16 @@ namespace XRoadLib.Extensions.AspNetCore
             });
         }
 
+        public static IRouteBuilder MapWsdlHandler<THandler>(this IRouteBuilder builder, string template)
+            where THandler : IXRoadHandler
+        {
+            return builder.MapGet(template, async context =>
+            {
+                using (var handler = context.RequestServices.GetRequiredService<THandler>())
+                    await XRoadLibMiddleware.Invoke(context, handler);
+            });
+        }
+
         public static IRouteBuilder MapWebService(this IRouteBuilder builder, string template, IServiceManager serviceManager)
         {
             return builder.MapPost(template, async context =>
@@ -36,6 +46,16 @@ namespace XRoadLib.Extensions.AspNetCore
             return builder.MapPost(template, async context =>
             {
                 await ExecuteWebServiceRequestDelegate(context, context.RequestServices.GetRequiredService<T>());
+            });
+        }
+
+        public static IRouteBuilder MapRequestHandler<THandler>(this IRouteBuilder builder, string template)
+            where THandler : IXRoadHandler
+        {
+            return builder.MapPost(template, async context =>
+            {
+                using (var handler = context.RequestServices.GetRequiredService<THandler>())
+                    await XRoadLibMiddleware.Invoke(context, handler);
             });
         }
 
