@@ -10,7 +10,7 @@ namespace XRoadLib.Headers
     /// <summary>
     /// Implements default X-Road message protocol version 4.0 SOAP header.
     /// </summary>
-    public class XRoadHeader40 : IXRoadHeader, IXRoadHeader<XRoadHeader40>, IXRoadHeader40
+    public class XRoadHeader40 : IXRoadHeader, IXRoadHeader40, IXRoadUniversalHeader
     {
         /// <summary>
         /// Client identity.
@@ -362,16 +362,16 @@ namespace XRoadLib.Headers
             WriteHeaderValue("protocolVersion", ProtocolVersion, XmlTypeConstants.String);
         }
 
-        public XRoadHeader40 InitFrom(XRoadCommonHeader commonHeader)
-        {
-            Client = commonHeader.Client;
-            Service = commonHeader.Service;
-            UserId = commonHeader.UserId;
-            Issue = commonHeader.Issue;
-            ProtocolVersion = commonHeader.ProtocolVersion;
-            Id = commonHeader.Id;
+        string IXRoadUniversalHeader.Unit { get => null; set { } }
+        string IXRoadUniversalHeader.Position { get => null; set { } }
+        string IXRoadUniversalHeader.UserName { get => null; set { } }
+        string IXRoadUniversalHeader.Authenticator { get => null; set { } }
+        string IXRoadUniversalHeader.Paid { get => null; set { } }
+        string IXRoadUniversalHeader.Encrypt { get => null; set { } }
+        string IXRoadUniversalHeader.EncryptCert { get => null; set { } }
+        string IXRoadUniversalHeader.Encrypted { get => null; set { } }
+        string IXRoadUniversalHeader.EncryptedCert { get => null; set { } }
 
-            return this;
-        }
+        bool? IXRoadUniversalHeader.Async { get => null; set { } }
     }
 }

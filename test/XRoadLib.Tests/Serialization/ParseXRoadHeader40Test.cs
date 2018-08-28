@@ -102,19 +102,20 @@ namespace XRoadLib.Tests.Serialization
         public void CollectsClientMandatoryValues()
         {
             var tuple = ParseHeader(minimalValidHeader(""));
-            Assert.NotNull(tuple.Item1);
+            var header = tuple.Item1 as IXRoadHeader;
+            Assert.NotNull(header);
             Assert.Same(Globals.ServiceManager40, tuple.Item3);
-            Assert.NotNull(tuple.Item1.Client);
-            Assert.Equal("EE", tuple.Item1.Client.XRoadInstance);
-            Assert.Equal("GOV", tuple.Item1.Client.MemberClass);
-            Assert.Equal("12345", tuple.Item1.Client.MemberCode);
-            Assert.Equal(XRoadObjectType.Member, tuple.Item1.Client.ObjectType);
-            Assert.Null(tuple.Item1.Client.SubsystemCode);
-            Assert.Equal("ABCDE", tuple.Item1.Id);
-            Assert.Null(tuple.Item1.Issue);
-            Assert.Equal("4.0", tuple.Item1.ProtocolVersion);
-            Assert.Null(tuple.Item1.Service);
-            Assert.Null(tuple.Item1.UserId);
+            Assert.NotNull(header.Client);
+            Assert.Equal("EE", header.Client.XRoadInstance);
+            Assert.Equal("GOV", header.Client.MemberClass);
+            Assert.Equal("12345", header.Client.MemberCode);
+            Assert.Equal(XRoadObjectType.Member, header.Client.ObjectType);
+            Assert.Null(header.Client.SubsystemCode);
+            Assert.Equal("ABCDE", header.Id);
+            Assert.Null(header.Issue);
+            Assert.Equal("4.0", header.ProtocolVersion);
+            Assert.Null(header.Service);
+            Assert.Null(header.UserId);
         }
 
         [Fact]
@@ -139,19 +140,20 @@ namespace XRoadLib.Tests.Serialization
         public void CollectsUnqualifiedSoapHeadersThatAreMixedWithXRoadElements()
         {
             var tuple = ParseHeader(@"<x /><xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><y /><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion><z />");
-            Assert.NotNull(tuple.Item1);
+            var header = tuple.Item1 as IXRoadHeader;
+            Assert.NotNull(header);
             Assert.Same(Globals.ServiceManager40, tuple.Item3);
-            Assert.NotNull(tuple.Item1.Client);
-            Assert.Equal("EE", tuple.Item1.Client.XRoadInstance);
-            Assert.Equal("GOV", tuple.Item1.Client.MemberClass);
-            Assert.Equal("12345", tuple.Item1.Client.MemberCode);
-            Assert.Equal(XRoadObjectType.Member, tuple.Item1.Client.ObjectType);
-            Assert.Null(tuple.Item1.Client.SubsystemCode);
-            Assert.Equal("ABCDE", tuple.Item1.Id);
-            Assert.Null(tuple.Item1.Issue);
-            Assert.Equal("4.0", tuple.Item1.ProtocolVersion);
-            Assert.Null(tuple.Item1.Service);
-            Assert.Null(tuple.Item1.UserId);
+            Assert.NotNull(header.Client);
+            Assert.Equal("EE", header.Client.XRoadInstance);
+            Assert.Equal("GOV", header.Client.MemberClass);
+            Assert.Equal("12345", header.Client.MemberCode);
+            Assert.Equal(XRoadObjectType.Member, header.Client.ObjectType);
+            Assert.Null(header.Client.SubsystemCode);
+            Assert.Equal("ABCDE", header.Id);
+            Assert.Null(header.Issue);
+            Assert.Equal("4.0", header.ProtocolVersion);
+            Assert.Null(header.Service);
+            Assert.Null(header.UserId);
             Assert.Equal(3, tuple.Item2.Count);
             Assert.Contains(tuple.Item2, x => x.Name.LocalName == "x");
             Assert.Contains(tuple.Item2, x => x.Name.LocalName == "y");
@@ -218,28 +220,30 @@ namespace XRoadLib.Tests.Serialization
         public void ReadMinimalGroupOfElementsForServiceElement()
         {
             var tuple = ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /></xrd:service>"));
-            Assert.NotNull(tuple.Item1);
-            Assert.NotNull(tuple.Item1.Service);
-            Assert.Equal("", tuple.Item1.Service.XRoadInstance);
-            Assert.Equal("", tuple.Item1.Service.MemberClass);
-            Assert.Equal("", tuple.Item1.Service.MemberCode);
-            Assert.Null(tuple.Item1.Service.SubsystemCode);
-            Assert.Equal("", tuple.Item1.Service.ServiceCode);
-            Assert.Null(tuple.Item1.Service.ServiceVersion);
+            var header = tuple.Item1 as IXRoadHeader;
+            Assert.NotNull(header);
+            Assert.NotNull(header.Service);
+            Assert.Equal("", header.Service.XRoadInstance);
+            Assert.Equal("", header.Service.MemberClass);
+            Assert.Equal("", header.Service.MemberCode);
+            Assert.Null(header.Service.SubsystemCode);
+            Assert.Equal("", header.Service.ServiceCode);
+            Assert.Null(header.Service.ServiceVersion);
         }
 
         [Fact]
         public void ReadAllElementsForServiceElement()
         {
             var tuple = ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:subsystemCode /><id:serviceCode /><id:serviceVersion /></xrd:service>"));
-            Assert.NotNull(tuple.Item1);
-            Assert.NotNull(tuple.Item1.Service);
-            Assert.Equal("", tuple.Item1.Service.XRoadInstance);
-            Assert.Equal("", tuple.Item1.Service.MemberClass);
-            Assert.Equal("", tuple.Item1.Service.MemberCode);
-            Assert.Equal("", tuple.Item1.Service.SubsystemCode);
-            Assert.Equal("", tuple.Item1.Service.ServiceCode);
-            Assert.Equal("", tuple.Item1.Service.ServiceVersion);
+            var header = tuple.Item1 as IXRoadHeader;
+            Assert.NotNull(header);
+            Assert.NotNull(header.Service);
+            Assert.Equal("", header.Service.XRoadInstance);
+            Assert.Equal("", header.Service.MemberClass);
+            Assert.Equal("", header.Service.MemberCode);
+            Assert.Equal("", header.Service.SubsystemCode);
+            Assert.Equal("", header.Service.ServiceCode);
+            Assert.Equal("", header.Service.ServiceVersion);
         }
 
         [Fact]
@@ -253,9 +257,10 @@ namespace XRoadLib.Tests.Serialization
         public void ReadSimpleOptionalElementValues()
         {
             var tuple = ParseHeader(minimalValidHeader(@"<xrd:userId>Kalle</xrd:userId><xrd:issue>TOIMIK</xrd:issue>"));
-            Assert.NotNull(tuple.Item1);
-            Assert.Equal("Kalle", tuple.Item1.UserId);
-            Assert.Equal("TOIMIK", tuple.Item1.Issue);
+            var header = tuple.Item1 as IXRoadHeader;
+            Assert.NotNull(header);
+            Assert.Equal("Kalle", header.UserId);
+            Assert.Equal("TOIMIK", header.Issue);
         }
 
         [Fact]
@@ -365,7 +370,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal(NamespaceConstants.XROAD, tuple.Item2[0].Name.NamespaceName);
         }
 
-        public static Tuple<IXRoadHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
+        public static Tuple<ISoapHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
         {
             return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD_V4);
         }

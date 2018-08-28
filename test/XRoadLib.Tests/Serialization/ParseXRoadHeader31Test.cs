@@ -12,8 +12,9 @@ namespace XRoadLib.Tests.Serialization
         public void CanParseEmptyElement()
         {
             var tuple = ParseHeader("<xrd:userId />");
-            Assert.NotNull(tuple.Item1);
-            Assert.Equal("", tuple.Item1.UserId);
+            var header = tuple.Item1 as IXRoadHeader;
+            Assert.NotNull(header);
+            Assert.Equal("", header.UserId);
         }
 
         [Fact]
@@ -168,7 +169,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("bibopp", xhr3.EncryptedCert);
         }
 
-        public static Tuple<IXRoadHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
+        public static Tuple<ISoapHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
         {
             return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD);
         }

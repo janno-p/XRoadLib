@@ -10,10 +10,10 @@ namespace XRoadLib.Headers
     /// <summary>
     /// Details of X-Road message protocol version 2.0 header.
     /// </summary>
-    public class XRoadHeader20 : IXRoadHeader, IXRoadHeader<XRoadHeader20>, IXRoadHeader20
+    public class XRoadHeader20 : IXRoadHeader, IXRoadHeader20, IXRoadUniversalHeader
     {
-        private readonly XRoadClientIdentifier client = new XRoadClientIdentifier();
-        private readonly XRoadServiceIdentifier service = new XRoadServiceIdentifier();
+        private XRoadClientIdentifier client = new XRoadClientIdentifier();
+        private XRoadServiceIdentifier service = new XRoadServiceIdentifier();
 
         /// <inheritdoc />
         XRoadClientIdentifier IXRoadHeader.Client => client;
@@ -216,26 +216,22 @@ namespace XRoadLib.Headers
             WriteHeaderValue("salastatud_sertifikaadiga", SalastatudSertifikaadiga, XmlTypeConstants.String);
         }
 
-        public XRoadHeader20 InitFrom(XRoadCommonHeader commonHeader)
-        {
-            Asutus = commonHeader.Client.MemberCode;
-            Andmekogu = commonHeader.Service.SubsystemCode;
-            Isikukood = commonHeader.UserId;
-            Toimik = commonHeader.Issue;
-            Nimi = commonHeader.Service.ToFullName();
-            Id = commonHeader.Id;
-            Allasutus = commonHeader.Unit;
-            Amet = commonHeader.Position;
-            AmetnikNimi = commonHeader.UserName;
-            Asünkroonne = commonHeader.Async;
-            Autentija = commonHeader.Authenticator;
-            Makstud = commonHeader.Paid;
-            Salastada = commonHeader.Encrypt;
-            SalastadaSertifikaadiga = commonHeader.EncryptCert;
-            Salastatud = commonHeader.Encrypted;
-            SalastatudSertifikaadiga = commonHeader.EncryptedCert;
+        XRoadClientIdentifier IXRoadUniversalHeader.Client { get => client; set => client = value; }
+        XRoadServiceIdentifier IXRoadUniversalHeader.Service { get => service; set => service = value; }
 
-            return this;
-        }
+        string IXRoadUniversalHeader.UserId { get => Isikukood; set => Isikukood = value; }
+        string IXRoadUniversalHeader.Issue { get => Toimik; set => Toimik = value; }
+        string IXRoadUniversalHeader.ProtocolVersion { get => "2.0"; set { } }
+        string IXRoadUniversalHeader.Unit { get => Allasutus; set => Allasutus = value; }
+        string IXRoadUniversalHeader.Position { get => Amet; set => Amet = value; }
+        string IXRoadUniversalHeader.UserName { get => AmetnikNimi; set => AmetnikNimi = value; }
+        string IXRoadUniversalHeader.Authenticator { get => Autentija; set => Autentija = value; }
+        string IXRoadUniversalHeader.Paid { get => Makstud; set => Makstud = value; }
+        string IXRoadUniversalHeader.Encrypt { get => Salastada; set => Salastada = value; }
+        string IXRoadUniversalHeader.EncryptCert { get => SalastadaSertifikaadiga; set => SalastadaSertifikaadiga = value; }
+        string IXRoadUniversalHeader.Encrypted { get => Salastatud; set => Salastatud = value; }
+        string IXRoadUniversalHeader.EncryptedCert { get => SalastatudSertifikaadiga; set => SalastatudSertifikaadiga = value; }
+
+        bool? IXRoadUniversalHeader.Async { get => Asünkroonne; set => Asünkroonne = value; }
     }
 }

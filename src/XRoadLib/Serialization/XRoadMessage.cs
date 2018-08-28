@@ -78,7 +78,7 @@ namespace XRoadLib.Serialization
         /// X-Road protocol compliant header values extracted from SOAP header of
         /// the message.
         /// </summary>
-        public IXRoadHeader Header { get; set; }
+        public ISoapHeader Header { get; set; }
 
         /// <summary>
         /// Remaining non-standard elements in X-Road message header.
@@ -125,7 +125,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Operation version of current X-Road message.
         /// </summary>
-        public uint Version => Header?.Service?.Version ?? 0u;
+        public uint Version => (Header as IXRoadHeader)?.Service?.Version ?? 0u;
 
         /// <summary>
         /// X-Road message template request element root node.
@@ -146,7 +146,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Initializes new empty X-Road message for request serialization.
         /// </summary>
-        public XRoadMessage(IServiceManager serviceManager, IXRoadHeader header)
+        public XRoadMessage(IServiceManager serviceManager, ISoapHeader header)
             : this(new MemoryStream())
         {
             ServiceManager = serviceManager;

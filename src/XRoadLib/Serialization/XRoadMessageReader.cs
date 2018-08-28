@@ -83,11 +83,13 @@ namespace XRoadLib.Serialization
             if (isResponse)
                 return;
 
-            if (target.RootElementName == null || string.IsNullOrWhiteSpace(target.Header?.Service?.ServiceCode))
+            var serviceCode = (target.Header as IXRoadHeader)?.Service?.ServiceCode;
+
+            if (target.RootElementName == null || string.IsNullOrWhiteSpace(serviceCode))
                 return;
 
-            if (!Equals(target.RootElementName.LocalName, target.Header?.Service?.ServiceCode))
-                throw new InvalidQueryException($"X-Road operation name `{target.Header?.Service?.ServiceCode}` does not match request wrapper element name `{target.RootElementName}`.");
+            if (!Equals(target.RootElementName.LocalName, serviceCode))
+                throw new InvalidQueryException($"X-Road operation name `{serviceCode}` does not match request wrapper element name `{target.RootElementName}`.");
         }
 
         public void Dispose()
@@ -383,6 +385,8 @@ namespace XRoadLib.Serialization
                 return;
 
             var header = serviceManager?.CreateHeader();
+            var xRoadHeader = header as IXRoadHeader;
+
             var unresolved = new List<XElement>();
 
             while (reader.MoveToElement(2))
@@ -393,16 +397,16 @@ namespace XRoadLib.Serialization
                     header = serviceManager?.CreateHeader();
                 }
 
-                if (serviceManager == null || header == null || !serviceManager.IsHeaderNamespace(reader.NamespaceURI))
+                if (serviceManager == null || xRoadHeader == null || !serviceManager.IsHeaderNamespace(reader.NamespaceURI))
                 {
                     unresolved.Add((XElement)XNode.ReadFrom(reader));
                     continue;
                 }
 
-                header.ReadHeaderValue(reader);
+                xRoadHeader.ReadHeaderValue(reader);
             }
 
-            header?.Validate();
+            xRoadHeader?.Validate();
 
             target.Header = header;
             target.UnresolvedHeaders = unresolved;

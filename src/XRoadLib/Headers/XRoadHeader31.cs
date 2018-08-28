@@ -10,10 +10,10 @@ namespace XRoadLib.Headers
     /// <summary>
     /// Details of X-Road message protocol version 3.1 header.
     /// </summary>
-    public class XRoadHeader31 : IXRoadHeader, IXRoadHeader<XRoadHeader31>, IXRoadHeader31
+    public class XRoadHeader31 : IXRoadHeader, IXRoadHeader31, IXRoadUniversalHeader
     {
-        private readonly XRoadClientIdentifier client = new XRoadClientIdentifier();
-        private readonly XRoadServiceIdentifier service = new XRoadServiceIdentifier();
+        private XRoadClientIdentifier client = new XRoadClientIdentifier();
+        private XRoadServiceIdentifier service = new XRoadServiceIdentifier();
 
         /// <inheritdoc />
         XRoadClientIdentifier IXRoadHeader.Client => client;
@@ -65,34 +65,34 @@ namespace XRoadLib.Headers
         /// </summary>
         public virtual string Id { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string Unit { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string Position { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string UserName { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual bool? Async { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string Authenticator { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string Paid { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string Encrypt { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string EncryptCert { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string Encrypted { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IXRoadHeader31" />
         public virtual string EncryptedCert { get; set; }
 
         /// <inheritdoc />
@@ -207,26 +207,9 @@ namespace XRoadLib.Headers
             WriteHeaderValue("encryptedCert", EncryptedCert, XmlTypeConstants.String);
         }
 
-        public XRoadHeader31 InitFrom(XRoadCommonHeader commonHeader)
-        {
-            Consumer = commonHeader.Client.MemberCode;
-            Producer = commonHeader.Service.SubsystemCode;
-            UserId = commonHeader.UserId;
-            Issue = commonHeader.Issue;
-            ServiceName = commonHeader.Service.ToFullName();
-            Id = commonHeader.Id;
-            Unit = commonHeader.Unit;
-            Position = commonHeader.Position;
-            UserName = commonHeader.UserName;
-            Async = commonHeader.Async;
-            Authenticator = commonHeader.Authenticator;
-            Paid = commonHeader.Paid;
-            Encrypt = commonHeader.Encrypt;
-            EncryptCert = commonHeader.EncryptCert;
-            Encrypted = commonHeader.Encrypted;
-            EncryptedCert = commonHeader.EncryptedCert;
+        XRoadClientIdentifier IXRoadUniversalHeader.Client { get => client; set => client = value; }
+        XRoadServiceIdentifier IXRoadUniversalHeader.Service { get => service; set => service = value; }
 
-            return this;
-        }
+        string IXRoadUniversalHeader.ProtocolVersion { get => "3.1"; set { } }
     }
 }

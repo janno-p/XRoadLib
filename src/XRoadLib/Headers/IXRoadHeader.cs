@@ -1,13 +1,11 @@
 ﻿using System.Xml;
-using XRoadLib.Schema;
-using XRoadLib.Styles;
 
 namespace XRoadLib.Headers
 {
     /// <summary>
     /// Describes X-Road message SOAP header elements.
     /// </summary>
-    public interface IXRoadHeader
+    public interface IXRoadHeader : ISoapHeader
     {
         /// <summary>
         /// Identifies X-Road client.
@@ -48,15 +46,5 @@ namespace XRoadLib.Headers
         /// Check if all required SOAP headers are present and in correct format.
         /// </summary>
         void Validate();
-
-        /// <summary>
-        /// Serializes X-Road message SOAP headers to XML.
-        /// </summary>
-        void WriteTo(XmlWriter writer, Style style, HeaderDefinition headerDefinition);
-    }
-
-    public interface IXRoadHeader<out THeader>
-    {
-        THeader InitFrom(XRoadCommonHeader commonHeader);
     }
 }

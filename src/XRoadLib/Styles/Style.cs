@@ -125,11 +125,14 @@ namespace XRoadLib.Styles
             writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, producerNamespace);
         }
 
-        public virtual void WriteSoapHeader(XmlWriter writer, IXRoadHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
+        public virtual void WriteSoapHeader(XmlWriter writer, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
         {
+            if (header == null)
+                return;
+
             writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
 
-            header?.WriteTo(writer, this, definition);
+            header.WriteTo(writer, this, definition);
 
             foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
                 additionalHeader.WriteTo(writer);
