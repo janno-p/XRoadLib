@@ -18,6 +18,11 @@ namespace XRoadLib.Schema
         public ParameterInfo ParameterInfo { get; }
 
         /// <summary>
+        /// Wrapper element name for outgoing responses.
+        /// </summary>
+        public string WrapperElementName { get; set; }
+
+        /// <summary>
         /// Describes the appearance of fault elements in service description.
         /// </summary>
         public XRoadFaultPresentation XRoadFaultPresentation { get; set; } = XRoadFaultPresentation.Choice;

@@ -19,6 +19,11 @@ namespace XRoadLib.Schema
         public ParameterInfo ParameterInfo { get; }
 
         /// <summary>
+        /// Wrapper element name for incoming requests.
+        /// </summary>
+        public string WrapperElementName { get; set; }
+
+        /// <summary>
         /// Serialized element name of this request object.
         /// </summary>
         public string RequestElementName { get; set; } = "request";

@@ -216,18 +216,20 @@ namespace XRoadLib
                 var requestElement = CreateRequestElement();
                 AddCustomAttributes(requestDefinition.Content, requestElement, ns => addRequiredImport(targetNamespace, ns, operationDefinition.ExtensionSchemaExporter));
 
+                var requestWrapperElementName = requestDefinition.WrapperElementName ?? operationDefinition.Name.LocalName;
+
                 if (schemaDefinitionProvider.ProtocolDefinition.Style.UseElementInMessagePart)
                 {
                     if (requestDefinition.Content.MergeContent)
                     {
-                        requestElement.Name = operationDefinition.Name.LocalName;
+                        requestElement.Name = requestWrapperElementName;
                         schemaElements.Add(requestElement);
                     }
                     else
                     {
                         schemaElements.Add(new XmlSchemaElement
                         {
-                            Name = operationDefinition.Name.LocalName,
+                            Name = requestWrapperElementName,
                             SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement } } }
                         });
                     }
@@ -239,6 +241,8 @@ namespace XRoadLib
 
                 XmlSchemaElement responseElement;
                 XmlSchemaElement resultElement = null;
+
+                var responseWrapperElementName = responseDefinition.WrapperElementName ?? $"{operationDefinition.Name.LocalName}Response";
 
                 if (responseDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit && responseDefinition.ContainsNonTechnicalFault)
                 {
@@ -281,7 +285,7 @@ namespace XRoadLib
                     }
                     schemaElements.Add(new XmlSchemaElement
                     {
-                        Name = $"{operationDefinition.Name.LocalName}Response",
+                        Name = responseWrapperElementName,
                         SchemaType = CreateOperationResponseSchemaType(responseDefinition, responseRequestElement, responseElement, faultDefinition)
                     });
                 }
@@ -292,7 +296,7 @@ namespace XRoadLib
                 var inputMessage = new Message { Name = operationDefinition.InputMessageName };
 
                 if (schemaDefinitionProvider.ProtocolDefinition.Style.UseElementInMessagePart)
-                    inputMessage.Parts.Add(new MessagePart { Name = "body", Element = new XmlQualifiedName(operationDefinition.Name.LocalName, operationDefinition.Name.NamespaceName) });
+                    inputMessage.Parts.Add(new MessagePart { Name = "body", Element = new XmlQualifiedName(requestWrapperElementName, operationDefinition.Name.NamespaceName) });
                 else
                 {
                     var requestTypeName = requestElement?.SchemaTypeName;
@@ -307,7 +311,7 @@ namespace XRoadLib
                 var outputMessage = new Message { Name = operationDefinition.OutputMessageName };
 
                 if (schemaDefinitionProvider.ProtocolDefinition.Style.UseElementInMessagePart)
-                    outputMessage.Parts.Add(new MessagePart { Name = "body", Element = new XmlQualifiedName($"{operationDefinition.Name.LocalName}Response", operationDefinition.Name.NamespaceName) });
+                    outputMessage.Parts.Add(new MessagePart { Name = "body", Element = new XmlQualifiedName(responseWrapperElementName, operationDefinition.Name.NamespaceName) });
                 else
                 {
                     var requestTypeName = requestElement?.SchemaTypeName;
@@ -416,7 +420,16 @@ namespace XRoadLib
         private static XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseDefinition responseDefinition, XmlSchemaElement requestElement, XmlSchemaElement responseElement, FaultDefinition faultDefinition)
         {
             if (responseDefinition.ContainsNonTechnicalFault)
-                return new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElement, responseElement } } };
+            {
+                var particle = new XmlSchemaSequence();
+
+                if (responseDefinition.DeclaringOperationDefinition.CopyRequestPartToResponse)
+                    particle.Items.Add(requestElement);
+
+                particle.Items.Add(responseElement);
+
+                return new XmlSchemaComplexType { Particle = particle };
+            }
 
             if ("unbounded".Equals(responseElement.MaxOccursString) || responseElement.MaxOccurs > 1)
                 responseElement = new XmlSchemaElement
@@ -631,9 +644,12 @@ namespace XRoadLib
                     return contentElement.SchemaTypeName;
 
                 var particle = ((XmlSchemaComplexType)contentElement.SchemaType)?.Particle;
-                if (particle != null) schemaType.Particle = particle;
+                if (particle != null)
+                    schemaType.Particle = particle;
+
                 var content = ((XmlSchemaComplexType)contentElement.SchemaType)?.ContentModel;
-                if (content != null) schemaType.ContentModel = content;
+                if (content != null)
+                    schemaType.ContentModel = content;
 
                 return null;
             }
@@ -731,10 +747,15 @@ namespace XRoadLib
             var typeDefinition = GetContentTypeDefinition(contentDefinition);
             if (!typeDefinition.IsAnonymous)
             {
+                if (contentDefinition.RuntimeType == typeof(XElement))
+                    return;
+
                 addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName, null);
                 schemaElement.SchemaTypeName = new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
+
                 if (!referencedTypes.ContainsKey(schemaElement.SchemaTypeName))
                     referencedTypes.Add(schemaElement.SchemaTypeName, null);
+
                 return;
             }
 
