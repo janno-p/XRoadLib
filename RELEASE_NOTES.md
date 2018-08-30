@@ -2,6 +2,13 @@
 
 * Disposable X-Road handlers
 * Use `Microsoft.AspNetCore.Routing` package for mapping requests.
+* Some support for SOAP messages without X-Road message protocol specifics.
+* Removed `XRoadCommonHeader`, use `IXRoadUniversalHeader` as replacement for common interface.
+* Configurable wrapper element names in request and response definitions.
+* Configurable service, port, binding and port type names.
+* Configurable soap binding address location.
+* Support qualified namespaces in XML schemas.
+* Support `object` (everything fits) types as long as runtime types used are defined in the schema.
 
 #### 1.2.6 - 12.04.2018
 
