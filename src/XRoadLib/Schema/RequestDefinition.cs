@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace XRoadLib.Schema
 {
@@ -22,12 +23,12 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Wrapper element name for incoming requests.
         /// </summary>
-        public string WrapperElementName { get; set; }
+        public XName WrapperElementName { get; set; }
 
         /// <summary>
         /// Serialized element name of this request object.
         /// </summary>
-        public string RequestElementName { get; set; } = "request";
+        public XName RequestElementName { get; set; }
 
         /// <summary>
         /// Initializes new request definition object.
@@ -40,15 +41,23 @@ namespace XRoadLib.Schema
 
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = methodParameters.SingleOrDefault();
+            WrapperElementName = declaringOperationDefinition.Name;
+
+            var targetNamespace = declaringOperationDefinition.Name.NamespaceName;
+            var defaultQualifiedElement = isQualifiedElementDefault(targetNamespace);
 
             Content = ContentDefinition.FromType(
                 this,
                 ParameterInfo,
                 ParameterInfo?.ParameterType,
                 "request",
-                declaringOperationDefinition.Name.NamespaceName,
-                isQualifiedElementDefault(declaringOperationDefinition.Name.NamespaceName)
+                targetNamespace,
+                defaultQualifiedElement
             );
+
+            var qualifiedNamespace = ContentDefinition.GetQualifiedNamespace("", null, targetNamespace, defaultQualifiedElement);
+
+            RequestElementName = XName.Get("request", qualifiedNamespace);
         }
 
         /// <summary>

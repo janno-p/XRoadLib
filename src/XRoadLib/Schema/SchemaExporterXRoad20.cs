@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Xml.Linq;
 using XRoadLib.Headers;
 using XRoadLib.Styles;
 
@@ -23,7 +24,7 @@ namespace XRoadLib.Schema
         {
             base.ExportRequestDefinition(requestDefinition);
 
-            requestDefinition.RequestElementName = "keha";
+            requestDefinition.RequestElementName = XName.Get("keha");
         }
 
         /// <inheritdoc />
@@ -31,8 +32,8 @@ namespace XRoadLib.Schema
         {
             base.ExportResponseDefinition(responseDefinition);
 
-            responseDefinition.RequestElementName = "paring";
-            responseDefinition.ResponseElementName = "keha";
+            responseDefinition.RequestElementName = XName.Get("paring");
+            responseDefinition.ResponseElementName = XName.Get("keha");
         }
 
         /// <inheritdoc />

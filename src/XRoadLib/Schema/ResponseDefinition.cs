@@ -22,7 +22,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Wrapper element name for outgoing responses.
         /// </summary>
-        public string WrapperElementName { get; set; }
+        public XName WrapperElementName { get; set; }
 
         /// <summary>
         /// Describes the appearance of fault elements in service description.
@@ -59,6 +59,7 @@ namespace XRoadLib.Schema
 
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = parameterInfo;
+            WrapperElementName = XName.Get($"{declaringOperationDefinition.Name.LocalName}Response", declaringOperationDefinition.Name.NamespaceName);
 
             var targetNamespace = declaringOperationDefinition.Name.NamespaceName;
             var defaultQualifiedElement = isQualifiedElementDefault(targetNamespace);

@@ -41,7 +41,9 @@ namespace XRoadLib.Extensions
         {
             message.ContentStream.Position = 0;
 
-            var pathRoot = $"/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*/{serviceMap.ResponseDefinition.ResponseElementName}";
+            var we = serviceMap.ResponseDefinition.WrapperElementName;
+            var re = serviceMap.ResponseDefinition.ResponseElementName;
+            var pathRoot = $"/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='{we.LocalName}' and namespace-uri()='{we.NamespaceName}']/*[local-name()='{re.LocalName}' and namespace-uri()='{re.NamespaceName}']";
 
             var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
             var navigator = doc.CreateNavigator();

@@ -84,7 +84,7 @@ namespace XRoadLib.Serialization.Mapping
             if (hasResponseElement && !ResponseDefinition.ContainsNonTechnicalFault && reader.LocalName == ResponseDefinition.FaultName)
                 return reader.ReadXRoadFault(4);
 
-            if (!hasResponseElement || reader.LocalName != responseName)
+            if (!hasResponseElement || reader.LocalName != responseName.LocalName || reader.NamespaceURI != responseName.NamespaceName)
                 throw new InvalidQueryException($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
 
             var hasWrapperElement = HasWrapperResultElement;
@@ -116,13 +116,12 @@ namespace XRoadLib.Serialization.Mapping
         /// <inheritdoc />
         public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null)
         {
-            var ns = string.IsNullOrEmpty(requestNamespace) ? OperationDefinition.Name.NamespaceName : requestNamespace;
+            var requestWrapperElementName = RequestDefinition.WrapperElementName;
+            var ns = string.IsNullOrEmpty(requestNamespace) ? requestWrapperElementName.NamespaceName : requestNamespace;
             var addPrefix = writer.LookupPrefix(ns) == null;
 
-            var requestWrapperElementName = RequestDefinition.WrapperElementName ?? OperationDefinition.Name.LocalName;
-
-            if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, requestWrapperElementName, ns);
-            else writer.WriteStartElement(requestWrapperElementName, ns);
+            if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, requestWrapperElementName.LocalName, ns);
+            else writer.WriteStartElement(requestWrapperElementName.LocalName, ns);
 
             if (!RequestDefinition.Content.MergeContent)
                 writer.WriteStartElement(RequestDefinition.RequestElementName);
@@ -141,13 +140,13 @@ namespace XRoadLib.Serialization.Mapping
         /// </summary>
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization)
         {
-            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name);
+            var containsRequest = requestReader.MoveToElement(2, RequestDefinition.WrapperElementName);
 
-            var responseWrapperElementName = ResponseDefinition.WrapperElementName ?? $"{OperationDefinition.Name.LocalName}Response";
+            var responseWrapperElementName = ResponseDefinition.WrapperElementName;
 
             if (containsRequest)
-                writer.WriteStartElement(requestReader.Prefix, responseWrapperElementName, OperationDefinition.Name.NamespaceName);
-            else writer.WriteStartElement(responseWrapperElementName, OperationDefinition.Name.NamespaceName);
+                writer.WriteStartElement(requestReader.Prefix, responseWrapperElementName.LocalName, responseWrapperElementName.NamespaceName);
+            else writer.WriteStartElement(responseWrapperElementName);
 
             if (containsRequest && OperationDefinition.CopyRequestPartToResponse)
                 CopyRequestToResponse(writer, requestReader);

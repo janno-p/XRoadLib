@@ -32,7 +32,7 @@ namespace XRoadLib.Serialization.Mapping
             ResponseDefinition = new ResponseDefinition(OperationDefinition, _ => false)
             {
                 ContainsNonTechnicalFault = true,
-                ResponseElementName = operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response"
+                ResponseElementName = XName.Get(operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response")
             };
         }
 
