@@ -1,4 +1,4 @@
-#### 1.2.7 - Unreleased
+#### 1.3.0-beta001 - Unreleased
 
 * Disposable X-Road handlers
 * Use `Microsoft.AspNetCore.Routing` package for mapping requests.
