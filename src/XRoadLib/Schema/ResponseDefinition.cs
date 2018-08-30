@@ -32,7 +32,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Fault element name for response element.
         /// </summary>
-        public string FaultName { get; set; } = "fault";
+        public XName FaultName { get; set; }
 
         /// <summary>
         /// Should technical fault fields be returned inside response element.
@@ -75,6 +75,7 @@ namespace XRoadLib.Schema
 
             var qualifiedNamespace = ContentDefinition.GetQualifiedNamespace("", null, targetNamespace, defaultQualifiedElement);
 
+            FaultName = XName.Get("fault", qualifiedNamespace);
             RequestElementName = XName.Get("request", qualifiedNamespace);
             ResponseElementName = XName.Get("response", qualifiedNamespace);
         }

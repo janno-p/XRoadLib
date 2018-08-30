@@ -81,7 +81,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var hasResponseElement = reader.MoveToElement(3);
 
-            if (hasResponseElement && !ResponseDefinition.ContainsNonTechnicalFault && reader.LocalName == ResponseDefinition.FaultName)
+            if (hasResponseElement && !ResponseDefinition.ContainsNonTechnicalFault && reader.LocalName == ResponseDefinition.FaultName.LocalName && reader.NamespaceURI == ResponseDefinition.FaultName.NamespaceName)
                 return reader.ReadXRoadFault(4);
 
             if (!hasResponseElement || reader.LocalName != responseName.LocalName || reader.NamespaceURI != responseName.NamespaceName)
