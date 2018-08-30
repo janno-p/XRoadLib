@@ -9,7 +9,7 @@ namespace XRoadLib.Extensions.AspNetCore
     /// <summary>
     /// X-Road context of classical AspNetCore applications.
     /// </summary>
-    public class XRoadContext : IDisposable
+    public class WebServiceContext : IDisposable
     {
         /// <summary>
         /// HTTP context this X-Road context is bound to.
@@ -49,7 +49,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Initialize new X-Road context instance.
         /// </summary>
-        public XRoadContext(HttpContext httpContext)
+        public WebServiceContext(HttpContext httpContext)
         {
             HttpContext = httpContext;
             Request = new XRoadMessage();

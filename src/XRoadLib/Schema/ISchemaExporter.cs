@@ -68,5 +68,10 @@ namespace XRoadLib.Schema
         /// Configure protocol global settings.
         /// </summary>
         void ExportProtocolDefinition(ProtocolDefinition protocolDefinition);
+
+        /// <summary>
+        /// Returns `true` if given namespace defines qualified element names by default.
+        /// </summary>
+        bool IsQualifiedElementDefault(string namespaceName);
     }
 }

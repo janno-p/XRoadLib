@@ -56,5 +56,8 @@ namespace XRoadLib.Schema
         {
             protocolDefinition.ProducerNamespace = producerNamespace;
         }
+
+        /// <inheritdoc />
+        public virtual bool IsQualifiedElementDefault(string namespaceName) => false;
     }
 }

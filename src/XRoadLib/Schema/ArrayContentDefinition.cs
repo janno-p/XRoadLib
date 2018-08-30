@@ -19,7 +19,7 @@ namespace XRoadLib.Schema
 
         public override XName SerializedName => MergeContent ? Item.Content.Name : Name;
 
-        public ArrayContentDefiniton(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName)
+        public ArrayContentDefiniton(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
             : base(particle)
         {
             if (customAttributeProvider.GetXmlElementAttribute() != null)
@@ -34,7 +34,16 @@ namespace XRoadLib.Schema
             if (runtimeType.GetArrayRank() > 1)
                 throw new SchemaDefinitionException($"Property `{particle}` declares multi-dimensional array, which is not supported.");
 
-            Name = XName.Get((arrayAttribute?.ElementName).GetStringOrDefault(runtimeName), arrayAttribute?.Namespace ?? "");
+            Name = XName.Get(
+                (arrayAttribute?.ElementName).GetStringOrDefault(runtimeName),
+                GetQualifiedNamespace(
+                    arrayAttribute?.Namespace ?? "",
+                    arrayAttribute?.Form,
+                    targetNamespace,
+                    defaultQualifiedElement
+                )
+            );
+
             IsNullable = (arrayAttribute?.IsNullable).GetValueOrDefault();
             Order = (arrayAttribute?.Order).GetValueOrDefault(-1);
             UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
@@ -49,7 +58,9 @@ namespace XRoadLib.Schema
                 Particle,
                 arrayItemAttribute,
                 runtimeType.GetElementType(),
-                MergeContent ? runtimeName : "item"
+                MergeContent ? runtimeName : "item",
+                targetNamespace,
+                defaultQualifiedElement
             );
         }
     }

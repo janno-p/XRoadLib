@@ -35,11 +35,9 @@ namespace XRoadLib.Serialization.Mapping
             var attachment = new XRoadAttachment((Stream)value);
             message.AllAttachments.Add(attachment);
 
-            if (!(content.Particle is RequestDefinition))
-                message.Style.WriteExplicitType(writer, Definition.Name);
+            message.Style.WriteType(writer, Definition, content);
 
             writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);
-            //writer.WriteAttributeString(PrefixConstants.XMIME, "contentType", NamespaceConstants.XMIME, "application/octet-stream");
 
             writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
 

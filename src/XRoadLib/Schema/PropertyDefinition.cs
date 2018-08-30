@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
@@ -10,7 +11,7 @@ namespace XRoadLib.Schema
         public string RuntimeName { get; }
         public string TemplateName { get; set; }
 
-        public PropertyDefinition(PropertyInfo propertyInfo, TypeDefinition declaringTypeDefinition)
+        public PropertyDefinition(PropertyInfo propertyInfo, TypeDefinition declaringTypeDefinition, Func<string, bool> isQualifiedElementDefault)
         {
             DeclaringTypeDefinition = declaringTypeDefinition;
             PropertyInfo = propertyInfo;
@@ -20,7 +21,9 @@ namespace XRoadLib.Schema
                 this,
                 propertyInfo,
                 propertyInfo.PropertyType.NormalizeType(),
-                RuntimeName
+                RuntimeName,
+                declaringTypeDefinition.TargetNamespace,
+                isQualifiedElementDefault(declaringTypeDefinition.TargetNamespace)
             );
 
             TemplateName = Content.Name?.LocalName;

@@ -174,7 +174,8 @@ namespace XRoadLib.Serialization
         /// </summary>
         public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
         {
-            LoadRequest(stream, contentTypeHeader, storagePath, new [] { serviceManager });
+            ServiceManager = serviceManager;
+            LoadRequest(stream, contentTypeHeader, storagePath, Enumerable.Empty<IServiceManager>());
         }
 
         /// <summary>

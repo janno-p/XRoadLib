@@ -36,9 +36,9 @@ namespace XRoadLib.Styles
             };
         }
 
-        public override SoapOperationBinding CreateSoapOperationBinding()
+        public override SoapOperationBinding CreateSoapOperationBinding(string soapAction)
         {
-            return new SoapOperationBinding { SoapAction = "", Style = SoapBindingStyle.Document };
+            return new SoapOperationBinding { SoapAction = soapAction, Style = SoapBindingStyle.Document };
         }
     }
 }

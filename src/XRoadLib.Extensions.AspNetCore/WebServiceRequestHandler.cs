@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using XRoadLib.Events;
 using XRoadLib.Schema;
@@ -11,7 +12,7 @@ namespace XRoadLib.Extensions.AspNetCore
     /// <summary>
     /// Base class of service request handlers.
     /// </summary>
-    public class XRoadRequestHandler : XRoadHandlerBase
+    public class WebServiceRequestHandler : WebServiceHandler
     {
         protected readonly IServiceProvider serviceProvider;
 
@@ -21,7 +22,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// Initialize new service request handler with X-Road message protocols
         /// it should be able to handle and storage path of temporary files.
         /// </summary>
-        public XRoadRequestHandler(IServiceProvider serviceProvider, IServiceManager serviceManager)
+        public WebServiceRequestHandler(IServiceProvider serviceProvider, IServiceManager serviceManager)
             : base(serviceManager)
         {
             this.serviceProvider = serviceProvider;
@@ -30,15 +31,12 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Handle incoming web request as X-Road service request.
         /// </summary>
-        public override void HandleRequest(XRoadContext context)
+        public override void HandleRequest(WebServiceContext context)
         {
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
                 throw new InvalidQueryException("Empty request content");
 
             context.Request.LoadRequest(context.HttpContext, GetStorageOrTempPath().FullName, ServiceManager);
-            if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
-                throw new InvalidQueryException($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {ServiceManager.Name}.");
-
             context.Response.Copy(context.Request);
             context.ServiceMap = context.Request.MetaServiceMap;
 
@@ -50,7 +48,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Handle X-Road message protocol meta-service request.
         /// </summary>
-        protected virtual object InvokeMetaService(XRoadContext context)
+        protected virtual object InvokeMetaService(WebServiceContext context)
         {
             return null;
         }
@@ -59,7 +57,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// Get main service object which implements the functionality of
         /// the operation.
         /// </summary>
-        protected virtual object GetServiceObject(XRoadContext context)
+        protected virtual object GetServiceObject(WebServiceContext context)
         {
             var operationDefinition = context.ServiceMap.OperationDefinition;
 
@@ -71,43 +69,48 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Intercept X-Road service request after request message is loaded.
         /// </summary>
-        protected virtual void OnRequestLoaded(XRoadContext context)
+        protected virtual void OnRequestLoaded(WebServiceContext context)
         { }
 
         /// <summary>
         /// Handle exception that occured on service method invokation.
         /// </summary>
-        protected virtual void OnInvocationError(XRoadContext context)
+        protected virtual void OnInvocationError(WebServiceContext context)
         { }
 
         /// <summary>
         /// Customize XML reader settings before deserialization of the X-Road message.
         /// </summary>
-        protected virtual void OnBeforeDeserialization(XRoadContext context, BeforeDeserializationEventArgs args)
+        protected virtual void OnBeforeDeserialization(WebServiceContext context, BeforeDeserializationEventArgs args)
         { }
 
         /// <summary>
         /// Intercept X-Road service request handling after deserialization of the message.
         /// </summary>
-        protected virtual void OnAfterDeserialization(XRoadContext context)
+        protected virtual void OnAfterDeserialization(WebServiceContext context)
         { }
 
         /// <summary>
         /// Intercept X-Road service request handling before serialization of the response message.
         /// </summary>
-        protected virtual void OnBeforeSerialization(XRoadContext context)
+        protected virtual void OnBeforeSerialization(WebServiceContext context)
         { }
 
         /// <summary>
         /// Intercept X-Road service request handling after serialization of the response message.
         /// </summary>
-        protected virtual void OnAfterSerialization(XRoadContext context)
+        protected virtual void OnAfterSerialization(WebServiceContext context)
         { }
+
+        protected virtual XName ResolveOperationName(WebServiceContext context)
+        {
+            return context.Request.RootElementName;
+        }
 
         /// <summary>
         /// Calls service method which implements the X-Road operation.
         /// </summary>
-        protected virtual void InvokeServiceMethod(XRoadContext context)
+        protected virtual void InvokeServiceMethod(WebServiceContext context)
         {
             if (context.ServiceMap != null)
             {
@@ -115,7 +118,9 @@ namespace XRoadLib.Extensions.AspNetCore
                 return;
             }
 
-            context.ServiceMap = context.Request.GetSerializer().GetServiceMap(context.Request.RootElementName);
+            var operationName = ResolveOperationName(context);
+
+            context.ServiceMap = context.Request.GetSerializer().GetServiceMap(operationName);
             context.Response.BinaryMode = context.ServiceMap.OperationDefinition.OutputBinaryMode;
 
             var serviceObject = GetServiceObject(context);
@@ -139,7 +144,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Deserializes X-Road request from SOAP message payload.
         /// </summary>
-        protected virtual void DeserializeMethodInput(XRoadContext context)
+        protected virtual void DeserializeMethodInput(WebServiceContext context)
         {
             var args = new BeforeDeserializationEventArgs();
             OnBeforeDeserialization(context, args);
@@ -157,7 +162,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Serializes service result to a X-Road message response.
         /// </summary>
-        protected virtual void SerializeXRoadResponse(XRoadContext context)
+        protected virtual void SerializeXRoadResponse(WebServiceContext context)
         {
             OnBeforeSerialization(context);
 
@@ -168,7 +173,7 @@ namespace XRoadLib.Extensions.AspNetCore
             {
                 writer.WriteStartDocument();
 
-                if (reader.MoveToElement(0) && reader.IsCurrentElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
+                if (reader.MoveToElement(0) && reader.IsCurrentElement(0, XName.Get("Envelope", NamespaceConstants.SOAP_ENV)))
                 {
                     writer.WriteStartElement(reader.Prefix, "Envelope", NamespaceConstants.SOAP_ENV);
                     writer.WriteAttributes(reader, true);
@@ -179,11 +184,11 @@ namespace XRoadLib.Extensions.AspNetCore
                     writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
                 }
 
-                if (reader.MoveToElement(1) && reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
+                if (reader.MoveToElement(1) && reader.IsCurrentElement(1, XName.Get("Header", NamespaceConstants.SOAP_ENV)))
                     writer.WriteNode(reader, true);
 
                 writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
-                if (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
+                if (reader.IsCurrentElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)) || reader.MoveToElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)))
                     writer.WriteAttributes(reader, true);
 
                 context.ServiceMap.SerializeResponse(writer, context.Result, context.Response, reader);

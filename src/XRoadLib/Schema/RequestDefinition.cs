@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace XRoadLib.Schema
@@ -31,7 +32,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes new request definition object.
         /// </summary>
-        public RequestDefinition(OperationDefinition declaringOperationDefinition)
+        public RequestDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
         {
             var methodParameters = declaringOperationDefinition.MethodInfo.GetParameters();
             if (methodParameters.Length > 1)
@@ -40,7 +41,14 @@ namespace XRoadLib.Schema
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = methodParameters.SingleOrDefault();
 
-            Content = ContentDefinition.FromType(this, ParameterInfo, ParameterInfo?.ParameterType, "request");
+            Content = ContentDefinition.FromType(
+                this,
+                ParameterInfo,
+                ParameterInfo?.ParameterType,
+                "request",
+                declaringOperationDefinition.Name.NamespaceName,
+                isQualifiedElementDefault(declaringOperationDefinition.Name.NamespaceName)
+            );
         }
 
         /// <summary>

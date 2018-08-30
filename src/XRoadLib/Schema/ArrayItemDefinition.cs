@@ -16,7 +16,7 @@ namespace XRoadLib.Schema
 
         public Type ItemTypeMapType { get; set; }
 
-        public ArrayItemDefinition(ParticleDefinition array, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName)
+        public ArrayItemDefinition(ParticleDefinition array, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
         {
             Array = array;
 
@@ -29,7 +29,9 @@ namespace XRoadLib.Schema
                 this,
                 arrayItemAttribute,
                 runtimeType,
-                runtimeName
+                runtimeName,
+                targetNamespace,
+                defaultQualifiedElement
             );
         }
     }

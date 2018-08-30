@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Events;
 using XRoadLib.Serialization;
 
@@ -163,7 +164,7 @@ namespace XRoadLib.Extensions.AspNet
 
                 writer.WriteStartDocument();
 
-                if (reader.MoveToElement(0) && reader.IsCurrentElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
+                if (reader.MoveToElement(0) && reader.IsCurrentElement(0, XName.Get("Envelope", NamespaceConstants.SOAP_ENV)))
                 {
                     writer.WriteStartElement(reader.Prefix, "Envelope", NamespaceConstants.SOAP_ENV);
                     writer.WriteAttributes(reader, true);
@@ -174,11 +175,11 @@ namespace XRoadLib.Extensions.AspNet
                     writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
                 }
 
-                if (reader.MoveToElement(1) && reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
+                if (reader.MoveToElement(1) && reader.IsCurrentElement(1, XName.Get("Header", NamespaceConstants.SOAP_ENV)))
                     writer.WriteNode(reader, true);
 
                 writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
-                if (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
+                if (reader.IsCurrentElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)) || reader.MoveToElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)))
                     writer.WriteAttributes(reader, true);
 
                 context.ServiceMap.SerializeResponse(writer, context.Result, context.Response, reader, CustomSerialization);

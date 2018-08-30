@@ -68,9 +68,12 @@ namespace XRoadLib.Serialization.Mapping
 
             var propertyValue = value != null ? getValueMethod(value) : null;
 
+            if (Definition.Content.IsOptional && propertyValue == null)
+                return;
+
             if (!Definition.Content.MergeContent)
             {
-                writer.WriteStartElement(Definition.Content.Name.LocalName);
+                writer.WriteStartElement(Definition.Content.Name);
 
                 if (propertyValue == null)
                     writer.WriteNilAttribute();

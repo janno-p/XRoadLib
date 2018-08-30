@@ -51,5 +51,30 @@ namespace XRoadLib.Schema
         /// Fixes MISP issue when missing documentation causes MISP to display empty labels.
         /// </summary>
         public bool GenerateFakeXRoadDocumentation { get; set; } = false;
+
+        /// <summary>
+        /// Port type name to use in service description document.
+        /// </summary>
+        public string PortTypeName { get; set; } = "PortTypeName";
+
+        /// <summary>
+        /// Binding name to use in service description document.
+        /// </summary>
+        public string BindingName { get; set; } = "BindingName";
+
+        /// <summary>
+        /// Port name used in service description document services section.
+        /// </summary>
+        public string PortName { get; set; } = "PortName";
+
+        /// <summary>
+        /// Service name used in service description document.
+        /// </summary>
+        public string ServiceName { get; set; } = "ServiceName";
+
+        /// <summary>
+        /// Soap address binding location value in service description document.
+        /// </summary>
+        public string SoapAddressLocation { get; set; } = "http://INSERT_CORRECT_SERVICE_URL";
     }
 }

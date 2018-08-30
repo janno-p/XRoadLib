@@ -20,7 +20,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// </summary>
         public static void LoadRequest(this XRoadMessage message, HttpContext httpContext, string storagePath, IServiceManager serviceManager)
         {
-            message.LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, new[] { serviceManager });
+            message.LoadRequest(httpContext.Request.Body, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManager);
         }
 
         /// <summary>

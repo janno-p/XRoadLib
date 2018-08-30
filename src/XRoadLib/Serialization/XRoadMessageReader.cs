@@ -60,8 +60,8 @@ namespace XRoadLib.Serialization
 
             using (var reader = XmlReader.Create(target.ContentStream, new XmlReaderSettings { CloseInput = false }))
             {
-                var protocol = DetectServiceManager(reader);
-                ParseXRoadHeader(target, reader, protocol);
+                var serviceManager = DetectServiceManager(reader, target.ServiceManager);
+                ParseXRoadHeader(target, reader, serviceManager);
 
                 target.RootElementName = ParseMessageRootElementName(reader);
 
@@ -371,17 +371,17 @@ namespace XRoadLib.Serialization
             return keyValuePair.Substring(fromIndx, toIndx - fromIndx).Trim();
         }
 
-        private IServiceManager DetectServiceManager(XmlReader reader)
+        private IServiceManager DetectServiceManager(XmlReader reader, IServiceManager serviceManager)
         {
-            if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
+            if (!reader.MoveToElement(0, XName.Get("Envelope", NamespaceConstants.SOAP_ENV)))
                 throw new InvalidQueryException("X-Road SOAP request is missing SOAP-ENV:Envelope element.");
 
-            return serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
+            return serviceManager ?? serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }
 
         private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IServiceManager serviceManager)
         {
-            if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, "Header", NamespaceConstants.SOAP_ENV))
+            if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, XName.Get("Header", NamespaceConstants.SOAP_ENV)))
                 return;
 
             var header = serviceManager?.CreateHeader();
@@ -434,7 +434,7 @@ namespace XRoadLib.Serialization
 
         private static XName ParseMessageRootElementName(XmlReader reader)
         {
-            return (reader.IsCurrentElement(1, "Body", NamespaceConstants.SOAP_ENV) || reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV)) && reader.MoveToElement(2)
+            return (reader.IsCurrentElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)) || reader.MoveToElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV))) && reader.MoveToElement(2)
                 ? reader.GetXName()
                 : null;
         }

@@ -63,6 +63,11 @@ namespace XRoadLib.Schema
         public ISchemaExporter ExtensionSchemaExporter { get; }
 
         /// <summary>
+        /// Customized SOAPAction header value for this operation.
+        /// </summary>
+        public string SoapAction { get; set; }
+
+        /// <summary>
         /// Initializes new definition object using default settings.
         /// </summary>
         public OperationDefinition(XName qualifiedName, uint? version, MethodInfo methodInfo)
@@ -83,6 +88,7 @@ namespace XRoadLib.Schema
             Documentation = new DocumentationDefinition(methodInfo);
             ServiceMapType = attribute?.ServiceMapType ?? typeof(ServiceMap);
             ExtensionSchemaExporter = attribute?.SchemaExporter;
+            SoapAction = attribute?.SoapAction ?? string.Empty;
         }
     }
 }

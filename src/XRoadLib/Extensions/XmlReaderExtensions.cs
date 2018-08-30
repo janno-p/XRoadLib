@@ -120,19 +120,19 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Check if XML reader is currently positioned at the specified element.
         /// </summary>
-        public static bool IsCurrentElement(this XmlReader reader, int depth, string name, string @namespace = "")
+        public static bool IsCurrentElement(this XmlReader reader, int depth, XName name)
         {
-            return reader.NodeType == XmlNodeType.Element && reader.Depth == depth && reader.LocalName == name && reader.NamespaceURI == @namespace;
+            return reader.NodeType == XmlNodeType.Element && reader.Depth == depth && reader.LocalName == name.LocalName && reader.NamespaceURI == name.NamespaceName;
         }
 
         /// <summary>
         /// Move XML reader current position to next element which matches the given arguments.
         /// </summary>
-        public static bool MoveToElement(this XmlReader reader, int depth, string name = null, string @namespace = "")
+        public static bool MoveToElement(this XmlReader reader, int depth, XName name = null)
         {
             while (true)
             {
-                if (reader.Depth == depth && reader.NodeType == XmlNodeType.Element && (name == null || reader.IsCurrentElement(depth, name, @namespace)))
+                if (reader.Depth == depth && reader.NodeType == XmlNodeType.Element && (name == null || reader.IsCurrentElement(depth, name)))
                     return true;
 
                 if (!reader.Read() || reader.Depth < depth)
@@ -153,10 +153,10 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static void MoveToBody(this XmlReader reader)
         {
-            if (!reader.MoveToElement(0, "Envelope", NamespaceConstants.SOAP_ENV))
+            if (!reader.MoveToElement(0, XName.Get("Envelope", NamespaceConstants.SOAP_ENV)))
                 throw new InvalidQueryException($"Element `{NamespaceConstants.SOAP}:Envelope` is missing from request content.");
 
-            if (!reader.MoveToElement(1, "Body", NamespaceConstants.SOAP_ENV))
+            if (!reader.MoveToElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)))
                 throw new InvalidQueryException($"Element `{NamespaceConstants.SOAP}:Body` is missing from request content.");
         }
 
@@ -167,7 +167,7 @@ namespace XRoadLib.Extensions
         {
             reader.MoveToBody();
 
-            if (!reader.MoveToElement(2, rootElementName.LocalName, rootElementName.NamespaceName))
+            if (!reader.MoveToElement(2, rootElementName))
                 throw new InvalidQueryException("Payload is missing from request content.");
         }
 

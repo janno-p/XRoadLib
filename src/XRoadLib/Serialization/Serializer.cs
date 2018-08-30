@@ -57,6 +57,8 @@ namespace XRoadLib.Serialization
             AddSystemType<Stream>("base64Binary", x => new ContentTypeMap(x));
             AddSystemType<Stream>("hexBinary", x => new ContentTypeMap(x));
             AddSystemType<Stream>("base64", x => new ContentTypeMap(x));
+
+            AddSystemType<object>("", x => new AnyContentTypeMap(x, this));
         }
 
         public IServiceMap GetServiceMap(string operationName)

@@ -10,7 +10,7 @@ namespace XRoadLib.Schema
 {
     public class SingularContentDefinition : ContentDefinition
     {
-        public SingularContentDefinition(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName)
+        public SingularContentDefinition(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
             : base(particle)
         {
             if (customAttributeProvider.GetXmlArrayAttribute() != null || customAttributeProvider.GetXmlArrayItemAttribute() != null)
@@ -19,7 +19,16 @@ namespace XRoadLib.Schema
             var elementAttribute = customAttributeProvider.GetXmlElementAttribute();
             var xroadElementAttribute = elementAttribute as XRoadXmlElementAttribute;
 
-            Name = XName.Get((elementAttribute?.ElementName).GetStringOrDefault(runtimeName), elementAttribute?.Namespace ?? "");
+            Name = XName.Get(
+                (elementAttribute?.ElementName).GetStringOrDefault(runtimeName),
+                GetQualifiedNamespace(
+                    elementAttribute?.Namespace ?? "",
+                    elementAttribute?.Form,
+                    targetNamespace,
+                    defaultQualifiedElement
+                )
+            );
+
             IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault();
             Order = (elementAttribute?.Order).GetValueOrDefault(-1);
             UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadElementAttribute?.UseXop).GetValueOrDefault(true);
@@ -31,12 +40,21 @@ namespace XRoadLib.Schema
             RuntimeType = runtimeType;
         }
 
-        public SingularContentDefinition(ParticleDefinition particle, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName)
+        public SingularContentDefinition(ParticleDefinition particle, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
             : base(particle)
         {
             var xroadArrayItemAttribute = arrayItemAttribute as XRoadXmlArrayItemAttribute;
 
-            Name = XName.Get((arrayItemAttribute?.ElementName).GetStringOrDefault(runtimeName), arrayItemAttribute?.Namespace ?? "");
+            Name = XName.Get(
+                (arrayItemAttribute?.ElementName).GetStringOrDefault(runtimeName),
+                GetQualifiedNamespace(
+                    arrayItemAttribute?.Namespace ?? "",
+                    arrayItemAttribute?.Form,
+                    targetNamespace,
+                    defaultQualifiedElement
+                )
+            );
+
             IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault();
             UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
             TypeName = (arrayItemAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.XSD));

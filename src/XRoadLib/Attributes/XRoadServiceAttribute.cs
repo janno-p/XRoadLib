@@ -63,6 +63,11 @@ namespace XRoadLib.Attributes
         public virtual BinaryMode OutputBinaryMode { get; set; }= BinaryMode.Xml;
 
         /// <summary>
+        /// SOAPAction header value for this service.
+        /// </summary>
+        public virtual string SoapAction { get; set; }
+
+        /// <summary>
         /// Initializes new operation definition.
         /// </summary>
         public XRoadServiceAttribute(string name)

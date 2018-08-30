@@ -78,8 +78,7 @@ namespace XRoadLib.Serialization.Mapping
                 return;
             }
 
-            if (!(content.Particle is RequestDefinition))
-                message.Style.WriteExplicitType(writer, Definition.Name);
+            message.Style.WriteType(writer, Definition, content);
 
             attachment.IsMultipartContent = false;
             attachment.WriteAsBase64(writer);

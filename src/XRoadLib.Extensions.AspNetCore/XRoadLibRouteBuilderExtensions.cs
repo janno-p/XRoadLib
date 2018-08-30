@@ -24,7 +24,7 @@ namespace XRoadLib.Extensions.AspNetCore
         }
 
         public static IRouteBuilder MapWsdlHandler<THandler>(this IRouteBuilder builder, string template)
-            where THandler : IXRoadHandler
+            where THandler : IWebServiceHandler
         {
             return builder.MapGet(template, async context =>
             {
@@ -50,7 +50,7 @@ namespace XRoadLib.Extensions.AspNetCore
         }
 
         public static IRouteBuilder MapRequestHandler<THandler>(this IRouteBuilder builder, string template)
-            where THandler : IXRoadHandler
+            where THandler : IWebServiceHandler
         {
             return builder.MapPost(template, async context =>
             {
@@ -61,13 +61,13 @@ namespace XRoadLib.Extensions.AspNetCore
 
         private static async Task ExecuteWsdlRequestDelegate(HttpContext context, IServiceManager serviceManager)
         {
-            using (var handler = new XRoadWsdlHandler(serviceManager))
+            using (var handler = new WebServiceDescriptionHandler(serviceManager))
                 await XRoadLibMiddleware.Invoke(context, handler);
         }
 
         private static async Task ExecuteWebServiceRequestDelegate(HttpContext context, IServiceManager serviceManager)
         {
-            using (var handler = new XRoadRequestHandler(context.RequestServices, serviceManager))
+            using (var handler = new WebServiceRequestHandler(context.RequestServices, serviceManager))
                 await XRoadLibMiddleware.Invoke(context, handler);
         }
     }

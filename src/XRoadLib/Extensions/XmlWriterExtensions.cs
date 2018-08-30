@@ -105,5 +105,10 @@ namespace XRoadLib.Extensions
                 writer.WriteString(value.ToString());
             else writer.WriteCDataEscape(value.ToString());
         }
+
+        public static void WriteStartElement(this XmlWriter writer, XName name)
+        {
+            writer.WriteStartElement(name.LocalName, name.NamespaceName);
+        }
     }
 }

@@ -64,25 +64,27 @@ namespace XRoadLib
             this.operationFilter = operationFilter;
             this.version = version;
 
-            portType = new PortType { Name = "PortTypeName" };
+            var protocolDefinition = schemaDefinitionProvider.ProtocolDefinition;
 
-            var producerNamespace = schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace;
+            portType = new PortType { Name = protocolDefinition.PortTypeName };
+
+            var producerNamespace = protocolDefinition.ProducerNamespace;
 
             binding = new Binding
             {
-                Name = "BindingName",
+                Name = protocolDefinition.BindingName,
                 Type = new XmlQualifiedName(portType.Name, producerNamespace)
             };
 
             servicePort = new Port
             {
-                Name = "PortName",
+                Name = protocolDefinition.PortName,
                 Binding = new XmlQualifiedName(binding.Name, producerNamespace)
             };
 
             service = new Service
             {
-                Name = "ServiceName",
+                Name = protocolDefinition.ServiceName,
                 Ports = { servicePort }
             };
 
@@ -247,7 +249,7 @@ namespace XRoadLib
                 if (responseDefinition.XRoadFaultPresentation != XRoadFaultPresentation.Implicit && responseDefinition.ContainsNonTechnicalFault)
                 {
                     var outputParticle = new XmlSchemaSequence();
-                    responseElement = new XmlSchemaElement { Name = responseDefinition.ResponseElementName, SchemaType = new XmlSchemaComplexType { Particle = outputParticle } };
+                    responseElement = new XmlSchemaElement { Name = responseDefinition.ResponseElementName.LocalName, SchemaType = new XmlSchemaComplexType { Particle = outputParticle } };
 
                     var faultSequence = CreateFaultSequence();
 
@@ -281,7 +283,7 @@ namespace XRoadLib
                     if (requestDefinition.RequestElementName != responseDefinition.RequestElementName)
                     {
                         responseRequestElement = CreateRequestElement();
-                        responseRequestElement.Name = responseDefinition.RequestElementName;
+                        responseRequestElement.Name = responseDefinition.RequestElementName.LocalName;
                     }
                     schemaElements.Add(new XmlSchemaElement
                     {
@@ -316,8 +318,8 @@ namespace XRoadLib
                 {
                     var requestTypeName = requestElement?.SchemaTypeName;
                     var responseTypeName = GetOutputMessageTypeName(resultElement, operationDefinition.MethodInfo.ReturnType, schemaTypes);
-                    outputMessage.Parts.Add(new MessagePart { Name = responseDefinition.RequestElementName, Type = requestTypeName });
-                    outputMessage.Parts.Add(new MessagePart { Name = responseDefinition.ResponseElementName, Type = responseTypeName });
+                    outputMessage.Parts.Add(new MessagePart { Name = responseDefinition.RequestElementName.LocalName, Type = requestTypeName });
+                    outputMessage.Parts.Add(new MessagePart { Name = responseDefinition.ResponseElementName.LocalName, Type = responseTypeName });
                 }
 
                 if (operationDefinition.OutputBinaryMode == BinaryMode.Attachment)
@@ -434,10 +436,10 @@ namespace XRoadLib
             if ("unbounded".Equals(responseElement.MaxOccursString) || responseElement.MaxOccurs > 1)
                 responseElement = new XmlSchemaElement
                 {
-                    Name = responseDefinition.ResponseElementName,
+                    Name = responseDefinition.ResponseElementName.LocalName,
                     SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { responseElement } } }
                 };
-            else responseElement.Name = responseDefinition.ResponseElementName;
+            else responseElement.Name = responseDefinition.ResponseElementName.LocalName;
 
             var complexTypeSequence = new XmlSchemaSequence();
 
@@ -496,6 +498,9 @@ namespace XRoadLib
 
             var schema = CreateXmlSchema();
             schema.TargetNamespace = schemaNamespace;
+
+            if (schemaDefinitionProvider.IsQualifiedElementDefault(schemaNamespace))
+                schema.ElementFormDefault = XmlSchemaForm.Qualified;
 
             foreach (var namespaceType in namespaceTypes.OrderBy(x => x.Name.ToLower()))
                 schema.Items.Add(namespaceType);
@@ -606,7 +611,7 @@ namespace XRoadLib
             if (operationVersionBinding != null)
                 operationBinding.Extensions.Add(operationVersionBinding);
 
-            operationBinding.Extensions.Add(schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapOperationBinding());
+            operationBinding.Extensions.Add(schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapOperationBinding(operationDefinition.SoapAction));
 
             binding.Operations.Add(operationBinding);
         }
@@ -747,7 +752,7 @@ namespace XRoadLib
             var typeDefinition = GetContentTypeDefinition(contentDefinition);
             if (!typeDefinition.IsAnonymous)
             {
-                if (contentDefinition.RuntimeType == typeof(XElement))
+                if (contentDefinition.RuntimeType == typeof(object))
                     return;
 
                 addRequiredImport(schemaNamespace, typeDefinition.Name.NamespaceName, null);
@@ -805,6 +810,14 @@ namespace XRoadLib
             {
                 Name = contentDefinition.Name?.LocalName
             };
+
+            var elementForm =
+                schemaDefinitionProvider.IsQualifiedElementDefault(schemaNamespace)
+                    ? (contentDefinition.Name?.NamespaceName == "" ? (XmlSchemaForm?)XmlSchemaForm.Unqualified : null)
+                    : (contentDefinition.Name?.NamespaceName == schemaNamespace ? (XmlSchemaForm?)XmlSchemaForm.Qualified : null);
+
+            if (elementForm.HasValue)
+                schemaElement.Form = elementForm.Value;
 
             var arrayContentDefinition = contentDefinition as ArrayContentDefiniton;
 
@@ -874,7 +887,8 @@ namespace XRoadLib
 
         public ServiceDescription GetServiceDescription()
         {
-            var serviceDescription = new ServiceDescription { TargetNamespace = schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace };
+            var protocolDefinition = schemaDefinitionProvider.ProtocolDefinition;
+            var serviceDescription = new ServiceDescription { TargetNamespace = protocolDefinition.ProducerNamespace };
 
             var standardHeader = new Message { Name = headerDefinition.MessageName };
 
@@ -886,15 +900,15 @@ namespace XRoadLib
 
             serviceDescription.Messages.Add(standardHeader);
 
-            foreach (var schema in BuildSchemas(schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace, serviceDescription.Messages))
+            foreach (var schema in BuildSchemas(protocolDefinition.ProducerNamespace, serviceDescription.Messages))
                 serviceDescription.Types.Schemas.Add(schema);
 
             serviceDescription.PortTypes.Add(portType);
 
-            binding.Extensions.Add(schemaDefinitionProvider.ProtocolDefinition.Style.CreateSoapBinding());
+            binding.Extensions.Add(protocolDefinition.Style.CreateSoapBinding());
             serviceDescription.Bindings.Add(binding);
 
-            servicePort.Extensions.Add(new SoapAddressBinding { Location = "http://INSERT_CORRECT_SERVICE_URL" });
+            servicePort.Extensions.Add(new SoapAddressBinding { Location = protocolDefinition.SoapAddressLocation });
 
             serviceDescription.Services.Add(service);
 

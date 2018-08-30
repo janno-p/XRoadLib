@@ -36,9 +36,11 @@ namespace XRoadLib.Schema
         /// </summary>
         public TypeDefinition GetSimpleTypeDefinition<T>(string typeName)
         {
-            var typeDefinition = new TypeDefinition(typeof(T))
+            var isType = !string.IsNullOrEmpty(typeName);
+
+            var typeDefinition = new TypeDefinition(typeof(T), isType ? NamespaceConstants.XSD : "")
             {
-                Name = XName.Get(typeName, NamespaceConstants.XSD),
+                Name = isType ? XName.Get(typeName, NamespaceConstants.XSD) : null,
                 IsSimpleType = true
             };
 
@@ -52,7 +54,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public CollectionDefinition GetCollectionDefinition(TypeDefinition typeDefinition)
         {
-            var collectionDefinition = new CollectionDefinition(typeDefinition.Type.MakeArrayType())
+            var collectionDefinition = new CollectionDefinition(typeDefinition.Type.MakeArrayType(), typeDefinition.TargetNamespace)
             {
                 ItemDefinition = typeDefinition,
                 CanHoldNullValues = true,
@@ -76,7 +78,7 @@ namespace XRoadLib.Schema
                 if (!string.IsNullOrWhiteSpace(typeName))
                     qualifiedName = XName.Get(typeName, ProtocolDefinition.ProducerNamespace);
 
-                var collectionDefinition = new CollectionDefinition(type)
+                var collectionDefinition = new CollectionDefinition(type, ProtocolDefinition.ProducerNamespace)
                 {
                     Name = qualifiedName,
                     ItemDefinition = GetTypeDefinition(type.GetElementType()),
@@ -94,12 +96,12 @@ namespace XRoadLib.Schema
             var isAnonymous = typeAttribute != null && typeAttribute.AnonymousType;
 
             var normalizedType = type.NormalizeType();
+            var targetNamespace = typeAttribute?.Namespace ?? ProtocolDefinition.ProducerNamespace;
 
             if (!isAnonymous)
-                qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(typeName ?? normalizedType.Name),
-                                          typeAttribute?.Namespace ?? ProtocolDefinition.ProducerNamespace);
+                qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(typeName ?? normalizedType.Name), targetNamespace);
 
-            var typeDefinition = new TypeDefinition(normalizedType)
+            var typeDefinition = new TypeDefinition(normalizedType, targetNamespace)
             {
                 ContentComparer = PropertyComparer.Instance,
                 HasStrictContentOrder = true,
@@ -119,7 +121,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public PropertyDefinition GetPropertyDefinition(PropertyInfo propertyInfo, TypeDefinition typeDefinition)
         {
-            var propertyDefinition = new PropertyDefinition(propertyInfo, typeDefinition);
+            var propertyDefinition = new PropertyDefinition(propertyInfo, typeDefinition, schemaExporter.IsQualifiedElementDefault);
 
             schemaExporter.ExportPropertyDefinition(propertyDefinition);
 
@@ -131,7 +133,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public RequestDefinition GetRequestDefinition(OperationDefinition operationDefinition)
         {
-            var requestDefinition = new RequestDefinition(operationDefinition);
+            var requestDefinition = new RequestDefinition(operationDefinition, schemaExporter.IsQualifiedElementDefault);
 
             operationDefinition.ExtensionSchemaExporter?.ExportRequestDefinition(requestDefinition);
             schemaExporter.ExportRequestDefinition(requestDefinition);
@@ -144,7 +146,10 @@ namespace XRoadLib.Schema
         /// </summary>
         public ResponseDefinition GetResponseDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
-            var responseDefinition = new ResponseDefinition(operationDefinition) { XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice };
+            var responseDefinition = new ResponseDefinition(operationDefinition, schemaExporter.IsQualifiedElementDefault)
+            {
+                XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice
+            };
 
             operationDefinition.ExtensionSchemaExporter?.ExportResponseDefinition(responseDefinition);
             schemaExporter.ExportResponseDefinition(responseDefinition);
@@ -226,6 +231,12 @@ namespace XRoadLib.Schema
 
             return headerDefinition;
         }
+
+        /// <summary>
+        /// Returns `true` if given namespace defines qualified element names by default.
+        /// </summary>
+        public virtual bool IsQualifiedElementDefault(string namespaceName) =>
+            schemaExporter.IsQualifiedElementDefault(namespaceName);
 
         private ProtocolDefinition GetProtocolDefinition()
         {

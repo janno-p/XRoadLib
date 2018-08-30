@@ -10,20 +10,20 @@ namespace XRoadLib.Extensions.AspNetCore
     /// <summary>
     /// Base X-Road message handler for AspNetCore applications.
     /// </summary>
-    public abstract class XRoadHandlerBase : IXRoadHandler
+    public abstract class WebServiceHandler : IWebServiceHandler
     {
         public IServiceManager ServiceManager { get; }
 
-        protected XRoadHandlerBase(IServiceManager serviceManager)
+        protected WebServiceHandler(IServiceManager serviceManager)
         {
             ServiceManager = serviceManager ?? throw new ArgumentNullException(nameof(serviceManager));
         }
 
         /// <inheritdoc />
-        public abstract void HandleRequest(XRoadContext context);
+        public abstract void HandleRequest(WebServiceContext context);
 
         /// <inheritdoc />
-        public virtual void HandleException(XRoadContext context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
+        public virtual void HandleException(WebServiceContext context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
         {
             using (var writer = XmlWriter.Create(new StreamWriter(context.HttpContext.Response.Body, XRoadEncoding.UTF8)))
                 SoapMessageHelper.SerializeSoapFaultResponse(writer, faultCode, faultString, faultActor, details, exception);

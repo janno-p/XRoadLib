@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 
 namespace XRoadLib.Schema
 {
@@ -6,8 +7,8 @@ namespace XRoadLib.Schema
     {
         public TypeDefinition ItemDefinition { get; set; }
 
-        public CollectionDefinition(Type type)
-            : base(type)
+        public CollectionDefinition(Type type, string targetNamespace)
+            : base(type, targetNamespace)
         { }
     }
 }

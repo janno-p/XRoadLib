@@ -28,8 +28,8 @@ namespace XRoadLib.Serialization.Mapping
             var methodInfo = typeof(Implementation).GetTypeInfo().GetMethod("Execute");
 
             OperationDefinition = new OperationDefinition(operationName, null, methodInfo);
-            RequestDefinition = new RequestDefinition(OperationDefinition);
-            ResponseDefinition = new ResponseDefinition(OperationDefinition)
+            RequestDefinition = new RequestDefinition(OperationDefinition, _ => false);
+            ResponseDefinition = new ResponseDefinition(OperationDefinition, _ => false)
             {
                 ContainsNonTechnicalFault = true,
                 ResponseElementName = operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response"
@@ -57,7 +57,7 @@ namespace XRoadLib.Serialization.Mapping
         /// <inheritdoc />
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null)
         {
-            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
+            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name);
 
             if (containsRequest)
                 writer.WriteStartElement(requestReader.Prefix, $"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);

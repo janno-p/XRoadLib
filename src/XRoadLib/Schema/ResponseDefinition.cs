@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace XRoadLib.Schema
 {
@@ -40,25 +42,40 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Request element name in response message.
         /// </summary>
-        public string RequestElementName { get; set; } = "request";
+        public XName RequestElementName { get; set; }
 
         /// <summary>
         /// Response element name in response message.
         /// </summary>
-        public string ResponseElementName { get; set; } = "response";
+        public XName ResponseElementName { get; set; }
 
         /// <summary>
         /// Initializes new response definition using default values extracted from
         /// operation definition entity.
         /// </summary>
-        public ResponseDefinition(OperationDefinition declaringOperationDefinition)
+        public ResponseDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
         {
             var parameterInfo = declaringOperationDefinition.MethodInfo.ReturnParameter;
 
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = parameterInfo;
-            
-            Content = ContentDefinition.FromType(this, parameterInfo, parameterInfo?.ParameterType, "result");
+
+            var targetNamespace = declaringOperationDefinition.Name.NamespaceName;
+            var defaultQualifiedElement = isQualifiedElementDefault(targetNamespace);
+
+            Content = ContentDefinition.FromType(
+                this,
+                parameterInfo,
+                parameterInfo?.ParameterType,
+                "result",
+                targetNamespace,
+                defaultQualifiedElement
+            );
+
+            var qualifiedNamespace = ContentDefinition.GetQualifiedNamespace("", null, targetNamespace, defaultQualifiedElement);
+
+            RequestElementName = XName.Get("request", qualifiedNamespace);
+            ResponseElementName = XName.Get("response", qualifiedNamespace);
         }
 
         /// <summary>

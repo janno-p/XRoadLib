@@ -88,7 +88,7 @@ namespace XRoadLib.Serialization.Mapping
                 throw new InvalidQueryException($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
 
             var hasWrapperElement = HasWrapperResultElement;
-            if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.Content.Name.LocalName, ResponseDefinition.Content.Name.NamespaceName))
+            if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.Content.Name))
                 throw new InvalidQueryException($"Expected result wrapper element `{ResponseDefinition.Content.Name}` was not found in SOAP message.");
 
             return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition, message));
@@ -119,8 +119,10 @@ namespace XRoadLib.Serialization.Mapping
             var ns = string.IsNullOrEmpty(requestNamespace) ? OperationDefinition.Name.NamespaceName : requestNamespace;
             var addPrefix = writer.LookupPrefix(ns) == null;
 
-            if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, OperationDefinition.Name.LocalName, ns);
-            else writer.WriteStartElement(OperationDefinition.Name.LocalName, ns);
+            var requestWrapperElementName = RequestDefinition.WrapperElementName ?? OperationDefinition.Name.LocalName;
+
+            if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, requestWrapperElementName, ns);
+            else writer.WriteStartElement(requestWrapperElementName, ns);
 
             if (!RequestDefinition.Content.MergeContent)
                 writer.WriteStartElement(RequestDefinition.RequestElementName);
@@ -139,17 +141,18 @@ namespace XRoadLib.Serialization.Mapping
         /// </summary>
         public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization)
         {
-            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name.LocalName, OperationDefinition.Name.NamespaceName);
+            var containsRequest = requestReader.MoveToElement(2, OperationDefinition.Name);
+
+            var responseWrapperElementName = ResponseDefinition.WrapperElementName ?? $"{OperationDefinition.Name.LocalName}Response";
 
             if (containsRequest)
-                writer.WriteStartElement(requestReader.Prefix, $"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
-            else writer.WriteStartElement($"{OperationDefinition.Name.LocalName}Response", OperationDefinition.Name.NamespaceName);
-
-            var fault = value as IXRoadFault;
-            var namespaceInContext = requestReader.NamespaceURI;
+                writer.WriteStartElement(requestReader.Prefix, responseWrapperElementName, OperationDefinition.Name.NamespaceName);
+            else writer.WriteStartElement(responseWrapperElementName, OperationDefinition.Name.NamespaceName);
 
             if (containsRequest && OperationDefinition.CopyRequestPartToResponse)
                 CopyRequestToResponse(writer, requestReader);
+
+            var fault = value as IXRoadFault;
 
             if (!ResponseDefinition.ContainsNonTechnicalFault && fault != null)
             {
@@ -159,9 +162,7 @@ namespace XRoadLib.Serialization.Mapping
             }
             else if (outputTypeMap != null)
             {
-                if (Equals(namespaceInContext, ""))
-                    writer.WriteStartElement(ResponseDefinition.ResponseElementName);
-                else writer.WriteStartElement(ResponseDefinition.ResponseElementName, "");
+                writer.WriteStartElement(ResponseDefinition.ResponseElementName);
 
                 if (fault != null)
                     message.Style.SerializeFault(writer, fault);
@@ -169,7 +170,7 @@ namespace XRoadLib.Serialization.Mapping
                 {
                     var addWrapperElement = HasWrapperResultElement;
                     if (addWrapperElement)
-                        writer.WriteStartElement(ResponseDefinition.Content.Name.LocalName, ResponseDefinition.Content.Name.NamespaceName);
+                        writer.WriteStartElement(ResponseDefinition.Content.Name);
 
                     SerializeValue(writer, PrepareResponseValue(value), outputTypeMap, message.ResponseNode, message, ResponseDefinition.Content);
 

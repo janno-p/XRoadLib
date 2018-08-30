@@ -8,14 +8,14 @@ namespace XRoadLib.Extensions.AspNetCore
 {
     public static class XRoadLibMiddleware
     {
-        public static Task Invoke(HttpContext httpContext, IXRoadHandler handler)
+        public static Task Invoke(HttpContext httpContext, IWebServiceHandler handler)
         {
             var options = httpContext.RequestServices.GetRequiredService<XRoadLibOptions>();
 
-            if (handler is XRoadRequestHandler requestHandler)
+            if (handler is WebServiceRequestHandler requestHandler)
                 requestHandler.StoragePath = options.StoragePath;
 
-            using (var context = new XRoadContext(httpContext))
+            using (var context = new WebServiceContext(httpContext))
             {
                 try
                 {

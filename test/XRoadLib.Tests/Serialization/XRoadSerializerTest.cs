@@ -48,7 +48,7 @@ namespace XRoadLib.Tests.Serialization
                 var methodInfo = propType.GetTypeInfo().GetMethod("Method");
 
                 var operationDefinition = new OperationDefinition("Method", null, methodInfo);
-                var requestDefinition = new RequestDefinition(operationDefinition);
+                var requestDefinition = new RequestDefinition(operationDefinition, _ => false);
 
                 var typeMap = Globals.ServiceManager20.GetSerializer(dtoVersion).GetTypeMap(typeof(T));
                 typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition.Content, message);

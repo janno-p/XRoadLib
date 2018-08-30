@@ -37,18 +37,18 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Writes element type attribute according to style preferences.
         /// </summary>
-        public virtual void WriteType(XmlWriter writer, TypeDefinition typeDefinition, Type expectedType, bool disableExplicitType)
+        public virtual void WriteType(XmlWriter writer, TypeDefinition typeDefinition, ContentDefinition contentDefinition)
         {
             if (typeDefinition.IsAnonymous)
                 return;
 
-            if (typeDefinition.Type != expectedType)
+            if (typeDefinition.Type != contentDefinition.RuntimeType)
             {
                 writer.WriteTypeAttribute(typeDefinition.Name);
                 return;
             }
 
-            if (!disableExplicitType)
+            if (!(contentDefinition.Particle is RequestDefinition))
                 WriteExplicitType(writer, typeDefinition.Name);
         }
 
@@ -71,7 +71,7 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Create operation binding for current style.
         /// </summary>
-        public abstract SoapOperationBinding CreateSoapOperationBinding();
+        public abstract SoapOperationBinding CreateSoapOperationBinding(string soapAction);
 
         /// <summary>
         /// Create soap body binding for current style.
