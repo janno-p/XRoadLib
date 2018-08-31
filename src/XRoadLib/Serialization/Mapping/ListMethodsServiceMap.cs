@@ -29,10 +29,14 @@ namespace XRoadLib.Serialization.Mapping
 
             OperationDefinition = new OperationDefinition(operationName, null, methodInfo);
             RequestDefinition = new RequestDefinition(OperationDefinition, _ => false);
+
             ResponseDefinition = new ResponseDefinition(OperationDefinition, _ => false)
             {
                 ContainsNonTechnicalFault = true,
-                ResponseElementName = XName.Get(operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response")
+                Content =
+                {
+                    Name = XName.Get(operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response")
+                }
             };
         }
 

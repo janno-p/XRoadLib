@@ -42,12 +42,13 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Request element name in response message.
         /// </summary>
-        public XName RequestElementName { get; set; }
+        public XName RequestContentName { get; set; }
 
         /// <summary>
-        /// Response element name in response message.
+        /// Element name that is used to wrap operation successful return value.
+        /// Used when operation result can be either return value or fault object.
         /// </summary>
-        public XName ResponseElementName { get; set; }
+        public XName ResultElementName { get; set; }
 
         /// <summary>
         /// Initializes new response definition using default values extracted from
@@ -68,7 +69,7 @@ namespace XRoadLib.Schema
                 this,
                 parameterInfo,
                 parameterInfo?.ParameterType,
-                "result",
+                "response",
                 targetNamespace,
                 defaultQualifiedElement
             );
@@ -76,8 +77,8 @@ namespace XRoadLib.Schema
             var qualifiedNamespace = ContentDefinition.GetQualifiedNamespace("", null, targetNamespace, defaultQualifiedElement);
 
             FaultName = XName.Get("fault", qualifiedNamespace);
-            RequestElementName = XName.Get("request", qualifiedNamespace);
-            ResponseElementName = XName.Get("response", qualifiedNamespace);
+            RequestContentName = XName.Get("request", qualifiedNamespace);
+            ResultElementName = XName.Get("result", qualifiedNamespace);
         }
 
         /// <summary>

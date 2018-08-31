@@ -19,7 +19,7 @@ namespace XRoadLib.Extensions
             {
                 reader.MoveToPayload(message.RootElementName);
 
-                var responseName = serviceMap.ResponseDefinition.ResponseElementName;
+                var responseName = serviceMap.ResponseDefinition.Content.Name;
                 if (!reader.MoveToElement(3, responseName))
                     throw new InvalidQueryException($"X-Road fault should be wrapped inside `{responseName}` element.");
 

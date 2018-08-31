@@ -32,8 +32,8 @@ namespace XRoadLib.Schema
         {
             base.ExportResponseDefinition(responseDefinition);
 
-            responseDefinition.RequestElementName = XName.Get("paring");
-            responseDefinition.ResponseElementName = XName.Get("keha");
+            responseDefinition.RequestContentName = XName.Get("paring");
+            responseDefinition.Content.Name = XName.Get("keha");
         }
 
         /// <inheritdoc />
