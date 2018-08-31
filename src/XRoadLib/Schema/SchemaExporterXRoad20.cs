@@ -24,7 +24,7 @@ namespace XRoadLib.Schema
         {
             base.ExportRequestDefinition(requestDefinition);
 
-            requestDefinition.RequestElementName = XName.Get("keha");
+            requestDefinition.Content.Name = XName.Get("keha");
         }
 
         /// <inheritdoc />

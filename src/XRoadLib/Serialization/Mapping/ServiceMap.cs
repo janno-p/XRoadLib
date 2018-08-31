@@ -56,7 +56,7 @@ namespace XRoadLib.Serialization.Mapping
         /// <inheritdoc />
         public object DeserializeRequest(XmlReader reader, XRoadMessage message)
         {
-            var requestName = RequestDefinition.RequestElementName;
+            var requestName = RequestDefinition.Content.Name;
 
             if (!RequestDefinition.Content.MergeContent && !reader.MoveToElement(3, requestName))
                 throw new InvalidQueryException($"Request wrapper element `{requestName}` was not found in incoming SOAP message.");
@@ -124,7 +124,7 @@ namespace XRoadLib.Serialization.Mapping
             else writer.WriteStartElement(requestWrapperElementName.LocalName, ns);
 
             if (!RequestDefinition.Content.MergeContent)
-                writer.WriteStartElement(RequestDefinition.RequestElementName);
+                writer.WriteStartElement(RequestDefinition.Content.Name);
 
             if (RequestDefinition.ParameterInfo != null)
                 SerializeValue(writer, PrepareRequestValue(value), inputTypeMap, message.RequestNode, message, RequestDefinition.Content);
@@ -207,10 +207,10 @@ namespace XRoadLib.Serialization.Mapping
         {
             writer.WriteAttributes(reader, true);
 
-            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, RequestDefinition.RequestElementName))
+            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, RequestDefinition.Content.Name))
                 return;
 
-            if (RequestDefinition.RequestElementName != ResponseDefinition.RequestElementName)
+            if (RequestDefinition.Content.Name != ResponseDefinition.RequestElementName)
             {
                 writer.WriteStartElement(ResponseDefinition.RequestElementName);
                 writer.WriteAttributes(reader, true);

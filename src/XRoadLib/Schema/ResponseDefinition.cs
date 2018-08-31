@@ -37,7 +37,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Should technical fault fields be returned inside response element.
         /// </summary>
-        public bool ContainsNonTechnicalFault { get; set; } = false;
+        public bool ContainsNonTechnicalFault { get; set; }
 
         /// <summary>
         /// Request element name in response message.

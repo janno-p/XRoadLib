@@ -216,7 +216,7 @@ namespace XRoadLib
                     if (requestDefinition.ParameterInfo != null)
                         return CreateContentElement(requestDefinition.Content, targetNamespace, referencedTypes);
 
-                    var e = CreateXmlSchemaElement(requestDefinition.RequestElementName, targetNamespace);
+                    var e = CreateXmlSchemaElement(requestDefinition.Content.Name, targetNamespace);
                     if (e.RefName != null)
                         e.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence() };
                     return e;
@@ -290,7 +290,7 @@ namespace XRoadLib
                 {
                     var responseRequestElement = requestElement;
 
-                    if (requestDefinition.RequestElementName != responseDefinition.RequestElementName)
+                    if (requestDefinition.Content.Name != responseDefinition.RequestElementName)
                     {
                         responseRequestElement = CreateRequestElement();
                         responseRequestElement.Name = responseDefinition.RequestElementName.LocalName;
@@ -313,7 +313,7 @@ namespace XRoadLib
                 else
                 {
                     var requestTypeName = requestElement?.SchemaTypeName;
-                    inputMessage.Parts.Add(new MessagePart { Name = requestDefinition.RequestElementName.LocalName, Type = requestTypeName });
+                    inputMessage.Parts.Add(new MessagePart { Name = requestDefinition.Content.Name.LocalName, Type = requestTypeName });
                 }
 
                 if (operationDefinition.InputBinaryMode == BinaryMode.Attachment)

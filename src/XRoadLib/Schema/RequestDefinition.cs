@@ -26,11 +26,6 @@ namespace XRoadLib.Schema
         public XName WrapperElementName { get; set; }
 
         /// <summary>
-        /// Serialized element name of this request object.
-        /// </summary>
-        public XName RequestElementName { get; set; }
-
-        /// <summary>
         /// Initializes new request definition object.
         /// </summary>
         public RequestDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
@@ -54,10 +49,6 @@ namespace XRoadLib.Schema
                 targetNamespace,
                 defaultQualifiedElement
             );
-
-            var qualifiedNamespace = ContentDefinition.GetQualifiedNamespace("", null, targetNamespace, defaultQualifiedElement);
-
-            RequestElementName = XName.Get("request", qualifiedNamespace);
         }
 
         /// <summary>
