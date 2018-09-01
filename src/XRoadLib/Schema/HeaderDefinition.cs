@@ -51,6 +51,15 @@ namespace XRoadLib.Schema
         }
 
         /// <summary>
+        /// Remove SOAP header definition from message.
+        /// </summary>
+        public void Remove()
+        {
+            RequiredHeaders.Clear();
+            headerNamespaces.Clear();
+        }
+
+        /// <summary>
         /// Test if given namespace is defined as SOAP header element namespace.
         /// </summary>
         public bool IsHeaderNamespace(string namespaceName)
@@ -65,8 +74,7 @@ namespace XRoadLib.Schema
             public HeaderDefinitionBuilder(HeaderDefinition headerDefinition)
             {
                 this.headerDefinition = headerDefinition;
-                headerDefinition.RequiredHeaders.Clear();
-                headerDefinition.headerNamespaces.Clear();
+                headerDefinition.Remove();
             }
 
             public IHeaderDefinitionBuilder<THeader> WithRequiredHeader<TValue>(Expression<Func<THeader, TValue>> expression)
