@@ -93,7 +93,12 @@ Target.create "RunTests" (fun _ ->
     -- "test/XRoadLib.Tests.Contract/XRoadLib.Tests.Contract.csproj"
     |> Seq.iter (fun proj ->
         DotNet.restore id proj
-        DotNet.test id proj
+        DotNet.exec
+            (fun p -> { p with WorkingDirectory = Path.GetDirectoryName(proj) })
+            "xunit"
+            ""
+        |> ignore
+        //DotNet.test id proj
     )
 )
 
