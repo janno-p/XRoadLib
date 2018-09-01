@@ -17,7 +17,7 @@ Documentation and samples can be found at the [XRoadLib home page](http://janno-
 
 * Restore 3rd party dependencies:
 
-  **Mono**: Run `$ mono ./.paket/paket.exe restore`
+  **Mono**: Run `$ mono ./.paket/paket.exe restore`  
   **Windows**: Run `> .paket\paket.exe restore`
 
 * Install FAKE dotnet SDK global tool:
