@@ -6,17 +6,31 @@ A .NET library for implementing service interfaces of [X-Road](http://x-road.eu)
 
 ## Build Status
 
-[![Mono build status](https://img.shields.io/travis/janno-p/XRoadLib/master.svg?label=Mono%20build)](https://travis-ci.org/janno-p/XRoadLib/)
+[![Mono build status](https://img.shields.io/travis/janno-p/XRoadLib/master.svg?label=Mono%20build)](https://travis-ci.org/janno-p/XRoadLib/)  
 [![Windows build status](https://img.shields.io/appveyor/ci/janno-p/xroadlib/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/janno-p/xroadlib)
 
 ## Documentation
 
 Documentation and samples can be found at the [XRoadLib home page](http://janno-p.github.io/XRoadLib/).
 
+## Prerequisites
+
+* Restore 3rd party dependencies:
+
+  **Mono**: Run `$ mono ./.paket/paket.exe restore`
+  **Windows**: Run `> .paket\paket.exe restore`
+
+* Install FAKE dotnet SDK global tool:
+
+  ```sh
+  dotnet tool install fake-cli -g
+  ```
+
 ## Building
 
-* Mono: Run `$ ./build.sh`
-* Windows: Run `> build.cmd`
+```sh
+fake run build.fsx
+```
 
 ## Disclaimer
 

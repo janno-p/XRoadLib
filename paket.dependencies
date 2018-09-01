@@ -1,8 +1,18 @@
-source https://nuget.org/api/v2
-framework >= net452
+source https://api.nuget.org/v3/index.json
+storage: none
 
-nuget FAKE
-nuget FSharp.Formatting
-nuget SourceLink.Fake
+group Build
+source https://api.nuget.org/v3/index.json
+storage: none
+
+nuget Fake.Core.Environment
+nuget Fake.Core.ReleaseNotes
+nuget Fake.Core.Target
+nuget Fake.Documentation.DocFx
+nuget Fake.DotNet.Cli
+nuget Fake.DotNet.Paket
+nuget Fake.Tools.Git
 
 github fsharp/FAKE modules/Octokit/Octokit.fsx
+
+http https://github.com/dotnet/docfx/releases/download/v2.38.1/docfx.zip
