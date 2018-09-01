@@ -1,4 +1,5 @@
 #r "paket: groupref Build //"
+open Fake.Documentation
 
 #load "./.fake/build.fsx/intellisense.fsx"
 #load "./paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
@@ -135,18 +136,18 @@ Target.create "CleanDocs" (fun _ ->
 )
 
 Target.create "Serve" (fun _ ->
-    DocFx.serve
-        (fun p ->
-            { p with
-                Common =
-                    { p.Common with
-                        DocFxPath = docFxToolPath
-                        Timeout = TimeSpan.MaxValue } })
+    DocFx.exec
+        (fun p -> { p with DocFxPath = docFxToolPath })
+        "serve"
+        tempDocsDir
 )
 
 Target.description "Generate the documentation"
 Target.create "GenerateDocs" (fun _ ->
-    DocFx.build (fun p -> p.WithCommon(fun o -> { o with DocFxPath = docFxToolPath }))
+    DocFx.exec
+        (fun p -> { p with DocFxPath = docFxToolPath })
+        (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json")
+        ""
 )
 
 Target.create "ReleaseDocs" (fun _ ->

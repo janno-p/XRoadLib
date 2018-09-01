@@ -1,5 +1,8 @@
-XRoadLib
-======================
+# XRoadLib #
+
+[![NuGet](https://buildstats.info/nuget/XRoadLib?includePreReleases=true)](https://www.nuget.org/packages/XRoadLib/)
+[![Mono build status](https://img.shields.io/travis/janno-p/XRoadLib/master.svg?label=Mono%20build)](https://travis-ci.org/janno-p/XRoadLib/)
+[![Windows build status](https://img.shields.io/appveyor/ci/janno-p/xroadlib/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/janno-p/xroadlib)
 
 XRoadLib is a .NET library for implementing service interfaces of X-Road providers using Code-First Development
 approach. Main focus of the library is to support easier service development on X-Road provider side, by extracting
@@ -22,32 +25,29 @@ Project is available for use through NuGet package manager:
 
     PM> Install-Package XRoadLib -Pre
 
-Samples & documentation
------------------------
+
+## Samples & documentation ##
 
 The library comes with comprehensible documentation. It can include tutorials automatically generated from `*.fsx`
 files in [the content folder][content]. The API reference is automatically generated from Markdown comments in the
 library implementation.
 
- * [Tutorial](tutorial.html) contains a further explanation of this sample library.
- * [.NET Core Tutorial](tutorial-dotnetcore.html) contains example application for .NET Core platform.
+ * [Tutorial](articles/tutorials/index.md) contains a further explanations and samples of this library.
 
- * [API Reference](reference/index.html) contains automatically generated documentation for all types, modules and
+ * [API Reference](api/index.md) contains automatically generated documentation for all types, modules and
    functions in the library. This includes additional brief samples on using most of the functions.
 
-Contributing and copyright
---------------------------
 
-The project is hosted on [GitHub][gh] where you can [report issues][issues], fork  the project and submit pull
-requests. If you're adding a new public API, please also consider adding [samples][content] that can be turned into a
-documentation. You might also want to read the [library design notes][readme] to understand how it works.
+## Contributing and copyright ##
 
-The library is available under MIT license, which allows modification and redistribution for both commercial and
-non-commercial purposes with proper attribution. For more information see the [License file][license] in the GitHub
-repository. 
+The project is hosted on [GitHub][gh] where you can [report issues][issues], fork 
+the project and submit pull requests. If you're adding a new public API, please also 
+consider adding [documentation][articles].
 
-  [content]: https://github.com/janno-p/XRoadLib/tree/master/docs/content
+The library is available under Public Domain license, which allows modification and 
+redistribution for both commercial and non-commercial purposes. For more information see the 
+[License file](articles/license.md) file. 
+
+  [articles]: https://github.com/janno-p/XRoadLib/tree/master/docs/articles
   [gh]: https://github.com/janno-p/XRoadLib
-  [issues]: https://github.com/janno-p/XRoadLib/issues
-  [readme]: https://github.com/janno-p/XRoadLib/blob/master/README.md
-  [license]: https://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt
+  [issues]: https://github.com/janno-p/XRoadLib/issues 
