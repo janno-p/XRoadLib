@@ -218,17 +218,11 @@ namespace XRoadLib
                 return sr;
             }
 
-            void RemoveKnownTypes()
+            void ResolveType(XmlQualifiedName qualifiedName, XmlSchemaType type)
             {
-                foreach (var kvp in schemaReferences)
-                foreach (var key in kvp.Value.Types.Where(x => x.Value != null).Select(x => x.Key).ToList())
-                    kvp.Value.Types.Remove(key);
-            }
-
-            void RemoveKnownType(XmlQualifiedName qualifiedName)
-            {
-                foreach (var kvp in schemaReferences)
-                    kvp.Value.Types.Remove(qualifiedName);
+                foreach (var sr in schemaReferences)
+                    if (sr.Value.Types.ContainsKey(qualifiedName))
+                        sr.Value.Types[qualifiedName] = type;
             }
 
             var targetSchemaReferences = GetSchemaReferences(targetNamespace);
@@ -281,13 +275,12 @@ namespace XRoadLib
                 {
                     var outputParticle = new XmlSchemaSequence();
 
-                    resultElements = responseElements;
-                    resultElements = SetXmlSchemaElementName(resultElements, responseDefinition.ResultElementName, targetSchemaReferences);
+                    var contentElements = responseElements;
 
                     responseElements = CreateXmlSchemaElement(responseDefinition.Content.Name, targetSchemaReferences);
                     responseElements.Item1.SchemaType = new XmlSchemaComplexType { Particle = outputParticle };
 
-                    var faultSequence = CreateFaultSequence();
+                    var faultSequence = CreateFaultSequence(targetSchemaReferences);
 
                     if (operationDefinition.MethodInfo.ReturnType == typeof(void))
                     {
@@ -296,10 +289,14 @@ namespace XRoadLib
                     }
                     else if (responseDefinition.XRoadFaultPresentation == XRoadFaultPresentation.Choice)
                     {
+                        resultElements = SetXmlSchemaElementName(contentElements, responseDefinition.ResultElementName, targetSchemaReferences);
+
                         outputParticle.Items.Add(new XmlSchemaChoice { Items = { resultElements.Item2, faultSequence } });
                     }
                     else
                     {
+                        resultElements = SetXmlSchemaElementName(contentElements, responseDefinition.ResultElementName, targetSchemaReferences);
+
                         resultElements.Item2.MinOccurs = 0;
                         outputParticle.Items.Add(resultElements.Item2);
 
@@ -352,7 +349,7 @@ namespace XRoadLib
                 else
                 {
                     var requestTypeName = requestElements.Item1.SchemaTypeName;
-                    var responseTypeName = GetOutputMessageTypeName(resultElements?.Item1, operationDefinition.MethodInfo.ReturnType, schemaTypes);
+                    var responseTypeName = GetOutputMessageTypeName((resultElements ?? responseElements).Item1, operationDefinition.MethodInfo.ReturnType, schemaTypes);
                     outputMessage.Parts.Add(new MessagePart { Name = responseDefinition.RequestContentName.LocalName, Type = requestTypeName });
                     outputMessage.Parts.Add(new MessagePart { Name = responseDefinition.Content.Name.LocalName, Type = responseTypeName });
                 }
@@ -366,8 +363,6 @@ namespace XRoadLib
 
                 AddBindingOperation(operationDefinition);
             }
-
-            RemoveKnownTypes();
 
             var newTypesResolved = true;
             while (newTypesResolved)
@@ -404,7 +399,7 @@ namespace XRoadLib
 
                     AddSchemaType(schemaTypes, typeDefinition.Name.NamespaceName, schemaType);
 
-                    RemoveKnownType(kvp.Key);
+                    ResolveType(kvp.Key, schemaType);
                     newTypesResolved = true;
 
                     if (!derivedTypes.TryGetValue(typeDefinition.Type, out var typeList))
@@ -423,7 +418,7 @@ namespace XRoadLib
                 AddSchemaType(schemaTypes, faultDefinition.Name.NamespaceName, new XmlSchemaComplexType
                 {
                     Name = faultDefinition.Name.LocalName,
-                    Particle = CreateFaultSequence(),
+                    Particle = CreateFaultSequence(targetSchemaReferences),
                     Annotation = CreateSchemaAnnotation(faultDefinition.Name.NamespaceName, faultDefinition.Documentation, faultDefinition.Name.LocalName)
                 });
 
@@ -527,12 +522,12 @@ namespace XRoadLib
             return elements;
         }
 
-        private XmlSchemaSequence CreateFaultSequence()
+        private XmlSchemaSequence CreateFaultSequence(SchemaReferences schemaReferences)
         {
-            var faultCodeElement = CreateXmlSchemaElement(XName.Get("faultCode"), null).Item1;
+            var faultCodeElement = CreateXmlSchemaElement(XName.Get("faultCode"), schemaReferences).Item1;
             faultCodeElement.SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD);
 
-            var faultStringElement = CreateXmlSchemaElement(XName.Get("faultString"), null).Item1;
+            var faultStringElement = CreateXmlSchemaElement(XName.Get("faultString"), schemaReferences).Item1;
             faultStringElement.SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.XSD);
 
             return new XmlSchemaSequence { Items = { faultCodeElement, faultStringElement } };
