@@ -38,6 +38,11 @@ namespace XRoadLib
         public const string SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/";
 
         /// <summary>
+        /// Defines main parts of SOAP 1.2 message.
+        /// </summary>
+        public const string SOAP12_ENV = "http://www.w3.org/2003/05/soap-envelope";
+
+        /// <summary>
         /// Namespace for describing WSDL documents.
         /// </summary>
         public const string WSDL = "http://schemas.xmlsoap.org/wsdl/";

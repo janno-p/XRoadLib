@@ -62,10 +62,10 @@ namespace XRoadLib.Serialization
 
             using (var reader = XmlReader.Create(target.ContentStream, new XmlReaderSettings { CloseInput = false }))
             {
-                var serviceManager = DetectServiceManager(reader, target.ServiceManager);
+                var serviceManager = DetectServiceManager(reader, target);
                 ParseXRoadHeader(target, reader, serviceManager);
 
-                target.RootElementName = ParseMessageRootElementName(reader);
+                target.RootElementName = ParseMessageRootElementName(reader, target.MessageFormatter);
 
                 if (target.ServiceManager == null && target.RootElementName != null)
                     target.ServiceManager = serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
@@ -285,7 +285,7 @@ namespace XRoadLib.Serialization
                     return new Soap12MessageFormatter();
 
                 default:
-                    throw new InvalidOperationException($"Unknown content type `{contentType}` used for message payload.");
+                    throw new InvalidQueryException($"Unknown content type `{contentType}` used for message payload.");
             }
         }
 
@@ -395,17 +395,15 @@ namespace XRoadLib.Serialization
             return keyValuePair.Substring(fromIndex, toIndex - fromIndex).Trim();
         }
 
-        private IServiceManager DetectServiceManager(XmlReader reader, IServiceManager serviceManager)
+        private IServiceManager DetectServiceManager(XmlReader reader, XRoadMessage target)
         {
-            if (!reader.MoveToElement(0, XName.Get("Envelope", NamespaceConstants.SOAP_ENV)))
-                throw new InvalidQueryException("X-Road SOAP request is missing SOAP-ENV:Envelope element.");
-
-            return serviceManager ?? serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
+            target.MessageFormatter.MoveToEnvelope(reader);
+            return target.ServiceManager ?? serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }
 
         private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IServiceManager serviceManager)
         {
-            if (!reader.MoveToElement(1) || !reader.IsCurrentElement(1, XName.Get("Header", NamespaceConstants.SOAP_ENV)))
+            if (!target.MessageFormatter.TryMoveToHeader(reader))
                 return;
 
             var header = serviceManager?.CreateHeader();
@@ -456,11 +454,9 @@ namespace XRoadLib.Serialization
             }
         }
 
-        private static XName ParseMessageRootElementName(XmlReader reader)
+        private static XName ParseMessageRootElementName(XmlReader reader, IMessageFormatter messageFormatter)
         {
-            return (reader.IsCurrentElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)) || reader.MoveToElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV))) && reader.MoveToElement(2)
-                ? reader.GetXName()
-                : null;
+            return messageFormatter.TryMoveToBody(reader) && reader.MoveToElement(2) ? reader.GetXName() : null;
         }
     }
 }
