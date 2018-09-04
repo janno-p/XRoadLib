@@ -244,6 +244,18 @@ namespace XRoadLib.Schema
 
             schemaExporter.ExportProtocolDefinition(protocolDefinition);
 
+            if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.SOAP_ENV))
+                protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.SOAP_ENV), PrefixConstants.SOAP_ENV);
+
+            if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.XSD))
+                protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.XSD), PrefixConstants.XSD);
+
+            if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.XSI))
+                protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.XSI), PrefixConstants.XSI);
+
+            if (!string.IsNullOrEmpty(protocolDefinition.ProducerNamespace) && !protocolDefinition.GlobalNamespacePrefixes.ContainsKey(protocolDefinition.ProducerNamespace))
+                protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(protocolDefinition.ProducerNamespace), PrefixConstants.TARGET);
+
             return protocolDefinition;
         }
     }

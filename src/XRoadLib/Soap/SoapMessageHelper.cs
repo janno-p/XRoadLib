@@ -12,7 +12,7 @@ namespace XRoadLib.Soap
             writer.WriteStartDocument();
 
             writer.WriteStartElement(PrefixConstants.SOAP_ENV, "Envelope", NamespaceConstants.SOAP_ENV);
-            writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
+            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
 
             writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
             writer.WriteStartElement("Fault", NamespaceConstants.SOAP_ENV);

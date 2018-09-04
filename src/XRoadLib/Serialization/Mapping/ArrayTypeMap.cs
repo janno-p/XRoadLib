@@ -33,7 +33,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var parentDepth = arrayContent.MergeContent ? reader.Depth - 1 : reader.Depth;
             var itemDepth = parentDepth + 1;
-            var itemName = arrayContent.Item.Content.Name.LocalName;
+            var itemName = arrayContent.Item.Content.Name;
 
             if (!arrayContent.MergeContent)
                 reader.Read();
@@ -46,7 +46,7 @@ namespace XRoadLib.Serialization.Mapping
                     continue;
                 }
 
-                if (reader.LocalName != itemName)
+                if (reader.LocalName != itemName.LocalName || reader.NamespaceURI != itemName.NamespaceName)
                 {
                     if (arrayContent.MergeContent)
                         break;
@@ -80,7 +80,7 @@ namespace XRoadLib.Serialization.Mapping
                 message.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
 
             var arrayContent = (ArrayContentDefiniton)content;
-            var itemName = arrayContent.Item.Content.Name.LocalName;
+            var itemName = arrayContent.Item.Content.Name;
 
             foreach (var valueItem in valueArray)
             {

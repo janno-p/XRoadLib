@@ -113,18 +113,6 @@ namespace XRoadLib.Styles
         /// </summary>
         public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
 
-        /// <summary>
-        /// Serializes beginning of SOAP envelope into X-Road message.
-        /// </summary>
-        public virtual void WriteSoapEnvelope(XmlWriter writer, string producerNamespace)
-        {
-            writer.WriteStartElement(PrefixConstants.SOAP_ENV, "Envelope", NamespaceConstants.SOAP_ENV);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, producerNamespace);
-        }
-
         public virtual void WriteSoapHeader(XmlWriter writer, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
         {
             if (header == null)

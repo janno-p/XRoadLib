@@ -60,6 +60,8 @@ namespace XRoadLib.Schema
 
             protocolDefinition.DetectEnvelope = reader => NamespaceConstants.SOAP_ENC.Equals(reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV));
             protocolDefinition.Style = new RpcEncodedStyle();
+
+            protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.SOAP_ENC), PrefixConstants.SOAP_ENC);
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 using System.Xml.Linq;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
+using XRoadLib.Styles;
 
 namespace XRoadLib.Extensions
 {
@@ -71,7 +74,7 @@ namespace XRoadLib.Extensions
             writer.WriteAttributeString("nil", NamespaceConstants.XSI, "1");
         }
 
-        internal static void WriteCDataEscape(this XmlWriter writer, string value)
+        private static void WriteCDataEscape(this XmlWriter writer, string value)
         {
             if (!value.Contains("&") && !value.Contains("<") && !value.Contains(">"))
             {
@@ -82,7 +85,7 @@ namespace XRoadLib.Extensions
             var startIndex = 0;
             while (true)
             {
-                var endIndex = value.IndexOf("]]>", startIndex);
+                var endIndex = value.IndexOf("]]>", startIndex, StringComparison.Ordinal);
                 if (endIndex < 0)
                 {
                     writer.WriteCData(value.Substring(startIndex));
@@ -102,13 +105,36 @@ namespace XRoadLib.Extensions
         public static void WriteStringWithMode(this XmlWriter writer, string value, StringSerializationMode mode)
         {
             if (mode == StringSerializationMode.HtmlEncoded)
-                writer.WriteString(value.ToString());
-            else writer.WriteCDataEscape(value.ToString());
+                writer.WriteString(value);
+            else writer.WriteCDataEscape(value);
         }
 
         public static void WriteStartElement(this XmlWriter writer, XName name)
         {
             writer.WriteStartElement(name.LocalName, name.NamespaceName);
+        }
+
+        /// <summary>
+        /// Serializes beginning of SOAP envelope into X-Road message.
+        /// </summary>
+        public static void WriteSoapEnvelope(this XmlWriter writer, ProtocolDefinition protocolDefinition)
+        {
+            var soapEnvPrefix = protocolDefinition.GlobalNamespacePrefixes[NamespaceConstants.SOAP_ENV];
+
+            writer.WriteStartElement(soapEnvPrefix, "Envelope", NamespaceConstants.SOAP_ENV);
+
+            foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
+                writer.WriteAttributeString(PrefixConstants.XMLNS, kvp.Value, NamespaceConstants.XMLNS, kvp.Key.NamespaceName);
+
+            if (protocolDefinition.Style is RpcEncodedStyle)
+                writer.WriteAttributeString("encodingStyle", NamespaceConstants.SOAP_ENV, NamespaceConstants.SOAP_ENC);
+        }
+
+        public static void WriteMissingAttributes(this XmlWriter writer, ProtocolDefinition protocolDefinition)
+        {
+            foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
+                if (writer.LookupPrefix(kvp.Key.NamespaceName) == null)
+                    writer.WriteAttributeString(PrefixConstants.XMLNS, kvp.Value, NamespaceConstants.XMLNS, kvp.Key.NamespaceName);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Styles;
 
 namespace XRoadLib.Schema
@@ -76,5 +77,10 @@ namespace XRoadLib.Schema
         /// Soap address binding location value in service description document.
         /// </summary>
         public string SoapAddressLocation { get; set; } = "http://INSERT_CORRECT_SERVICE_URL";
+
+        /// <summary>
+        /// Allows to define namespace prefixes which should be defined in outgoing SOAP messages.
+        /// </summary>
+        public IDictionary<XNamespace, string> GlobalNamespacePrefixes { get; } = new Dictionary<XNamespace, string>();
     }
 }

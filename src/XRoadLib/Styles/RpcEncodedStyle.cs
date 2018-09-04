@@ -81,13 +81,5 @@ namespace XRoadLib.Styles
         {
             return new SoapOperationBinding { SoapAction = soapAction, Style = SoapBindingStyle.Rpc };
         }
-
-        public override void WriteSoapEnvelope(XmlWriter writer, string producerNamespace)
-        {
-            base.WriteSoapEnvelope(writer, producerNamespace);
-
-            writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC);
-            writer.WriteAttributeString("encodingStyle", NamespaceConstants.SOAP_ENV, NamespaceConstants.SOAP_ENC);
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using XRoadLib.Wsdl;
+﻿using System.Collections.Generic;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Schema
 {

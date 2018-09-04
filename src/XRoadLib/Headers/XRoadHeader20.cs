@@ -189,7 +189,7 @@ namespace XRoadLib.Headers
         public virtual void WriteTo(XmlWriter writer, Style style, HeaderDefinition definition)
         {
             if (writer.LookupPrefix(NamespaceConstants.XTEE) == null)
-                writer.WriteAttributeString("xmlns", PrefixConstants.XTEE, NamespaceConstants.XMLNS, NamespaceConstants.XTEE);
+                writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XTEE, NamespaceConstants.XMLNS, NamespaceConstants.XTEE);
 
             void WriteHeaderValue(string elementName, object value, XName typeName)
             {

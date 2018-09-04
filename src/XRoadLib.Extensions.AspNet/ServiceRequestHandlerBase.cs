@@ -168,11 +168,11 @@ namespace XRoadLib.Extensions.AspNet
                 {
                     writer.WriteStartElement(reader.Prefix, "Envelope", NamespaceConstants.SOAP_ENV);
                     writer.WriteAttributes(reader, true);
+                    writer.WriteMissingAttributes(context.Request.ServiceManager.ProtocolDefinition);
                 }
                 else
                 {
-                    writer.WriteStartElement(PrefixConstants.SOAP_ENV, "Envelope", NamespaceConstants.SOAP_ENV);
-                    writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENV, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENV);
+                    writer.WriteSoapEnvelope(context.Request.ServiceManager.ProtocolDefinition);
                 }
 
                 if (reader.MoveToElement(1) && reader.IsCurrentElement(1, XName.Get("Header", NamespaceConstants.SOAP_ENV)))

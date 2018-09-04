@@ -309,10 +309,10 @@ namespace XRoadLib.Headers
         public virtual void WriteTo(XmlWriter writer, Style style, HeaderDefinition definition)
         {
             if (writer.LookupPrefix(NamespaceConstants.XROAD_V4) == null)
-                writer.WriteAttributeString("xmlns", PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4);
+                writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4);
 
             if (writer.LookupPrefix(NamespaceConstants.XROAD_V4_ID) == null)
-                writer.WriteAttributeString("xmlns", PrefixConstants.ID, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4_ID);
+                writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.ID, NamespaceConstants.XMLNS, NamespaceConstants.XROAD_V4_ID);
 
             if (definition.RequiredHeaders.Contains(XName.Get("client", NamespaceConstants.XROAD_V4)) || Client != null)
             {

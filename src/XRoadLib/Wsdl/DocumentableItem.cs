@@ -42,7 +42,7 @@ namespace XRoadLib.Wsdl
         {
             Namespaces.Where(x => !string.IsNullOrWhiteSpace(x.Value) && writer.LookupPrefix(x.Value) != x.Key)
                       .ToList()
-                      .ForEach(ns => writer.WriteAttributeString("xmlns", ns.Key, NamespaceConstants.XMLNS, ns.Value));
+                      .ForEach(ns => writer.WriteAttributeString(PrefixConstants.XMLNS, ns.Key, NamespaceConstants.XMLNS, ns.Value));
 
             ExtensibleAttributes.ForEach(x => x.WriteTo(writer));
         }

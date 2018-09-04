@@ -36,10 +36,10 @@ namespace XRoadLib.Tests.Serialization
                 if (addEnvelope)
                 {
                     writer.WriteStartElement("Envelope");
-                    writer.WriteAttributeString("xmlns", PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC);
-                    writer.WriteAttributeString("xmlns", PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
-                    writer.WriteAttributeString("xmlns", PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
-                    writer.WriteAttributeString("xmlns", "tns", NamespaceConstants.XMLNS, Globals.ServiceManager20.ProducerNamespace);
+                    writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC);
+                    writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
+                    writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
+                    writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, Globals.ServiceManager20.ProducerNamespace);
                 }
 
                 writer.WriteStartElement(elementName);

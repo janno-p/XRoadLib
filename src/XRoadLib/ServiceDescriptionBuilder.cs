@@ -474,8 +474,9 @@ namespace XRoadLib
 
             if ("unbounded".Equals(responseElements.Item2.MaxOccursString) || responseElements.Item2.MaxOccurs > 1)
             {
+                var resultElements = responseElements;
                 responseElements = CreateXmlSchemaElement(responseDefinition.Content.Name, schemaReferences);
-                responseElements.Item1.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { responseElements.Item2 } } };
+                responseElements.Item1.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { resultElements.Item2 } } };
             }
             else
             {
@@ -548,7 +549,10 @@ namespace XRoadLib
                 schema.Items.Add(namespaceType);
 
             foreach (var schemaElement in namespaceElements.OrderBy(x => x.Name.ToLower()))
+            {
+                schemaElement.Form = XmlSchemaForm.None;
                 schema.Items.Add(schemaElement);
+            }
 
             if (schema.TargetNamespace != schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace)
                 schema.Namespaces.Add("tns", schema.TargetNamespace);

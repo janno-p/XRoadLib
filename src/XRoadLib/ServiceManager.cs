@@ -69,8 +69,8 @@ namespace XRoadLib
                 {
                     writer.WriteStartDocument();
 
-                    Style.WriteSoapEnvelope(writer, ProducerNamespace);
-                    if (!string.IsNullOrEmpty(options?.RequestNamespace))
+                    writer.WriteSoapEnvelope(ProtocolDefinition);
+                    if (!string.IsNullOrEmpty(options?.RequestNamespace) && writer.LookupPrefix(options.RequestNamespace) == null)
                         writer.WriteAttributeString(PrefixConstants.XMLNS, "req", NamespaceConstants.XMLNS, options.RequestNamespace);
 
                     Style.WriteSoapHeader(writer, header, HeaderDefinition);

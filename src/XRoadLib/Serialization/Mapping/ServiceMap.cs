@@ -142,11 +142,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             var containsRequest = requestReader.MoveToElement(2, RequestDefinition.WrapperElementName);
 
-            var responseWrapperElementName = ResponseDefinition.WrapperElementName;
-
-            if (containsRequest)
-                writer.WriteStartElement(requestReader.Prefix, responseWrapperElementName.LocalName, responseWrapperElementName.NamespaceName);
-            else writer.WriteStartElement(responseWrapperElementName);
+            writer.WriteStartElement(ResponseDefinition.WrapperElementName);
 
             if (containsRequest && OperationDefinition.CopyRequestPartToResponse)
                 CopyRequestToResponse(writer, requestReader);
