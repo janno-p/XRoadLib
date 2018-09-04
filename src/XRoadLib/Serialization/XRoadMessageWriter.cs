@@ -9,9 +9,9 @@ namespace XRoadLib.Serialization
     public class XRoadMessageWriter : IDisposable
     {
         public const string NEW_LINE = "\r\n";
-        
-        private const string SOAP_MULTIPART_ROOT_CONTENT_TYPE = "Content-Type: text/xml; charset=UTF-8";
-        private const string XOP_MULTIPART_ROOT_CONTENT_TYPE = "Content-Type: " + XRoadMessage.MULTIPART_CONTENT_TYPE_XOP + @"; charset=UTF-8; type=""text/xml""";
+
+        private const string SOAP_MULTIPART_ROOT_CONTENT_TYPE = "Content-Type: " + ContentTypes.SOAP + "; charset=UTF-8";
+        private const string XOP_MULTIPART_ROOT_CONTENT_TYPE = "Content-Type: " + ContentTypes.XOP + @"; charset=UTF-8; type=""" + ContentTypes.SOAP + @"""";
 
         private readonly CountingStream outputStream;
 
@@ -39,15 +39,15 @@ namespace XRoadLib.Serialization
 
             var contentID = Convert.ToBase64String(MD5.Create().ComputeHash(source.ContentStream));
 
-            var contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_SOAP;
+            var contentTypeType = ContentTypes.SOAP;
             var startInfo = string.Empty;
             if (source.BinaryMode == BinaryMode.Xml)
             {
-                contentTypeType = XRoadMessage.MULTIPART_CONTENT_TYPE_XOP;
-                startInfo = $@"start-info=""{XRoadMessage.MULTIPART_CONTENT_TYPE_SOAP}""; ";
+                contentTypeType = ContentTypes.XOP;
+                startInfo = $@"start-info=""{ContentTypes.SOAP}""; ";
             }
 
-            setContentType($@"multipart/related; type=""{contentTypeType}""; start=""{contentID}""; {startInfo}boundary=""{boundaryMarker}""");
+            setContentType($@"{ContentTypes.MULTIPART}; type=""{contentTypeType}""; start=""{contentID}""; {startInfo}boundary=""{boundaryMarker}""");
             appendHeader("MIME-Version", "1.0");
 
             source.ContentStream.Position = 0;

@@ -9,6 +9,7 @@ using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
 using XRoadLib.Headers;
+using XRoadLib.Soap;
 using XRoadLib.Styles;
 
 namespace XRoadLib.Serialization
@@ -19,16 +20,6 @@ namespace XRoadLib.Serialization
     public class XRoadMessage : IAttachmentManager
     {
         public IServiceManager ServiceManager { get; internal set; }
-        
-        /// <summary>
-        /// Expected content type of message with SOAP attachments.
-        /// </summary>
-        public const string MULTIPART_CONTENT_TYPE_SOAP = "text/xml";
-
-        /// <summary>
-        /// Expected content type of message with XOP attachments.
-        /// </summary>
-        public const string MULTIPART_CONTENT_TYPE_XOP = "application/xop+xml";
 
         private readonly List<XRoadAttachment> attachments = new List<XRoadAttachment>();
 
@@ -136,6 +127,8 @@ namespace XRoadLib.Serialization
         /// X-Road message template response element root node.
         /// </summary>
         public IXmlTemplateNode ResponseNode => XmlTemplate != null ? XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
+
+        public IMessageFormatter MessageFormatter { get; internal set; }
 
         /// <summary>
         /// Initializes new empty X-Road message for deserialization.

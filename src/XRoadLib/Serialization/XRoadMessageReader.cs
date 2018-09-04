@@ -9,6 +9,7 @@ using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization
 {
@@ -55,6 +56,7 @@ namespace XRoadLib.Serialization
             target.ContentStream = new MemoryStream();
 
             target.IsMultipartContainer = ReadMessageParts(target);
+            target.MessageFormatter = GetMessageFormatter(target);
 
             target.ContentStream.Position = 0;
 
@@ -77,7 +79,7 @@ namespace XRoadLib.Serialization
             if (target.IsMultipartContainer)
                 target.BinaryMode = BinaryMode.Attachment;
 
-            if (XRoadMessage.MULTIPART_CONTENT_TYPE_XOP.Equals(target.MultipartContentType))
+            if (ContentTypes.XOP.Equals(target.MultipartContentType))
                 target.BinaryMode = BinaryMode.Xml;
 
             if (isResponse)
@@ -265,6 +267,28 @@ namespace XRoadLib.Serialization
             return peekedByte.Value;
         }
 
+        private IMessageFormatter GetMessageFormatter(XRoadMessage target)
+        {
+            var contentType = target.MultipartContentType;
+
+            if (!target.IsMultipartContainer)
+                contentType = (contentTypeHeader ?? "").Split(new[] { ';' }, 2).First().Trim();
+            else if (contentType.Equals(ContentTypes.XOP))
+                contentType = ExtractValue("start-info=", contentTypeHeader, ";")?.Trim();
+
+            switch (contentType)
+            {
+                case ContentTypes.SOAP:
+                    return new SoapMessageFormatter();
+
+                case ContentTypes.SOAP12:
+                    return new Soap12MessageFormatter();
+
+                default:
+                    throw new InvalidOperationException($"Unknown content type `{contentType}` used for message payload.");
+            }
+        }
+
         private Encoding GetContentEncoding()
         {
             var contentType = ExtractValue("charset=", contentTypeHeader, ";")?.Trim().Trim('"');
@@ -359,16 +383,16 @@ namespace XRoadLib.Serialization
                 return null;
 
             // Mis positsioonilt küsitud key üldse hakkab ..
-            var indxOfKey = keyValuePair.ToLower().IndexOf(key.ToLower(), StringComparison.Ordinal);
-            if (indxOfKey < 0)
+            var indexOfKey = keyValuePair.ToLower().IndexOf(key.ToLower(), StringComparison.Ordinal);
+            if (indexOfKey < 0)
                 return null;
 
-            var fromIndx = indxOfKey + key.Length;
-            var toIndx = keyValuePair.Length;
-            if (separator != null && keyValuePair.IndexOf(separator, fromIndx, StringComparison.Ordinal) > -1)
-                toIndx = keyValuePair.IndexOf(separator, fromIndx, StringComparison.Ordinal);
+            var fromIndex = indexOfKey + key.Length;
+            var toIndex = keyValuePair.Length;
+            if (separator != null && keyValuePair.IndexOf(separator, fromIndex, StringComparison.Ordinal) > -1)
+                toIndex = keyValuePair.IndexOf(separator, fromIndex, StringComparison.Ordinal);
 
-            return keyValuePair.Substring(fromIndx, toIndx - fromIndx).Trim();
+            return keyValuePair.Substring(fromIndex, toIndex - fromIndex).Trim();
         }
 
         private IServiceManager DetectServiceManager(XmlReader reader, IServiceManager serviceManager)
