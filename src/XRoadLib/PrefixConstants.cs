@@ -6,8 +6,10 @@
         public const string MIME = "mime";
         public const string REPR = "repr";
         public const string SOAP = "soap";
+        public const string SOAP12 = "soap12";
         public const string SOAP_ENC = "SOAP-ENC";
         public const string SOAP_ENV = "SOAP-ENV";
+        public const string SOAP12_ENV = "env";
         public const string TARGET = "tns";
         public const string WSDL = "wsdl";
         public const string XMIME = "xmime";

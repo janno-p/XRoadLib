@@ -3,6 +3,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
+using XRoadLib.Soap;
 using XRoadLib.Styles;
 
 namespace XRoadLib.Extensions
@@ -117,17 +118,17 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Serializes beginning of SOAP envelope into X-Road message.
         /// </summary>
-        public static void WriteSoapEnvelope(this XmlWriter writer, ProtocolDefinition protocolDefinition)
+        public static void WriteSoapEnvelope(this XmlWriter writer, IMessageFormatter messageFormatter, ProtocolDefinition protocolDefinition)
         {
-            var soapEnvPrefix = protocolDefinition.GlobalNamespacePrefixes[NamespaceConstants.SOAP_ENV];
+            var soapEnvPrefix = protocolDefinition.GlobalNamespacePrefixes[messageFormatter.Namespace];
 
-            writer.WriteStartElement(soapEnvPrefix, "Envelope", NamespaceConstants.SOAP_ENV);
+            messageFormatter.WriteStartEnvelope(writer, soapEnvPrefix);
 
             foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
                 writer.WriteAttributeString(PrefixConstants.XMLNS, kvp.Value, NamespaceConstants.XMLNS, kvp.Key.NamespaceName);
 
             if (protocolDefinition.Style is RpcEncodedStyle)
-                writer.WriteAttributeString("encodingStyle", NamespaceConstants.SOAP_ENV, NamespaceConstants.SOAP_ENC);
+                writer.WriteAttributeString("encodingStyle", messageFormatter.Namespace, NamespaceConstants.SOAP_ENC);
         }
 
         public static void WriteMissingAttributes(this XmlWriter writer, ProtocolDefinition protocolDefinition)

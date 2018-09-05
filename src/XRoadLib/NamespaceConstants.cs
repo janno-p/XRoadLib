@@ -123,8 +123,10 @@ namespace XRoadLib
                 case HTTP:
                 case MIME:
                 case SOAP:
+                case SOAP12:
                 case SOAP_ENC:
                 case SOAP_ENV:
+                case SOAP12_ENV:
                 case WSDL:
                 case XML:
                 case XMLNS:
@@ -156,11 +158,17 @@ namespace XRoadLib
                 case SOAP:
                     return PrefixConstants.SOAP;
 
+                case SOAP12:
+                    return PrefixConstants.SOAP12;
+
                 case SOAP_ENC:
                     return PrefixConstants.SOAP_ENC;
 
                 case SOAP_ENV:
                     return PrefixConstants.SOAP_ENV;
+
+                case SOAP12_ENV:
+                    return PrefixConstants.SOAP12_ENV;
 
                 case WSDL:
                     return PrefixConstants.WSDL;

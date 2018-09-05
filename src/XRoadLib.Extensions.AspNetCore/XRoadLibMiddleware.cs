@@ -28,13 +28,17 @@ namespace XRoadLib.Extensions.AspNetCore
                 }
                 catch (Exception exception)
                 {
+                    httpContext.Response.ContentType = context.MessageFormatter.ContentType;
+
                     if (httpContext.Response.Body.CanSeek)
                     {
                         httpContext.Response.Body.Position = 0;
                         httpContext.Response.Body.SetLength(0);
                     }
 
-                    handler.HandleException(context, exception, null, null, null, null);
+                    var fault = context.MessageFormatter.CreateFault(exception);
+
+                    handler.HandleException(context, exception, fault);
                 }
             }
 

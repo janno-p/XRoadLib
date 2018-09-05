@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using System.Xml.Linq;
 using XRoadLib.Events;
 using XRoadLib.Serialization;
 
@@ -85,7 +84,7 @@ namespace XRoadLib.Extensions.AspNet
             if (context.HttpContext.Request.InputStream.Length == 0)
                 throw new InvalidQueryException("Empty request content");
 
-            context.Request.LoadRequest(context.HttpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), serviceManagers);
+            context.MessageFormatter = context.Request.LoadRequest(context.HttpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), serviceManagers);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
             {
                 var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));
@@ -143,7 +142,7 @@ namespace XRoadLib.Extensions.AspNet
             context.Request.ContentStream.Position = 0;
             var reader = XmlReader.Create(context.Request.ContentStream, args.XmlReaderSettings);
 
-            reader.MoveToPayload(context.Request.RootElementName);
+            context.MessageFormatter.MoveToPayload(reader, context.Request.RootElementName);
 
             context.Parameters = context.ServiceMap.DeserializeRequest(reader, context.Request);
 
@@ -164,22 +163,22 @@ namespace XRoadLib.Extensions.AspNet
 
                 writer.WriteStartDocument();
 
-                if (reader.MoveToElement(0) && reader.IsCurrentElement(0, XName.Get("Envelope", NamespaceConstants.SOAP_ENV)))
+                if (context.MessageFormatter.TryMoveToEnvelope(reader))
                 {
-                    writer.WriteStartElement(reader.Prefix, "Envelope", NamespaceConstants.SOAP_ENV);
+                    context.MessageFormatter.WriteStartEnvelope(writer, reader.Prefix);
                     writer.WriteAttributes(reader, true);
-                    writer.WriteMissingAttributes(context.Request.ServiceManager.ProtocolDefinition);
+                    writer.WriteMissingAttributes(context.Response.ServiceManager.ProtocolDefinition);
                 }
                 else
                 {
-                    writer.WriteSoapEnvelope(context.Request.ServiceManager.ProtocolDefinition);
+                    writer.WriteSoapEnvelope(context.MessageFormatter, context.Response.ServiceManager.ProtocolDefinition);
                 }
 
-                if (reader.MoveToElement(1) && reader.IsCurrentElement(1, XName.Get("Header", NamespaceConstants.SOAP_ENV)))
+                if (context.MessageFormatter.TryMoveToHeader(reader))
                     writer.WriteNode(reader, true);
 
-                writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
-                if (reader.IsCurrentElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)) || reader.MoveToElement(1, XName.Get("Body", NamespaceConstants.SOAP_ENV)))
+                context.MessageFormatter.WriteStartBody(writer);
+                if (context.MessageFormatter.TryMoveToBody(reader))
                     writer.WriteAttributes(reader, true);
 
                 context.ServiceMap.SerializeResponse(writer, context.Result, context.Response, reader, CustomSerialization);
@@ -188,7 +187,7 @@ namespace XRoadLib.Extensions.AspNet
                 writer.Flush();
             }
 
-            context.Response.SaveTo(context.HttpContext);
+            context.Response.SaveTo(context.HttpContext, context.MessageFormatter);
 
             OnAfterSerialization(context);
         }

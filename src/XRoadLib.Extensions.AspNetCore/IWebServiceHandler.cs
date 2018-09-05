@@ -21,6 +21,6 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Handle exception that occured while handling X-Road message service request.
         /// </summary>
-        void HandleException(WebServiceContext context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details);
+        void HandleException(WebServiceContext context, Exception exception, IFault fault);
     }
 }

@@ -128,8 +128,6 @@ namespace XRoadLib.Serialization
         /// </summary>
         public IXmlTemplateNode ResponseNode => XmlTemplate != null ? XmlTemplate.ResponseNode : XRoadXmlTemplate.EmptyNode;
 
-        public IMessageFormatter MessageFormatter { get; internal set; }
-
         /// <summary>
         /// Initializes new empty X-Road message for deserialization.
         /// </summary>
@@ -165,19 +163,19 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
+        public IMessageFormatter LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
         {
             ServiceManager = serviceManager;
-            LoadRequest(stream, contentTypeHeader, storagePath, Enumerable.Empty<IServiceManager>());
+            return LoadRequest(stream, contentTypeHeader, storagePath, Enumerable.Empty<IServiceManager>());
         }
 
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public void LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public IMessageFormatter LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, serviceManagers))
-                reader.Read(this);
+                return reader.Read(this);
         }
 
         /// <summary>
@@ -200,20 +198,20 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Serializes X-Road message into specified web request.
         /// </summary>
-        public void SaveTo(WebRequest webRequest)
+        public void SaveTo(WebRequest webRequest, IMessageFormatter messageFormatter)
         {
             using (var outputStream = webRequest.GetRequestStreamAsync().Result)
             using (var writer = new XRoadMessageWriter(outputStream))
-                writer.Write(this, contentType => webRequest.ContentType = contentType, (k, v) => webRequest.Headers[k] = v);
+                writer.Write(this, contentType => webRequest.ContentType = contentType, (k, v) => webRequest.Headers[k] = v, messageFormatter);
         }
 
         /// <summary>
         /// Serializes X-Road message into specified stream.
         /// </summary>
-        public void SaveTo(Stream outputStream, Action<string> setContentType, Action<string, string> appendHeader)
+        public void SaveTo(Stream outputStream, Action<string> setContentType, Action<string, string> appendHeader, IMessageFormatter messageFormatter)
         {
             using (var writer = new XRoadMessageWriter(outputStream))
-                writer.Write(this, setContentType, appendHeader);
+                writer.Write(this, setContentType, appendHeader, messageFormatter);
         }
 
         /// <summary>

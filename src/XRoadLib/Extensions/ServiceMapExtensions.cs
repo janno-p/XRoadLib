@@ -1,6 +1,7 @@
 using System.Xml;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions
 {
@@ -12,12 +13,12 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Deserializes X-Road fault from message which is known to contain fault.
         /// </summary>
-        public static IXRoadFault DeserializeXRoadFault(this IServiceMap serviceMap, XRoadMessage message)
+        public static IXRoadFault DeserializeXRoadFault(this IServiceMap serviceMap, XRoadMessage message, IMessageFormatter messageFormatter)
         {
             message.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(message.ContentStream))
             {
-                reader.MoveToPayload(message.RootElementName);
+                messageFormatter.MoveToPayload(reader, message.RootElementName);
 
                 var responseName = serviceMap.ResponseDefinition.Content.Name;
                 if (!reader.MoveToElement(3, responseName))

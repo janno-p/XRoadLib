@@ -3,6 +3,7 @@ using System.IO;
 using System.Web;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions.AspNet
 {
@@ -45,6 +46,8 @@ namespace XRoadLib.Extensions.AspNet
         /// Exception that occured while handling service request.
         /// </summary>
         public Exception Exception { get; set; }
+
+        public IMessageFormatter MessageFormatter { get; set; }
 
         /// <summary>
         /// Initialize new X-Road context instance.

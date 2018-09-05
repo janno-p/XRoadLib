@@ -23,10 +23,10 @@ namespace XRoadLib.Extensions.AspNetCore
         public abstract void HandleRequest(WebServiceContext context);
 
         /// <inheritdoc />
-        public virtual void HandleException(WebServiceContext context, Exception exception, FaultCode faultCode, string faultString, string faultActor, string details)
+        public virtual void HandleException(WebServiceContext context, Exception exception, IFault fault)
         {
             using (var writer = XmlWriter.Create(new StreamWriter(context.HttpContext.Response.Body, XRoadEncoding.UTF8)))
-                SoapMessageHelper.SerializeSoapFaultResponse(writer, faultCode, faultString, faultActor, details, exception);
+                context.MessageFormatter.WriteSoapFault(writer, fault);
         }
 
         public virtual void Dispose()

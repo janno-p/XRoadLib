@@ -42,10 +42,10 @@ namespace XRoadLib.Serialization
             this.serviceManagers = serviceManagers.ToList();
         }
 
-        public void Read(XRoadMessage target, bool isResponse = false)
+        public IMessageFormatter Read(XRoadMessage target, bool isResponse = false)
         {
             if (stream.CanSeek && stream.Length == 0)
-                return;
+                return null;
 
             if (stream.CanSeek)
                 stream.Position = 0;
@@ -56,16 +56,17 @@ namespace XRoadLib.Serialization
             target.ContentStream = new MemoryStream();
 
             target.IsMultipartContainer = ReadMessageParts(target);
-            target.MessageFormatter = GetMessageFormatter(target);
+
+            var messageFormatter = GetMessageFormatter(target);
 
             target.ContentStream.Position = 0;
 
             using (var reader = XmlReader.Create(target.ContentStream, new XmlReaderSettings { CloseInput = false }))
             {
-                var serviceManager = DetectServiceManager(reader, target);
-                ParseXRoadHeader(target, reader, serviceManager);
+                var serviceManager = DetectServiceManager(reader, target, messageFormatter);
+                ParseXRoadHeader(target, reader, serviceManager, messageFormatter);
 
-                target.RootElementName = ParseMessageRootElementName(reader, target.MessageFormatter);
+                target.RootElementName = ParseMessageRootElementName(reader, messageFormatter);
 
                 if (target.ServiceManager == null && target.RootElementName != null)
                     target.ServiceManager = serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
@@ -83,15 +84,17 @@ namespace XRoadLib.Serialization
                 target.BinaryMode = BinaryMode.Xml;
 
             if (isResponse)
-                return;
+                return messageFormatter;
 
             var serviceCode = (target.Header as IXRoadHeader)?.Service?.ServiceCode;
 
             if (target.RootElementName == null || string.IsNullOrWhiteSpace(serviceCode))
-                return;
+                return messageFormatter;
 
             if (!Equals(target.RootElementName.LocalName, serviceCode))
                 throw new InvalidQueryException($"X-Road operation name `{serviceCode}` does not match request wrapper element name `{target.RootElementName}`.");
+
+            return messageFormatter;
         }
 
         public void Dispose()
@@ -395,15 +398,15 @@ namespace XRoadLib.Serialization
             return keyValuePair.Substring(fromIndex, toIndex - fromIndex).Trim();
         }
 
-        private IServiceManager DetectServiceManager(XmlReader reader, XRoadMessage target)
+        private IServiceManager DetectServiceManager(XmlReader reader, XRoadMessage target, IMessageFormatter messageFormatter)
         {
-            target.MessageFormatter.MoveToEnvelope(reader);
+            messageFormatter.MoveToEnvelope(reader);
             return target.ServiceManager ?? serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }
 
-        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IServiceManager serviceManager)
+        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IServiceManager serviceManager, IMessageFormatter messageFormatter)
         {
-            if (!target.MessageFormatter.TryMoveToHeader(reader))
+            if (!messageFormatter.TryMoveToHeader(reader))
                 return;
 
             var header = serviceManager?.CreateHeader();

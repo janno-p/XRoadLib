@@ -1,6 +1,6 @@
 ﻿namespace XRoadLib.Soap
 {
-    internal class SoapFault : ISoapFault
+    public class SoapFault : ISoapFault
     {
         public string FaultCode { get; set; }
         public string FaultString { get; set; }

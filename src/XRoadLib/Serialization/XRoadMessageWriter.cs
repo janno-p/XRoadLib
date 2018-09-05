@@ -3,15 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using XRoadLib.Schema;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization
 {
     public class XRoadMessageWriter : IDisposable
     {
         public const string NEW_LINE = "\r\n";
-
-        private const string SOAP_MULTIPART_ROOT_CONTENT_TYPE = "Content-Type: " + ContentTypes.SOAP + "; charset=UTF-8";
-        private const string XOP_MULTIPART_ROOT_CONTENT_TYPE = "Content-Type: " + ContentTypes.XOP + @"; charset=UTF-8; type=""" + ContentTypes.SOAP + @"""";
 
         private readonly CountingStream outputStream;
 
@@ -23,7 +21,7 @@ namespace XRoadLib.Serialization
             writer = new StreamWriter(this.outputStream);
         }
 
-        public void Write(XRoadMessage source, Action<string> setContentType, Action<string, string> appendHeader)
+        public void Write(XRoadMessage source, Action<string> setContentType, Action<string, string> appendHeader, IMessageFormatter messageFormatter)
         {
             source.ContentStream.Position = 0;
 
@@ -39,19 +37,19 @@ namespace XRoadLib.Serialization
 
             var contentID = Convert.ToBase64String(MD5.Create().ComputeHash(source.ContentStream));
 
-            var contentTypeType = ContentTypes.SOAP;
+            var contentTypeType = messageFormatter.ContentType;
             var startInfo = string.Empty;
             if (source.BinaryMode == BinaryMode.Xml)
             {
                 contentTypeType = ContentTypes.XOP;
-                startInfo = $@"start-info=""{ContentTypes.SOAP}""; ";
+                startInfo = $@"start-info=""{messageFormatter.ContentType}""; ";
             }
 
             setContentType($@"{ContentTypes.MULTIPART}; type=""{contentTypeType}""; start=""{contentID}""; {startInfo}boundary=""{boundaryMarker}""");
             appendHeader("MIME-Version", "1.0");
 
             source.ContentStream.Position = 0;
-            SerializeMessage(source, contentID, boundaryMarker);
+            SerializeMessage(source, contentID, boundaryMarker, messageFormatter);
             writer.Flush();
 
             foreach (var attachment in source.MultipartContentAttachments)
@@ -80,12 +78,16 @@ namespace XRoadLib.Serialization
             writer.Write(new StreamReader(source.ContentStream).ReadToEnd());
         }
 
-        private void SerializeMessage(XRoadMessage source, string contentID, string boundaryMarker)
+        private void SerializeMessage(XRoadMessage source, string contentID, string boundaryMarker, IMessageFormatter messageFormatter)
         {
             writer.Write(NEW_LINE);
             writer.Write("--{0}", boundaryMarker);
             writer.Write(NEW_LINE);
-            writer.Write(source.BinaryMode == BinaryMode.Attachment ? SOAP_MULTIPART_ROOT_CONTENT_TYPE : XOP_MULTIPART_ROOT_CONTENT_TYPE);
+            writer.Write(
+                source.BinaryMode == BinaryMode.Attachment
+                    ? $"Content-Type: {messageFormatter.ContentType}; charset=UTF-8"
+                    : $"Content-Type: {ContentTypes.XOP}; charset=UTF-8; type=\"{messageFormatter.ContentType}\""
+            );
             writer.Write(NEW_LINE);
             writer.Write("Content-Transfer-Encoding: 8bit");
             writer.Write(NEW_LINE);

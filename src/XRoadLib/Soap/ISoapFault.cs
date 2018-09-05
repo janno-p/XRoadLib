@@ -1,20 +1,10 @@
-﻿using System.Xml.Serialization;
-
-namespace XRoadLib.Soap
+﻿namespace XRoadLib.Soap
 {
-    [XmlType("Fault", Namespace = NamespaceConstants.SOAP_ENV)]
-    public interface ISoapFault
+    public interface ISoapFault : IFault
     {
-        [XmlElement("faultcode")]
-        string FaultCode { get; }
-
-        [XmlElement("faultstring")]
-        string FaultString { get; }
-
-        [XmlElement("faultactor")]
-        string FaultActor { get; }
-
-        [XmlElement("detail")]
-        string Details { get; }
+        string FaultCode { get; set; }
+        string FaultString { get; set; }
+        string FaultActor { get; set; }
+        string Details { get; set; }
     }
 }

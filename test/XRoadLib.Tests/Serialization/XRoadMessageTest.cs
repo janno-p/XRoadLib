@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using XRoadLib.Serialization;
+using XRoadLib.Soap;
 using Xunit;
 
 namespace XRoadLib.Tests.Serialization
@@ -124,6 +125,8 @@ namespace XRoadLib.Tests.Serialization
 
         private static long WriteContent(string content = null, IEnumerable<XRoadAttachment> attachments = null)
         {
+            var messageFormatter = new SoapMessageFormatter();
+
             using (var outputStream = new MemoryStream())
             using (var contentStream = new MemoryStream())
             {
@@ -136,7 +139,7 @@ namespace XRoadLib.Tests.Serialization
                 using (var message = new XRoadMessage(contentStream))
                 {
                     (attachments ?? Enumerable.Empty<XRoadAttachment>()).ToList().ForEach(message.AllAttachments.Add);
-                    message.SaveTo(outputStream, x => {}, (k, v) => {});
+                    message.SaveTo(outputStream, x => {}, (k, v) => {}, messageFormatter);
 
                     return message.ContentLength;
                 }

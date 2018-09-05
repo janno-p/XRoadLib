@@ -9,6 +9,7 @@ using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
+using XRoadLib.Soap;
 using XRoadLib.Tests.Contract;
 using XRoadLib.Tests.Contract.Wsdl;
 using Xunit;
@@ -24,6 +25,8 @@ namespace XRoadLib.Tests.Serialization
         private static readonly IServiceMap serviceMap20 = serializer20.GetServiceMap("Service1");
         private static readonly IServiceMap serviceMap31 = serializer31.GetServiceMap("Service1");
         private static readonly IServiceMap service3Map31 = serializer31.GetServiceMap("Service3");
+
+        private static readonly IMessageFormatter messageFormatter = new SoapMessageFormatter();
 
         [Fact]
         public void CanHandleOptionalParameters()
@@ -532,6 +535,7 @@ namespace XRoadLib.Tests.Serialization
         private static object DeserializeRequest20(string templateXml, string contentXml)
         {
             var template = new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod("Service1"));
+
             return DeserializeRequest(templateXml, contentXml, Globals.ServiceManager20, "Service1", (msgr, xmlr) =>
             {
                 var message = Globals.ServiceManager20.CreateMessage();
@@ -539,8 +543,8 @@ namespace XRoadLib.Tests.Serialization
 
                 using (message)
                 {
-                    msgr.Read(message, false);
-                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get("Service1", Globals.ServiceManager20.ProducerNamespace));
+                    msgr.Read(message);
+                    messageFormatter.MoveToPayload(xmlr, XName.Get("Service1", Globals.ServiceManager20.ProducerNamespace));
                     return serviceMap20.DeserializeRequest(xmlr, message);
                 }
             });
@@ -558,7 +562,7 @@ namespace XRoadLib.Tests.Serialization
                 using (message)
                 {
                     msgr.Read(message);
-                    xmlr.MoveToPayload(System.Xml.Linq.XName.Get(serviceName, Globals.ServiceManager31.ProducerNamespace));
+                    messageFormatter.MoveToPayload(xmlr, XName.Get(serviceName, Globals.ServiceManager31.ProducerNamespace));
                     return serviceMap.DeserializeRequest(xmlr, message);
                 }
             });

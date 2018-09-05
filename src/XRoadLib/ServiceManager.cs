@@ -11,6 +11,7 @@ using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Soap;
 using XRoadLib.Styles;
 using XRoadLib.Wsdl;
 
@@ -62,6 +63,8 @@ namespace XRoadLib
         /// <inheritdoc />
         object IServiceManager.Execute(WebRequest webRequest, object body, ISoapHeader header, ServiceExecutionOptions options)
         {
+            var messageFormatter = options?.MessageFormatter ?? new SoapMessageFormatter();
+
             using (var requestMessage = new XRoadMessage(this, header))
             {
                 IServiceMap operationServiceMap;
@@ -69,13 +72,12 @@ namespace XRoadLib
                 {
                     writer.WriteStartDocument();
 
-                    writer.WriteSoapEnvelope(ProtocolDefinition);
+                    writer.WriteSoapEnvelope(messageFormatter, ProtocolDefinition);
                     if (!string.IsNullOrEmpty(options?.RequestNamespace) && writer.LookupPrefix(options.RequestNamespace) == null)
                         writer.WriteAttributeString(PrefixConstants.XMLNS, "req", NamespaceConstants.XMLNS, options.RequestNamespace);
 
-                    Style.WriteSoapHeader(writer, header, HeaderDefinition);
-
-                    writer.WriteStartElement("Body", NamespaceConstants.SOAP_ENV);
+                    messageFormatter.WriteSoapHeader(writer, Style, header, HeaderDefinition);
+                    messageFormatter.WriteStartBody(writer);
 
                     var serviceCode = (header as IXRoadHeader)?.Service?.ServiceCode ?? string.Empty;
 
@@ -92,7 +94,7 @@ namespace XRoadLib
 
                 options?.BeforeRequest?.Invoke(this, new XRoadRequestEventArgs(requestMessage));
 
-                requestMessage.SaveTo(webRequest);
+                requestMessage.SaveTo(webRequest, messageFormatter);
 
                 using (var response = webRequest.GetResponseAsync().Result)
                 using (var responseStream = response.GetResponseStream())
@@ -102,7 +104,7 @@ namespace XRoadLib
                     responseStream?.CopyTo(seekableStream);
                     options?.BeforeDeserialize?.Invoke(this, new XRoadResponseEventArgs(response, seekableStream));
                     responseMessage.LoadResponse(seekableStream, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), this);
-                    return responseMessage.DeserializeMessageContent(operationServiceMap);
+                    return responseMessage.DeserializeMessageContent(operationServiceMap, messageFormatter);
                 }
             }
         }

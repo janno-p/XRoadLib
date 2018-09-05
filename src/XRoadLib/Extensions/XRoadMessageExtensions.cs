@@ -15,21 +15,20 @@ namespace XRoadLib.Extensions
         /// Deserializes X-Road message response or throws <see>XRoadFaultException</see> when
         /// X-Road fault is parsed from the message instead of expected result value.
         /// </summary>
-        public static object DeserializeMessageContent(this XRoadMessage message, IServiceMap serviceMap)
+        public static object DeserializeMessageContent(this XRoadMessage message, IServiceMap serviceMap, IMessageFormatter messageFormatter)
         {
             if (serviceMap.ResponseDefinition.ContainsNonTechnicalFault)
-                ThrowIfXRoadFault(message, serviceMap);
+                ThrowIfXRoadFault(message, serviceMap, messageFormatter);
 
             message.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(message.ContentStream))
             {
-                reader.MoveToBody();
+                messageFormatter.MoveToBody(reader);
 
                 if (!reader.MoveToElement(2))
                     throw new InvalidQueryException("No payload element in SOAP message.");
 
-                if (reader.NamespaceURI == NamespaceConstants.SOAP_ENV && reader.LocalName == "Fault")
-                    throw new SoapFaultException(SoapMessageHelper.DeserializeSoapFault(reader));
+                messageFormatter.ThrowSoapFaultIfPresent(reader);
 
                 var result = serviceMap.DeserializeResponse(reader, message);
 
@@ -37,7 +36,7 @@ namespace XRoadLib.Extensions
             }
         }
 
-        private static void ThrowIfXRoadFault(XRoadMessage message, IServiceMap serviceMap)
+        private static void ThrowIfXRoadFault(XRoadMessage message, IServiceMap serviceMap, IMessageFormatter messageFormatter)
         {
             message.ContentStream.Position = 0;
 
@@ -49,7 +48,7 @@ namespace XRoadLib.Extensions
             var navigator = doc.CreateNavigator();
 
             if (navigator.SelectSingleNode($"{pathRoot}/faultCode | {pathRoot}/faultString") != null)
-                throw new XRoadFaultException(serviceMap.DeserializeXRoadFault(message));
+                throw new XRoadFaultException(serviceMap.DeserializeXRoadFault(message, messageFormatter));
         }
     }
 }

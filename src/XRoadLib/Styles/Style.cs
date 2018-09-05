@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using System.Xml.Schema;
-using XRoadLib.Headers;
 using XRoadLib.Wsdl;
 
 namespace XRoadLib.Styles
@@ -112,21 +109,6 @@ namespace XRoadLib.Styles
         /// Preferred string serialization mode.
         /// </summary>
         public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
-
-        public virtual void WriteSoapHeader(XmlWriter writer, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
-        {
-            if (header == null)
-                return;
-
-            writer.WriteStartElement("Header", NamespaceConstants.SOAP_ENV);
-
-            header.WriteTo(writer, this, definition);
-
-            foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
-                additionalHeader.WriteTo(writer);
-
-            writer.WriteEndElement();
-        }
         
         public virtual void SerializeFault(XmlWriter writer, IXRoadFault fault)
         {
