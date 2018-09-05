@@ -10,6 +10,8 @@ namespace XRoadLib.Tests.Serialization
 {
     public class XRoadMessageTest
     {
+        private static readonly IMessageFormatter messageFormatter = new SoapMessageFormatter();
+
         private readonly IServiceManager[] serviceManagers =
         {
             Globals.ServiceManager20,
@@ -46,7 +48,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanReadEmptyContentWithoutAttachments()
         {
             using (var stream = new MemoryStream())
-            using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), serviceManagers))
+            using (var reader = new XRoadMessageReader(stream, messageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), serviceManagers))
             using (var message = new XRoadMessage())
             {
                 reader.Read(message, false);
@@ -68,7 +70,7 @@ namespace XRoadLib.Tests.Serialization
                 streamWriter.Flush();
 
                 stream.Position = 0L;
-                using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), serviceManagers))
+                using (var reader = new XRoadMessageReader(stream, messageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), serviceManagers))
                 using (var message = new XRoadMessage())
                 {
                     reader.Read(message, false);
@@ -114,7 +116,7 @@ namespace XRoadLib.Tests.Serialization
                 var contentTypeHeader = "multipart/related; type=\"application/xml+xop\"; start=\"rQI0gpIFuQMxlrqBj3qHKw==\"; boundary=\"5e7a8827-5850-45be-9a1e-8bbf6aff5da7\"";
 
                 stream.Position = 0L;
-                using (var reader = new XRoadMessageReader(stream, contentTypeHeader, Path.GetTempPath(), serviceManagers))
+                using (var reader = new XRoadMessageReader(stream, messageFormatter, contentTypeHeader, Path.GetTempPath(), serviceManagers))
                 using (var message = new XRoadMessage())
                 {
                     reader.Read(message, false);

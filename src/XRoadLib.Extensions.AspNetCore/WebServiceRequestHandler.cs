@@ -36,8 +36,7 @@ namespace XRoadLib.Extensions.AspNetCore
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
                 throw new InvalidQueryException("Empty request content");
 
-            context.MessageFormatter = context.Request.LoadRequest(context.HttpContext, GetStorageOrTempPath().FullName, ServiceManager);
-
+            context.Request.LoadRequest(context.HttpContext, context.MessageFormatter, GetStorageOrTempPath().FullName, ServiceManager);
             context.Response.Copy(context.Request);
             context.ServiceMap = context.Request.MetaServiceMap;
 

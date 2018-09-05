@@ -11,9 +11,9 @@ namespace XRoadLib.Extensions.AspNet
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public static IMessageFormatter LoadRequest(this XRoadMessage message, HttpContext httpContext, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public static void LoadRequest(this XRoadMessage message, HttpContext httpContext, IMessageFormatter messageFormatter, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
-            return message.LoadRequest(httpContext.Request.InputStream, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
+            message.LoadRequest(httpContext.Request.InputStream, messageFormatter, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
         }
 
         /// <summary>

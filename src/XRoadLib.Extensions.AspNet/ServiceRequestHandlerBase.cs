@@ -84,7 +84,7 @@ namespace XRoadLib.Extensions.AspNet
             if (context.HttpContext.Request.InputStream.Length == 0)
                 throw new InvalidQueryException("Empty request content");
 
-            context.MessageFormatter = context.Request.LoadRequest(context.HttpContext, StoragePath.GetValueOrDefault(Path.GetTempPath()), serviceManagers);
+            context.Request.LoadRequest(context.HttpContext, context.MessageFormatter, StoragePath.GetValueOrDefault(Path.GetTempPath()), serviceManagers);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
             {
                 var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));

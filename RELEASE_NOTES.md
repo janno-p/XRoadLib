@@ -9,6 +9,7 @@
 * Configurable soap binding address location.
 * Support qualified namespaces in XML schemas.
 * Support `object` (everything fits) types as long as runtime types used are defined in the schema.
+* Basic support of SOAP 1.2 messages.
 
 #### 1.2.6 - 12.04.2018
 

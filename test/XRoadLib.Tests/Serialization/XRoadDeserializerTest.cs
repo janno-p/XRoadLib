@@ -585,7 +585,7 @@ namespace XRoadLib.Tests.Serialization
 
                 stream.Position = 0;
                 using (var reader = XmlReader.Create(stream))
-                using (var messageReader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", null, new[] { protocol }))
+                using (var messageReader = new XRoadMessageReader(stream, messageFormatter, "text/xml; charset=UTF-8", null, new[] { protocol }))
                 return deserializeMessage(messageReader, reader);
             }
         }

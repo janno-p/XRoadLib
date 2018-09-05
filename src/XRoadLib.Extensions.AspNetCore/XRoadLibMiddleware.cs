@@ -19,10 +19,12 @@ namespace XRoadLib.Extensions.AspNetCore
             {
                 try
                 {
+                    context.MessageFormatter = XRoadHelper.GetMessageFormatter(context.HttpContext.Request.ContentType);
+
                     if (httpContext.Request.Body.CanSeek)
                         httpContext.Request.Body.Position = 0;
 
-                    httpContext.Response.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
+                    httpContext.Response.ContentType = $"{context.MessageFormatter.ContentType}; charset={XRoadEncoding.UTF8.WebName}";
 
                     handler.HandleRequest(context);
                 }

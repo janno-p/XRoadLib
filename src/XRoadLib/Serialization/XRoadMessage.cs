@@ -163,35 +163,35 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public IMessageFormatter LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
+        public void LoadRequest(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
         {
             ServiceManager = serviceManager;
-            return LoadRequest(stream, contentTypeHeader, storagePath, Enumerable.Empty<IServiceManager>());
+            LoadRequest(stream, messageFormatter, contentTypeHeader, storagePath, Enumerable.Empty<IServiceManager>());
         }
 
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public IMessageFormatter LoadRequest(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public void LoadRequest(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
-            using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, serviceManagers))
-                return reader.Read(this);
+            using (var reader = new XRoadMessageReader(stream, messageFormatter, contentTypeHeader, storagePath, serviceManagers))
+                reader.Read(this);
         }
 
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
-        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
+        public void LoadResponse(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
         {
-            LoadResponse(stream, contentTypeHeader, storagePath, new [] { serviceManager });
+            LoadResponse(stream, messageFormatter, contentTypeHeader, storagePath, new [] { serviceManager });
         }
 
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
-        public void LoadResponse(Stream stream, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public void LoadResponse(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
-            using (var reader = new XRoadMessageReader(stream, contentTypeHeader, storagePath, serviceManagers))
+            using (var reader = new XRoadMessageReader(stream, messageFormatter, contentTypeHeader, storagePath, serviceManagers))
                 reader.Read(this, true);
         }
 

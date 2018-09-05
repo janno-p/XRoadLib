@@ -68,7 +68,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var propertyValue = value != null ? getValueMethod(value) : null;
 
-            if (Definition.Content.IsOptional && propertyValue == null)
+            if (Definition.Content.IsOptional && !Definition.Content.IsNullable && propertyValue == null)
                 return;
 
             if (!Definition.Content.MergeContent)

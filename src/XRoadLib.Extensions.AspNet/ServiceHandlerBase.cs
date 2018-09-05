@@ -24,13 +24,16 @@ namespace XRoadLib.Extensions.AspNet
         /// </summary>
         public virtual void ProcessRequest(HttpContext httpContext)
         {
-            httpContext.Request.InputStream.Position = 0;
-            httpContext.Response.ContentType = $"text/xml; charset={encoding.HeaderName}";
-
             using (var context = new XRoadContext(httpContext))
             {
                 try
                 {
+                    context.MessageFormatter = XRoadHelper.GetMessageFormatter(httpContext.Request.ContentType);
+
+                    httpContext.Request.InputStream.Position = 0;
+
+                    httpContext.Response.ContentType = $"{context.MessageFormatter.ContentType}; charset={encoding.HeaderName}";
+
                     HandleRequest(context);
                 }
                 catch (Exception exception)

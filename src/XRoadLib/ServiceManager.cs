@@ -103,7 +103,7 @@ namespace XRoadLib
                 {
                     responseStream?.CopyTo(seekableStream);
                     options?.BeforeDeserialize?.Invoke(this, new XRoadResponseEventArgs(response, seekableStream));
-                    responseMessage.LoadResponse(seekableStream, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), this);
+                    responseMessage.LoadResponse(seekableStream, messageFormatter, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), this);
                     return responseMessage.DeserializeMessageContent(operationServiceMap, messageFormatter);
                 }
             }

@@ -5,11 +5,14 @@ using System.Text;
 using System.Xml.Linq;
 using XRoadLib.Headers;
 using XRoadLib.Serialization;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Tests.Serialization
 {
     public static class ParseXRoadHeaderHelper
     {
+        private static readonly IMessageFormatter messageFormatter = new SoapMessageFormatter();
+
         public static Tuple<ISoapHeader, IList<XElement>, IServiceManager> ParseHeader(string xml, string ns)
         {
             using (var stream = new MemoryStream())
@@ -23,7 +26,7 @@ namespace XRoadLib.Tests.Serialization
                 streamWriter.Flush();
 
                 stream.Position = 0;
-                using (var reader = new XRoadMessageReader(stream, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager20, Globals.ServiceManager31, Globals.ServiceManager40 }))
+                using (var reader = new XRoadMessageReader(stream, messageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager20, Globals.ServiceManager31, Globals.ServiceManager40 }))
                 using (var msg = new XRoadMessage())
                 {
                     reader.Read(msg);
