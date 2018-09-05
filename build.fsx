@@ -120,7 +120,12 @@ Target.create "NuGet" (fun _ ->
 )
 
 Target.create "PublishNuget" (fun _ ->
-    Paket.push (fun p -> { p with WorkingDir = "bin" })
+    let apiKey = Environment.environVarOrFail "nugetkey"
+    Paket.push
+        (fun p ->
+            { p with
+                WorkingDir = "bin"
+                ApiKey = apiKey })
 )
 
 // --------------------------------------------------------------------------------------
@@ -158,7 +163,10 @@ Target.create "GenerateDocs" (fun _ ->
 Target.create "ReleaseDocs" (fun _ ->
     Shell.cleanDirs [ tempDocsDir ]
     Git.Repository.cloneSingleBranch "" (sprintf "%s/%s.git" gitHome gitName) "gh-pages" tempDocsDir
-    DocFx.build (fun p -> p.WithCommon(fun o -> { o with DocFxPath = docFxToolPath }))
+    DocFx.exec
+        (fun p -> { p with DocFxPath = docFxToolPath })
+        (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json")
+        ""
     Git.Staging.stageAll tempDocsDir
     Git.Commit.exec tempDocsDir (sprintf "Update generated documentation for version %s" release.NugetVersion)
     Git.Branches.push tempDocsDir
@@ -226,4 +234,4 @@ Target.create "All" ignore
     ==> "PublishNuget"
     ==> "Release"
 
-Target.runOrDefault "All"
+Target.runOrDefaultWithArguments "All"

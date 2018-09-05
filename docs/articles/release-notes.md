@@ -1,4 +1,4 @@
-#### 1.3.0-beta001 - Unreleased
+#### 1.3.0-beta001 - 05.09.2018
 
 * Disposable X-Road handlers
 * Use `Microsoft.AspNetCore.Routing` package for mapping requests.
@@ -9,6 +9,7 @@
 * Configurable soap binding address location.
 * Support qualified namespaces in XML schemas.
 * Support `object` (everything fits) types as long as runtime types used are defined in the schema.
+* Basic support of SOAP 1.2 messages.
 
 #### 1.2.6 - 12.04.2018
 
