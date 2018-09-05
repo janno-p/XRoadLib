@@ -1,0 +1,541 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title> </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content=" ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+
+<h4 id="130-beta001---05092018">1.3.0-beta001 - 05.09.2018</h4>
+<ul>
+<li>Disposable X-Road handlers</li>
+<li>Use <code>Microsoft.AspNetCore.Routing</code> package for mapping requests.</li>
+<li>Some support for SOAP messages without X-Road message protocol specifics.</li>
+<li>Removed <code>XRoadCommonHeader</code>, use <code>IXRoadUniversalHeader</code> as replacement for common interface.</li>
+<li>Configurable wrapper element names in request and response definitions.</li>
+<li>Configurable service, port, binding and port type names.</li>
+<li>Configurable soap binding address location.</li>
+<li>Support qualified namespaces in XML schemas.</li>
+<li>Support <code>object</code> (everything fits) types as long as runtime types used are defined in the schema.</li>
+<li>Basic support of SOAP 1.2 messages.</li>
+</ul>
+<h4 id="126---12042018">1.2.6 - 12.04.2018</h4>
+<ul>
+<li>Add <code>start-info</code> token to MTOM/XOP message <code>Content-Type</code> header.</li>
+</ul>
+<h4 id="125---20032018">1.2.5 - 20.03.2018</h4>
+<ul>
+<li>Fix error messages.</li>
+</ul>
+<h4 id="124---19032018">1.2.4 - 19.03.2018</h4>
+<ul>
+<li>Fix regression.</li>
+</ul>
+<h4 id="123---19032018">1.2.3 - 19.03.2018</h4>
+<ul>
+<li>More specific contract violation exceptions.</li>
+<li>Operation input/output binary serialization mode configurable via <code>XRoadServiceAttribute</code> attribute.</li>
+<li>Property MTOM/XOP serialization configurable via <code>XRoadXmlElementAttribute</code> and <code>XRoadXmlArrayItemAttribute</code> attributes.</li>
+</ul>
+<h4 id="122---18032018">1.2.2 - 18.03.2018</h4>
+<ul>
+<li>Fix duplicate namespace imports issue in generated service description.</li>
+<li>Fix empty string tag deserialization (returns empty string instead of null).</li>
+<li>Fix deserialization of array with merged content and empty values.</li>
+<li>New exception type <code>SchemaDefinitionException</code> which describes issues in schema definitions on server side.</li>
+<li>New exception type <code>ContractViolationException</code> which describes issues in incoming requests where message differs from service description.</li>
+<li>New exception type <code>InvalidQueryException</code> which describes propblems with messages which break SOAP specification.</li>
+<li>Refactor usage of existing exception types to use introduced exception types.</li>
+</ul>
+<h4 id="121---07032018">1.2.1 - 07.03.2018</h4>
+<ul>
+<li>Namespace imports should not contain defined schemas.</li>
+</ul>
+<h4 id="120---07032018">1.2.0 - 07.03.2018</h4>
+<ul>
+<li>Fix common header mapping to legacy header types.</li>
+<li>Fix missing namespace imports when no usages in schemas.</li>
+</ul>
+<h4 id="120-alpha001---01032018">1.2.0-alpha001 - 01.03.2018</h4>
+<ul>
+<li>Separated packages for Asp.Net and Asp.Net Core platform support.</li>
+<li>Removed <code>System.Web.Services</code> dependency.</li>
+</ul>
+<h4 id="118---28022018">1.1.8 - 28.02.2018</h4>
+<ul>
+<li>Use <code>XRoadContext</code> parameter instead of <code>HttpContext</code> in AspNetCore application X-Road handler virtual methods.</li>
+<li>Improved AspNetCore middleware configuration options.</li>
+</ul>
+<h4 id="117---27022018">1.1.7 - 27.02.2018</h4>
+<ul>
+<li>Separate net461 packaging.</li>
+</ul>
+<h4 id="116---27022018">1.1.6 - 27.02.2018</h4>
+<ul>
+<li>Fix regression in enum deserialization.</li>
+</ul>
+<h4 id="115---27022018">1.1.5 - 27.02.2018</h4>
+<ul>
+<li>Fix enum deserialization of self-closing element tags.</li>
+</ul>
+<h4 id="114---19022018">1.1.4 - 19.02.2018</h4>
+<ul>
+<li>Fix default property comparer.</li>
+</ul>
+<h4 id="113---16022018">1.1.3 - 16.02.2018</h4>
+<ul>
+<li>Common definition for all protocol versions.</li>
+<li>Move more properties and methods to service manager interface.</li>
+<li>EmptyContentDefinition type.</li>
+<li>More service execution options.</li>
+</ul>
+<h4 id="112---15022018">1.1.2 - 15.02.2018</h4>
+<ul>
+<li>Allow operation filter to override visibility of operations hidden by schema exporter.</li>
+</ul>
+<h4 id="111---15022018">1.1.1 - 15.02.2018</h4>
+<ul>
+<li><code>MergeContentAttribute</code> should be usable on fields, parameters and return values.</li>
+<li>Fix <code>UseXop</code> detection regression.</li>
+</ul>
+<h4 id="110---15022018">1.1.0 - 15.02.2018</h4>
+<ul>
+<li>Removed XRoadOptional attribute which is replaced by element, array and array item specific attributes.</li>
+<li>Added XRoadXmlElementAttribute which extends XmlElementAttribute to support <code>IsOptional</code> property.</li>
+<li>Added XRoadXmlArrayAttribute which extends XmlArrayAttribute to support <code>IsOptional</code> property.</li>
+<li>Added XRoadXmlArrayItemAttribute which extends XmlArrayItemAttribute to support <code>MinOccurs</code> and <code>MaxOccurs</code> properties.</li>
+<li>Refactored <code>ContentDefinition</code> type to support better array definitions.</li>
+<li>Refactored <code>XRoadRequest</code> and <code>XRoadProtocol</code> types into combined <code>ServiceManager</code> type.</li>
+<li>Optionally add implicit X-Road title annotation via configuration setting.</li>
+<li>Filter operations from service description.</li>
+</ul>
+<h4 id="103---27102017">1.0.3 - 27.10.2017</h4>
+<ul>
+<li>Fix regression in response element definition.</li>
+</ul>
+<h4 id="102---27102017">1.0.2 - 27.10.2017</h4>
+<ul>
+<li>Add missing namespace prefix for multipart message header definition.</li>
+<li>Take into account <code>MergeContent</code> value when providing definitions of request and response elements.</li>
+<li>Fix exception when no service version element is expected in definition.</li>
+</ul>
+<h4 id="101---13102017">1.0.1 - 13.10.2017</h4>
+<ul>
+<li>Annotation elements appliable to enumeration types and fields.</li>
+<li>Fix xrd:techNotes annotation.</li>
+</ul>
+<h4 id="100---12102017">1.0.0 - 12.10.2017</h4>
+<ul>
+<li>Remove unnecessary XML namespace prefix from WSDL.</li>
+<li>Add X-Road specific documentation elements.</li>
+<li>Assembly strong name key changed.</li>
+<li>Upgrade to .NET Standard 2.0.</li>
+</ul>
+<h4 id="100-beta042---22022017">1.0.0-beta042 - 22.02.2017</h4>
+<ul>
+<li>Fix NuGet publishing.</li>
+<li>Remove duplicate entries from API reference.</li>
+</ul>
+<h4 id="100-beta041---22022017">1.0.0-beta041 - 22.02.2017</h4>
+<ul>
+<li>Improve extensibility of base handlers.</li>
+</ul>
+<h4 id="100-beta040---30112016">1.0.0-beta040 - 30.11.2016</h4>
+<ul>
+<li>Fix Content-Type header value of <code>application/xop+xml</code> message root part.</li>
+</ul>
+<h4 id="100-beta039---29112016">1.0.0-beta039 - 29.11.2016</h4>
+<ul>
+<li>Extension package to support Google Protocol Buffers serialization.</li>
+</ul>
+<h4 id="100-beta038---22112016">1.0.0-beta038 - 22.11.2016</h4>
+<ul>
+<li>Allow overriding of default IHttpHandler.ProcessRequest method.</li>
+</ul>
+<h4 id="100-beta037---21112016">1.0.0-beta037 - 21.11.2016</h4>
+<ul>
+<li>Fix base64 encoding excess memory allocation problem.</li>
+</ul>
+<h4 id="100-beta036---13102016">1.0.0-beta036 - 13.10.2016</h4>
+<ul>
+<li>Fix regression when using meta services.</li>
+</ul>
+<h4 id="100-beta035---13102016">1.0.0-beta035 - 13.10.2016</h4>
+<ul>
+<li>Use explicit target namespace prefix instead of default in service description.</li>
+<li>Use highest supported version of serializers for meta services.</li>
+<li>Fix base64 attachment serialization bug: insert line breaks after every 76 characters.</li>
+</ul>
+<h4 id="100-beta034---29092016">1.0.0-beta034 - 29.09.2016</h4>
+<ul>
+<li>Fix X-Road header serialization error when serializing required header with missing value.</li>
+<li>Fix X-Road protocol name not assigned bug.</li>
+</ul>
+<h4 id="100-beta033---29092016">1.0.0-beta033 - 29.09.2016</h4>
+<ul>
+<li>Improved customization support for X-Road message headers.</li>
+</ul>
+<h4 id="100-beta032---28092016">1.0.0-beta032 - 28.09.2016</h4>
+<ul>
+<li>Refactor all customizations to ISchemaExporter.</li>
+</ul>
+<h4 id="100-beta031---23092016">1.0.0-beta031 - 23.09.2016</h4>
+<ul>
+<li>Improve namespace dependency management in service descriptions.</li>
+<li>Fix parsing of X-Road message protocol version 4.0 response headers.</li>
+</ul>
+<h4 id="100-beta030---22092016">1.0.0-beta030 - 22.09.2016</h4>
+<ul>
+<li>Fix regression in listMethods service.</li>
+</ul>
+<h4 id="100-beta029---22092016">1.0.0-beta029 - 22.09.2016</h4>
+<ul>
+<li>New X-Road fault structure for message protocol version 4.0.</li>
+<li>Fix regression: remove type attribute from RPC/Encoded root element.</li>
+<li>Deprecate custom CData-based escaping in preference to HTML encoded special characters.</li>
+<li>Fix SOAP Fault parsing when details contains XML.</li>
+</ul>
+<h4 id="100-beta028---20092016">1.0.0-beta028 - 20.09.2016</h4>
+<ul>
+<li>Use customized type name when searching runtime types from contract assembly.</li>
+</ul>
+<h4 id="100-beta027---20092016">1.0.0-beta027 - 20.09.2016</h4>
+<ul>
+<li>Configuration option to ignore type attributes in content definitions.</li>
+</ul>
+<h4 id="100-beta026---19092016">1.0.0-beta026 - 19.09.2016</h4>
+<ul>
+<li>Fix request serialization/deserialization issues for inherited types.</li>
+</ul>
+<h4 id="100-beta025---19092016">1.0.0-beta025 - 19.09.2016</h4>
+<ul>
+<li>Separate explicit type attribute serialization logic for request elements.</li>
+</ul>
+<h4 id="100-beta024---16082016">1.0.0-beta024 - 16.08.2016</h4>
+<ul>
+<li>Trim quotes from content type header charset.</li>
+</ul>
+<h4 id="100-beta023---08082016">1.0.0-beta023 - 08.08.2016</h4>
+<ul>
+<li>Add schemaLocation attribute to Xml Schema import element.</li>
+</ul>
+<h4 id="100-beta022---17072016">1.0.0-beta022 - 17.07.2016</h4>
+<ul>
+<li>Make .NET Core features available for .NET 4.5.1.</li>
+</ul>
+<h4 id="100-beta021---12072016">1.0.0-beta021 - 12.07.2016</h4>
+<ul>
+<li>Add .NET Core support.</li>
+<li>Validate presence of required elements inside sequences.</li>
+<li>Optional namespace override for service root element.</li>
+<li>Fixes for non-seekable input stream.</li>
+</ul>
+<h4 id="100-beta020---19042016">1.0.0-beta020 - 19.04.2016</h4>
+<ul>
+<li>Fix service description for rootless list type response element.</li>
+</ul>
+<h4 id="100-beta019---13042016">1.0.0-beta019 - 13.04.2016</h4>
+<ul>
+<li>Better validation for XML Schema date types.</li>
+</ul>
+<h4 id="100-beta018---07042016">1.0.0-beta018 - 07.04.2016</h4>
+<ul>
+<li>Fix serialization of RPC/Encoded style header elements.</li>
+</ul>
+<h4 id="100-beta017---02042016">1.0.0-beta017 - 02.04.2016</h4>
+<ul>
+<li>Fix parameter name of XRoadProtocol40 constructor.</li>
+<li>Add informational version number to released assembly.</li>
+<li>Remove byte order mark from outgoing messages.</li>
+</ul>
+<h4 id="100-beta016---01042016">1.0.0-beta016 - 01.04.2016</h4>
+<ul>
+<li>Fix identifiers ToString() methods.</li>
+<li>Add optional inner exception argument to XRoadFaultException type constructor.</li>
+</ul>
+<h4 id="100-beta015---29032016">1.0.0-beta015 - 29.03.2016</h4>
+<ul>
+<li>Fix serialization bug of testSystem response when X-Road message protocol version is not supported.</li>
+</ul>
+<h4 id="100-beta014---23032016">1.0.0-beta014 - 23.03.2016</h4>
+<ul>
+<li>Fix deserialization bug when element with xsi:nil attribute has content.</li>
+</ul>
+<h4 id="100-beta013---22032016">1.0.0-beta013 - 22.03.2016</h4>
+<ul>
+<li>Fix X-Road namespace import when title attributes are used.</li>
+</ul>
+<h4 id="100-beta012---17032016">1.0.0-beta012 - 17.03.2016</h4>
+<ul>
+<li>Fix object reference exception when no SchemaExporter is defined for protocol.</li>
+<li>Check type or operation namespace before creating type map (currently it allowed to use wrong namespaces for composite types).</li>
+</ul>
+<h4 id="100-beta011---15032016">1.0.0-beta011 - 15.03.2016</h4>
+<ul>
+<li>Fix types in RPC encoded messages.</li>
+<li>Remove contentType from xop:Include element.</li>
+</ul>
+<h4 id="100-beta010---10032016">1.0.0-beta010 - 10.03.2016</h4>
+<ul>
+<li>Add content length to XRoadMessage for write and read operations.</li>
+<li>Add definition property to allow optionally ignore array item element names.</li>
+<li>Fix MIME message output for Linux systems.</li>
+</ul>
+<h4 id="100-beta009---06032016">1.0.0-beta009 - 06.03.2016</h4>
+<ul>
+<li>Fix regression of 1.0.0-beta008.</li>
+<li>Refactor to use string interpolation instead of string.Format in error messages.</li>
+</ul>
+<h4 id="100-beta008---06032016">1.0.0-beta008 - 06.03.2016</h4>
+<ul>
+<li>Remove unused X-Road exceptions.</li>
+<li>Replace exception message of unsuccessful service detection.</li>
+</ul>
+<h4 id="100-beta007---04032016">1.0.0-beta007 - 04.03.2016</h4>
+<ul>
+<li>Fix XRoadRequest helper class.</li>
+<li>Add helper method to generate X-Road request ID-s.</li>
+</ul>
+<h4 id="100-beta006---04032016">1.0.0-beta006 - 04.03.2016</h4>
+<ul>
+<li>Fix XRoadRequest class to make POST requests instead of GET.</li>
+<li>Refactor X-Road meta services to handle them separately.</li>
+</ul>
+<h4 id="100-beta005---04032016">1.0.0-beta005 - 04.03.2016</h4>
+<ul>
+<li>Fix Xop binary content serialization bug.</li>
+<li>Fix deserialization of merged empty root element.</li>
+</ul>
+<h4 id="100-beta004---03032016">1.0.0-beta004 - 03.03.2016</h4>
+<ul>
+<li>Fix serialization/deserialization in reverse direction.</li>
+</ul>
+<h4 id="100-beta003---03032016">1.0.0-beta003 - 03.03.2016</h4>
+<ul>
+<li>Add X-Road v4.0 style non-technical faults.</li>
+<li>Alternative explicit non-technical fault representations.</li>
+</ul>
+<h4 id="100-beta002---19022016">1.0.0-beta002 - 19.02.2016</h4>
+<ul>
+<li>Multiple schemas in single WSDL file.</li>
+<li>Detect type dependency to filter out unused types from service description.</li>
+</ul>
+<h4 id="100-beta001---february-14-2016">1.0.0-beta001 - February 14 2016</h4>
+<ul>
+<li>Redesign X-Road protocol concept.</li>
+<li>Default protocol implementations for X-Road message protocol versions 2.0, 3.1 and 4.0.</li>
+<li>Improved customization of properties, types and methods.</li>
+<li>Customizable serialization processor.</li>
+<li>Better separation of encoded and literal styles.</li>
+<li>Type improvements: merged content and arrays without wrapper element.</li>
+<li>Clean attributes and support more existing attributes from System.Xml.Serialization namespace.</li>
+</ul>
+<h4 id="100-alpha020---january-26-2016">1.0.0-alpha020 - January 26 2016</h4>
+<ul>
+<li>Improve protocol v4.0 generated service description.</li>
+<li>Bug fix: add X-Road namespace to imports when title element is used in schema.</li>
+</ul>
+<h4 id="100-alpha019---january-25-2016">1.0.0-alpha019 - January 25 2016</h4>
+<ul>
+<li>Remove XRoadParameterAttribute in favor of XmlElementAttribute</li>
+<li>Rename default handlers.</li>
+<li>More customizations for collections.</li>
+<li>Add description for enumeration types.</li>
+</ul>
+<h4 id="100-alpha018---january-21-2016">1.0.0-alpha018 - January 21 2016</h4>
+<ul>
+<li>Bug: anonymous type name in service description.</li>
+</ul>
+<h4 id="100-alpha017---january-21-2016">1.0.0-alpha017 - January 21 2016</h4>
+<ul>
+<li>Add support for anonymous types.</li>
+<li>Fix error messages.</li>
+</ul>
+<h4 id="100-alpha016---january-20-2016">1.0.0-alpha016 - January 20 2016</h4>
+<ul>
+<li>Add basic handlers for data and service description requests.</li>
+<li>Fix bugs of previous releases.</li>
+</ul>
+<h4 id="100-alpha015---january-19-2016">1.0.0-alpha015 - January 19 2016</h4>
+<ul>
+<li>Refactor to use XName instead of XmlQualifiedName.</li>
+<li>Add deserializer for X-Road standard non-technical fault.</li>
+<li>Add deserializer for standard SOAP fault.</li>
+<li>Parameter name customization for contract parameters only.</li>
+<li>Remove protocol dependency from parameter name selection.</li>
+<li>Remove XRoadSerializer since it's buggy and is not needed by the library.</li>
+<li>Add helper method which deserializes SOAP message and handles faults when present.</li>
+</ul>
+<h4 id="100-alpha014---january-18-2016">1.0.0-alpha014 - January 18 2016</h4>
+<ul>
+<li>Add support for X-Road v6 and X-Road messaging protcol v4.0.</li>
+<li>Redesign support for different protocol versions.</li>
+<li>Add interfaces to override default type options.</li>
+<li>Unhandled SOAP header elements as XElement instead of string representation.</li>
+</ul>
+<h4 id="100-alpha013---january-14-2016">1.0.0-alpha013 - January 14 2016</h4>
+<ul>
+<li>More annotation elements to types and elements.</li>
+<li>Accept XmlElementAttribute.DataType for parameter elements.</li>
+<li>Type content particle uses always sequence, but deserialization mode may vary.</li>
+</ul>
+<h4 id="100-alpha012---january-12-2016">1.0.0-alpha012 - January 12 2016</h4>
+<ul>
+<li>Fix strict parameter deserialization when xml template is not used.</li>
+<li>General request handler for X-Road data requests.</li>
+<li>Refactored serializer cache to deal with one assembly only.</li>
+<li>Bug fixes.</li>
+</ul>
+<h4 id="100-alpha011---january-11-2016">1.0.0-alpha011 - January 11 2016</h4>
+<ul>
+<li>Fix service root element name.</li>
+</ul>
+<h4 id="100-alpha010---january-11-2016">1.0.0-alpha010 - January 11 2016</h4>
+<ul>
+<li>Fix bug with custom operation type name format.</li>
+</ul>
+<h4 id="100-alpha009---january-11-2016">1.0.0-alpha009 - January 11 2016</h4>
+<ul>
+<li>Bug fix.</li>
+</ul>
+<h4 id="100-alpha008---january-11-2016">1.0.0-alpha008 - January 11 2016</h4>
+<ul>
+<li>Use <code>all</code> particle for non-strict operation types.</li>
+<li>Make <code>XRoadImportAttribute</code> protocol specific.</li>
+<li>Common interface for appliable attributes.</li>
+<li>Customize parameter names with global name provider.</li>
+</ul>
+<h4 id="100-alpha007---january-11-2016">1.0.0-alpha007 - January 11 2016</h4>
+<ul>
+<li>Allow protocol specific differences for schema import.</li>
+</ul>
+<h4 id="100-alpha006---january-11-2016">1.0.0-alpha006 - January 11 2016</h4>
+<ul>
+<li>Customize schema import namespaces and location through attribute parameter.</li>
+</ul>
+<h4 id="100-alpha005---january-11-2016">1.0.0-alpha005 - January 11 2016</h4>
+<ul>
+<li>Fix wrong version number in generated service description.</li>
+<li>Add properties to test of operation version limits are specified.</li>
+</ul>
+<h4 id="100-alpha004---january-11-2016">1.0.0-alpha004 - January 11 2016</h4>
+<ul>
+<li>Restore separate producer name attribute.</li>
+<li>Hide complexity of operation declarations in producer definition.</li>
+</ul>
+<h4 id="100-alpha003---january-11-2016">1.0.0-alpha003 - January 11 2016</h4>
+<ul>
+<li>More configuration options through contract assembly attributes.</li>
+<li>Layout attribute to control content particle and order of elements.</li>
+</ul>
+<h4 id="100-alpha002---january-7-2016">1.0.0-alpha002 - January 7 2016</h4>
+<ul>
+<li>Add SOAP specific helper methods.</li>
+<li>Add helper methods to resolve operation contracts.</li>
+</ul>
+<h4 id="100-alpha001---january-7-2016">1.0.0-alpha001 - January 7 2016</h4>
+<ul>
+<li>Initial release</li>
+<li>Extract common logic into separate project.</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/janno-p/XRoadLib/blob/master/docs/articles/release-notes.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

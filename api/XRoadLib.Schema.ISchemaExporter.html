@@ -1,0 +1,587 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface ISchemaExporter
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface ISchemaExporter
+   ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="XRoadLib.Schema.ISchemaExporter">
+  
+  
+  <h1 id="XRoadLib_Schema_ISchemaExporter" data-uid="XRoadLib.Schema.ISchemaExporter" class="text-break">Interface ISchemaExporter
+  </h1>
+  <div class="markdown level0 summary"><p>Provides configuration hooks for customizing contract serialization
+and definitions.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="XRoadLib.Schema.html">XRoadLib.Schema</a></h6>
+  <h6><strong>Assembly</strong>: XRoadLib.dll</h6>
+  <h5 id="XRoadLib_Schema_ISchemaExporter_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface ISchemaExporter</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_XRoadNamespace.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.XRoadNamespace%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L20">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_XRoadNamespace_" data-uid="XRoadLib.Schema.ISchemaExporter.XRoadNamespace*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_XRoadNamespace" data-uid="XRoadLib.Schema.ISchemaExporter.XRoadNamespace">XRoadNamespace</h4>
+  <div class="markdown level1 summary"><p>X-Road specification namespace of the message protocol version.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string XRoadNamespace { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_XRoadPrefix.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.XRoadPrefix%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L15">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_XRoadPrefix_" data-uid="XRoadLib.Schema.ISchemaExporter.XRoadPrefix*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_XRoadPrefix" data-uid="XRoadLib.Schema.ISchemaExporter.XRoadPrefix">XRoadPrefix</h4>
+  <div class="markdown level1 summary"><p>Preferred X-Road namespace prefix of the message protocol version.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string XRoadPrefix { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportFaultDefinition_XRoadLib_Schema_FaultDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportFaultDefinition(XRoadLib.Schema.FaultDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L50">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportFaultDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportFaultDefinition*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportFaultDefinition_XRoadLib_Schema_FaultDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportFaultDefinition(XRoadLib.Schema.FaultDefinition)">ExportFaultDefinition(FaultDefinition)</h4>
+  <div class="markdown level1 summary"><p>Configuration hook for overriding default non-technical fault settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportFaultDefinition(FaultDefinition faultDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.FaultDefinition.html">FaultDefinition</a></td>
+        <td><span class="parametername">faultDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportHeaderDefinition_XRoadLib_Schema_HeaderDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportHeaderDefinition(XRoadLib.Schema.HeaderDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L66">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportHeaderDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportHeaderDefinition*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportHeaderDefinition_XRoadLib_Schema_HeaderDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportHeaderDefinition(XRoadLib.Schema.HeaderDefinition)">ExportHeaderDefinition(HeaderDefinition)</h4>
+  <div class="markdown level1 summary"><p>Customize X-Road message header elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportHeaderDefinition(HeaderDefinition headerDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.HeaderDefinition.html">HeaderDefinition</a></td>
+        <td><span class="parametername">headerDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportOperationDefinition_XRoadLib_Schema_OperationDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportOperationDefinition(XRoadLib.Schema.OperationDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L25">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportOperationDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportOperationDefinition*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportOperationDefinition_XRoadLib_Schema_OperationDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportOperationDefinition(XRoadLib.Schema.OperationDefinition)">ExportOperationDefinition(OperationDefinition)</h4>
+  <div class="markdown level1 summary"><p>Configuration hook for overriding default operation settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportOperationDefinition(OperationDefinition operationDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.OperationDefinition.html">OperationDefinition</a></td>
+        <td><span class="parametername">operationDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportPropertyDefinition_XRoadLib_Schema_PropertyDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportPropertyDefinition(XRoadLib.Schema.PropertyDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L30">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportPropertyDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportPropertyDefinition*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportPropertyDefinition_XRoadLib_Schema_PropertyDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportPropertyDefinition(XRoadLib.Schema.PropertyDefinition)">ExportPropertyDefinition(PropertyDefinition)</h4>
+  <div class="markdown level1 summary"><p>Configuration hook for overriding default property settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportPropertyDefinition(PropertyDefinition propertyDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.PropertyDefinition.html">PropertyDefinition</a></td>
+        <td><span class="parametername">propertyDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportProtocolDefinition_XRoadLib_Schema_ProtocolDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportProtocolDefinition(XRoadLib.Schema.ProtocolDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L71">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportProtocolDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportProtocolDefinition*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportProtocolDefinition_XRoadLib_Schema_ProtocolDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportProtocolDefinition(XRoadLib.Schema.ProtocolDefinition)">ExportProtocolDefinition(ProtocolDefinition)</h4>
+  <div class="markdown level1 summary"><p>Configure protocol global settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.ProtocolDefinition.html">ProtocolDefinition</a></td>
+        <td><span class="parametername">protocolDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportRequestDefinition_XRoadLib_Schema_RequestDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportRequestDefinition(XRoadLib.Schema.RequestDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L45">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportRequestDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportRequestDefinition*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportRequestDefinition_XRoadLib_Schema_RequestDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportRequestDefinition(XRoadLib.Schema.RequestDefinition)">ExportRequestDefinition(RequestDefinition)</h4>
+  <div class="markdown level1 summary"><p>Configuration hook for overriding default request element settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportRequestDefinition(RequestDefinition requestDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.RequestDefinition.html">RequestDefinition</a></td>
+        <td><span class="parametername">requestDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportResponseDefinition_XRoadLib_Schema_ResponseDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportResponseDefinition(XRoadLib.Schema.ResponseDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L40">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportResponseDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportResponseDefinition*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportResponseDefinition_XRoadLib_Schema_ResponseDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportResponseDefinition(XRoadLib.Schema.ResponseDefinition)">ExportResponseDefinition(ResponseDefinition)</h4>
+  <div class="markdown level1 summary"><p>Configuration hook for overriding default response element settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportResponseDefinition(ResponseDefinition responseDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.ResponseDefinition.html">ResponseDefinition</a></td>
+        <td><span class="parametername">responseDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportSchemaLocation_System_String_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportSchemaLocation(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L55">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportSchemaLocation_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportSchemaLocation*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportSchemaLocation_System_String_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportSchemaLocation(System.String)">ExportSchemaLocation(String)</h4>
+  <div class="markdown level1 summary"><p>Provide custom schema locations.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string ExportSchemaLocation(string namespaceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">namespaceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportServiceDescription_XRoadLib_Wsdl_ServiceDescription_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportServiceDescription(XRoadLib.Wsdl.ServiceDescription)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L61">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportServiceDescription_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportServiceDescription*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportServiceDescription_XRoadLib_Wsdl_ServiceDescription_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportServiceDescription(XRoadLib.Wsdl.ServiceDescription)">ExportServiceDescription(ServiceDescription)</h4>
+  <div class="markdown level1 summary"><p>Allows each message protocol implementation to customize service description document
+before publishing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportServiceDescription(ServiceDescription serviceDescription)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Wsdl.ServiceDescription.html">ServiceDescription</a></td>
+        <td><span class="parametername">serviceDescription</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_ExportTypeDefinition_XRoadLib_Schema_TypeDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.ExportTypeDefinition(XRoadLib.Schema.TypeDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L35">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_ExportTypeDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportTypeDefinition*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_ExportTypeDefinition_XRoadLib_Schema_TypeDefinition_" data-uid="XRoadLib.Schema.ISchemaExporter.ExportTypeDefinition(XRoadLib.Schema.TypeDefinition)">ExportTypeDefinition(TypeDefinition)</h4>
+  <div class="markdown level1 summary"><p>Configuration hook for overriding default type settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ExportTypeDefinition(TypeDefinition typeDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.TypeDefinition.html">TypeDefinition</a></td>
+        <td><span class="parametername">typeDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter_IsQualifiedElementDefault_System_String_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter.IsQualifiedElementDefault(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L76">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_ISchemaExporter_IsQualifiedElementDefault_" data-uid="XRoadLib.Schema.ISchemaExporter.IsQualifiedElementDefault*"></a>
+  <h4 id="XRoadLib_Schema_ISchemaExporter_IsQualifiedElementDefault_System_String_" data-uid="XRoadLib.Schema.ISchemaExporter.IsQualifiedElementDefault(System.String)">IsQualifiedElementDefault(String)</h4>
+  <div class="markdown level1 summary"><p>Returns <code>true</code> if given namespace defines qualified element names by default.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool IsQualifiedElementDefault(string namespaceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">namespaceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_ISchemaExporter.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.ISchemaExporter%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/ISchemaExporter.cs/#L10" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

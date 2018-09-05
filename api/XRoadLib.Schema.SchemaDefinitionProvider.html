@@ -1,0 +1,859 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class SchemaDefinitionProvider
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class SchemaDefinitionProvider
+   ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="XRoadLib.Schema.SchemaDefinitionProvider">
+  
+  
+  <h1 id="XRoadLib_Schema_SchemaDefinitionProvider" data-uid="XRoadLib.Schema.SchemaDefinitionProvider" class="text-break">Class SchemaDefinitionProvider
+  </h1>
+  <div class="markdown level0 summary"><p>Extracts serialization/definition details from runtime types and methods.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">SchemaDefinitionProvider</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="XRoadLib.Schema.html">XRoadLib.Schema</a></h6>
+  <h6><strong>Assembly</strong>: XRoadLib.dll</h6>
+  <h5 id="XRoadLib_Schema_SchemaDefinitionProvider_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SchemaDefinitionProvider</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider__ctor_XRoadLib_Schema_ISchemaExporter_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.%23ctor(XRoadLib.Schema.ISchemaExporter)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L27">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider__ctor_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.#ctor*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider__ctor_XRoadLib_Schema_ISchemaExporter_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.#ctor(XRoadLib.Schema.ISchemaExporter)">SchemaDefinitionProvider(ISchemaExporter)</h4>
+  <div class="markdown level1 summary"><p>Initializes definition builder.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SchemaDefinitionProvider(ISchemaExporter schemaExporter)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.ISchemaExporter.html">ISchemaExporter</a></td>
+        <td><span class="parametername">schemaExporter</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_ProtocolDefinition.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.ProtocolDefinition%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L22">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_ProtocolDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.ProtocolDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_ProtocolDefinition" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.ProtocolDefinition">ProtocolDefinition</h4>
+  <div class="markdown level1 summary"><p>Global settings for protocol instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ProtocolDefinition ProtocolDefinition { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.ProtocolDefinition.html">ProtocolDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_ExportServiceDescription_XRoadLib_Wsdl_ServiceDescription_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.ExportServiceDescription(XRoadLib.Wsdl.ServiceDescription)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L198">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_ExportServiceDescription_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.ExportServiceDescription*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_ExportServiceDescription_XRoadLib_Wsdl_ServiceDescription_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.ExportServiceDescription(XRoadLib.Wsdl.ServiceDescription)">ExportServiceDescription(ServiceDescription)</h4>
+  <div class="markdown level1 summary"><p>Customize service description before presentation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ExportServiceDescription(ServiceDescription serviceDescription)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Wsdl.ServiceDescription.html">ServiceDescription</a></td>
+        <td><span class="parametername">serviceDescription</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetCollectionDefinition_XRoadLib_Schema_TypeDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetCollectionDefinition(XRoadLib.Schema.TypeDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L55">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetCollectionDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetCollectionDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetCollectionDefinition_XRoadLib_Schema_TypeDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetCollectionDefinition(XRoadLib.Schema.TypeDefinition)">GetCollectionDefinition(TypeDefinition)</h4>
+  <div class="markdown level1 summary"><p>Initializes default collection type definition and applies customizations (if any).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionDefinition GetCollectionDefinition(TypeDefinition typeDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.TypeDefinition.html">TypeDefinition</a></td>
+        <td><span class="parametername">typeDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.CollectionDefinition.html">CollectionDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetFaultDefinition.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetFaultDefinition%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L176">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetFaultDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetFaultDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetFaultDefinition" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetFaultDefinition">GetFaultDefinition()</h4>
+  <div class="markdown level1 summary"><p>Initializes default fault definition and applies customizations (if any).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FaultDefinition GetFaultDefinition()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.FaultDefinition.html">FaultDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetOperationDefinition_System_Reflection_MethodInfo_System_Xml_Linq_XName_System_Nullable_System_UInt32__.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetOperationDefinition(System.Reflection.MethodInfo%2CSystem.Xml.Linq.XName%2CSystem.Nullable%7BSystem.UInt32%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L163">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetOperationDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetOperationDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetOperationDefinition_System_Reflection_MethodInfo_System_Xml_Linq_XName_System_Nullable_System_UInt32__" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetOperationDefinition(System.Reflection.MethodInfo,System.Xml.Linq.XName,System.Nullable{System.UInt32})">GetOperationDefinition(MethodInfo, XName, Nullable&lt;UInt32&gt;)</h4>
+  <div class="markdown level1 summary"><p>Initializes default opeartion definition and applies customizations (if any).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XName qualifiedName, uint? version)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Reflection.MethodInfo</span></td>
+        <td><span class="parametername">methodInfo</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Xml.Linq.XName</span></td>
+        <td><span class="parametername">qualifiedName</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.UInt32</span>&gt;</td>
+        <td><span class="parametername">version</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.OperationDefinition.html">OperationDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetPropertyDefinition_System_Reflection_PropertyInfo_XRoadLib_Schema_TypeDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetPropertyDefinition(System.Reflection.PropertyInfo%2CXRoadLib.Schema.TypeDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L122">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetPropertyDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetPropertyDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetPropertyDefinition_System_Reflection_PropertyInfo_XRoadLib_Schema_TypeDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetPropertyDefinition(System.Reflection.PropertyInfo,XRoadLib.Schema.TypeDefinition)">GetPropertyDefinition(PropertyInfo, TypeDefinition)</h4>
+  <div class="markdown level1 summary"><p>Initializes default property definition and applies customizations (if any).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PropertyDefinition GetPropertyDefinition(PropertyInfo propertyInfo, TypeDefinition typeDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Reflection.PropertyInfo</span></td>
+        <td><span class="parametername">propertyInfo</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.TypeDefinition.html">TypeDefinition</a></td>
+        <td><span class="parametername">typeDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.PropertyDefinition.html">PropertyDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetRequestDefinition_XRoadLib_Schema_OperationDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetRequestDefinition(XRoadLib.Schema.OperationDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L134">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetRequestDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetRequestDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetRequestDefinition_XRoadLib_Schema_OperationDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetRequestDefinition(XRoadLib.Schema.OperationDefinition)">GetRequestDefinition(OperationDefinition)</h4>
+  <div class="markdown level1 summary"><p>Initializes default request element definition and applies customizations (if any).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RequestDefinition GetRequestDefinition(OperationDefinition operationDefinition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.OperationDefinition.html">OperationDefinition</a></td>
+        <td><span class="parametername">operationDefinition</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.RequestDefinition.html">RequestDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetResponseDefinition_XRoadLib_Schema_OperationDefinition_System_Nullable_XRoadLib_Schema_XRoadFaultPresentation__.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetResponseDefinition(XRoadLib.Schema.OperationDefinition%2CSystem.Nullable%7BXRoadLib.Schema.XRoadFaultPresentation%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L147">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetResponseDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetResponseDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetResponseDefinition_XRoadLib_Schema_OperationDefinition_System_Nullable_XRoadLib_Schema_XRoadFaultPresentation__" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetResponseDefinition(XRoadLib.Schema.OperationDefinition,System.Nullable{XRoadLib.Schema.XRoadFaultPresentation})">GetResponseDefinition(OperationDefinition, Nullable&lt;XRoadFaultPresentation&gt;)</h4>
+  <div class="markdown level1 summary"><p>Initializes default response element definition and applies customizations (if any).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ResponseDefinition GetResponseDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = default(XRoadFaultPresentation? ))</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.OperationDefinition.html">OperationDefinition</a></td>
+        <td><span class="parametername">operationDefinition</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<a class="xref" href="XRoadLib.Schema.XRoadFaultPresentation.html">XRoadFaultPresentation</a>&gt;</td>
+        <td><span class="parametername">xRoadFaultPresentation</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.ResponseDefinition.html">ResponseDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetSchemaLocation_System_String_XRoadLib_Schema_ISchemaExporter_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetSchemaLocation(System.String%2CXRoadLib.Schema.ISchemaExporter)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L188">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetSchemaLocation_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetSchemaLocation*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetSchemaLocation_System_String_XRoadLib_Schema_ISchemaExporter_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetSchemaLocation(System.String,XRoadLib.Schema.ISchemaExporter)">GetSchemaLocation(String, ISchemaExporter)</h4>
+  <div class="markdown level1 summary"><p>Get schema location of specified schema namespace.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GetSchemaLocation(string namespaceName, ISchemaExporter extension = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">namespaceName</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.ISchemaExporter.html">ISchemaExporter</a></td>
+        <td><span class="parametername">extension</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetSimpleTypeDefinition__1_System_String_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetSimpleTypeDefinition%60%601(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L37">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetSimpleTypeDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetSimpleTypeDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetSimpleTypeDefinition__1_System_String_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetSimpleTypeDefinition``1(System.String)">GetSimpleTypeDefinition&lt;T&gt;(String)</h4>
+  <div class="markdown level1 summary"><p>Initializes default simple type definition and applies customizations (if any).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TypeDefinition GetSimpleTypeDefinition&lt;T&gt;(string typeName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">typeName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.TypeDefinition.html">TypeDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetTypeDefinition_System_Type_System_String_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetTypeDefinition(System.Type%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L72">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetTypeDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetTypeDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetTypeDefinition_System_Type_System_String_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetTypeDefinition(System.Type,System.String)">GetTypeDefinition(Type, String)</h4>
+  <div class="markdown level1 summary"><p>Initializes default type definition and applies customizations (if any).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TypeDefinition GetTypeDefinition(Type type, string typeName = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">type</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">typeName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.TypeDefinition.html">TypeDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadHeaderDefinition.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadHeaderDefinition%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L216">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadHeaderDefinition_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadHeaderDefinition*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadHeaderDefinition" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadHeaderDefinition">GetXRoadHeaderDefinition()</h4>
+  <div class="markdown level1 summary"><p>Customize X-Road message header elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HeaderDefinition GetXRoadHeaderDefinition()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Schema.HeaderDefinition.html">HeaderDefinition</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadNamespace.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadNamespace%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L211">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadNamespace_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadNamespace*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadNamespace" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadNamespace">GetXRoadNamespace()</h4>
+  <div class="markdown level1 summary"><p>Get main namespace which defines X-Road message protocol specifics.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GetXRoadNamespace()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadPrefix.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadPrefix%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L206">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadPrefix_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadPrefix*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_GetXRoadPrefix" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.GetXRoadPrefix">GetXRoadPrefix()</h4>
+  <div class="markdown level1 summary"><p>Get preferred X-Road namespace prefix for service description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GetXRoadPrefix()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider_IsQualifiedElementDefault_System_String_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider.IsQualifiedElementDefault(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L238">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_SchemaDefinitionProvider_IsQualifiedElementDefault_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.IsQualifiedElementDefault*"></a>
+  <h4 id="XRoadLib_Schema_SchemaDefinitionProvider_IsQualifiedElementDefault_System_String_" data-uid="XRoadLib.Schema.SchemaDefinitionProvider.IsQualifiedElementDefault(System.String)">IsQualifiedElementDefault(String)</h4>
+  <div class="markdown level1 summary"><p>Returns <code>true</code> if given namespace defines qualified element names by default.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool IsQualifiedElementDefault(string namespaceName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">namespaceName</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_SchemaDefinitionProvider.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.SchemaDefinitionProvider%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/SchemaDefinitionProvider.cs/#L15" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

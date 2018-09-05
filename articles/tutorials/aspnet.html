@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Sample tutorial </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Sample tutorial ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="sample-tutorial">Sample tutorial</h1>
+
+<p>In this tutorial we will create simple X-Road service and set up a complete infrastructure to make that service
+available for X-Road infrastucture. This includes:</p>
+<ul>
+<li><p>Describe types and methods which describe and implement X-Road operation.</p>
+</li>
+<li><p>Set up service request handler which listens for incoming messages and executes specified operations.</p>
+</li>
+<li><p>Set up service description handler to provide WSDL document which represents technical specification for the
+X-Road operation.</p>
+</li>
+</ul>
+<h2 id="create-new-solution">Create new solution</h2>
+<p>Create new empty ASP.NET Web application <code>Calculator</code> in Visual Studio. XRoadLib is designed to be used with ASP.NET
+applications, but it shouldn't be difficult to use it in alternative setups. This tutorial assumes we're working on
+ASP.NET Web application. Add reference to <code>XRoadLib</code> in web project.</p>
+<h2 id="contract-library">Contract library</h2>
+<p>Create empty library project <code>Calculator.Contract</code> to the solution, which defines service contracts for our
+application. Add reference to XRoadLib library using NuGet or local assembly file. In this project create new class
+<code>AddRequest</code> which represents main request type for our X-Road service.</p>
+<pre><code>[lang=csharp]
+using System.Xml.Serialization;
+using XRoadLib.Serialization;
+
+namespace Calculator.Contract
+{
+    public class AddRequest : XRoadSerializable
+    {
+        [XmlElement(Order = 1)]
+        public int X { get; set; }
+        
+        [XmlElement(Order = 2)]
+        public int Y { get; set; }
+    }
+}
+</code></pre>
+<p>Defined class describes <code>request</code> part of our operation message, which has two integer type arguments <code>X</code> and <code>Y</code>.
+XRoadLib defines its types as XML Schema sequences, which means the order of elements is important. By default XRoadLib
+orders elements by name. To use specific order we use <code>System.Xml.Serialization.XmlElementAttribute</code> attribute <code>Order</code>
+property. More advanced alternative to sort type properties, is to provide custom comparer for <code>TypeDefinition</code> through
+<code>ISchemaExporter</code> interface.</p>
+<p>Next we need to define contract for operation itself. For that create new interface in contract project named
+<code>ISumOfIntegers</code>.</p>
+<pre><code>[lang=csharp]
+using XRoadLib.Attributes;
+
+namespace Calculator.Contract
+{
+    public interface ISumOfIntegers
+    {
+        [XRoadService(&quot;SumOfIntegers&quot;)]
+        int Sum(AddRequest request);
+    }
+}
+</code></pre>
+<p>In here we defined new operation contract with input of type <code>AddRequest</code> and output of type <code>integer</code>. Currently XRoadLib
+allows at most 1 parameter for method interface which represents operation contract. Attribute
+<code>XRoadLib.Attributes.XRoadServiceAttribute</code> defines service code for X-Road operation which will be used in X-Road header
+to identify the service.</p>
+<h2 id="custom-x-road-protocol">Custom X-Road protocol</h2>
+<p>XRoadLib supports different X-Road message protocol versions, and allows to extend them to add provider specific details
+and configurations. Add new class to web project <code>CalculatorXRoadProtocol</code>:</p>
+<pre><code>[lang=csharp]
+using Calculator.Contract;
+using XRoadLib.Protocols;
+
+namespace Calculator.WebService
+{
+    public class CalculatorXRoadProtocol : XRoad31Protocol
+    {
+        public static readonly XRoadProtocol Instance = new CalculatorXRoadProtocol();
+
+        private CalculatorXRoadProtocol()
+            : base(&quot;calculator&quot;, &quot;http://calculator.x-road.eu/producer/&quot;)
+        { }
+
+        static CalculatorXRoadProtocol()
+        {
+            Instance.SetContractAssembly(typeof(AddRequest).Assembly, null);
+        }
+    }
+}
+</code></pre>
+<p>Here we specify that our Calculator application is based on X-Road message protocol version 3.1. We define our producer
+name and namespace. Since XRoadProtocol caches type specific information, its necessary to follow singleton pattern
+when creating instance of the protocol. Also, we need to bind contract assembly to protocol.</p>
+<p>If required, same web application can support multiple X-Road message protocols and have separate configurations for
+individual protocol instances.</p>
+<h2 id="service-contract-handler">Service contract handler</h2>
+<p>In this section we're going to create new handler which generates WSDL document according to service contract. Add new
+generic handler <code>wsdl.ashx</code> to the web project:</p>
+<pre><code>[lang=csharp]
+using XRoadLib.Handler;
+using XRoadLib.Protocols;
+
+namespace Calculator.WebService
+{
+    public class Wsdl : ServiceDescriptionHandlerBase
+    {
+        protected override XRoadProtocol Protocol =&gt; CalculatorXRoadProtocol.Instance;
+    }
+}
+</code></pre>
+<p><code>Wsdl</code> handler derives from <code>XRoadLib.Handler.ServiceDescriptionHandlerBase</code> which implements minimal service
+description handler for X-Road web service. To generate correct WSDL documentation, service description handler
+requires reference to implementing X-Road message protocol.</p>
+<p>After this step we can compile the project and navigate to service description handler with web browser, which should
+display valid service description document for our contract.</p>
+<h2 id="service-request-handler">Service request handler</h2>
+<p>Final step in our small tutorial is to create handler which serves incoming requests. Since we're missing the
+implementation of the service, lets add new class to web project named <code>SumOfIntegersWebService</code>:</p>
+<pre><code>[lang=csharp]
+using Calculator.Contract;
+
+namespace Calculator.WebService
+{
+    public class SumOfIntegersWebService : ISumOfIntegers
+    {
+        public int Sum(AddRequest request)
+        {
+            return request.X + request.Y;
+        }
+    }
+}
+</code></pre>
+<p>Last step is to create service request handler, which brings together service contract definition and its
+implementation. Add new generic handler <code>Calculator.ashx</code> to your web project:</p>
+<pre><code>[lang=csharp]
+using System;
+using Calculator.WebService;
+using XRoadLib.Handler;
+using XRoadLib.Serialization;
+
+namespace Calculator.WebService
+{
+    public class Calculator : ServiceRequestHandlerBase
+    {
+        public Calculator()
+            : base(new[] { CalculatorXRoadProtocol.Instance })
+        { }
+
+        protected override object InvokeMetaService(MetaServiceName metaServiceName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override object GetServiceObject(string operationName)
+        {
+            if (operationName == &quot;SumOfIntegers&quot;)
+                return new SumOfIntegersWebService();
+
+            throw new NotImplementedException();
+        }
+    }
+}
+</code></pre>
+<p>Base handlers expects list of all supported protocols as constructor arguments which will be used to detect
+message protocol version of incoming service request.</p>
+<p>Our simple example won't support any meta services, so we leave that with default implementation which returns
+exception. We're only supporting one functional service at the moment, so for the simplicity we're initializing
+it every time by creating new instance of the service object.</p>
+<p>After that, our simple web application is ready to accept incoming X-Road requests.</p>
+<h2 id="sample-request">Sample request</h2>
+<pre><code>[lang=xml]
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;
+                  xmlns:xrd=&quot;http://x-road.ee/xsd/x-road.xsd&quot;
+                  xmlns:calc=&quot;http://calculator.x-road.eu/producer/&quot;&gt;
+  &lt;soapenv:Header&gt;
+    &lt;xrd:consumer&gt;1234&lt;/xrd:consumer&gt;
+    &lt;xrd:producer&gt;calculator&lt;/xrd:producer&gt;
+    &lt;xrd:service&gt;calculator.SumOfIntegers.v1&lt;/xrd:service&gt;
+    &lt;xrd:id&gt;ABCDE&lt;/xrd:id&gt;
+    &lt;xrd:userId&gt;30101010001&lt;/xrd:userId&gt;
+    &lt;xrd:userName&gt;toomas.dumpti&lt;/xrd:userName&gt;
+  &lt;/soapenv:Header&gt;
+  &lt;soapenv:Body&gt;
+    &lt;calc:SumOfIntegers&gt;
+      &lt;request&gt;
+        &lt;X&gt;12&lt;/X&gt;
+        &lt;Y&gt;7&lt;/Y&gt;
+      &lt;/request&gt;
+    &lt;/calc:SumOfIntegers&gt;
+  &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;
+</code></pre>
+<h2 id="sample-response">Sample response</h2>
+<pre><code>[lang=xml]
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;
+                  xmlns:xrd=&quot;http://x-road.ee/xsd/x-road.xsd&quot;
+                  xmlns:calc=&quot;http://calculator.x-road.eu/producer/&quot;&gt;
+  &lt;soapenv:Header&gt;
+    &lt;xrd:consumer&gt;1234&lt;/xrd:consumer&gt;
+    &lt;xrd:producer&gt;calculator&lt;/xrd:producer&gt;
+    &lt;xrd:service&gt;calculator.SumOfIntegers.v1&lt;/xrd:service&gt;
+    &lt;xrd:id&gt;ABCDE&lt;/xrd:id&gt;
+    &lt;xrd:userId&gt;30101010001&lt;/xrd:userId&gt;
+    &lt;xrd:userName&gt;toomas.dumpti&lt;/xrd:userName&gt;
+  &lt;/soapenv:Header&gt;
+  &lt;soapenv:Body&gt;
+    &lt;calc:SumOfIntegersResponse&gt;
+      &lt;request&gt;
+        &lt;X&gt;12&lt;/X&gt;
+        &lt;Y&gt;7&lt;/Y&gt;
+      &lt;/request&gt;
+      &lt;response&gt;
+        &lt;result&gt;19&lt;/result&gt;
+      &lt;/response&gt;
+    &lt;/calc:SumOfIntegersResponse&gt;
+  &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/janno-p/XRoadLib/blob/master/docs/articles/tutorials/aspnet.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

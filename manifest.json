@@ -1,0 +1,2936 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Work/XRoadLib/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadAddContractAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadAddContractAttribute.html",
+          "hash": "XxSNf0gy8MuAMCoeRTdqIg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadMergeContentAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadMergeContentAttribute.html",
+          "hash": "NVrvIjQtfGE9YjyW6ZkJpQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadNotesAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadNotesAttribute.html",
+          "hash": "xc7FbHKKJ7QUDGZFGr3obg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadRemoveContractAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadRemoveContractAttribute.html",
+          "hash": "H3YfPAoVRtkl+izBRNVs1Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadServiceAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadServiceAttribute.html",
+          "hash": "yrffDz16XkW6sD6HKg5BnQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadTechNotesAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadTechNotesAttribute.html",
+          "hash": "WzT9UHp+r+BGsoL/BSCiVA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadTitleAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadTitleAttribute.html",
+          "hash": "XrsJAcMxTyG05RBj4rA5Dw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadXmlArrayAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadXmlArrayAttribute.html",
+          "hash": "5gu4kmW7rIaYBRY04PIO6w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadXmlArrayItemAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadXmlArrayItemAttribute.html",
+          "hash": "p3Eyfa4l/8w5CrwTpt7O8g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadXmlElementAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadXmlElementAttribute.html",
+          "hash": "5hisSLe6/6/bM1tBTYbUlA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.html",
+          "hash": "wMSI021B9m8efZnFOmqd9A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Events.BeforeDeserializationEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Events.BeforeDeserializationEventArgs.html",
+          "hash": "fCrLBuLXe4EzqUrKexMCvg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Events.XRoadRequestEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Events.XRoadRequestEventArgs.html",
+          "hash": "V1ngtOB0kPA79S10hjxk1g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Events.XRoadResponseEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Events.XRoadResponseEventArgs.html",
+          "hash": "IB0sg+H8kuTmhY/rwcmFrg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Events.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Events.html",
+          "hash": "OKDUg3xdyGNvsimWQZHB7A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html",
+          "hash": "p12dxmixmO61THyNRdBURg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceContext.html",
+          "hash": "ZLMqGpwBcNZN68ircBEEDw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.html",
+          "hash": "/Ev5tv/68MPGixzes4rOCg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html",
+          "hash": "B1XPqAHvwficKopCuJ0UOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html",
+          "hash": "WZnGNEv1cOT+riP+iNI1DA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibMiddleware.html",
+          "hash": "PVAsHUhSlSJNGkVT8st3tw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibMiddlewareExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibMiddlewareExtensions.html",
+          "hash": "eRqqkSvTLJTUytEiZwqzqg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibOptions.html",
+          "hash": "VXK1YDFf6jiQxt82nnArWA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibRouteBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibRouteBuilderExtensions.html",
+          "hash": "fbsqohUrncwln2lgT2Igyg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibServiceCollectionExtensions.html",
+          "hash": "6jwIyGk0O+naQcYDbKFSGA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadMessageExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadMessageExtensions.html",
+          "hash": "xZS7Nn1FwPVO5Hr5ISV/ZA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadRequestExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadRequestExtensions.html",
+          "hash": "/8CQInINEdHc6Jxf6BcrCA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.html",
+          "hash": "3uVzqK5Jt2i4TkCrZawtCQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AssemblyExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AssemblyExtensions.html",
+          "hash": "+Ukdlw/+OsI2/+xluaco2A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.GetValueMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.GetValueMethod.html",
+          "hash": "FeGiccS+YRQvfDwvZW6PcA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.XRoadProtoBufServiceAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.XRoadProtoBufServiceAttribute.html",
+          "hash": "4yqx5eig3RjCIg4DrgdSrQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.html",
+          "hash": "YPznQy4oviMjtq/Vei18sQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.ProtoBuf.Serialization.Mapping.ProtoBufServiceMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.ProtoBuf.Serialization.Mapping.ProtoBufServiceMap.html",
+          "hash": "COMnPf6rCC4zG1G3F4REAA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.ProtoBuf.Serialization.Mapping.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.ProtoBuf.Serialization.Mapping.html",
+          "hash": "f3Kokpg5/VIuZriURnTv0w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.ServiceDescriptionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.ServiceDescriptionExtensions.html",
+          "hash": "famYeVDfIscbZnu9SQCCqQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.ServiceMapExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.ServiceMapExtensions.html",
+          "hash": "LkVT8HwN93ypFUef1KcOyg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.SetValueMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.SetValueMethod.html",
+          "hash": "Ny3Rq7WPj/SeJ0/48HIUIw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.TypeExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.TypeExtensions.html",
+          "hash": "1z2YMjzoZ3k8iteLGMZwQQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.XRoadMessageExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.XRoadMessageExtensions.html",
+          "hash": "jasEPtsAveaIf74QTTD36w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.XRoadRequestExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.XRoadRequestExtensions.html",
+          "hash": "mJ121d/kwstR03bMRCMwcA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.XmlReaderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.XmlReaderExtensions.html",
+          "hash": "6llrOirviO1MXFnZA3RhAQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.XmlWriterExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.XmlWriterExtensions.html",
+          "hash": "pqwbjRapotBXGIXf8xe6PA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.html",
+          "hash": "6OQvnp2Alf7rDQ1mVDzYnw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.ISoapHeader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.ISoapHeader.html",
+          "hash": "ZqRGQ0owRIEjPzclXGipQA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.IXRoadHeader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.IXRoadHeader.html",
+          "hash": "F2BpeouB/cyh/Twc/69pSg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.IXRoadHeader20.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.IXRoadHeader20.html",
+          "hash": "UCichnSmNC5TD3G85S4oCA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.IXRoadHeader31.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.IXRoadHeader31.html",
+          "hash": "p4/I0hdue+v+1dIMnNqXPg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.IXRoadHeader40.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.IXRoadHeader40.html",
+          "hash": "qnnhxr7EKhuV3KrSZBkldw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.IXRoadIdentifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.IXRoadIdentifier.html",
+          "hash": "wx9w62GfuWdzGt6XzKtcHw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.IXRoadUniversalHeader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.IXRoadUniversalHeader.html",
+          "hash": "h/z9oCrMDe6R8lL7ECoUuw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadCentralServiceIdentifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadCentralServiceIdentifier.html",
+          "hash": "u7Jz5IjVBgNw+rB+Om5PKw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadClientIdentifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadClientIdentifier.html",
+          "hash": "fJI1GyveXm9ILQHEYzgcxA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadHeader20.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadHeader20.html",
+          "hash": "5v8ufetw5GTDOalXhKvx5A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadHeader31.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadHeader31.html",
+          "hash": "mxk6e+01+xfJm5IDbBarLQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadHeader40.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadHeader40.html",
+          "hash": "r3Mdbca2L3UuiTwVRf2prA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadObjectType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadObjectType.html",
+          "hash": "Muvsy+8eXAkso2w9JtKVZA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadRepresentedParty.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadRepresentedParty.html",
+          "hash": "/JyEeATZghlGZZd1vpp78A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadRequestHash.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadRequestHash.html",
+          "hash": "1mIdPA7DhdiA+fB46Jxacg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.XRoadServiceIdentifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.XRoadServiceIdentifier.html",
+          "hash": "NfftY9KqcV1Lxq4/sluE0A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Headers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Headers.html",
+          "hash": "8DRQnnkBBDP8JDof5xfV8g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.IServiceManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.IServiceManager.html",
+          "hash": "MmmgSTazVlzb7BVAcyTW4g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.NamespaceConstants.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.NamespaceConstants.html",
+          "hash": "AFh6BccZKBzyHrDNQqgMDA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.PrefixConstants.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.PrefixConstants.html",
+          "hash": "WfCq6K09gXHfeIgP+4hHtQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.AbstractSchemaExporter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.AbstractSchemaExporter.html",
+          "hash": "Hw6LB1gn+mi7IWXyv3gcOg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ArrayContentDefiniton.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ArrayContentDefiniton.html",
+          "hash": "8g/wYePGgi0OeM6GMm6uZA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ArrayItemDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ArrayItemDefinition.html",
+          "hash": "zWNaq0RR7ILLngPMzuiUpw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.BinaryMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.BinaryMode.html",
+          "hash": "DOtr+FdzieTRENpy7OuR2Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.CollectionDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.CollectionDefinition.html",
+          "hash": "1qn9YA4vd3G4Cf0Ikp4w4Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ContentDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ContentDefinition.html",
+          "hash": "yl8CS0fLyfLwXILWq6BzUw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ContractViolationException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ContractViolationException.html",
+          "hash": "Y6fK2NoG9/3ba9v6NF+OoA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.DefaultSchemaExporter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.DefaultSchemaExporter.html",
+          "hash": "0Z8Pi7yHK95wmKg7xvMPFQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.Definition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.Definition.html",
+          "hash": "ZpBxm9cngQ6aBAqYahaeXA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.DefinitionState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.DefinitionState.html",
+          "hash": "kxgNedcDqweZkM+QgQWuJQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.DocumentationDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.DocumentationDefinition.html",
+          "hash": "Z/Ls9GPj6wvb9VFizosqRg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.EmptyContentDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.EmptyContentDefinition.html",
+          "hash": "f+kWvgZZqzb6KKWzJdDIKg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.FaultDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.FaultDefinition.html",
+          "hash": "khXVAd9jf2UXLHkcsDpOLw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.HeaderDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.HeaderDefinition.html",
+          "hash": "yP2m8ju7iK5olcX4LVCh1Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.IHeaderDefinitionBuilder-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.IHeaderDefinitionBuilder-1.html",
+          "hash": "5k1/D0bDQ0CzXOZvcdo4ew=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ISchemaExporter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ISchemaExporter.html",
+          "hash": "YK1N1TvgvsGz0WWgO228rw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.OperationDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.OperationDefinition.html",
+          "hash": "O/tvfUkmYo9bjzWHHiDuKQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ParameterRequiredException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ParameterRequiredException.html",
+          "hash": "gOFxm+fkF78zQ45SaVyAVw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ParticleDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ParticleDefinition.html",
+          "hash": "GNyfoKQ20CWjJWn1KUa+mg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.PropertyComparer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.PropertyComparer.html",
+          "hash": "djlR3VJC9tpKyDAWftYqoQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.PropertyDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.PropertyDefinition.html",
+          "hash": "nWmLnII8tfOBImuk0akDiA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ProtocolDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ProtocolDefinition.html",
+          "hash": "xrffOD92j/rYeNqkjRf69g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.RequestDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.RequestDefinition.html",
+          "hash": "dU5rzuTxUezXOH10UKQMUw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.ResponseDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.ResponseDefinition.html",
+          "hash": "mUVXsclsyX8A/ErGg3Px/g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.SchemaDefinitionException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.SchemaDefinitionException.html",
+          "hash": "BotMxdgbKenuQJCD1wST5A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.SchemaDefinitionProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.SchemaDefinitionProvider.html",
+          "hash": "a5HLeKNCNIbLXtQz/Pd/Uw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.SchemaExporterXRoad20.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.SchemaExporterXRoad20.html",
+          "hash": "7+dfbOIVlPlRD9uu7KiTtg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.SchemaExporterXRoad31.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.SchemaExporterXRoad31.html",
+          "hash": "BwHifkBTMIlmSfGWlFDtXw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.SchemaExporterXRoadLegacy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.SchemaExporterXRoadLegacy.html",
+          "hash": "iEWJ8c4Hti0NQp58EXtOUQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.SingularContentDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.SingularContentDefinition.html",
+          "hash": "qfsiD/to2DXlQ2YftQqhig=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.TypeDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.TypeDefinition.html",
+          "hash": "7oS1XiMdfajrs4J+KZoBCQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.UnexpectedElementException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.UnexpectedElementException.html",
+          "hash": "dxYRpus0yZ1ZfdPs2uCGVA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.UnexpectedValueException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.UnexpectedValueException.html",
+          "hash": "LIHrBY+ijzSFDm6V9K7UuA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.UnknownOperationException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.UnknownOperationException.html",
+          "hash": "H1Aoql06T9R1w5BeXXuWXw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.UnknownPropertyException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.UnknownPropertyException.html",
+          "hash": "Xr4V+A2TX5IRSoBIH5/l4A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.UnknownTypeException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.UnknownTypeException.html",
+          "hash": "ObBA2PztyVqD8NJRNtqplg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.UnsupportedContentTransferEncodingException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.UnsupportedContentTransferEncodingException.html",
+          "hash": "EafldRsw+5unyE+ypftmgw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.XRoadFaultPresentation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.XRoadFaultPresentation.html",
+          "hash": "hnGKMQy34TzU+rRmxHFnPw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.html",
+          "hash": "RZV7g0mGczAtTtALGR3jmA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.ContentTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.ContentTypes.html",
+          "hash": "Taei0oQ8EXn2Mi2A+GkA9A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.CustomSerialization.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.CustomSerialization.html",
+          "hash": "gsykCcy39UCMKfANK80TMA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.IAttachmentManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.IAttachmentManager.html",
+          "hash": "Hl1V1jp4iyJnYqIaqB2zbQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.ICustomSerialization.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.ICustomSerialization.html",
+          "hash": "HnBnQQVEy+hC1Gr0iOPjiA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.ISerializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.ISerializer.html",
+          "hash": "NSLPOspHOOzhfWY7VJWKfg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.IXRoadFault.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.IXRoadFault.html",
+          "hash": "UQ2wCZoyKIciiZ//xgXKzA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.IXRoadFilterMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.IXRoadFilterMap.html",
+          "hash": "vYdin83hzJkfLckF/1aGFQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.IXRoadSerializable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.IXRoadSerializable.html",
+          "hash": "iUChkGOLum2OOqSkLQQJ5Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.IXRoadXmlSerializable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.IXRoadXmlSerializable.html",
+          "hash": "fknQE0bbYbWZy6EHU/AJLQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.InvalidQueryException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.InvalidQueryException.html",
+          "hash": "8poB5UyJ3VNt5kGrNWWFMg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.AbstractTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.AbstractTypeMap.html",
+          "hash": "GMzRbciwTJd9a+Z6kRqGtw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.AllTypeMap-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.AllTypeMap-1.html",
+          "hash": "fp3vMDefrrAYLutHXBOW+Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.AnyContentTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.AnyContentTypeMap.html",
+          "hash": "3D8PHPfe25HOBFwJ8kBUUw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.ArrayTypeMap-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.ArrayTypeMap-1.html",
+          "hash": "q2u+Hr/ipRcUWIzRJi21qA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.BooleanTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.BooleanTypeMap.html",
+          "hash": "POisb15ktoRfslj5jspJfg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.CompositeTypeMap-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.CompositeTypeMap-1.html",
+          "hash": "8vWKxPzAESNQoyBnmW6uHg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.ContentTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.ContentTypeMap.html",
+          "hash": "mVXDOv7eyhHVwMdsrWElgA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.DateTimeTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.DateTimeTypeMap.html",
+          "hash": "gH/dnNjMJicpRuUI0eWmUA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.DateTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.DateTypeMap.html",
+          "hash": "nlvNFk19SpX11rm88nA5kw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.DecimalTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.DecimalTypeMap.html",
+          "hash": "eoRgYeyt7mX8NrPWqda6Xg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.DoubleTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.DoubleTypeMap.html",
+          "hash": "iCB3JUT03NHVuH4Juj/Y9A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.EnumTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.EnumTypeMap.html",
+          "hash": "IeiihHJEBxWSiwdDFZ1XrA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.IAbstractTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.IAbstractTypeMap.html",
+          "hash": "VRhiELuoXMClokXLexrdWQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.IArrayTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.IArrayTypeMap.html",
+          "hash": "HkyfhN3OclK8v0E80bGmfA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.ICompositeTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.ICompositeTypeMap.html",
+          "hash": "OYkgwx3JlaEaLOaIzc066w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.IContentTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.IContentTypeMap.html",
+          "hash": "JSGf+xFgVzYttMrjtKkJSg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.IPropertyMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.IPropertyMap.html",
+          "hash": "TexpRTf2wCon0pmdwiwyBw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.IServiceMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.IServiceMap.html",
+          "hash": "eDBF8EuYKEf3kRDvNnLZHQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.ITypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.ITypeMap.html",
+          "hash": "mIPeHltyEf+Cx99+zBKvww=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.Int16TypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.Int16TypeMap.html",
+          "hash": "pvS1rcP+Rx6gViALyRlX3A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.Int32TypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.Int32TypeMap.html",
+          "hash": "OWGVyUIjd0J6HGumGxbxnA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.Int64TypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.Int64TypeMap.html",
+          "hash": "orqSn5Lsen7H8zUco/EXSA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.IntegerTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.IntegerTypeMap.html",
+          "hash": "ub/rC0+mknA39ys+G6RHcw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.ListMethodsServiceMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.ListMethodsServiceMap.html",
+          "hash": "JGVcVZupH2yXkTM7O0O8Gw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.OptimizedContentTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.OptimizedContentTypeMap.html",
+          "hash": "Ls9a9XDkDGHiNtbjucv1Xg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.PropertyMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.PropertyMap.html",
+          "hash": "VPUImdM6vD/jVwObvCSTlA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.SequenceTypeMap-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.SequenceTypeMap-1.html",
+          "hash": "INMgOVTDzwwOva0HfQFvRA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.ServiceMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.ServiceMap.html",
+          "hash": "Z8FzypvrRBvaA8rNOODCHQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.SingleTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.SingleTypeMap.html",
+          "hash": "SfECgrd159kHuJDcCDlTlw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.StringTypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.StringTypeMap.html",
+          "hash": "BrsdOxDgRtwgnwun+X4SXA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.TestSystemServiceMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.TestSystemServiceMap.html",
+          "hash": "K8DTPJ58ktuiBzyx5LNRYQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.TypeMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.TypeMap.html",
+          "hash": "YO6T7ddLXZezXr/VYVY5Lw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Mapping.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Mapping.html",
+          "hash": "u4R2bqowkTn80uGGPvWiHQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Serializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Serializer.html",
+          "hash": "4IOUdRD3lbH/7A07UuAIHA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.StringSerializationMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.StringSerializationMode.html",
+          "hash": "0NG2kLpMJ8GRkS9bkoxxZA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Template.IXmlTemplate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Template.IXmlTemplate.html",
+          "hash": "RmoRZvyjfZtI4IsGAgmh7Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Template.IXmlTemplateNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Template.IXmlTemplateNode.html",
+          "hash": "5IrUvTGJ2S7mjyHq+Ly5oA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Template.XRoadXmlSchemaTemplate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Template.XRoadXmlSchemaTemplate.html",
+          "hash": "Z6Dsef+K65Yc78X8N6xcFg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Template.XRoadXmlTemplate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Template.XRoadXmlTemplate.html",
+          "hash": "y/ZnbRp5r173jWvM4ME9Dw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.Template.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.Template.html",
+          "hash": "N0UXl4pxnuWULP/e+U29LA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.XRoadAttachment.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.XRoadAttachment.html",
+          "hash": "4whmUlaZprlXAy7JEZOtgw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.XRoadEncoding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.XRoadEncoding.html",
+          "hash": "b3BkhyxUgvSqRwcFJZu05w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.XRoadFaultException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.XRoadFaultException.html",
+          "hash": "kCbc6iS4qsPoIitwqyjs5A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.XRoadFilterMap-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.XRoadFilterMap-1.html",
+          "hash": "CjPWkKLwAEEHhVf1OJPsDg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.XRoadMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.XRoadMessage.html",
+          "hash": "qVLqMfgUkc/5oaZ1X8XsTA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.XRoadMessageWriter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.XRoadMessageWriter.html",
+          "hash": "rCxcfy2UV4R17/19jtnsPg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.XRoadSerializable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.XRoadSerializable.html",
+          "hash": "wK1QTlADSiIk2uj2yBcRSw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.html",
+          "hash": "WXTZVhNacmfbEnX2QCuAWA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.ServiceDescriptionBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.ServiceDescriptionBuilder.html",
+          "hash": "/z4uX8TR08ciPj3apmA6IQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.ServiceExecutionOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.ServiceExecutionOptions.html",
+          "hash": "SQpqii7RPg+U0DXlC0sxBA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.ServiceManager-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.ServiceManager-1.html",
+          "hash": "quMkJk4mc/Ya/GpJPt9nkw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.ServiceManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.ServiceManager.html",
+          "hash": "tJcA5BYygo8308En1TTr9Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.ClientFaultCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.ClientFaultCode.html",
+          "hash": "uqCN/+bffN48qSzEteMXNw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.FaultCode.FaultCodeType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.FaultCode.FaultCodeType.html",
+          "hash": "Zo54l2qRo4HK8sSo1+aLvg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.FaultCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.FaultCode.html",
+          "hash": "nXjDsUv2N2Xv1ah6pjcsFQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.IFault.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.IFault.html",
+          "hash": "gVtA6ojz+68tNAIFASG5qw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.IMessageFormatter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.IMessageFormatter.html",
+          "hash": "544oyvGgQfWP1JvJskhT3Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.ISoap12Fault.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.ISoap12Fault.html",
+          "hash": "7sSHsXiNxpNOAmMxctoiDA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.ISoapFault.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.ISoapFault.html",
+          "hash": "HI8Ex8k8Fru//2rumjrzCg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.ServerFaultCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.ServerFaultCode.html",
+          "hash": "EZ0GY1HDkY0NzaGolR8aGA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.Soap12Fault.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.Soap12Fault.html",
+          "hash": "Fm3Wp0FdQr3s5Y/eH67DQw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.Soap12FaultCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.Soap12FaultCode.html",
+          "hash": "67/CHmwJwV2ecOV8nGRNSw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.Soap12FaultCodeEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.Soap12FaultCodeEnum.html",
+          "hash": "HJkGUaKsZgibI/95MzMDxg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.Soap12FaultException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.Soap12FaultException.html",
+          "hash": "JHn2vEYuT3dzBf/tFxwfZQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.Soap12FaultReasonText.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.Soap12FaultReasonText.html",
+          "hash": "zDSsnG5o14mUTs91DYP9Ug=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.Soap12FaultSubcode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.Soap12FaultSubcode.html",
+          "hash": "TU3CfFMTPwpnliD7Jy01tQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.Soap12MessageFormatter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.Soap12MessageFormatter.html",
+          "hash": "8T8ObBuj0weX16/ZNpu5EA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.SoapFault.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.SoapFault.html",
+          "hash": "OjkFTbLk/V44Eih/4d+Pyw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.SoapFaultException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.SoapFaultException.html",
+          "hash": "ZKPfDXJYR5mX6QIxJIWMEg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.SoapMessageFormatter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.SoapMessageFormatter.html",
+          "hash": "yvRoooE4jCx5dkVDOEyJOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Soap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Soap.html",
+          "hash": "swHYKo0pHdO3DkiWTQc9ag=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Styles.DocLiteralStyle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Styles.DocLiteralStyle.html",
+          "hash": "tHRLJYEcRbOiHYLHBe6G2A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Styles.RpcEncodedStyle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Styles.RpcEncodedStyle.html",
+          "hash": "msvp53MWH0A5xy/EpsMZPg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Styles.Style.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Styles.Style.html",
+          "hash": "ra45OAq8DxgW1TS5cYnlbQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Styles.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Styles.html",
+          "hash": "BQ9utBEPTNOp+QuRDPwsCw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Binding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Binding.html",
+          "hash": "yhrBa3VUVVCpC40nfiyZvg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.DocumentableItem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.DocumentableItem.html",
+          "hash": "vYAZj5Lk+2ij6h6eDPqIGg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.InputBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.InputBinding.html",
+          "hash": "s/S6KFk+/dbVLwDXkm52Hw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Message.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Message.html",
+          "hash": "8ucy0Ad06BME02+6xeAXUQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.MessageBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.MessageBinding.html",
+          "hash": "UdknKxYKUOOcjwrDNqZQ3A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.MessagePart.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.MessagePart.html",
+          "hash": "TuJAHZTzCd41ag9I9pFo6A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.MimeContentBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.MimeContentBinding.html",
+          "hash": "lxeaqqkd2CTVuN3AWq/T9Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.MimeMultipartRelatedBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.MimeMultipartRelatedBinding.html",
+          "hash": "d32mdoo6vYjS/ub0qewXEQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.MimePart.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.MimePart.html",
+          "hash": "u8b8DBhok6HQC9pyqyj0VQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.NamedItem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.NamedItem.html",
+          "hash": "eNLQV99gQ+2OId0h0pHsAw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Operation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Operation.html",
+          "hash": "SltGuxW8JNgxhJGl90UeCg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.OperationBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.OperationBinding.html",
+          "hash": "wNC1ZvGGluzhsFBOPEKv2Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.OperationInput.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.OperationInput.html",
+          "hash": "kZlh6afa7ZG3NGZHz6Uibg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.OperationMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.OperationMessage.html",
+          "hash": "vu2YTybp6lVpfy9SCOMjqg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.OperationOutput.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.OperationOutput.html",
+          "hash": "BQBg7BZDdZq2s4Fxaj05og=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.OutputBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.OutputBinding.html",
+          "hash": "zrISrH/RaSoiSaGZkfvlaQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Port.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Port.html",
+          "hash": "IzddarCXre3Plk5q3+2M7A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.PortType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.PortType.html",
+          "hash": "yHYXGgqhJlekex2sA7++xg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Service.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Service.html",
+          "hash": "B8m51ZwGRgRyaRkzniw4TA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.ServiceDescription.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.ServiceDescription.html",
+          "hash": "6aekfzyB2W6rpuRgcaEV7w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.ServiceDescriptionFormatExtension.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.ServiceDescriptionFormatExtension.html",
+          "hash": "/KPRsu1C02UXYYfvdJQWbA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Soap12AddressBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Soap12AddressBinding.html",
+          "hash": "i3d7W3zXqzjRk+KgxTYA8A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Soap12Binding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Soap12Binding.html",
+          "hash": "WL6ZdBFXck2Ml+vkLROGFg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Soap12BodyBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Soap12BodyBinding.html",
+          "hash": "sOJqNNPB1T8cwpPL4yWL2w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Soap12HeaderBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Soap12HeaderBinding.html",
+          "hash": "W9raI9LIytCrmq99oNXvuw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Soap12OperationBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Soap12OperationBinding.html",
+          "hash": "CJ0t3b8Bv4d4WcvqAkUu2w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.SoapAddressBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.SoapAddressBinding.html",
+          "hash": "czxTCA8HeN7K3/jlT0psfg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.SoapBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.SoapBinding.html",
+          "hash": "UeoT1ysdcaSbN74efh+EIw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.SoapBindingStyle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.SoapBindingStyle.html",
+          "hash": "Jb9HTe154mKSFEc4vS/MZw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.SoapBindingUse.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.SoapBindingUse.html",
+          "hash": "6WbbgPIX7zqweGwJ7bihzw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.SoapBodyBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.SoapBodyBinding.html",
+          "hash": "ZX/taxLjRBAJhrhrgPljJA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.SoapHeaderBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.SoapHeaderBinding.html",
+          "hash": "fqZDm1+gwPUCitmepobrQw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.SoapOperationBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.SoapOperationBinding.html",
+          "hash": "7u54Ybk87mimhExJXversg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.Types.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.Types.html",
+          "hash": "jiXlyaWWoA7R6W9FfVvQJg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.XRoadAddressBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.XRoadAddressBinding.html",
+          "hash": "Bbvs6TH9p7PiuhZNAFI7zA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.XRoadOperationVersionBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.XRoadOperationVersionBinding.html",
+          "hash": "/37S5+J2oJ3P/k8XzAlriw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.XRoadTitleBinding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.XRoadTitleBinding.html",
+          "hash": "Eqr8VWBA4giMnSCVi1ODGQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Wsdl.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Wsdl.html",
+          "hash": "1zf1ciSB7U4oUcD33Xlaig=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.XRoadException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.XRoadException.html",
+          "hash": "aNXY90ZmPUB+gq+oHylgkg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.XRoadHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.XRoadHelper.html",
+          "hash": "bUmkaVFEPToQoNdzWdnaiA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.XRoadWebRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.XRoadWebRequest.html",
+          "hash": "EPLB/i5A9fbY8M/eOMog3g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.XmlTypeConstants.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.XmlTypeConstants.html",
+          "hash": "QMUpFphrFFR0B0+kSefKfw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.html",
+          "hash": "4ni3ynm7ccD4f17khZaSbw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "NRKj9Mjnen/HXqXU9JhGDQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "3q25hCu0CyjNT2C/w7vAUQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/license.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/license.html",
+          "hash": "pj6cj+V83IEk7a6ketBWMg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/release-notes.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/release-notes.html",
+          "hash": "GBPbrwW6BmQyjgXFv7g/4g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "sahKL6baci90OeYFE1JyuQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/tutorials/aspnet.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/tutorials/aspnet.html",
+          "hash": "Wua5cW8MkpMAWyC05EpbMA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/tutorials/aspnetcore.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/tutorials/aspnetcore.html",
+          "hash": "d0E8m8gj5+0/xpvBr8yydg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/tutorials/getting-started.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/tutorials/getting-started.html",
+          "hash": "Iu/oLMRGtspMSYI0JrYHSg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/tutorials/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/tutorials/index.html",
+          "hash": "yr/PkBXW5d+H6As0MjYnZA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "KGAFBmIGuDIZxKjKlR5AoQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "Gdrh/gFx4p0WxgxhatrNaA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build"
+      },
+      "processors": {
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
+        "incrementalPhase": "postProcessing"
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
