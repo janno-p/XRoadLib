@@ -19,6 +19,7 @@ namespace XRoadLib
 
             switch (contentType)
             {
+                case null:
                 case "":
                 case ContentTypes.SOAP:
                     return new SoapMessageFormatter();
@@ -38,7 +39,7 @@ namespace XRoadLib
 
         public static bool IsMultipartMsg(string contentType)
         {
-            return contentType.ToLower().Contains("multipart/related");
+            return (contentType ?? "").ToLower().Contains("multipart/related");
         }
 
         public static string ExtractValue(string key, string keyValuePair, string separator)
