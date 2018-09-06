@@ -1,3 +1,7 @@
+#### 1.3.0-beta002 - 06.09.2018
+
+* Fix missing content-type bug.
+
 #### 1.3.0-beta001 - 05.09.2018
 
 * Disposable X-Road handlers
