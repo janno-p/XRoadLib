@@ -2721,7 +2721,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.XRoadHelper.html",
-          "hash": "bUmkaVFEPToQoNdzWdnaiA=="
+          "hash": "2cXu9ngt1UK3hnOcscae1A=="
         }
       },
       "is_incremental": true,
@@ -2805,7 +2805,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/release-notes.html",
-          "hash": "GBPbrwW6BmQyjgXFv7g/4g=="
+          "hash": "bTBpqd7040aIzeZnX+fKTQ=="
         }
       },
       "is_incremental": true,
@@ -2903,17 +2903,17 @@
         "incrementalPhase": "build"
       },
       "processors": {
-        "TocDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
-          "incrementalPhase": "build"
-        },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
         "ConceptualDocumentProcessor": {
           "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         }
       }
