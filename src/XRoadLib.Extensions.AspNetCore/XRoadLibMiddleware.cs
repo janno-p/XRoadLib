@@ -8,15 +8,19 @@ namespace XRoadLib.Extensions.AspNetCore
 {
     public static class XRoadLibMiddleware
     {
-        public static Task Invoke(HttpContext httpContext, IWebServiceHandler handler)
+        public static async Task Invoke(HttpContext httpContext, IWebServiceHandler handler)
         {
             var options = httpContext.RequestServices.GetRequiredService<XRoadLibOptions>();
+            var accessor = httpContext.RequestServices.GetRequiredService<IWebServiceContextAccessor>();
 
             if (handler is WebServiceRequestHandler requestHandler)
                 requestHandler.StoragePath = options.StoragePath;
 
             using (var context = new WebServiceContext(httpContext))
             {
+                if (accessor is WebServiceContextAccessor webServiceContextAccessor)
+                    webServiceContextAccessor.WebServiceContext = context;
+                
                 try
                 {
                     context.MessageFormatter = XRoadHelper.GetMessageFormatter(context.HttpContext.Request.ContentType);
@@ -26,7 +30,7 @@ namespace XRoadLib.Extensions.AspNetCore
 
                     httpContext.Response.ContentType = $"{context.MessageFormatter.ContentType}; charset={XRoadEncoding.UTF8.WebName}";
 
-                    handler.HandleRequest(context);
+                    await handler.HandleRequestAsync(context);
                 }
                 catch (Exception exception)
                 {
@@ -40,11 +44,9 @@ namespace XRoadLib.Extensions.AspNetCore
 
                     var fault = context.MessageFormatter.CreateFault(exception);
 
-                    handler.HandleException(context, exception, fault);
+                    await handler.HandleExceptionAsync(context, exception, fault);
                 }
             }
-
-            return Task.FromResult(0);
         }
     }
 }

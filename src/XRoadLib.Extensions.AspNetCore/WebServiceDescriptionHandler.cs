@@ -1,4 +1,6 @@
-﻿namespace XRoadLib.Extensions.AspNetCore
+﻿using System.Threading.Tasks;
+
+namespace XRoadLib.Extensions.AspNetCore
 {
     /// <inheritdoc />
     /// <summary>
@@ -14,10 +16,12 @@
         { }
 
         /// <inheritdoc />
-        public override void HandleRequest(WebServiceContext context)
+        public override Task HandleRequestAsync(WebServiceContext context)
         {
             ServiceManager.CreateServiceDescription()
                           .SaveTo(context.HttpContext.Response.Body);
+
+            return Task.CompletedTask;
         }
     }
 }

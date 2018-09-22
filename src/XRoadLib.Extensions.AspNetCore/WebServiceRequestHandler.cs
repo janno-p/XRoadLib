@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Handle incoming web request as X-Road service request.
         /// </summary>
-        public override void HandleRequest(WebServiceContext context)
+        public override async Task HandleRequestAsync(WebServiceContext context)
         {
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
                 throw new InvalidQueryException("Empty request content");
@@ -42,67 +43,67 @@ namespace XRoadLib.Extensions.AspNetCore
 
             context.HttpContext.Response.ContentType = context.MessageFormatter.ContentType;
 
-            OnRequestLoaded(context);
-            InvokeServiceMethod(context);
-            SerializeXRoadResponse(context);
+            await OnRequestLoadedAsync(context);
+            await InvokeServiceMethodAsync(context);
+            await SerializeXRoadResponseAsync(context);
         }
 
         /// <summary>
         /// Handle X-Road message protocol meta-service request.
         /// </summary>
-        protected virtual object InvokeMetaService(WebServiceContext context)
-        {
-            return null;
-        }
+        protected virtual Task<object> InvokeMetaServiceAsync(WebServiceContext context) =>
+            Task.FromResult<object>(null);
 
         /// <summary>
         /// Get main service object which implements the functionality of
         /// the operation.
         /// </summary>
-        protected virtual object GetServiceObject(WebServiceContext context)
+        protected virtual Task<object> GetServiceObjectAsync(WebServiceContext context)
         {
             var operationDefinition = context.ServiceMap.OperationDefinition;
 
             var service = serviceProvider.GetRequiredService(operationDefinition.MethodInfo.DeclaringType);
+            if (service == null)
+                throw new SchemaDefinitionException($"Operation {operationDefinition.Name} is not implemented by contract.");
 
-            return service ?? throw new SchemaDefinitionException($"Operation {operationDefinition.Name} is not implemented by contract.");
+            return Task.FromResult(service);
         }
 
         /// <summary>
         /// Intercept X-Road service request after request message is loaded.
         /// </summary>
-        protected virtual void OnRequestLoaded(WebServiceContext context)
-        { }
+        protected virtual Task OnRequestLoadedAsync(WebServiceContext context) =>
+            Task.CompletedTask;
 
         /// <summary>
         /// Handle exception that occured on service method invokation.
         /// </summary>
-        protected virtual void OnInvocationError(WebServiceContext context)
-        { }
+        protected virtual Task OnInvocationErrorAsync(WebServiceContext context) =>
+            Task.CompletedTask;
 
         /// <summary>
         /// Customize XML reader settings before deserialization of the X-Road message.
         /// </summary>
-        protected virtual void OnBeforeDeserialization(WebServiceContext context, BeforeDeserializationEventArgs args)
-        { }
+        protected virtual Task OnBeforeDeserializationAsync(WebServiceContext context, BeforeDeserializationEventArgs args) =>
+            Task.CompletedTask;
 
         /// <summary>
         /// Intercept X-Road service request handling after deserialization of the message.
         /// </summary>
-        protected virtual void OnAfterDeserialization(WebServiceContext context)
-        { }
+        protected virtual Task OnAfterDeserializationAsync(WebServiceContext context) =>
+            Task.CompletedTask;
 
         /// <summary>
         /// Intercept X-Road service request handling before serialization of the response message.
         /// </summary>
-        protected virtual void OnBeforeSerialization(WebServiceContext context)
-        { }
+        protected virtual Task OnBeforeSerializationAsync(WebServiceContext context) =>
+            Task.CompletedTask;
 
         /// <summary>
         /// Intercept X-Road service request handling after serialization of the response message.
         /// </summary>
-        protected virtual void OnAfterSerialization(WebServiceContext context)
-        { }
+        protected virtual Task OnAfterSerializationAsync(WebServiceContext context) =>
+            Task.CompletedTask;
 
         protected virtual XName ResolveOperationName(WebServiceContext context)
         {
@@ -112,11 +113,11 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Calls service method which implements the X-Road operation.
         /// </summary>
-        protected virtual void InvokeServiceMethod(WebServiceContext context)
+        protected virtual async Task InvokeServiceMethodAsync(WebServiceContext context)
         {
             if (context.ServiceMap != null)
             {
-                context.Result = InvokeMetaService(context);
+                context.Result = await InvokeMetaServiceAsync(context);
                 return;
             }
 
@@ -125,8 +126,8 @@ namespace XRoadLib.Extensions.AspNetCore
             context.ServiceMap = context.Request.GetSerializer().GetServiceMap(operationName);
             context.Response.BinaryMode = context.ServiceMap.OperationDefinition.OutputBinaryMode;
 
-            var serviceObject = GetServiceObject(context);
-            DeserializeMethodInput(context);
+            var serviceObject = await GetServiceObjectAsync(context);
+            await DeserializeMethodInputAsync(context);
 
             try
             {
@@ -136,7 +137,7 @@ namespace XRoadLib.Extensions.AspNetCore
             catch (Exception exception)
             {
                 context.Exception = exception;
-                OnInvocationError(context);
+                await OnInvocationErrorAsync(context);
 
                 if (context.Result == null)
                     throw;
@@ -146,10 +147,10 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Deserializes X-Road request from SOAP message payload.
         /// </summary>
-        protected virtual void DeserializeMethodInput(WebServiceContext context)
+        protected virtual async Task DeserializeMethodInputAsync(WebServiceContext context)
         {
             var args = new BeforeDeserializationEventArgs();
-            OnBeforeDeserialization(context, args);
+            await OnBeforeDeserializationAsync(context, args);
 
             context.Request.ContentStream.Position = 0;
             var reader = XmlReader.Create(context.Request.ContentStream, args.XmlReaderSettings);
@@ -158,15 +159,15 @@ namespace XRoadLib.Extensions.AspNetCore
 
             context.Parameters = context.ServiceMap.DeserializeRequest(reader, context.Request);
 
-            OnAfterDeserialization(context);
+            await OnAfterDeserializationAsync(context);
         }
 
         /// <summary>
         /// Serializes service result to a X-Road message response.
         /// </summary>
-        protected virtual void SerializeXRoadResponse(WebServiceContext context)
+        protected virtual async Task SerializeXRoadResponseAsync(WebServiceContext context)
         {
-            OnBeforeSerialization(context);
+            await OnBeforeSerializationAsync(context);
 
             context.Request.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(context.Request.ContentStream, new XmlReaderSettings { CloseInput = false }))
@@ -198,7 +199,7 @@ namespace XRoadLib.Extensions.AspNetCore
 
             context.Response.SaveTo(context.HttpContext, context.MessageFormatter);
 
-            OnAfterSerialization(context);
+            await OnAfterSerializationAsync(context);
         }
 
         private DirectoryInfo GetStorageOrTempPath()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Serialization;
 using XRoadLib.Soap;
@@ -20,13 +21,15 @@ namespace XRoadLib.Extensions.AspNetCore
         }
 
         /// <inheritdoc />
-        public abstract void HandleRequest(WebServiceContext context);
+        public abstract Task HandleRequestAsync(WebServiceContext context);
 
         /// <inheritdoc />
-        public virtual void HandleException(WebServiceContext context, Exception exception, IFault fault)
+        public virtual Task HandleExceptionAsync(WebServiceContext context, Exception exception, IFault fault)
         {
             using (var writer = XmlWriter.Create(new StreamWriter(context.HttpContext.Response.Body, XRoadEncoding.UTF8)))
                 context.MessageFormatter.WriteSoapFault(writer, fault);
+
+            return Task.CompletedTask;
         }
 
         public virtual void Dispose()

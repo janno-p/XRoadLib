@@ -17,6 +17,7 @@ namespace XRoadLib.Extensions.AspNetCore
                 throw new ArgumentNullException(nameof(configureOptions));
 
             services.AddRouting();
+            services.AddScoped<IWebServiceContextAccessor, WebServiceContextAccessor>();
 
             var options = new XRoadLibOptions();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions.AspNetCore
@@ -16,11 +17,11 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Handles X-Road message service request.
         /// </summary>
-        void HandleRequest(WebServiceContext context);
+        Task HandleRequestAsync(WebServiceContext context);
 
         /// <summary>
         /// Handle exception that occured while handling X-Road message service request.
         /// </summary>
-        void HandleException(WebServiceContext context, Exception exception, IFault fault);
+        Task HandleExceptionAsync(WebServiceContext context, Exception exception, IFault fault);
     }
 }
