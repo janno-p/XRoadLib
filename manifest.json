@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "C:/Work/XRoadLib/docs",
+  "source_base_path": "C:/Users/Janno/Projects/XRoadLib/docs",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -185,11 +185,23 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.html",
+          "hash": "RBXH+0iyF8icVDJWpvlSFA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.yml",
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html",
-          "hash": "p12dxmixmO61THyNRdBURg=="
+          "hash": "t0DJjasQc+CsVv6wl0qQxg=="
         }
       },
       "is_incremental": false,
@@ -209,11 +221,23 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.html",
+          "hash": "bIKhH3Q5Umh7cqx7rgI2GQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.yml",
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.html",
-          "hash": "/Ev5tv/68MPGixzes4rOCg=="
+          "hash": "Xj3To/BJ6A2tKelXKBMD9g=="
         }
       },
       "is_incremental": false,
@@ -225,7 +249,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html",
-          "hash": "B1XPqAHvwficKopCuJ0UOQ=="
+          "hash": "vynWeRnsHCPZmNhHWzxqoA=="
         }
       },
       "is_incremental": false,
@@ -237,7 +261,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html",
-          "hash": "WZnGNEv1cOT+riP+iNI1DA=="
+          "hash": "f8ow2sBuY78IlIxXHE2eKg=="
         }
       },
       "is_incremental": false,
@@ -333,7 +357,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.html",
-          "hash": "3uVzqK5Jt2i4TkCrZawtCQ=="
+          "hash": "jDby/nMWUW9DVJvjV4+lhg=="
         }
       },
       "is_incremental": false,
@@ -2781,7 +2805,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "3q25hCu0CyjNT2C/w7vAUQ=="
+          "hash": "wXjPG0erCF3ma0WuPLax5Q=="
         }
       },
       "is_incremental": false,
@@ -2805,7 +2829,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/release-notes.html",
-          "hash": "bTBpqd7040aIzeZnX+fKTQ=="
+          "hash": "o1CuVFFDEHPkiE8zZn8PMA=="
         }
       },
       "is_incremental": true,
@@ -2903,11 +2927,11 @@
         "incrementalPhase": "build"
       },
       "processors": {
-        "ManagedReferenceDocumentProcessor": {
+        "ConceptualDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
-        "ConceptualDocumentProcessor": {
+        "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
