@@ -663,38 +663,57 @@ references:
   commentId: N:XRoadLib.Extensions.AspNetCore
   fullName: XRoadLib.Extensions.AspNetCore
   nameWithType: XRoadLib.Extensions.AspNetCore
+- uid: XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor
+  name: IWebServiceContextAccessor
+  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.html
+  commentId: T:XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor
+  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor
+  nameWithType: IWebServiceContextAccessor
+- uid: XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.WebServiceContext
+  name: WebServiceContext
+  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.html#XRoadLib_Extensions_AspNetCore_IWebServiceContextAccessor_WebServiceContext
+  commentId: P:XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.WebServiceContext
+  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.WebServiceContext
+  nameWithType: IWebServiceContextAccessor.WebServiceContext
+- uid: XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.WebServiceContext*
+  name: WebServiceContext
+  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.html#XRoadLib_Extensions_AspNetCore_IWebServiceContextAccessor_WebServiceContext_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.WebServiceContext
+  isSpec: "True"
+  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceContextAccessor.WebServiceContext
+  nameWithType: IWebServiceContextAccessor.WebServiceContext
 - uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler
   name: IWebServiceHandler
   href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html
   commentId: T:XRoadLib.Extensions.AspNetCore.IWebServiceHandler
   fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler
   nameWithType: IWebServiceHandler
-- uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)
-  name: HandleException(WebServiceContext, Exception, IFault)
-  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleException_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Exception_XRoadLib_Soap_IFault_
-  commentId: M:XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)
-  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException(XRoadLib.Extensions.AspNetCore.WebServiceContext, System.Exception, XRoadLib.Soap.IFault)
-  nameWithType: IWebServiceHandler.HandleException(WebServiceContext, Exception, IFault)
-- uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException*
-  name: HandleException
-  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleException_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException
+- uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)
+  name: HandleExceptionAsync(WebServiceContext, Exception, IFault)
+  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleExceptionAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Exception_XRoadLib_Soap_IFault_
+  commentId: M:XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)
+  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext, System.Exception, XRoadLib.Soap.IFault)
+  nameWithType: IWebServiceHandler.HandleExceptionAsync(WebServiceContext, Exception, IFault)
+- uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync*
+  name: HandleExceptionAsync
+  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleExceptionAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException
-  nameWithType: IWebServiceHandler.HandleException
-- uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: HandleRequest(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequest_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: IWebServiceHandler.HandleRequest(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest*
-  name: HandleRequest
-  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequest_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest
+  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync
+  nameWithType: IWebServiceHandler.HandleExceptionAsync
+- uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: HandleRequestAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequestAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: IWebServiceHandler.HandleRequestAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync*
+  name: HandleRequestAsync
+  href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequestAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest
-  nameWithType: IWebServiceHandler.HandleRequest
+  fullName: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync
+  nameWithType: IWebServiceHandler.HandleRequestAsync
 - uid: XRoadLib.Extensions.AspNetCore.IWebServiceHandler.ServiceManager
   name: ServiceManager
   href: api/XRoadLib.Extensions.AspNetCore.IWebServiceHandler.html#XRoadLib_Extensions_AspNetCore_IWebServiceHandler_ServiceManager
@@ -848,6 +867,25 @@ references:
   fullName: XRoadLib.Extensions.AspNetCore.WebServiceContext.System.IDisposable.Dispose
   nameWithType: WebServiceContext.IDisposable.Dispose
   nameWithType.vb: WebServiceContext.System.IDisposable.Dispose
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor
+  name: WebServiceContextAccessor
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.html
+  commentId: T:XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor
+  nameWithType: WebServiceContextAccessor
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.WebServiceContext
+  name: WebServiceContext
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.html#XRoadLib_Extensions_AspNetCore_WebServiceContextAccessor_WebServiceContext
+  commentId: P:XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.WebServiceContext
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.WebServiceContext
+  nameWithType: WebServiceContextAccessor.WebServiceContext
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.WebServiceContext*
+  name: WebServiceContext
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.html#XRoadLib_Extensions_AspNetCore_WebServiceContextAccessor_WebServiceContext_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.WebServiceContext
+  isSpec: "True"
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceContextAccessor.WebServiceContext
+  nameWithType: WebServiceContextAccessor.WebServiceContext
 - uid: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler
   name: WebServiceDescriptionHandler
   href: api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.html
@@ -867,19 +905,19 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.WebServiceDescriptionHandler
   nameWithType: WebServiceDescriptionHandler.WebServiceDescriptionHandler
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: HandleRequest(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceDescriptionHandler_HandleRequest_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceDescriptionHandler.HandleRequest(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequest*
-  name: HandleRequest
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceDescriptionHandler_HandleRequest_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequest
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: HandleRequestAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceDescriptionHandler_HandleRequestAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceDescriptionHandler.HandleRequestAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequestAsync*
+  name: HandleRequestAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceDescriptionHandler_HandleRequestAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequestAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequest
-  nameWithType: WebServiceDescriptionHandler.HandleRequest
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceDescriptionHandler.HandleRequestAsync
+  nameWithType: WebServiceDescriptionHandler.HandleRequestAsync
 - uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler
   name: WebServiceHandler
   href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html
@@ -912,32 +950,32 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.Dispose
   nameWithType: WebServiceHandler.Dispose
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleException(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)
-  name: HandleException(WebServiceContext, Exception, IFault)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_HandleException_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Exception_XRoadLib_Soap_IFault_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleException(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleException(XRoadLib.Extensions.AspNetCore.WebServiceContext, System.Exception, XRoadLib.Soap.IFault)
-  nameWithType: WebServiceHandler.HandleException(WebServiceContext, Exception, IFault)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleException*
-  name: HandleException
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_HandleException_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleException
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleExceptionAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)
+  name: HandleExceptionAsync(WebServiceContext, Exception, IFault)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_HandleExceptionAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Exception_XRoadLib_Soap_IFault_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleExceptionAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleExceptionAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext, System.Exception, XRoadLib.Soap.IFault)
+  nameWithType: WebServiceHandler.HandleExceptionAsync(WebServiceContext, Exception, IFault)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleExceptionAsync*
+  name: HandleExceptionAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_HandleExceptionAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleExceptionAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleException
-  nameWithType: WebServiceHandler.HandleException
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: HandleRequest(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_HandleRequest_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceHandler.HandleRequest(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequest*
-  name: HandleRequest
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_HandleRequest_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequest
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleExceptionAsync
+  nameWithType: WebServiceHandler.HandleExceptionAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: HandleRequestAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_HandleRequestAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceHandler.HandleRequestAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequestAsync*
+  name: HandleRequestAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_HandleRequestAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequestAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequest
-  nameWithType: WebServiceHandler.HandleRequest
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceHandler.HandleRequestAsync
+  nameWithType: WebServiceHandler.HandleRequestAsync
 - uid: XRoadLib.Extensions.AspNetCore.WebServiceHandler.ServiceManager
   name: ServiceManager
   href: api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceHandler_ServiceManager
@@ -970,149 +1008,149 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.WebServiceRequestHandler
   nameWithType: WebServiceRequestHandler.WebServiceRequestHandler
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInput(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: DeserializeMethodInput(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_DeserializeMethodInput_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInput(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInput(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.DeserializeMethodInput(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInput*
-  name: DeserializeMethodInput
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_DeserializeMethodInput_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInput
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: DeserializeMethodInputAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_DeserializeMethodInputAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.DeserializeMethodInputAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync*
+  name: DeserializeMethodInputAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_DeserializeMethodInputAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInput
-  nameWithType: WebServiceRequestHandler.DeserializeMethodInput
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObject(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: GetServiceObject(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_GetServiceObject_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObject(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObject(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.GetServiceObject(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObject*
-  name: GetServiceObject
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_GetServiceObject_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObject
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync
+  nameWithType: WebServiceRequestHandler.DeserializeMethodInputAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObjectAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: GetServiceObjectAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_GetServiceObjectAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObjectAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObjectAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.GetServiceObjectAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObjectAsync*
+  name: GetServiceObjectAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_GetServiceObjectAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObjectAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObject
-  nameWithType: WebServiceRequestHandler.GetServiceObject
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: HandleRequest(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_HandleRequest_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.HandleRequest(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequest*
-  name: HandleRequest
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_HandleRequest_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequest
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.GetServiceObjectAsync
+  nameWithType: WebServiceRequestHandler.GetServiceObjectAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: HandleRequestAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_HandleRequestAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.HandleRequestAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequestAsync*
+  name: HandleRequestAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_HandleRequestAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequestAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequest
-  nameWithType: WebServiceRequestHandler.HandleRequest
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaService(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: InvokeMetaService(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeMetaService_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaService(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaService(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.InvokeMetaService(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaService*
-  name: InvokeMetaService
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeMetaService_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaService
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.HandleRequestAsync
+  nameWithType: WebServiceRequestHandler.HandleRequestAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaServiceAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: InvokeMetaServiceAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeMetaServiceAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaServiceAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaServiceAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.InvokeMetaServiceAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaServiceAsync*
+  name: InvokeMetaServiceAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeMetaServiceAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaServiceAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaService
-  nameWithType: WebServiceRequestHandler.InvokeMetaService
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethod(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: InvokeServiceMethod(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethod_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethod(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethod(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.InvokeServiceMethod(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethod*
-  name: InvokeServiceMethod
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethod_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethod
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaServiceAsync
+  nameWithType: WebServiceRequestHandler.InvokeMetaServiceAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: InvokeServiceMethodAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethodAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.InvokeServiceMethodAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync*
+  name: InvokeServiceMethodAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethodAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethod
-  nameWithType: WebServiceRequestHandler.InvokeServiceMethod
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: OnAfterDeserialization(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterDeserialization_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.OnAfterDeserialization(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserialization*
-  name: OnAfterDeserialization
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterDeserialization_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserialization
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync
+  nameWithType: WebServiceRequestHandler.InvokeServiceMethodAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: OnAfterDeserializationAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterDeserializationAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.OnAfterDeserializationAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserializationAsync*
+  name: OnAfterDeserializationAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterDeserializationAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserializationAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserialization
-  nameWithType: WebServiceRequestHandler.OnAfterDeserialization
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: OnAfterSerialization(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterSerialization_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.OnAfterSerialization(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerialization*
-  name: OnAfterSerialization
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterSerialization_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerialization
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserializationAsync
+  nameWithType: WebServiceRequestHandler.OnAfterDeserializationAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: OnAfterSerializationAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterSerializationAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.OnAfterSerializationAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerializationAsync*
+  name: OnAfterSerializationAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterSerializationAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerializationAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerialization
-  nameWithType: WebServiceRequestHandler.OnAfterSerialization
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserialization(XRoadLib.Extensions.AspNetCore.WebServiceContext,XRoadLib.Events.BeforeDeserializationEventArgs)
-  name: OnBeforeDeserialization(WebServiceContext, BeforeDeserializationEventArgs)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnBeforeDeserialization_XRoadLib_Extensions_AspNetCore_WebServiceContext_XRoadLib_Events_BeforeDeserializationEventArgs_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserialization(XRoadLib.Extensions.AspNetCore.WebServiceContext,XRoadLib.Events.BeforeDeserializationEventArgs)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserialization(XRoadLib.Extensions.AspNetCore.WebServiceContext, XRoadLib.Events.BeforeDeserializationEventArgs)
-  nameWithType: WebServiceRequestHandler.OnBeforeDeserialization(WebServiceContext, BeforeDeserializationEventArgs)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserialization*
-  name: OnBeforeDeserialization
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnBeforeDeserialization_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserialization
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterSerializationAsync
+  nameWithType: WebServiceRequestHandler.OnAfterSerializationAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,XRoadLib.Events.BeforeDeserializationEventArgs)
+  name: OnBeforeDeserializationAsync(WebServiceContext, BeforeDeserializationEventArgs)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnBeforeDeserializationAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_XRoadLib_Events_BeforeDeserializationEventArgs_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,XRoadLib.Events.BeforeDeserializationEventArgs)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext, XRoadLib.Events.BeforeDeserializationEventArgs)
+  nameWithType: WebServiceRequestHandler.OnBeforeDeserializationAsync(WebServiceContext, BeforeDeserializationEventArgs)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserializationAsync*
+  name: OnBeforeDeserializationAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnBeforeDeserializationAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserializationAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserialization
-  nameWithType: WebServiceRequestHandler.OnBeforeDeserialization
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: OnBeforeSerialization(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnBeforeSerialization_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerialization(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.OnBeforeSerialization(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerialization*
-  name: OnBeforeSerialization
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnBeforeSerialization_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerialization
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeDeserializationAsync
+  nameWithType: WebServiceRequestHandler.OnBeforeDeserializationAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: OnBeforeSerializationAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnBeforeSerializationAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.OnBeforeSerializationAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerializationAsync*
+  name: OnBeforeSerializationAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnBeforeSerializationAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerializationAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerialization
-  nameWithType: WebServiceRequestHandler.OnBeforeSerialization
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationError(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: OnInvocationError(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnInvocationError_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationError(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationError(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.OnInvocationError(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationError*
-  name: OnInvocationError
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnInvocationError_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationError
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnBeforeSerializationAsync
+  nameWithType: WebServiceRequestHandler.OnBeforeSerializationAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationErrorAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: OnInvocationErrorAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnInvocationErrorAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationErrorAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationErrorAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.OnInvocationErrorAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationErrorAsync*
+  name: OnInvocationErrorAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnInvocationErrorAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationErrorAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationError
-  nameWithType: WebServiceRequestHandler.OnInvocationError
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoaded(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: OnRequestLoaded(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnRequestLoaded_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoaded(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoaded(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.OnRequestLoaded(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoaded*
-  name: OnRequestLoaded
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnRequestLoaded_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoaded
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnInvocationErrorAsync
+  nameWithType: WebServiceRequestHandler.OnInvocationErrorAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoadedAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: OnRequestLoadedAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnRequestLoadedAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoadedAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoadedAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.OnRequestLoadedAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoadedAsync*
+  name: OnRequestLoadedAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnRequestLoadedAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoadedAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoaded
-  nameWithType: WebServiceRequestHandler.OnRequestLoaded
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnRequestLoadedAsync
+  nameWithType: WebServiceRequestHandler.OnRequestLoadedAsync
 - uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.ResolveOperationName(XRoadLib.Extensions.AspNetCore.WebServiceContext)
   name: ResolveOperationName(WebServiceContext)
   href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_ResolveOperationName_XRoadLib_Extensions_AspNetCore_WebServiceContext_
@@ -1126,19 +1164,19 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.ResolveOperationName
   nameWithType: WebServiceRequestHandler.ResolveOperationName
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponse(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: SerializeXRoadResponse(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeXRoadResponse_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponse(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponse(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.SerializeXRoadResponse(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponse*
-  name: SerializeXRoadResponse
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeXRoadResponse_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponse
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: SerializeXRoadResponseAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeXRoadResponseAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.SerializeXRoadResponseAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync*
+  name: SerializeXRoadResponseAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeXRoadResponseAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponse
-  nameWithType: WebServiceRequestHandler.SerializeXRoadResponse
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync
+  nameWithType: WebServiceRequestHandler.SerializeXRoadResponseAsync
 - uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.serviceProvider
   name: serviceProvider
   href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_serviceProvider

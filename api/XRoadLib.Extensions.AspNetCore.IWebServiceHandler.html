@@ -95,7 +95,7 @@
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_IWebServiceHandler_ServiceManager.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.IWebServiceHandler.ServiceManager%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/IWebServiceHandler.cs/#L14">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/IWebServiceHandler.cs/#L15">View Source</a>
   </span>
   <a id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_ServiceManager_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.ServiceManager*"></a>
   <h4 id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_ServiceManager" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.ServiceManager">ServiceManager</h4>
@@ -125,19 +125,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleException_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Exception_XRoadLib_Soap_IFault_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException(XRoadLib.Extensions.AspNetCore.WebServiceContext%2CSystem.Exception%2CXRoadLib.Soap.IFault)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleExceptionAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Exception_XRoadLib_Soap_IFault_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext%2CSystem.Exception%2CXRoadLib.Soap.IFault)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/IWebServiceHandler.cs/#L24">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/IWebServiceHandler.cs/#L25">View Source</a>
   </span>
-  <a id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleException_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException*"></a>
-  <h4 id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleException_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Exception_XRoadLib_Soap_IFault_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleException(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)">HandleException(WebServiceContext, Exception, IFault)</h4>
+  <a id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleExceptionAsync_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync*"></a>
+  <h4 id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleExceptionAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Exception_XRoadLib_Soap_IFault_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleExceptionAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Exception,XRoadLib.Soap.IFault)">HandleExceptionAsync(WebServiceContext, Exception, IFault)</h4>
   <div class="markdown level1 summary"><p>Handle exception that occured while handling X-Road message service request.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void HandleException(WebServiceContext context, Exception exception, IFault fault)</code></pre>
+    <pre><code class="lang-csharp hljs">Task HandleExceptionAsync(WebServiceContext context, Exception exception, IFault fault)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -166,21 +166,36 @@
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequest_XRoadLib_Extensions_AspNetCore_WebServiceContext_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequestAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/IWebServiceHandler.cs/#L19">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/IWebServiceHandler.cs/#L20">View Source</a>
   </span>
-  <a id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequest_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest*"></a>
-  <h4 id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequest_XRoadLib_Extensions_AspNetCore_WebServiceContext_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequest(XRoadLib.Extensions.AspNetCore.WebServiceContext)">HandleRequest(WebServiceContext)</h4>
+  <a id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequestAsync_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync*"></a>
+  <h4 id="XRoadLib_Extensions_AspNetCore_IWebServiceHandler_HandleRequestAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_" data-uid="XRoadLib.Extensions.AspNetCore.IWebServiceHandler.HandleRequestAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)">HandleRequestAsync(WebServiceContext)</h4>
   <div class="markdown level1 summary"><p>Handles X-Road message service request.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void HandleRequest(WebServiceContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">Task HandleRequestAsync(WebServiceContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -199,6 +214,21 @@
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           
@@ -210,7 +240,7 @@
                     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_IWebServiceHandler.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.IWebServiceHandler%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/IWebServiceHandler.cs/#L9" class="contribution-link">View Source</a>
+                    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/IWebServiceHandler.cs/#L10" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>
