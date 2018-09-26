@@ -1,4 +1,4 @@
-#### 1.3.0-beta003 - Unreleased
+#### 1.3.0-beta003 - 26.09.2018
 
 * Async interface for AspNetCore handlers.
 * `IWebServiceContextAccessor` to provide access to web service context through DI.
