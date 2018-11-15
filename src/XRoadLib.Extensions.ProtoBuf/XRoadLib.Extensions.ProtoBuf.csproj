@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>XRoadLib.Extensions.ProtoBuf</AssemblyName>
     <AssemblyTitle>XRoadLib.Extensions.ProtoBuf</AssemblyTitle>
@@ -13,6 +13,6 @@
     <ProjectReference Include="..\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.6.1" />
   </ItemGroup>
 </Project>

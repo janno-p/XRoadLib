@@ -6,8 +6,9 @@ branches:
 init:
   - git config --global core.autocrlf true
   - dotnet tool install fake-cli -g
+  - dotnet tool install paket -g
 build: off
 before_test:
-  - .\.paket\paket.exe restore
+  - paket restore
 test_script:
   - fake run build.fsx target RunTests
