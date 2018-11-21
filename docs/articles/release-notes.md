@@ -1,3 +1,9 @@
+#### 1.3.0 - 21.11.2018
+
+* Fix contradictions with empty tag deserialization of simple type definitions.
+* Update AspNetCore tutorial to match latest changes.
+* Update dependencies.
+
 #### 1.3.0-beta003 - 26.09.2018
 
 * Async interface for AspNetCore handlers.
