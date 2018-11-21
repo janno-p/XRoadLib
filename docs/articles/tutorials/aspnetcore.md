@@ -97,42 +97,30 @@ Create new class which represents web service, that implements our `SumOfInteger
 Service request handler
 ------------------------
 
-Next step is to create service request handler, which brings together service contract definition and its
-implementation. In our application we can rely on dependency injection to provide implementations for the
-requested services.
+Next step is to define service manager class, which combines together service contract definition, its
+implementation and X-Road protocol info. In our sample application we can rely on dependency injection
+to provide implementations for the requested services.
 
     [lang=csharp]
-    using System;
-    using System.Collections.Generic;
+    using System.Reflection;
     using XRoadLib;
-    using XRoadLib.Handler;
-    using XRoadLib.Serialization;
+    using XRoadLib.Headers;
+    using XRoadLib.Schema;
 
-    namespace Calculator.Handler
+    namespace Calculator
     {
-        public class CalculatorHandler : XRoadRequestHandler
+        public class CalculatorServiceManager : ServiceManager<XRoadHeader40>
         {
-            private readonly IServiceProvider serviceProvider;
-
-            public CalculatorHandler(IServiceProvider serviceProvider, IEnumerable<IXRoadProtocol> supportedProtocols, string storagePath)
-                : base(supportedProtocols, storagePath)
-            {
-                this.serviceProvider = serviceProvider;
-            }
-
-            protected override object GetServiceObject(XRoadContext context)
-            {
-                var service = serviceProvider.GetService(context.ServiceMap.OperationDefinition.MethodInfo.DeclaringType);
-                if (service != null)
-                    return service;
-
-                throw new NotImplementedException();
-            }
+            public CalculatorServiceManager()
+                : base("4.0", new DefaultSchemaExporter("http://calculator.x-road.eu/", typeof(CalculatorServiceManager).GetTypeInfo().Assembly))
+            { }
         }
     }
 
-Base handlers expects list of all supported protocols as constructor arguments which will be used to detect
-message protocol version of incoming service request.
+Arguments provided to base type constructor are unique name for defined service manager class and implementation
+of IServiceManager interfaces which provides serialization and deserialization details of the services.
+Current sample uses DefaultSchemaExporter which uses X-Road message protocol version 4.0 with default
+settings.
 
 After that, we have completed business logic of our simple web application and we can continue with technical setup.
 
@@ -142,8 +130,8 @@ Choosing X-Road protocol
 
 Interpretation of the service contract in X-Road context is determined by X-Road protocol version. Out of box XRoadLib
 provides default implementations for X-Road protocol versions 2.0, 3.1 and 4.0. To use certain X-Road protocol version
-you have to initialize `XRoadLib.XRoadProtocol` type instance with corresponding `SchemaExporter` implementation. XRoadLib
-provides following schema exporters which correspond to certain X-Road protocol version:
+you have to initialize `XRoadLib.ServiceManager` type instance with corresponding `SchemaExporter` implementation.
+XRoadLib provides following schema exporters which correspond to certain X-Road protocol version:
 
 * `XRoadLib.Schema.SchemaExporterXRoad20` -> X-Road protocol version 2.0 (legacy RPC/Encoded)
 * `XRoadLib.Schema.SchemaExporterXRoad31` -> X-Road protocol version 3.1 (legacy Document/Literal)
@@ -152,40 +140,33 @@ provides following schema exporters which correspond to certain X-Road protocol 
 Predefined protocol implementations can be further extended by overriding schema exporter methods and customizing its
 behavior to suit your needs.
 
-This example uses latest X-Road protocol which is initialized using:
-
-    new XRoadProtocol("<unique application-defined protocol name>", new DefaultSchemaExporter("<producer namespace>", <contract assembly>))
-
 
 Startup class
 -------------
 
-In AspNetCore Startup class we have to register our service with dependency injection and configure XRoadLibMiddleware to be
-used with our AspNetCore application.
+In AspNetCore Startup class we have to register our service with dependency injection and configure
+XRoadLibMiddleware to be used with our AspNetCore application.
 
     [lang=csharp]
-    using System.Reflection;
     using Calculator.Contract;
-    using Calculator.Handler;
     using Calculator.WebService;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
-    using XRoadLib;
-    using XRoadLib.Extensions;
-    using XRoadLib.Schema;
+    using XRoadLib.Extensions.AspNetCore;
 
     namespace Calculator
     {
         public class Startup
         {
-            private readonly IXRoadProtocol protocol = new XRoadProtocol("4.0", new DefaultSchemaExporter("http://calculator.x-road.eu/", typeof(Startup).GetTypeInfo().Assembly));
-
             public void ConfigureServices(IServiceCollection services)
             {
+                services.AddXRoadLib();
+
+                services.AddSingleton<ICalculate, CalculateWebService>();
                 services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
-                services.AddSingleton(provider => new CalculatorHandler(provider, new[] { protocol }, null));
+                services.AddSingleton<CalculatorServiceManager>();
             }
 
             public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -193,13 +174,13 @@ used with our AspNetCore application.
                 if (env.IsDevelopment())
                     app.UseDeveloperExceptionPage();
 
-                app.UseXRoadLib(options =>
+                app.UseXRoadLib(routes =>
                 {
-                    options.AddRequestHandler<CalculatorHandler>();
-                    options.SupportedProtocols.Add(protocol);
+                    routes.MapWsdl<CalculatorServiceManager>("");
+                    routes.MapWebService<CalculatorServiceManager>("");
                 });
 
-                app.Run(async (context) =>
+                app.Run(async context =>
                 {
                     await context.Response.WriteAsync("Hello World!");
                 });
@@ -208,13 +189,23 @@ used with our AspNetCore application.
     }
 
 
-First we specify that our Calculator application is based on X-Road message protocol version 4.0. We define our producer
-namespace `"http://calculator.x-road.eu/"` and assembly which contains contract definitons. Since XRoadProtocol caches type specific information,
-its necessary to follow singleton pattern when creating instance of the protocol. If required, same web application can support multiple X-Road message protocols
-and have separate configurations for individual protocol instances.
+To use XRoadLib with AspNetCore platform the IApplicationBuilders extension method UseXRoadLib should
+be called in Startup class of the application. Extension method accepts callback that allows to define
+routes for service description (WSDL) and web service endpoints which provide access to functionality
+of the services defined in specified service manager.
 
-With this setup our application expects incoming requests to application root using HTTP "POST" method. HTTP "GET" method to our application root
-returns service description in WSDL format. All other routes pass XRoadLib middleware and return "Hello World!" response.
+In the ConfigureServices method of the Startup class, XRoadLib has to be registered with the dependency
+injection provider, by calling the IServiceCollection extension method AddXRoadLib. Since ServiceManager
+caches type specific information, its necessary to follow singleton pattern when registering instance of
+the service manager type.
+
+If required, same web application can support multiple X-Road message protocols and have separate configurations
+for individual protocol instances. In such case each protocol should define its own separate service
+manager type which should be registered through unique routes.
+
+With this setup our application expects incoming requests to application root using HTTP "POST" method.
+HTTP "GET" method to our application root returns service description in WSDL format. All other routes
+pass XRoadLib middleware and return "Hello World!" response.
 
 
 Sample request
