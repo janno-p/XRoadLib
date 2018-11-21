@@ -15,12 +15,13 @@ Create AspNetCore web project
 This tutorial uses dotnet command line interface to create and manage dotnet projects, but these commands
 are easily repeatable in Visual Studio using user interface.
 
-Create new empty dotnet web application `Calculator`, and add reference to `XRoadLib` package.
+Create new empty dotnet web application `Calculator`, and add reference to `XRoadLib` packages.
 
     $ mkdir Calculator
     $ cd Calculator
     $ dotnet new web
     $ dotnet add package XRoadLib
+    $ dotnet add package XRoadLib.Extensions.AspNetCore
 
 
 Service and type contracts
@@ -189,15 +190,15 @@ XRoadLibMiddleware to be used with our AspNetCore application.
     }
 
 
-To use XRoadLib with AspNetCore platform the IApplicationBuilders extension method UseXRoadLib should
-be called in Startup class of the application. Extension method accepts callback that allows to define
+To use XRoadLib with AspNetCore platform the `IApplicationBuilder` extension method `UseXRoadLib` should
+be called in `Startup` class of the application. Extension method accepts callback that allows to define
 routes for service description (WSDL) and web service endpoints which provide access to functionality
 of the services defined in specified service manager.
 
-In the ConfigureServices method of the Startup class, XRoadLib has to be registered with the dependency
-injection provider, by calling the IServiceCollection extension method AddXRoadLib. Since ServiceManager
-caches type specific information, its necessary to follow singleton pattern when registering instance of
-the service manager type.
+In the `ConfigureServices` method of the `Startup` class, XRoadLib has to be registered with the dependency
+injection provider, by calling the `IServiceCollection` extension method `AddXRoadLib`. Since service
+manager caches type specific information, its necessary to follow singleton pattern when registering
+instance of the service manager type.
 
 If required, same web application can support multiple X-Road message protocols and have separate configurations
 for individual protocol instances. In such case each protocol should define its own separate service
@@ -205,7 +206,7 @@ manager type which should be registered through unique routes.
 
 With this setup our application expects incoming requests to application root using HTTP "POST" method.
 HTTP "GET" method to our application root returns service description in WSDL format. All other routes
-pass XRoadLib middleware and return "Hello World!" response.
+pass through XRoadLib middleware and return "Hello World!" response.
 
 
 Sample request
