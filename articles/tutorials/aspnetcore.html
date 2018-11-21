@@ -80,11 +80,12 @@ available for X-Road infrastucture. This includes:</p>
 <h2 id="create-aspnetcore-web-project">Create AspNetCore web project</h2>
 <p>This tutorial uses dotnet command line interface to create and manage dotnet projects, but these commands
 are easily repeatable in Visual Studio using user interface.</p>
-<p>Create new empty dotnet web application <code>Calculator</code>, and add reference to <code>XRoadLib</code> package.</p>
+<p>Create new empty dotnet web application <code>Calculator</code>, and add reference to <code>XRoadLib</code> packages.</p>
 <pre><code>$ mkdir Calculator
 $ cd Calculator
 $ dotnet new web
 $ dotnet add package XRoadLib
+$ dotnet add package XRoadLib.Extensions.AspNetCore
 </code></pre>
 <h2 id="service-and-type-contracts">Service and type contracts</h2>
 <p>Add new <code>Contract</code> subfolder to the project and add definitions for the X-Road services and all the types
@@ -146,47 +147,35 @@ namespace Calculator.WebService
 }
 </code></pre>
 <h2 id="service-request-handler">Service request handler</h2>
-<p>Next step is to create service request handler, which brings together service contract definition and its
-implementation. In our application we can rely on dependency injection to provide implementations for the
-requested services.</p>
+<p>Next step is to define service manager class, which combines together service contract definition, its
+implementation and X-Road protocol info. In our sample application we can rely on dependency injection
+to provide implementations for the requested services.</p>
 <pre><code>[lang=csharp]
-using System;
-using System.Collections.Generic;
+using System.Reflection;
 using XRoadLib;
-using XRoadLib.Handler;
-using XRoadLib.Serialization;
+using XRoadLib.Headers;
+using XRoadLib.Schema;
 
-namespace Calculator.Handler
+namespace Calculator
 {
-    public class CalculatorHandler : XRoadRequestHandler
+    public class CalculatorServiceManager : ServiceManager&lt;XRoadHeader40&gt;
     {
-        private readonly IServiceProvider serviceProvider;
-
-        public CalculatorHandler(IServiceProvider serviceProvider, IEnumerable&lt;IXRoadProtocol&gt; supportedProtocols, string storagePath)
-            : base(supportedProtocols, storagePath)
-        {
-            this.serviceProvider = serviceProvider;
-        }
-
-        protected override object GetServiceObject(XRoadContext context)
-        {
-            var service = serviceProvider.GetService(context.ServiceMap.OperationDefinition.MethodInfo.DeclaringType);
-            if (service != null)
-                return service;
-
-            throw new NotImplementedException();
-        }
+        public CalculatorServiceManager()
+            : base(&quot;4.0&quot;, new DefaultSchemaExporter(&quot;http://calculator.x-road.eu/&quot;, typeof(CalculatorServiceManager).GetTypeInfo().Assembly))
+        { }
     }
 }
 </code></pre>
-<p>Base handlers expects list of all supported protocols as constructor arguments which will be used to detect
-message protocol version of incoming service request.</p>
+<p>Arguments provided to base type constructor are unique name for defined service manager class and implementation
+of IServiceManager interfaces which provides serialization and deserialization details of the services.
+Current sample uses DefaultSchemaExporter which uses X-Road message protocol version 4.0 with default
+settings.</p>
 <p>After that, we have completed business logic of our simple web application and we can continue with technical setup.</p>
 <h2 id="choosing-x-road-protocol">Choosing X-Road protocol</h2>
 <p>Interpretation of the service contract in X-Road context is determined by X-Road protocol version. Out of box XRoadLib
 provides default implementations for X-Road protocol versions 2.0, 3.1 and 4.0. To use certain X-Road protocol version
-you have to initialize <code>XRoadLib.XRoadProtocol</code> type instance with corresponding <code>SchemaExporter</code> implementation. XRoadLib
-provides following schema exporters which correspond to certain X-Road protocol version:</p>
+you have to initialize <code>XRoadLib.ServiceManager</code> type instance with corresponding <code>SchemaExporter</code> implementation.
+XRoadLib provides following schema exporters which correspond to certain X-Road protocol version:</p>
 <ul>
 <li><code>XRoadLib.Schema.SchemaExporterXRoad20</code> -&gt; X-Road protocol version 2.0 (legacy RPC/Encoded)</li>
 <li><code>XRoadLib.Schema.SchemaExporterXRoad31</code> -&gt; X-Road protocol version 3.1 (legacy Document/Literal)</li>
@@ -194,35 +183,29 @@ provides following schema exporters which correspond to certain X-Road protocol 
 </ul>
 <p>Predefined protocol implementations can be further extended by overriding schema exporter methods and customizing its
 behavior to suit your needs.</p>
-<p>This example uses latest X-Road protocol which is initialized using:</p>
-<pre><code>new XRoadProtocol(&quot;&lt;unique application-defined protocol name&gt;&quot;, new DefaultSchemaExporter(&quot;&lt;producer namespace&gt;&quot;, &lt;contract assembly&gt;))
-</code></pre>
 <h2 id="startup-class">Startup class</h2>
-<p>In AspNetCore Startup class we have to register our service with dependency injection and configure XRoadLibMiddleware to be
-used with our AspNetCore application.</p>
+<p>In AspNetCore Startup class we have to register our service with dependency injection and configure
+XRoadLibMiddleware to be used with our AspNetCore application.</p>
 <pre><code>[lang=csharp]
-using System.Reflection;
 using Calculator.Contract;
-using Calculator.Handler;
 using Calculator.WebService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using XRoadLib;
-using XRoadLib.Extensions;
-using XRoadLib.Schema;
+using XRoadLib.Extensions.AspNetCore;
 
 namespace Calculator
 {
     public class Startup
     {
-        private readonly IXRoadProtocol protocol = new XRoadProtocol(&quot;4.0&quot;, new DefaultSchemaExporter(&quot;http://calculator.x-road.eu/&quot;, typeof(Startup).GetTypeInfo().Assembly));
-
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddXRoadLib();
+
+            services.AddSingleton&lt;ICalculate, CalculateWebService&gt;();
             services.AddSingleton&lt;ISumOfIntegers, SumOfIntegersWebService&gt;();
-            services.AddSingleton(provider =&gt; new CalculatorHandler(provider, new[] { protocol }, null));
+            services.AddSingleton&lt;CalculatorServiceManager&gt;();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -230,13 +213,13 @@ namespace Calculator
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-            app.UseXRoadLib(options =&gt;
+            app.UseXRoadLib(routes =&gt;
             {
-                options.AddRequestHandler&lt;CalculatorHandler&gt;();
-                options.SupportedProtocols.Add(protocol);
+                routes.MapWsdl&lt;CalculatorServiceManager&gt;(&quot;&quot;);
+                routes.MapWebService&lt;CalculatorServiceManager&gt;(&quot;&quot;);
             });
 
-            app.Run(async (context) =&gt;
+            app.Run(async context =&gt;
             {
                 await context.Response.WriteAsync(&quot;Hello World!&quot;);
             });
@@ -244,12 +227,20 @@ namespace Calculator
     }
 }
 </code></pre>
-<p>First we specify that our Calculator application is based on X-Road message protocol version 4.0. We define our producer
-namespace <code>&quot;http://calculator.x-road.eu/&quot;</code> and assembly which contains contract definitons. Since XRoadProtocol caches type specific information,
-its necessary to follow singleton pattern when creating instance of the protocol. If required, same web application can support multiple X-Road message protocols
-and have separate configurations for individual protocol instances.</p>
-<p>With this setup our application expects incoming requests to application root using HTTP &quot;POST&quot; method. HTTP &quot;GET&quot; method to our application root
-returns service description in WSDL format. All other routes pass XRoadLib middleware and return &quot;Hello World!&quot; response.</p>
+<p>To use XRoadLib with AspNetCore platform the <code>IApplicationBuilder</code> extension method <code>UseXRoadLib</code> should
+be called in <code>Startup</code> class of the application. Extension method accepts callback that allows to define
+routes for service description (WSDL) and web service endpoints which provide access to functionality
+of the services defined in specified service manager.</p>
+<p>In the <code>ConfigureServices</code> method of the <code>Startup</code> class, XRoadLib has to be registered with the dependency
+injection provider, by calling the <code>IServiceCollection</code> extension method <code>AddXRoadLib</code>. Since service
+manager caches type specific information, its necessary to follow singleton pattern when registering
+instance of the service manager type.</p>
+<p>If required, same web application can support multiple X-Road message protocols and have separate configurations
+for individual protocol instances. In such case each protocol should define its own separate service
+manager type which should be registered through unique routes.</p>
+<p>With this setup our application expects incoming requests to application root using HTTP &quot;POST&quot; method.
+HTTP &quot;GET&quot; method to our application root returns service description in WSDL format. All other routes
+pass through XRoadLib middleware and return &quot;Hello World!&quot; response.</p>
 <h2 id="sample-request">Sample request</h2>
 <pre><code>[lang=xml]
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
