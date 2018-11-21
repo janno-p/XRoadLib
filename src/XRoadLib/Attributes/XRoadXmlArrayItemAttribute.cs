@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Attributes
 {
@@ -23,6 +24,8 @@ namespace XRoadLib.Attributes
         /// Use MTOM/XOP standard for binary content serialization (default value is `true`).
         /// </summary>
         public bool UseXop { get; set; } = true;
+
+        public EmptyTagHandlingMode? EmptyTagHandlingMode { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the XmlArrayItemAttribute class.

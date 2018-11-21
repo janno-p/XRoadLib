@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using XRoadLib.Serialization;
 using XRoadLib.Styles;
 
 namespace XRoadLib.Schema
@@ -82,5 +83,10 @@ namespace XRoadLib.Schema
         /// Allows to define namespace prefixes which should be defined in outgoing SOAP messages.
         /// </summary>
         public IDictionary<XNamespace, string> GlobalNamespacePrefixes { get; } = new Dictionary<XNamespace, string>();
+
+        /// <summary>
+        /// Global empty tag handling mode for the protocol definition.
+        /// </summary>
+        public EmptyTagHandlingMode EmptyTagHandlingMode { get; set; }
     }
 }

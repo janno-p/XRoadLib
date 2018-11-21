@@ -27,7 +27,7 @@ namespace XRoadLib.Serialization.Mapping
             var arrayContent = (ArrayContentDefiniton)content;
 
             if (reader.IsEmptyElement && !arrayContent.MergeContent)
-                return MoveNextAndReturn(reader, new T[0]);
+                return MoveNextAndReturn(reader, message.HandleEmptyElement(content, () => new T[0]));
 
             var items = new List<T>();
 

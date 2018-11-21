@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Schema
 {
@@ -14,6 +15,8 @@ namespace XRoadLib.Schema
         public bool MergeContent { get; set; }
 
         public bool IsNullable { get; set; }
+
+        public EmptyTagHandlingMode? EmptyTagHandlingMode { get; set; }
 
         public virtual bool IsOptional { get; set; }
 

@@ -38,6 +38,7 @@ namespace XRoadLib.Schema
             Documentation = new DocumentationDefinition(customAttributeProvider);
             MergeContent = customAttributeProvider.HasMergeAttribute();
             RuntimeType = runtimeType;
+            EmptyTagHandlingMode = xroadElementAttribute?.EmptyTagHandlingMode;
         }
 
         public SingularContentDefinition(ParticleDefinition particle, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
@@ -60,6 +61,7 @@ namespace XRoadLib.Schema
             TypeName = (arrayItemAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.XSD));
             State = DefinitionState.Default;
             RuntimeType = runtimeType;
+            EmptyTagHandlingMode = xroadArrayItemAttribute?.EmptyTagHandlingMode;
         }
     }
 }

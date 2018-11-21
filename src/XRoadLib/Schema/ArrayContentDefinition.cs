@@ -53,6 +53,7 @@ namespace XRoadLib.Schema
             Documentation = new DocumentationDefinition(customAttributeProvider);
             MergeContent = customAttributeProvider.HasMergeAttribute();
             RuntimeType = runtimeType;
+            EmptyTagHandlingMode = xroadArrayAttribute?.EmptyTagHandlingMode;
 
             Item = new ArrayItemDefinition(
                 Particle,

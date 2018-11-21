@@ -1,5 +1,7 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 using System.Xml.XPath;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Soap;
@@ -49,6 +51,31 @@ namespace XRoadLib.Extensions
 
             if (navigator.SelectSingleNode($"{pathRoot}/faultCode | {pathRoot}/faultString") != null)
                 throw new XRoadFaultException(serviceMap.DeserializeXRoadFault(message, messageFormatter));
+        }
+
+        public static T? HandleEmptyElementOfValueType<T>(this XRoadMessage message, ContentDefinition content, Func<T?> getStrictValue) where T : struct
+        {
+            switch (content.EmptyTagHandlingMode ?? message.ServiceManager.ProtocolDefinition.EmptyTagHandlingMode)
+            {
+                case EmptyTagHandlingMode.DefaultValue:
+                    return default(T);
+                case EmptyTagHandlingMode.Null:
+                    return null;
+                default:
+                    return getStrictValue();
+            }
+        }
+
+        public static T HandleEmptyElement<T>(this XRoadMessage message, ContentDefinition content, Func<T> getStrictValue) where T : class
+        {
+            switch (content.EmptyTagHandlingMode ?? message.ServiceManager.ProtocolDefinition.EmptyTagHandlingMode)
+            {
+                case EmptyTagHandlingMode.DefaultValue:
+                case EmptyTagHandlingMode.Null:
+                    return null;
+                default:
+                    return getStrictValue();
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Attributes
 {
@@ -13,6 +14,8 @@ namespace XRoadLib.Attributes
         /// Indicates if this element must occur in serialized XML or not.
         /// </summary>
         public bool IsOptional { get; set; }
+
+        public EmptyTagHandlingMode? EmptyTagHandlingMode { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the XmlArrayAttribute class.
