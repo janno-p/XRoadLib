@@ -1,3 +1,8 @@
+#### 1.3.1 - 27.11.2018
+
+* Fix null reference exception when multipart header does not include content type.
+* Fix typo in method name.
+
 #### 1.3.0 - 21.11.2018
 
 * Fix contradictions with empty tag deserialization of simple type definitions.

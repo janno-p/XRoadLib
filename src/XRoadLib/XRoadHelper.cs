@@ -14,7 +14,7 @@ namespace XRoadLib
 
             if (!IsMultipartMsg(contentTypeHeader))
                 contentType = (contentTypeHeader ?? "").Split(new[] { ';' }, 2).First().Trim();
-            else if (contentType.Equals(ContentTypes.XOP))
+            else if (contentType?.Equals(ContentTypes.XOP) == true)
                 contentType = ExtractValue("start-info=", contentTypeHeader, ";")?.Trim();
 
             switch (contentType)

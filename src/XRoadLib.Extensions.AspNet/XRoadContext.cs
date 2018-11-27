@@ -43,7 +43,7 @@ namespace XRoadLib.Extensions.AspNet
         public object Result { get; set; }
 
         /// <summary>
-        /// Exception that occured while handling service request.
+        /// Exception that occurred while handling service request.
         /// </summary>
         public Exception Exception { get; set; }
 

@@ -49,7 +49,7 @@ namespace XRoadLib.Extensions.AspNet
         { }
 
         /// <summary>
-        /// Handle exception that occured on service method invokation.
+        /// Handle exception that occurred on service method invokation.
         /// </summary>
         protected virtual void OnInvocationError(XRoadContext context)
         { }

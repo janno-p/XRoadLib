@@ -20,7 +20,7 @@ namespace XRoadLib.Extensions.AspNetCore
         Task HandleRequestAsync(WebServiceContext context);
 
         /// <summary>
-        /// Handle exception that occured while handling X-Road message service request.
+        /// Handle exception that occurred while handling X-Road message service request.
         /// </summary>
         Task HandleExceptionAsync(WebServiceContext context, Exception exception, IFault fault);
     }

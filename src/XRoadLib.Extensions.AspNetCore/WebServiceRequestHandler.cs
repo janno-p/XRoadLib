@@ -76,7 +76,7 @@ namespace XRoadLib.Extensions.AspNetCore
             Task.CompletedTask;
 
         /// <summary>
-        /// Handle exception that occured on service method invokation.
+        /// Handle exception that occurred on service method invokation.
         /// </summary>
         protected virtual Task OnInvocationErrorAsync(WebServiceContext context) =>
             Task.CompletedTask;

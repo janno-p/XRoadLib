@@ -40,7 +40,7 @@ namespace XRoadLib.Extensions.AspNet
                 {
                     var fault = context.MessageFormatter.CreateFault(exception);
 
-                    OnExceptionOccured(context, exception, fault);
+                    OnExceptionOccurred(context, exception, fault);
                 }
             }
         }
@@ -53,7 +53,7 @@ namespace XRoadLib.Extensions.AspNet
         /// <summary>
         /// Handles all exceptions as technical SOAP faults.
         /// </summary>
-        protected virtual void OnExceptionOccured(XRoadContext context, Exception exception, IFault fault)
+        protected virtual void OnExceptionOccurred(XRoadContext context, Exception exception, IFault fault)
         {
             using (var writer = new XmlTextWriter(context.HttpContext.Response.OutputStream, encoding))
                 context.MessageFormatter.WriteSoapFault(writer, fault);
