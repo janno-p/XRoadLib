@@ -26,7 +26,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <inheritdoc />
         public virtual Task HandleExceptionAsync(WebServiceContext context, Exception exception, IFault fault)
         {
-            using (var writer = XmlWriter.Create(new StreamWriter(context.HttpContext.Response.Body, XRoadEncoding.UTF8)))
+            using (var writer = XmlWriter.Create(new StreamWriter(context.HttpContext.Response.Body, XRoadEncoding.Utf8)))
                 context.MessageFormatter.WriteSoapFault(writer, fault);
 
             return Task.CompletedTask;

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using XRoadLib.Serialization;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions.AspNetCore
 {
@@ -28,17 +29,20 @@ namespace XRoadLib.Extensions.AspNetCore
                     if (httpContext.Request.Body.CanSeek)
                         httpContext.Request.Body.Position = 0;
 
-                    httpContext.Response.ContentType = $"{context.MessageFormatter.ContentType}; charset={XRoadEncoding.UTF8.WebName}";
+                    httpContext.Response.ContentType = XRoadHelper.GetContentTypeHeader(context.MessageFormatter.ContentType);
 
                     await handler.HandleRequestAsync(context);
                 }
                 catch (Exception exception)
                 {
-                    httpContext.Response.ContentType = context.MessageFormatter.ContentType;
+                    if (context.MessageFormatter == null)
+                        context.MessageFormatter = new SoapMessageFormatter();
+
+                    httpContext.Response.ContentType = XRoadHelper.GetContentTypeHeader(context.MessageFormatter.ContentType);
 
                     if (httpContext.Response.Body.CanSeek)
                     {
-                        httpContext.Response.Body.Position = 0;
+                        httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
                         httpContext.Response.Body.SetLength(0);
                     }
 

@@ -53,7 +53,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Encoding that is used to transfer X-Road message content.
         /// </summary>
-        public Encoding ContentEncoding { get; set; } = XRoadEncoding.UTF8;
+        public Encoding ContentEncoding { get; set; } = XRoadEncoding.Utf8;
 
         /// <summary>
         /// XML document part of the X-Road message.

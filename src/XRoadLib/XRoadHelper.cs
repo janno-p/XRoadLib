@@ -15,7 +15,7 @@ namespace XRoadLib
             if (!IsMultipartMsg(contentTypeHeader))
                 contentType = (contentTypeHeader ?? "").Split(new[] { ';' }, 2).First().Trim();
             else if (contentType?.Equals(ContentTypes.XOP) == true)
-                contentType = ExtractValue("start-info=", contentTypeHeader, ";")?.Trim();
+                contentType = GetContentTypeStartInfo(contentTypeHeader);
 
             switch (contentType)
             {
@@ -32,15 +32,17 @@ namespace XRoadLib
             }
         }
 
-        public static string GetMultipartContentType(string contentType)
-        {
-            return ExtractValue("type=", contentType, ";")?.Trim().Trim('"');
-        }
+        private static string GetContentTypeStartInfo(string contentTypeHeader) =>
+            ExtractValue("start-info=", contentTypeHeader, ";")?.Trim().Trim('"');
 
-        public static bool IsMultipartMsg(string contentType)
-        {
-            return (contentType ?? "").ToLower().Contains("multipart/related");
-        }
+        public static string GetMultipartContentType(string contentType) =>
+            ExtractValue("type=", contentType, ";")?.Trim().Trim('"');
+
+        public static bool IsMultipartMsg(string contentType) =>
+            (contentType ?? "").ToLower().Contains("multipart/related");
+
+        public static string GetContentTypeHeader(string contentType) =>
+            $"{contentType}; charset={XRoadEncoding.Utf8.WebName}";
 
         public static string ExtractValue(string key, string keyValuePair, string separator)
         {

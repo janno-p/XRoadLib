@@ -18,7 +18,7 @@ namespace XRoadLib
         {
             var request = WebRequest.Create(requestUri);
 
-            request.ContentType = $"text/xml; charset={XRoadEncoding.UTF8.WebName}";
+            request.ContentType = $"text/xml; charset={XRoadEncoding.Utf8.WebName}";
             request.Headers["SOAPAction"] = string.Empty;
             request.Method = "POST";
 

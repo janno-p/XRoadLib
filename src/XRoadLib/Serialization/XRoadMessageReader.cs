@@ -272,7 +272,7 @@ namespace XRoadLib.Serialization
         private Encoding GetContentEncoding()
         {
             var contentType = XRoadHelper.ExtractValue("charset=", contentTypeHeader, ";")?.Trim().Trim('"');
-            return string.IsNullOrWhiteSpace(contentType) || contentType.ToUpper().Equals("UTF-8") ? XRoadEncoding.UTF8 : Encoding.GetEncoding(contentType);
+            return string.IsNullOrWhiteSpace(contentType) || contentType.ToUpper().Equals("UTF-8") ? XRoadEncoding.Utf8 : Encoding.GetEncoding(contentType);
         }
 
         private string GetMultipartStartContentID()
