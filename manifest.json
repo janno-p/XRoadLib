@@ -273,7 +273,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibMiddleware.html",
-          "hash": "PVAsHUhSlSJNGkVT8st3tw=="
+          "hash": "CRdIq49W6TyGpaW6PKSILg=="
         }
       },
       "is_incremental": false,
@@ -1881,7 +1881,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.XRoadEncoding.html",
-          "hash": "b3BkhyxUgvSqRwcFJZu05w=="
+          "hash": "bzLsIuCBXGETFvd+HtSHtw=="
         }
       },
       "is_incremental": true,
@@ -2757,7 +2757,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.XRoadHelper.html",
-          "hash": "2cXu9ngt1UK3hnOcscae1A=="
+          "hash": "Ij75jxiEoZNPujk8hrV1aA=="
         }
       },
       "is_incremental": true,
@@ -2841,7 +2841,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/release-notes.html",
-          "hash": "Y8YgGVKcLjt32XEoz92Djg=="
+          "hash": "FXEOtJ2S+1F4eLACRkBqow=="
         }
       },
       "is_incremental": true,
@@ -2939,17 +2939,17 @@
         "incrementalPhase": "build"
       },
       "processors": {
-        "TocDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
           "incrementalPhase": "build"
         },
         "ConceptualDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
-        "ManagedReferenceDocumentProcessor": {
-          "can_incremental": true,
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         }
       }

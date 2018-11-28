@@ -11143,19 +11143,19 @@ references:
   commentId: T:XRoadLib.Serialization.XRoadEncoding
   fullName: XRoadLib.Serialization.XRoadEncoding
   nameWithType: XRoadEncoding
-- uid: XRoadLib.Serialization.XRoadEncoding.UTF8
-  name: UTF8
-  href: api/XRoadLib.Serialization.XRoadEncoding.html#XRoadLib_Serialization_XRoadEncoding_UTF8
-  commentId: P:XRoadLib.Serialization.XRoadEncoding.UTF8
-  fullName: XRoadLib.Serialization.XRoadEncoding.UTF8
-  nameWithType: XRoadEncoding.UTF8
-- uid: XRoadLib.Serialization.XRoadEncoding.UTF8*
-  name: UTF8
-  href: api/XRoadLib.Serialization.XRoadEncoding.html#XRoadLib_Serialization_XRoadEncoding_UTF8_
-  commentId: Overload:XRoadLib.Serialization.XRoadEncoding.UTF8
+- uid: XRoadLib.Serialization.XRoadEncoding.Utf8
+  name: Utf8
+  href: api/XRoadLib.Serialization.XRoadEncoding.html#XRoadLib_Serialization_XRoadEncoding_Utf8
+  commentId: P:XRoadLib.Serialization.XRoadEncoding.Utf8
+  fullName: XRoadLib.Serialization.XRoadEncoding.Utf8
+  nameWithType: XRoadEncoding.Utf8
+- uid: XRoadLib.Serialization.XRoadEncoding.Utf8*
+  name: Utf8
+  href: api/XRoadLib.Serialization.XRoadEncoding.html#XRoadLib_Serialization_XRoadEncoding_Utf8_
+  commentId: Overload:XRoadLib.Serialization.XRoadEncoding.Utf8
   isSpec: "True"
-  fullName: XRoadLib.Serialization.XRoadEncoding.UTF8
-  nameWithType: XRoadEncoding.UTF8
+  fullName: XRoadLib.Serialization.XRoadEncoding.Utf8
+  nameWithType: XRoadEncoding.Utf8
 - uid: XRoadLib.Serialization.XRoadFaultException
   name: XRoadFaultException
   href: api/XRoadLib.Serialization.XRoadFaultException.html
@@ -15515,6 +15515,19 @@ references:
   isSpec: "True"
   fullName: XRoadLib.XRoadHelper.GenerateRequestID
   nameWithType: XRoadHelper.GenerateRequestID
+- uid: XRoadLib.XRoadHelper.GetContentTypeHeader(System.String)
+  name: GetContentTypeHeader(String)
+  href: api/XRoadLib.XRoadHelper.html#XRoadLib_XRoadHelper_GetContentTypeHeader_System_String_
+  commentId: M:XRoadLib.XRoadHelper.GetContentTypeHeader(System.String)
+  fullName: XRoadLib.XRoadHelper.GetContentTypeHeader(System.String)
+  nameWithType: XRoadHelper.GetContentTypeHeader(String)
+- uid: XRoadLib.XRoadHelper.GetContentTypeHeader*
+  name: GetContentTypeHeader
+  href: api/XRoadLib.XRoadHelper.html#XRoadLib_XRoadHelper_GetContentTypeHeader_
+  commentId: Overload:XRoadLib.XRoadHelper.GetContentTypeHeader
+  isSpec: "True"
+  fullName: XRoadLib.XRoadHelper.GetContentTypeHeader
+  nameWithType: XRoadHelper.GetContentTypeHeader
 - uid: XRoadLib.XRoadHelper.GetMessageFormatter(System.String)
   name: GetMessageFormatter(String)
   href: api/XRoadLib.XRoadHelper.html#XRoadLib_XRoadHelper_GetMessageFormatter_System_String_
