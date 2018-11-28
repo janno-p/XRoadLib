@@ -9,7 +9,7 @@
     <Copyright>Copyright © 2018</Copyright>
     <PackageIconUrl>https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png</PackageIconUrl>
     <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
-    <PackageLicenseUrl>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageLicense>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicense>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net452' ">
     <FrameworkPathOverride>/usr/lib/mono/4.5.2-api</FrameworkPathOverride>
