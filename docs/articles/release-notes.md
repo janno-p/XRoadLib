@@ -1,3 +1,8 @@
+#### 1.3.2 - 28.11.2018
+
+* Fix null reference exception when content type could not be handled.
+* Handle quotes around `start-info=` value.
+
 #### 1.3.1 - 27.11.2018
 
 * Fix null reference exception when multipart header does not include content type.
