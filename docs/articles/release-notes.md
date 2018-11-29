@@ -1,3 +1,7 @@
+#### 1.3.3 - 29.11.2018
+
+* Fix null reference exception of classic Asp.Net handler while serving X-Road metaservices.
+
 #### 1.3.2 - 28.11.2018
 
 * Fix null reference exception when content type could not be handled.
