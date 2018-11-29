@@ -163,15 +163,17 @@ namespace XRoadLib.Extensions.AspNet
 
                 writer.WriteStartDocument();
 
+                var protocolDefinition = context.Response.ServiceManager?.ProtocolDefinition;
+
                 if (context.MessageFormatter.TryMoveToEnvelope(reader))
                 {
                     context.MessageFormatter.WriteStartEnvelope(writer, reader.Prefix);
                     writer.WriteAttributes(reader, true);
-                    writer.WriteMissingAttributes(context.Response.ServiceManager.ProtocolDefinition);
+                    writer.WriteMissingAttributes(protocolDefinition);
                 }
                 else
                 {
-                    writer.WriteSoapEnvelope(context.MessageFormatter, context.Response.ServiceManager.ProtocolDefinition);
+                    writer.WriteSoapEnvelope(context.MessageFormatter, protocolDefinition);
                 }
 
                 if (context.MessageFormatter.TryMoveToHeader(reader))

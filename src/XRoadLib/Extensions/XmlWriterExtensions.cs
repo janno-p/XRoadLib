@@ -120,9 +120,12 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static void WriteSoapEnvelope(this XmlWriter writer, IMessageFormatter messageFormatter, ProtocolDefinition protocolDefinition)
         {
-            var soapEnvPrefix = protocolDefinition.GlobalNamespacePrefixes[messageFormatter.Namespace];
+            var soapEnvPrefix = protocolDefinition != null ? protocolDefinition.GlobalNamespacePrefixes[messageFormatter.Namespace] : PrefixConstants.SOAP_ENV;
 
             messageFormatter.WriteStartEnvelope(writer, soapEnvPrefix);
+
+            if (protocolDefinition == null)
+                return;
 
             foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
                 writer.WriteAttributeString(PrefixConstants.XMLNS, kvp.Value, NamespaceConstants.XMLNS, kvp.Key.NamespaceName);
@@ -133,6 +136,9 @@ namespace XRoadLib.Extensions
 
         public static void WriteMissingAttributes(this XmlWriter writer, ProtocolDefinition protocolDefinition)
         {
+            if (protocolDefinition == null)
+                return;
+
             foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
                 if (writer.LookupPrefix(kvp.Key.NamespaceName) == null)
                     writer.WriteAttributeString(PrefixConstants.XMLNS, kvp.Value, NamespaceConstants.XMLNS, kvp.Key.NamespaceName);
