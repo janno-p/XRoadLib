@@ -525,7 +525,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.XmlWriterExtensions.html",
-          "hash": "pqwbjRapotBXGIXf8xe6PA=="
+          "hash": "9V12HL0TlMyx9xIBlaZ+7Q=="
         }
       },
       "is_incremental": true,
@@ -2841,7 +2841,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/release-notes.html",
-          "hash": "FXEOtJ2S+1F4eLACRkBqow=="
+          "hash": "4eGeXKlq/hq+UJopt2drNA=="
         }
       },
       "is_incremental": true,
@@ -2939,17 +2939,17 @@
         "incrementalPhase": "build"
       },
       "processors": {
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
         "ConceptualDocumentProcessor": {
           "can_incremental": true,
-          "incrementalPhase": "build"
-        },
-        "TocDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         }
       }
