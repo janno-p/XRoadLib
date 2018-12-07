@@ -1,3 +1,7 @@
+#### 1.3.4 - 07.12.2018
+
+* Empty tag handling is only required for simple types.
+
 #### 1.3.3 - 29.11.2018
 
 * Fix null reference exception of classic Asp.Net handler while serving X-Road metaservices.
