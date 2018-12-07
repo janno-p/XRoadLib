@@ -2204,22 +2204,6 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.XRoadMessageExtensions.DeserializeMessageContent
   nameWithType: XRoadMessageExtensions.DeserializeMessageContent
-- uid: XRoadLib.Extensions.XRoadMessageExtensions.HandleEmptyElement*
-  name: HandleEmptyElement
-  href: api/XRoadLib.Extensions.XRoadMessageExtensions.html#XRoadLib_Extensions_XRoadMessageExtensions_HandleEmptyElement_
-  commentId: Overload:XRoadLib.Extensions.XRoadMessageExtensions.HandleEmptyElement
-  isSpec: "True"
-  fullName: XRoadLib.Extensions.XRoadMessageExtensions.HandleEmptyElement
-  nameWithType: XRoadMessageExtensions.HandleEmptyElement
-- uid: XRoadLib.Extensions.XRoadMessageExtensions.HandleEmptyElement``1(XRoadLib.Serialization.XRoadMessage,XRoadLib.Schema.ContentDefinition,System.Func{``0})
-  name: HandleEmptyElement<T>(XRoadMessage, ContentDefinition, Func<T>)
-  href: api/XRoadLib.Extensions.XRoadMessageExtensions.html#XRoadLib_Extensions_XRoadMessageExtensions_HandleEmptyElement__1_XRoadLib_Serialization_XRoadMessage_XRoadLib_Schema_ContentDefinition_System_Func___0__
-  commentId: M:XRoadLib.Extensions.XRoadMessageExtensions.HandleEmptyElement``1(XRoadLib.Serialization.XRoadMessage,XRoadLib.Schema.ContentDefinition,System.Func{``0})
-  name.vb: HandleEmptyElement(Of T)(XRoadMessage, ContentDefinition, Func(Of T))
-  fullName: XRoadLib.Extensions.XRoadMessageExtensions.HandleEmptyElement<T>(XRoadLib.Serialization.XRoadMessage, XRoadLib.Schema.ContentDefinition, System.Func<T>)
-  fullName.vb: XRoadLib.Extensions.XRoadMessageExtensions.HandleEmptyElement(Of T)(XRoadLib.Serialization.XRoadMessage, XRoadLib.Schema.ContentDefinition, System.Func(Of T))
-  nameWithType: XRoadMessageExtensions.HandleEmptyElement<T>(XRoadMessage, ContentDefinition, Func<T>)
-  nameWithType.vb: XRoadMessageExtensions.HandleEmptyElement(Of T)(XRoadMessage, ContentDefinition, Func(Of T))
 - uid: XRoadLib.Extensions.XRoadMessageExtensions.HandleEmptyElementOfValueType*
   name: HandleEmptyElementOfValueType
   href: api/XRoadLib.Extensions.XRoadMessageExtensions.html#XRoadLib_Extensions_XRoadMessageExtensions_HandleEmptyElementOfValueType_
@@ -8494,12 +8478,6 @@ references:
   commentId: F:XRoadLib.Serialization.EmptyTagHandlingMode.DefaultValue
   fullName: XRoadLib.Serialization.EmptyTagHandlingMode.DefaultValue
   nameWithType: EmptyTagHandlingMode.DefaultValue
-- uid: XRoadLib.Serialization.EmptyTagHandlingMode.Null
-  name: "Null"
-  href: api/XRoadLib.Serialization.EmptyTagHandlingMode.html#XRoadLib_Serialization_EmptyTagHandlingMode_Null
-  commentId: F:XRoadLib.Serialization.EmptyTagHandlingMode.Null
-  fullName: XRoadLib.Serialization.EmptyTagHandlingMode.Null
-  nameWithType: EmptyTagHandlingMode.Null
 - uid: XRoadLib.Serialization.EmptyTagHandlingMode.Strict
   name: Strict
   href: api/XRoadLib.Serialization.EmptyTagHandlingMode.html#XRoadLib_Serialization_EmptyTagHandlingMode_Strict
