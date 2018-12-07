@@ -23,11 +23,11 @@ namespace XRoadLib.Serialization.Mapping
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return MoveNextAndReturn(reader, HandleEmptyElement(content, message));
+                return MoveNextAndReturn(reader, "");
 
             var value = reader.ReadElementContentAsString();
             if (string.IsNullOrEmpty(value))
-                return HandleEmptyElement(content, message);
+                return "";
 
             return value;
         }
@@ -40,11 +40,6 @@ namespace XRoadLib.Serialization.Mapping
             message.Style.WriteType(writer, Definition, content);
 
             writer.WriteStringWithMode(value.ToString(), message.Style.StringSerializationMode);
-        }
-
-        private static string HandleEmptyElement(ContentDefinition content, XRoadMessage message)
-        {
-            return message.HandleEmptyElement(content, () => "");
         }
     }
 }
