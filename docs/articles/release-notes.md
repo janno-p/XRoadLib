@@ -1,3 +1,9 @@
+#### 1.3.5 - 12.12.2018
+
+* Fix null reference exception when request definition is merged and doesn't have explicit element (and content name).
+* Restore `Null` option of empty tag handling (provides different behavior for nullable value types).
+* Add `xs:duration` data type.
+
 #### 1.3.4 - 07.12.2018
 
 * Empty tag handling is only required for simple types.
