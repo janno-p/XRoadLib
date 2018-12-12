@@ -277,6 +277,7 @@ namespace XRoadLib.Serialization
                 case "System.Int64": return XName.Get("long", NamespaceConstants.XSD);
                 case "System.Int32": return XName.Get("int", NamespaceConstants.XSD);
                 case "System.String": return XName.Get("string", NamespaceConstants.XSD);
+                case "System.TimeSpan": return XName.Get("duration", NamespaceConstants.XSD);
             }
 
             if (ReferenceEquals(type.GetTypeInfo().Assembly, contractAssembly))

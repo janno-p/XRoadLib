@@ -136,6 +136,8 @@ namespace XRoadLib
             AddSystemType<DateTime>("dateTime");
             AddSystemType<DateTime>("date");
 
+            AddSystemType<TimeSpan>("duration");
+
             AddSystemType<bool>("boolean");
 
             AddSystemType<float>("float");

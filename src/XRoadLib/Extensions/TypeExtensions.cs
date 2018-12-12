@@ -130,6 +130,7 @@ namespace XRoadLib.Extensions
             if (type == typeof(int)) return XName.Get("int", NamespaceConstants.XSD);
             if (type == typeof(long)) return XName.Get("long", NamespaceConstants.XSD);
             if (type == typeof(string)) return XName.Get("string", NamespaceConstants.XSD);
+            if (type == typeof(TimeSpan)) return XName.Get("duration", NamespaceConstants.XSD);
             return typeof(Stream).GetTypeInfo().IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.XSD) : null;
         }
 
