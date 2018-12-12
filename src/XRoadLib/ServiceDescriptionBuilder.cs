@@ -1052,21 +1052,24 @@ namespace XRoadLib
 
         private Tuple<XmlSchemaElement, XmlSchemaElement> CreateXmlSchemaElement(XName name, SchemaReferences schemaReferences)
         {
-            var element = new XmlSchemaElement { Name = name.LocalName };
+            var elementName = name?.LocalName ?? string.Empty;
+            var elementNamespace = name?.NamespaceName ?? string.Empty;
+
+            var element = new XmlSchemaElement { Name = elementName };
             var referenceElement = element;
 
             var ns = schemaReferences.SchemaNamespace;
-            if (name.NamespaceName != schemaReferences.SchemaNamespace && name.NamespaceName != "")
+            if (elementNamespace != schemaReferences.SchemaNamespace && elementNamespace != "")
             {
-                ns = name.NamespaceName;
-                referenceElement = new XmlSchemaElement { RefName = new XmlQualifiedName(name.LocalName, name.NamespaceName) };
+                ns = elementNamespace;
+                referenceElement = new XmlSchemaElement { RefName = new XmlQualifiedName(elementName, elementNamespace) };
                 schemaReferences.Elements.Add(referenceElement.RefName, element);
             }
 
             var elementForm =
                 schemaDefinitionProvider.IsQualifiedElementDefault(ns)
-                    ? (name.NamespaceName == "" ? (XmlSchemaForm?)XmlSchemaForm.Unqualified : null)
-                    : (name.NamespaceName == ns ? (XmlSchemaForm?)XmlSchemaForm.Qualified : null);
+                    ? (elementNamespace == "" ? (XmlSchemaForm?)XmlSchemaForm.Unqualified : null)
+                    : (elementNamespace == ns ? (XmlSchemaForm?)XmlSchemaForm.Qualified : null);
 
             if (elementForm.HasValue)
                 element.Form = elementForm.Value;

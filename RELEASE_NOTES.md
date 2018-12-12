@@ -1,3 +1,7 @@
+#### 1.3.5 - Unreleased
+
+* Fix null reference exception when request definition is merged and doesn't have explicit element (and content name).
+
 #### 1.3.4 - 07.12.2018
 
 * Empty tag handling is only required for simple types.
