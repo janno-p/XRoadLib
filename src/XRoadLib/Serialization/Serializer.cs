@@ -40,6 +40,8 @@ namespace XRoadLib.Serialization
             AddSystemType<DateTime>("dateTime", x => new DateTimeTypeMap(x));
             AddSystemType<DateTime>("date", x => new DateTypeMap(x));
 
+            AddSystemType<TimeSpan>("duration", x => new TimeSpanTypeMap(x));
+
             AddSystemType<bool>("boolean", x => new BooleanTypeMap(x));
 
             AddSystemType<float>("float", x => new SingleTypeMap(x));
