@@ -13,6 +13,12 @@
         /// <summary>
         /// Empty tag produces default value of the property type.
         /// </summary>
-        DefaultValue
+        DefaultValue,
+
+        /// <summary>
+        /// Empty tag produces value `null` for nullable value types and default value for
+        /// non nullable types.
+        /// </summary>
+        Null
     }
 }

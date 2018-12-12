@@ -59,6 +59,8 @@ namespace XRoadLib.Extensions
             {
                 case EmptyTagHandlingMode.DefaultValue:
                     return default(T);
+                case EmptyTagHandlingMode.Null:
+                    return null;
                 default:
                     return getStrictValue();
             }
