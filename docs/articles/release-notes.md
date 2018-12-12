@@ -1,3 +1,7 @@
+#### 1.3.6 - 12.12.2018
+
+* Add missing pieces of `xs:duration` implementation.
+
 #### 1.3.5 - 12.12.2018
 
 * Fix null reference exception when request definition is merged and doesn't have explicit element (and content name).
