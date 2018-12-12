@@ -8478,6 +8478,12 @@ references:
   commentId: F:XRoadLib.Serialization.EmptyTagHandlingMode.DefaultValue
   fullName: XRoadLib.Serialization.EmptyTagHandlingMode.DefaultValue
   nameWithType: EmptyTagHandlingMode.DefaultValue
+- uid: XRoadLib.Serialization.EmptyTagHandlingMode.Null
+  name: "Null"
+  href: api/XRoadLib.Serialization.EmptyTagHandlingMode.html#XRoadLib_Serialization_EmptyTagHandlingMode_Null
+  commentId: F:XRoadLib.Serialization.EmptyTagHandlingMode.Null
+  fullName: XRoadLib.Serialization.EmptyTagHandlingMode.Null
+  nameWithType: EmptyTagHandlingMode.Null
 - uid: XRoadLib.Serialization.EmptyTagHandlingMode.Strict
   name: Strict
   href: api/XRoadLib.Serialization.EmptyTagHandlingMode.html#XRoadLib_Serialization_EmptyTagHandlingMode_Strict
@@ -10497,6 +10503,51 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Serialization.Mapping.TestSystemServiceMap.SerializeResponse
   nameWithType: TestSystemServiceMap.SerializeResponse
+- uid: XRoadLib.Serialization.Mapping.TimeSpanTypeMap
+  name: TimeSpanTypeMap
+  href: api/XRoadLib.Serialization.Mapping.TimeSpanTypeMap.html
+  commentId: T:XRoadLib.Serialization.Mapping.TimeSpanTypeMap
+  fullName: XRoadLib.Serialization.Mapping.TimeSpanTypeMap
+  nameWithType: TimeSpanTypeMap
+- uid: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.#ctor(XRoadLib.Schema.TypeDefinition)
+  name: TimeSpanTypeMap(TypeDefinition)
+  href: api/XRoadLib.Serialization.Mapping.TimeSpanTypeMap.html#XRoadLib_Serialization_Mapping_TimeSpanTypeMap__ctor_XRoadLib_Schema_TypeDefinition_
+  commentId: M:XRoadLib.Serialization.Mapping.TimeSpanTypeMap.#ctor(XRoadLib.Schema.TypeDefinition)
+  fullName: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.TimeSpanTypeMap(XRoadLib.Schema.TypeDefinition)
+  nameWithType: TimeSpanTypeMap.TimeSpanTypeMap(TypeDefinition)
+- uid: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.#ctor*
+  name: TimeSpanTypeMap
+  href: api/XRoadLib.Serialization.Mapping.TimeSpanTypeMap.html#XRoadLib_Serialization_Mapping_TimeSpanTypeMap__ctor_
+  commentId: Overload:XRoadLib.Serialization.Mapping.TimeSpanTypeMap.#ctor
+  isSpec: "True"
+  fullName: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.TimeSpanTypeMap
+  nameWithType: TimeSpanTypeMap.TimeSpanTypeMap
+- uid: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Deserialize(System.Xml.XmlReader,XRoadLib.Serialization.Template.IXmlTemplateNode,XRoadLib.Schema.ContentDefinition,XRoadLib.Serialization.XRoadMessage)
+  name: Deserialize(XmlReader, IXmlTemplateNode, ContentDefinition, XRoadMessage)
+  href: api/XRoadLib.Serialization.Mapping.TimeSpanTypeMap.html#XRoadLib_Serialization_Mapping_TimeSpanTypeMap_Deserialize_System_Xml_XmlReader_XRoadLib_Serialization_Template_IXmlTemplateNode_XRoadLib_Schema_ContentDefinition_XRoadLib_Serialization_XRoadMessage_
+  commentId: M:XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Deserialize(System.Xml.XmlReader,XRoadLib.Serialization.Template.IXmlTemplateNode,XRoadLib.Schema.ContentDefinition,XRoadLib.Serialization.XRoadMessage)
+  fullName: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Deserialize(System.Xml.XmlReader, XRoadLib.Serialization.Template.IXmlTemplateNode, XRoadLib.Schema.ContentDefinition, XRoadLib.Serialization.XRoadMessage)
+  nameWithType: TimeSpanTypeMap.Deserialize(XmlReader, IXmlTemplateNode, ContentDefinition, XRoadMessage)
+- uid: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Deserialize*
+  name: Deserialize
+  href: api/XRoadLib.Serialization.Mapping.TimeSpanTypeMap.html#XRoadLib_Serialization_Mapping_TimeSpanTypeMap_Deserialize_
+  commentId: Overload:XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Deserialize
+  isSpec: "True"
+  fullName: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Deserialize
+  nameWithType: TimeSpanTypeMap.Deserialize
+- uid: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Serialize(System.Xml.XmlWriter,XRoadLib.Serialization.Template.IXmlTemplateNode,System.Object,XRoadLib.Schema.ContentDefinition,XRoadLib.Serialization.XRoadMessage)
+  name: Serialize(XmlWriter, IXmlTemplateNode, Object, ContentDefinition, XRoadMessage)
+  href: api/XRoadLib.Serialization.Mapping.TimeSpanTypeMap.html#XRoadLib_Serialization_Mapping_TimeSpanTypeMap_Serialize_System_Xml_XmlWriter_XRoadLib_Serialization_Template_IXmlTemplateNode_System_Object_XRoadLib_Schema_ContentDefinition_XRoadLib_Serialization_XRoadMessage_
+  commentId: M:XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Serialize(System.Xml.XmlWriter,XRoadLib.Serialization.Template.IXmlTemplateNode,System.Object,XRoadLib.Schema.ContentDefinition,XRoadLib.Serialization.XRoadMessage)
+  fullName: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Serialize(System.Xml.XmlWriter, XRoadLib.Serialization.Template.IXmlTemplateNode, System.Object, XRoadLib.Schema.ContentDefinition, XRoadLib.Serialization.XRoadMessage)
+  nameWithType: TimeSpanTypeMap.Serialize(XmlWriter, IXmlTemplateNode, Object, ContentDefinition, XRoadMessage)
+- uid: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Serialize*
+  name: Serialize
+  href: api/XRoadLib.Serialization.Mapping.TimeSpanTypeMap.html#XRoadLib_Serialization_Mapping_TimeSpanTypeMap_Serialize_
+  commentId: Overload:XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Serialize
+  isSpec: "True"
+  fullName: XRoadLib.Serialization.Mapping.TimeSpanTypeMap.Serialize
+  nameWithType: TimeSpanTypeMap.Serialize
 - uid: XRoadLib.Serialization.Mapping.TypeMap
   name: TypeMap
   href: api/XRoadLib.Serialization.Mapping.TypeMap.html
