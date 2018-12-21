@@ -8093,18 +8093,18 @@ references:
   commentId: T:XRoadLib.Schema.UnexpectedElementException
   fullName: XRoadLib.Schema.UnexpectedElementException
   nameWithType: UnexpectedElementException
-- uid: XRoadLib.Schema.UnexpectedElementException.#ctor(System.String,XRoadLib.Schema.TypeDefinition,XRoadLib.Schema.ParticleDefinition,System.String)
-  name: UnexpectedElementException(String, TypeDefinition, ParticleDefinition, String)
-  href: api/XRoadLib.Schema.UnexpectedElementException.html#XRoadLib_Schema_UnexpectedElementException__ctor_System_String_XRoadLib_Schema_TypeDefinition_XRoadLib_Schema_ParticleDefinition_System_String_
-  commentId: M:XRoadLib.Schema.UnexpectedElementException.#ctor(System.String,XRoadLib.Schema.TypeDefinition,XRoadLib.Schema.ParticleDefinition,System.String)
-  fullName: XRoadLib.Schema.UnexpectedElementException.UnexpectedElementException(System.String, XRoadLib.Schema.TypeDefinition, XRoadLib.Schema.ParticleDefinition, System.String)
-  nameWithType: UnexpectedElementException.UnexpectedElementException(String, TypeDefinition, ParticleDefinition, String)
-- uid: XRoadLib.Schema.UnexpectedElementException.#ctor(XRoadLib.Schema.TypeDefinition,XRoadLib.Schema.ParticleDefinition,System.String)
-  name: UnexpectedElementException(TypeDefinition, ParticleDefinition, String)
-  href: api/XRoadLib.Schema.UnexpectedElementException.html#XRoadLib_Schema_UnexpectedElementException__ctor_XRoadLib_Schema_TypeDefinition_XRoadLib_Schema_ParticleDefinition_System_String_
-  commentId: M:XRoadLib.Schema.UnexpectedElementException.#ctor(XRoadLib.Schema.TypeDefinition,XRoadLib.Schema.ParticleDefinition,System.String)
-  fullName: XRoadLib.Schema.UnexpectedElementException.UnexpectedElementException(XRoadLib.Schema.TypeDefinition, XRoadLib.Schema.ParticleDefinition, System.String)
-  nameWithType: UnexpectedElementException.UnexpectedElementException(TypeDefinition, ParticleDefinition, String)
+- uid: XRoadLib.Schema.UnexpectedElementException.#ctor(System.String,XRoadLib.Schema.TypeDefinition,XRoadLib.Schema.ParticleDefinition,System.Xml.Linq.XName)
+  name: UnexpectedElementException(String, TypeDefinition, ParticleDefinition, XName)
+  href: api/XRoadLib.Schema.UnexpectedElementException.html#XRoadLib_Schema_UnexpectedElementException__ctor_System_String_XRoadLib_Schema_TypeDefinition_XRoadLib_Schema_ParticleDefinition_System_Xml_Linq_XName_
+  commentId: M:XRoadLib.Schema.UnexpectedElementException.#ctor(System.String,XRoadLib.Schema.TypeDefinition,XRoadLib.Schema.ParticleDefinition,System.Xml.Linq.XName)
+  fullName: XRoadLib.Schema.UnexpectedElementException.UnexpectedElementException(System.String, XRoadLib.Schema.TypeDefinition, XRoadLib.Schema.ParticleDefinition, System.Xml.Linq.XName)
+  nameWithType: UnexpectedElementException.UnexpectedElementException(String, TypeDefinition, ParticleDefinition, XName)
+- uid: XRoadLib.Schema.UnexpectedElementException.#ctor(XRoadLib.Schema.TypeDefinition,XRoadLib.Schema.ParticleDefinition,System.Xml.Linq.XName)
+  name: UnexpectedElementException(TypeDefinition, ParticleDefinition, XName)
+  href: api/XRoadLib.Schema.UnexpectedElementException.html#XRoadLib_Schema_UnexpectedElementException__ctor_XRoadLib_Schema_TypeDefinition_XRoadLib_Schema_ParticleDefinition_System_Xml_Linq_XName_
+  commentId: M:XRoadLib.Schema.UnexpectedElementException.#ctor(XRoadLib.Schema.TypeDefinition,XRoadLib.Schema.ParticleDefinition,System.Xml.Linq.XName)
+  fullName: XRoadLib.Schema.UnexpectedElementException.UnexpectedElementException(XRoadLib.Schema.TypeDefinition, XRoadLib.Schema.ParticleDefinition, System.Xml.Linq.XName)
+  nameWithType: UnexpectedElementException.UnexpectedElementException(TypeDefinition, ParticleDefinition, XName)
 - uid: XRoadLib.Schema.UnexpectedElementException.#ctor*
   name: UnexpectedElementException
   href: api/XRoadLib.Schema.UnexpectedElementException.html#XRoadLib_Schema_UnexpectedElementException__ctor_
@@ -8240,18 +8240,18 @@ references:
   commentId: T:XRoadLib.Schema.UnknownPropertyException
   fullName: XRoadLib.Schema.UnknownPropertyException
   nameWithType: UnknownPropertyException
-- uid: XRoadLib.Schema.UnknownPropertyException.#ctor(System.String,XRoadLib.Schema.TypeDefinition,System.String)
-  name: UnknownPropertyException(String, TypeDefinition, String)
-  href: api/XRoadLib.Schema.UnknownPropertyException.html#XRoadLib_Schema_UnknownPropertyException__ctor_System_String_XRoadLib_Schema_TypeDefinition_System_String_
-  commentId: M:XRoadLib.Schema.UnknownPropertyException.#ctor(System.String,XRoadLib.Schema.TypeDefinition,System.String)
-  fullName: XRoadLib.Schema.UnknownPropertyException.UnknownPropertyException(System.String, XRoadLib.Schema.TypeDefinition, System.String)
-  nameWithType: UnknownPropertyException.UnknownPropertyException(String, TypeDefinition, String)
-- uid: XRoadLib.Schema.UnknownPropertyException.#ctor(XRoadLib.Schema.TypeDefinition,System.String)
-  name: UnknownPropertyException(TypeDefinition, String)
-  href: api/XRoadLib.Schema.UnknownPropertyException.html#XRoadLib_Schema_UnknownPropertyException__ctor_XRoadLib_Schema_TypeDefinition_System_String_
-  commentId: M:XRoadLib.Schema.UnknownPropertyException.#ctor(XRoadLib.Schema.TypeDefinition,System.String)
-  fullName: XRoadLib.Schema.UnknownPropertyException.UnknownPropertyException(XRoadLib.Schema.TypeDefinition, System.String)
-  nameWithType: UnknownPropertyException.UnknownPropertyException(TypeDefinition, String)
+- uid: XRoadLib.Schema.UnknownPropertyException.#ctor(System.String,XRoadLib.Schema.TypeDefinition,System.Xml.Linq.XName)
+  name: UnknownPropertyException(String, TypeDefinition, XName)
+  href: api/XRoadLib.Schema.UnknownPropertyException.html#XRoadLib_Schema_UnknownPropertyException__ctor_System_String_XRoadLib_Schema_TypeDefinition_System_Xml_Linq_XName_
+  commentId: M:XRoadLib.Schema.UnknownPropertyException.#ctor(System.String,XRoadLib.Schema.TypeDefinition,System.Xml.Linq.XName)
+  fullName: XRoadLib.Schema.UnknownPropertyException.UnknownPropertyException(System.String, XRoadLib.Schema.TypeDefinition, System.Xml.Linq.XName)
+  nameWithType: UnknownPropertyException.UnknownPropertyException(String, TypeDefinition, XName)
+- uid: XRoadLib.Schema.UnknownPropertyException.#ctor(XRoadLib.Schema.TypeDefinition,System.Xml.Linq.XName)
+  name: UnknownPropertyException(TypeDefinition, XName)
+  href: api/XRoadLib.Schema.UnknownPropertyException.html#XRoadLib_Schema_UnknownPropertyException__ctor_XRoadLib_Schema_TypeDefinition_System_Xml_Linq_XName_
+  commentId: M:XRoadLib.Schema.UnknownPropertyException.#ctor(XRoadLib.Schema.TypeDefinition,System.Xml.Linq.XName)
+  fullName: XRoadLib.Schema.UnknownPropertyException.UnknownPropertyException(XRoadLib.Schema.TypeDefinition, System.Xml.Linq.XName)
+  nameWithType: UnknownPropertyException.UnknownPropertyException(TypeDefinition, XName)
 - uid: XRoadLib.Schema.UnknownPropertyException.#ctor*
   name: UnknownPropertyException
   href: api/XRoadLib.Schema.UnknownPropertyException.html#XRoadLib_Schema_UnknownPropertyException__ctor_
