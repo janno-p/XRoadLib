@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -10,7 +11,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class AllTypeMap<T> : CompositeTypeMap<T> where T : class, IXRoadSerializable, new()
     {
-        private readonly IDictionary<string, IPropertyMap> deserializationPropertyMaps = new Dictionary<string, IPropertyMap>();
+        private readonly IDictionary<XName, IPropertyMap> deserializationPropertyMaps = new Dictionary<XName, IPropertyMap>();
         private readonly Lazy<int> requiredPropertiesCount;
 
         public AllTypeMap(ISerializer serializer, TypeDefinition typeDefinition)
@@ -32,7 +33,7 @@ namespace XRoadLib.Serialization.Mapping
                 return dtoObject;
             }
 
-            var existingPropertyNames = new HashSet<string>();
+            var existingPropertyNames = new HashSet<XName>();
 
             if (reader.IsEmptyElement)
             {
@@ -57,7 +58,7 @@ namespace XRoadLib.Serialization.Mapping
                 var propertyMap = GetPropertyMap(reader);
 
                 if (!propertyMap.Definition.Content.IsOptional)
-                    existingPropertyNames.Add(reader.LocalName);
+                    existingPropertyNames.Add(reader.GetXName());
 
                 if (ReadPropertyValue(reader, propertyMap, templateNode, message, validateRequired, dtoObject) && validateRequired)
                     requiredCount++;
@@ -108,9 +109,11 @@ namespace XRoadLib.Serialization.Mapping
 
         private IPropertyMap GetPropertyMap(XmlReader reader)
         {
-            return deserializationPropertyMaps.TryGetValue(reader.LocalName, out var propertyMap)
+            var readerName = reader.GetXName();
+
+            return deserializationPropertyMaps.TryGetValue(readerName, out var propertyMap)
                 ? propertyMap
-                : throw new UnknownPropertyException($"Type `{Definition.Name}` does not define property `{reader.LocalName}` (property names are case-sensitive).", Definition, reader.LocalName);
+                : throw new UnknownPropertyException($"Type `{Definition.Name}` does not define property `{readerName}` (property names are case-sensitive).", Definition, readerName);
         }
 
         protected override void AddPropertyMap(IPropertyMap propertyMap)
@@ -120,7 +123,7 @@ namespace XRoadLib.Serialization.Mapping
             deserializationPropertyMaps.Add(propertyMap.Definition.Content.SerializedName.LocalName, propertyMap);
         }
 
-        private void ValidateRemainingProperties(ICollection<string> existingPropertyNames, ContentDefinition content)
+        private void ValidateRemainingProperties(ICollection<XName> existingPropertyNames, ContentDefinition content)
         {
             if (existingPropertyNames.Count == requiredPropertiesCount.Value)
                 return;

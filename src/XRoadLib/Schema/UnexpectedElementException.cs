@@ -1,4 +1,5 @@
-﻿using XRoadLib.Soap;
+﻿using System.Xml.Linq;
+using XRoadLib.Soap;
 
 namespace XRoadLib.Schema
 {
@@ -6,9 +7,9 @@ namespace XRoadLib.Schema
     {
         public TypeDefinition TypeDefinition { get; }
         public ParticleDefinition ParticleDefinition { get; }
-        public string ElementName { get; }
+        public XName ElementName { get; }
 
-        public UnexpectedElementException(string message, TypeDefinition typeDefinition, ParticleDefinition particleDefinition, string elementName)
+        public UnexpectedElementException(string message, TypeDefinition typeDefinition, ParticleDefinition particleDefinition, XName elementName)
             : base(ClientFaultCode.UnexpectedElement, message)
         {
             TypeDefinition = typeDefinition;
@@ -16,7 +17,7 @@ namespace XRoadLib.Schema
             ElementName = elementName;
         }
 
-        public UnexpectedElementException(TypeDefinition typeDefinition, ParticleDefinition particleDefinition, string elementName)
+        public UnexpectedElementException(TypeDefinition typeDefinition, ParticleDefinition particleDefinition, XName elementName)
             : this($"Expected element `{particleDefinition.Content.SerializedName.LocalName}` while deserializing type `{typeDefinition.Name}`, but element `{elementName}` was found instead.", typeDefinition, particleDefinition, elementName)
         { }
     }

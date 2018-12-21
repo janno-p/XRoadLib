@@ -127,7 +127,7 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static bool IsCurrentElement(this XmlReader reader, int depth, XName name)
         {
-            return reader.NodeType == XmlNodeType.Element && reader.Depth == depth && reader.LocalName == name.LocalName && reader.NamespaceURI == name.NamespaceName;
+            return reader.NodeType == XmlNodeType.Element && reader.Depth == depth && reader.GetXName() == name;
         }
 
         /// <summary>

@@ -1,3 +1,7 @@
+#### 1.3.7 - 21.12.2018
+
+* Check namespaces of complex type elements.
+
 #### 1.3.6 - 12.12.2018
 
 * Add missing pieces of `xs:duration` implementation.

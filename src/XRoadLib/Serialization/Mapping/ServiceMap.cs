@@ -81,11 +81,11 @@ namespace XRoadLib.Serialization.Mapping
 
             var hasResponseElement = reader.MoveToElement(3);
 
-            if (hasResponseElement && !ResponseDefinition.ContainsNonTechnicalFault && reader.LocalName == ResponseDefinition.FaultName.LocalName && reader.NamespaceURI == ResponseDefinition.FaultName.NamespaceName)
+            if (hasResponseElement && !ResponseDefinition.ContainsNonTechnicalFault && reader.GetXName() == ResponseDefinition.FaultName)
                 return reader.ReadXRoadFault(4);
 
-            if (!hasResponseElement || reader.LocalName != responseName.LocalName || reader.NamespaceURI != responseName.NamespaceName)
-                throw new InvalidQueryException($"Expected payload element `{responseName}` in SOAP message, but `{reader.LocalName}` was found instead.");
+            if (!hasResponseElement || reader.GetXName() != responseName)
+                throw new InvalidQueryException($"Expected payload element `{responseName}` in SOAP message, but `{reader.GetXName()}` was found instead.");
 
             var hasWrapperElement = HasWrapperResultElement;
             if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.ResultElementName))

@@ -84,23 +84,23 @@ namespace XRoadLib.Serialization.Mapping
             {
                 propertyMap = properties.Current ?? throw new NullReferenceException();
 
-                var propertyName = propertyMap.Definition.Content.SerializedName.LocalName;
+                var propertyName = propertyMap.Definition.Content.SerializedName;
                 var propertyNode = templateNode[properties.Current.Definition.TemplateName, message.Version];
 
-                if (reader.LocalName == propertyName)
+                if (reader.GetXName() == propertyName)
                     return propertyNode;
 
                 if (!propertyMap.Definition.Content.IsOptional)
-                    throw new UnexpectedElementException(Definition, propertyMap.Definition, reader.LocalName);
+                    throw new UnexpectedElementException(Definition, propertyMap.Definition, reader.GetXName());
 
                 if (validateRequired && propertyNode != null && propertyNode.IsRequired)
                     throw new ParameterRequiredException(Definition, propertyMap.Definition);
             }
 
             if (propertyMap == null)
-                throw new InvalidQueryException($"Element `{reader.LocalName}` was unexpected at given location while deserializing type `{Definition.Name}`.");
+                throw new InvalidQueryException($"Element `{reader.GetXName()}` was unexpected at given location while deserializing type `{Definition.Name}`.");
 
-            throw new UnexpectedElementException(Definition, propertyMap.Definition, reader.LocalName);
+            throw new UnexpectedElementException(Definition, propertyMap.Definition, reader.GetXName());
         }
 
         private void ValidateRemainingProperties(IEnumerator<IPropertyMap> properties, ContentDefinition content)

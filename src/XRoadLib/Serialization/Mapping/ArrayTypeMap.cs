@@ -46,13 +46,16 @@ namespace XRoadLib.Serialization.Mapping
                     continue;
                 }
 
-                if (reader.LocalName != itemName.LocalName || reader.NamespaceURI != itemName.NamespaceName)
+                if (reader.GetXName() != itemName)
                 {
                     if (arrayContent.MergeContent)
                         break;
 
                     if (!arrayContent.Item.AcceptsAnyName)
-                        throw new UnexpectedElementException($"Invalid array item name {reader.LocalName}.", Definition, arrayContent.Item, reader.LocalName);
+                    {
+                        var readerName = reader.GetXName();
+                        throw new UnexpectedElementException($"Invalid array item name `{readerName}`.", Definition, arrayContent.Item, readerName);
+                    }
                 }
 
                 if (reader.IsNilElement())
