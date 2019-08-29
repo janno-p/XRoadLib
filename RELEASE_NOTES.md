@@ -1,4 +1,4 @@
-#### 1.3.8 - Unreleased
+#### 1.3.8 - 29.08.2019
 
 * Fix: duplicate complex type definitions in WSDL document.
 * Fix: deserialize MTOM/XOP enabled property as inline base64 content when multipart attachment content id is missing.
