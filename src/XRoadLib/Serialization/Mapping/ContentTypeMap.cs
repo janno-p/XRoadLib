@@ -37,7 +37,7 @@ namespace XRoadLib.Serialization.Mapping
                 message.AllAttachments.Add(tempAttachment);
 
                 if (reader.IsEmptyElement)
-                    return MoveNextAndReturn(reader, tempAttachment.ContentStream);
+                    return reader.MoveNextAndReturn(tempAttachment.ContentStream);
 
                 reader.Read();
 
@@ -57,7 +57,7 @@ namespace XRoadLib.Serialization.Mapping
                 throw new InvalidQueryException($"MIME multipart message does not contain message part with ID `{contentID}`.");
 
             if (reader.IsEmptyElement)
-                return MoveNextAndReturn(reader, attachment.ContentStream);
+                return reader.MoveNextAndReturn(attachment.ContentStream);
 
             reader.ReadToEndElement();
 

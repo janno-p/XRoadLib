@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using XRoadLib.Schema;
+using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Tests.Contract.Configuration;
 

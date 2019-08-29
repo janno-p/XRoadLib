@@ -40,7 +40,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var result = Enum.ToObject(Definition.Type, enumerationValue);
 
-            return isEmptyElement ? MoveNextAndReturn(reader, result) : result;
+            return isEmptyElement ? reader.MoveNextAndReturn(result) : result;
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)

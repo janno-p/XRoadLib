@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Serialization;
 
@@ -10,14 +9,6 @@ namespace XRoadLib.Extensions
     /// </summary>
     public static class XmlReaderExtensions
     {
-        private static readonly ICollection<string> headerNamespaces = new[]
-        {
-            NamespaceConstants.XTEE,
-            NamespaceConstants.XROAD,
-            NamespaceConstants.XROAD_V4,
-            NamespaceConstants.XROAD_V4_REPR
-        };
-
         private static readonly XName qnXsiNil = XName.Get("nil", NamespaceConstants.XSI);
         private static readonly XName qnXsiType = XName.Get("type", NamespaceConstants.XSI);
         private static readonly XName qnSoapEncArray = XName.Get("Array", NamespaceConstants.SOAP_ENC);
@@ -146,14 +137,6 @@ namespace XRoadLib.Extensions
         }
 
         /// <summary>
-        /// Check if current XML reader node is defined in one of the X-Road schema namespaces.
-        /// </summary>
-        public static bool IsHeaderNamespace(this XmlReader reader)
-        {
-            return headerNamespaces.Contains(reader.NamespaceURI);
-        }
-
-        /// <summary>
         /// Get current reader node name as XName.
         /// </summary>
         public static XName GetXName(this XmlReader reader)
@@ -181,6 +164,27 @@ namespace XRoadLib.Extensions
             }
 
             return fault;
+        }
+
+        internal static object MoveNextAndReturn(this XmlReader reader, object value)
+        {
+            reader.Read();
+            return value;
+        }
+
+        internal static bool ReadToContent(this XmlReader reader)
+        {
+            var depth = reader.Depth;
+            var childDepth = depth + 1;
+
+            while (true)
+            {
+                if (reader.Depth == childDepth && (reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.Text || reader.NodeType == XmlNodeType.CDATA))
+                    return true;
+
+                if (!reader.Read() || reader.Depth < childDepth)
+                    return false;
+            }
         }
     }
 }

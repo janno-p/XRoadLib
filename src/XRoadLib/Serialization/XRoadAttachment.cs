@@ -44,6 +44,16 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Initializes new attachment based on existing stream.
         /// </summary>
+        public XRoadAttachment(byte[] contentBytes) : this()
+        {
+            var contentStream = new MemoryStream(contentBytes);
+            contentID = Convert.ToBase64String(MD5.Create().ComputeHash(contentStream));
+            ContentStream = contentStream;
+        }
+
+        /// <summary>
+        /// Initializes new attachment based on existing stream.
+        /// </summary>
         public XRoadAttachment(Stream contentStream) : this()
         {
             contentID = Convert.ToBase64String(MD5.Create().ComputeHash(contentStream));

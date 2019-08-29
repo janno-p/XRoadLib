@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -15,7 +14,7 @@ namespace XRoadLib.Serialization.Mapping
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return MoveNextAndReturn(reader, HandleEmptyElement(content, message));
+                return reader.MoveNextAndReturn(HandleEmptyElement(content, message));
 
             var value = reader.ReadElementContentAsString();
 

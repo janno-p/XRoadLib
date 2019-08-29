@@ -31,7 +31,7 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.IsEmptyElement)
             {
                 ValidateRemainingProperties(properties, content);
-                return MoveNextAndReturn(reader, entity);
+                return reader.MoveNextAndReturn(entity);
             }
 
             var parentDepth = reader.Depth;
