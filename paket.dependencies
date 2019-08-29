@@ -18,4 +18,4 @@ nuget Octokit
 
 github fsharp/FAKE modules/Octokit/Octokit.fsx
 
-http https://github.com/dotnet/docfx/releases/download/v2.38.1/docfx.zip
+http https://github.com/dotnet/docfx/releases/download/v2.45/docfx.zip

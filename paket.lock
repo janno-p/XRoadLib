@@ -937,4 +937,4 @@ GITHUB
       Octokit (>= 0.20)
 HTTP
   remote: https://github.com
-    docfx.zip (/dotnet/docfx/releases/download/v2.38.1/docfx.zip)
+    docfx.zip (/dotnet/docfx/releases/download/v2.45/docfx.zip)
