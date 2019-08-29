@@ -202,6 +202,8 @@ namespace XRoadLib
 
         private IEnumerable<XmlSchema> BuildSchemas(string targetNamespace, MessageCollection messages)
         {
+            var builtTypes = new HashSet<XName>();
+
             var schemaTypes = new List<Tuple<string, XmlSchemaType>>();
             var schemaElements = new List<Tuple<string, XmlSchemaElement>>();
             var schemaReferences = new Dictionary<string, SchemaReferences>();
@@ -373,10 +375,12 @@ namespace XRoadLib
 
                 foreach (var kvp in schemaReferences.SelectMany(x => x.Value.Types).Where(x => x.Value == null).ToList())
                 {
-                    if (!schemaTypeDefinitions.TryGetValue(XName.Get(kvp.Key.Name, kvp.Key.Namespace), out var typeDefinition))
+                    var schemaTypeName = XName.Get(kvp.Key.Name, kvp.Key.Namespace);
+
+                    if (!schemaTypeDefinitions.TryGetValue(schemaTypeName, out var typeDefinition))
                         continue;
 
-                    if (typeDefinition.IsSimpleType)
+                    if (typeDefinition.IsSimpleType || !builtTypes.Add(schemaTypeName))
                         continue;
 
                     XmlSchemaType schemaType;
