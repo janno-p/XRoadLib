@@ -4,20 +4,14 @@ open Fake.Documentation
 #load "./.fake/build.fsx/intellisense.fsx"
 #load "./paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 
-#if INTERACTIVE
-#r "netstandard"
-#endif
-
 open Fake.Core
 open Fake.Core.TargetOperators
-open Fake.Documentation
 open Fake.DotNet
 open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Tools
 open Octokit
-open System
 open System.IO
 
 // Git configuration (used for publishing documentation in gh-pages branch)

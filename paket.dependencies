@@ -1,9 +1,11 @@
+version 5.216.0
+
 source https://api.nuget.org/v3/index.json
-storage: none
+storage: packages
 
 group Build
 source https://api.nuget.org/v3/index.json
-storage: none
+storage:
 
 nuget Fake.Core.Environment
 nuget Fake.Core.ReleaseNotes
@@ -12,6 +14,7 @@ nuget Fake.Documentation.DocFx
 nuget Fake.DotNet.Cli
 nuget Fake.DotNet.Paket
 nuget Fake.Tools.Git
+nuget Octokit
 
 github fsharp/FAKE modules/Octokit/Octokit.fsx
 

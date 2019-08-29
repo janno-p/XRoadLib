@@ -13,6 +13,6 @@
     <ProjectReference Include="..\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.6.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.9.1" />
   </ItemGroup>
 </Project>

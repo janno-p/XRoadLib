@@ -6,7 +6,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <Authors>Janno Põldma</Authors>
-    <Copyright>Copyright © 2018</Copyright>
+    <Copyright>Copyright © 2019</Copyright>
     <PackageIconUrl>https://raw.githubusercontent.com/janno-p/XRoadLib/master/docs/files/img/logo.png</PackageIconUrl>
     <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
     <PackageLicense>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicense>
