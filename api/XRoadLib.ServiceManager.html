@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ServiceManager
    ">
-    <meta name="generator" content="docfx 2.38.1.0">
+    <meta name="generator" content="docfx 2.45.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -168,7 +168,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_HeaderDefinition_" data-uid="XRoadLib.ServiceManager.HeaderDefinition*"></a>
   <h4 id="XRoadLib_ServiceManager_HeaderDefinition" data-uid="XRoadLib.ServiceManager.HeaderDefinition">HeaderDefinition</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Header definition of the protocol.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -198,7 +199,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_Name_" data-uid="XRoadLib.ServiceManager.Name*"></a>
   <h4 id="XRoadLib_ServiceManager_Name" data-uid="XRoadLib.ServiceManager.Name">Name</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>User defined name for service manager in case of multiple definitions.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -228,7 +230,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_ProducerNamespace_" data-uid="XRoadLib.ServiceManager.ProducerNamespace*"></a>
   <h4 id="XRoadLib_ServiceManager_ProducerNamespace" data-uid="XRoadLib.ServiceManager.ProducerNamespace">ProducerNamespace</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Main namespace which defines current producer operations and types.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -258,7 +261,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_ProtocolDefinition_" data-uid="XRoadLib.ServiceManager.ProtocolDefinition*"></a>
   <h4 id="XRoadLib_ServiceManager_ProtocolDefinition" data-uid="XRoadLib.ServiceManager.ProtocolDefinition">ProtocolDefinition</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Protocol specification.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -288,7 +292,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_Style_" data-uid="XRoadLib.ServiceManager.Style*"></a>
   <h4 id="XRoadLib_ServiceManager_Style" data-uid="XRoadLib.ServiceManager.Style">Style</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Operation binding style of Xml messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -350,7 +355,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_CreateServiceDescription_" data-uid="XRoadLib.ServiceManager.CreateServiceDescription*"></a>
   <h4 id="XRoadLib_ServiceManager_CreateServiceDescription_System_Func_XRoadLib_Schema_OperationDefinition_System_Boolean__System_Nullable_System_UInt32__" data-uid="XRoadLib.ServiceManager.CreateServiceDescription(System.Func{XRoadLib.Schema.OperationDefinition,System.Boolean},System.Nullable{System.UInt32})">CreateServiceDescription(Func&lt;OperationDefinition, Boolean&gt;, Nullable&lt;UInt32&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Generates service description based on current schema definition.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -369,12 +375,14 @@
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="XRoadLib.Schema.OperationDefinition.html">OperationDefinition</a>, <span class="xref">System.Boolean</span>&gt;</td>
         <td><span class="parametername">operationFilter</span></td>
-        <td></td>
+        <td><p>Allows to filter out unwanted operations which should not appear in service description.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.UInt32</span>&gt;</td>
         <td><span class="parametername">version</span></td>
-        <td></td>
+        <td><p>Global DTO version of wanted service description.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -389,7 +397,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="XRoadLib.Wsdl.ServiceDescription.html">ServiceDescription</a></td>
-        <td></td>
+        <td><p>Service description instance of current schema definition.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -402,7 +411,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_GetSerializer_" data-uid="XRoadLib.ServiceManager.GetSerializer*"></a>
   <h4 id="XRoadLib_ServiceManager_GetSerializer_System_Nullable_System_UInt32__" data-uid="XRoadLib.ServiceManager.GetSerializer(System.Nullable{System.UInt32})">GetSerializer(Nullable&lt;UInt32&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Get serializer instance of schema definition runtime serialization.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -421,7 +431,8 @@
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.UInt32</span>&gt;</td>
         <td><span class="parametername">version</span></td>
-        <td></td>
+        <td><p>Global DTO version of wanted serialzier.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -436,7 +447,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="XRoadLib.Serialization.ISerializer.html">ISerializer</a></td>
-        <td></td>
+        <td><p>Runtime type serializer.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -449,7 +461,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_IsDefinedByEnvelope_" data-uid="XRoadLib.ServiceManager.IsDefinedByEnvelope*"></a>
   <h4 id="XRoadLib_ServiceManager_IsDefinedByEnvelope_System_Xml_XmlReader_" data-uid="XRoadLib.ServiceManager.IsDefinedByEnvelope(System.Xml.XmlReader)">IsDefinedByEnvelope(XmlReader)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Check if envelope defines given protocol schema.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -496,7 +509,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_IsHeaderNamespace_" data-uid="XRoadLib.ServiceManager.IsHeaderNamespace*"></a>
   <h4 id="XRoadLib_ServiceManager_IsHeaderNamespace_System_String_" data-uid="XRoadLib.ServiceManager.IsHeaderNamespace(System.String)">IsHeaderNamespace(String)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Test if given namespace is defined as SOAP header element namespace.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -575,7 +589,8 @@
   </span>
   <a id="XRoadLib_ServiceManager_XRoadLib_IServiceManager_Execute_" data-uid="XRoadLib.ServiceManager.XRoadLib#IServiceManager#Execute*"></a>
   <h4 id="XRoadLib_ServiceManager_XRoadLib_IServiceManager_Execute_System_Net_WebRequest_System_Object_XRoadLib_Headers_ISoapHeader_XRoadLib_ServiceExecutionOptions_" data-uid="XRoadLib.ServiceManager.XRoadLib#IServiceManager#Execute(System.Net.WebRequest,System.Object,XRoadLib.Headers.ISoapHeader,XRoadLib.ServiceExecutionOptions)">IServiceManager.Execute(WebRequest, Object, ISoapHeader, ServiceExecutionOptions)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Executes X-Road operation on endpoint specified by WebRequest parameter.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -594,22 +609,26 @@
       <tr>
         <td><span class="xref">System.Net.WebRequest</span></td>
         <td><span class="parametername">webRequest</span></td>
-        <td></td>
+        <td><p>WebRequest used to transfer X-Road messages.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Object</span></td>
         <td><span class="parametername">body</span></td>
-        <td></td>
+        <td><p>Soap body part of outgoing serialized X-Road message.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="XRoadLib.Headers.ISoapHeader.html">ISoapHeader</a></td>
         <td><span class="parametername">header</span></td>
-        <td></td>
+        <td><p>Soap header part of outgoing serialized X-Road message.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="XRoadLib.ServiceExecutionOptions.html">ServiceExecutionOptions</a></td>
         <td><span class="parametername">options</span></td>
-        <td></td>
+        <td><p>Additional options to configure service call execution.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -624,7 +643,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Object</span></td>
-        <td></td>
+        <td><p>Deserialized value of X-Road response message Soap body.</p>
+</td>
       </tr>
     </tbody>
   </table>

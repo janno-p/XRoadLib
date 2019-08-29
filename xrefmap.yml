@@ -2004,19 +2004,6 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.XmlReaderExtensions.IsCurrentElement
   nameWithType: XmlReaderExtensions.IsCurrentElement
-- uid: XRoadLib.Extensions.XmlReaderExtensions.IsHeaderNamespace(System.Xml.XmlReader)
-  name: IsHeaderNamespace(XmlReader)
-  href: api/XRoadLib.Extensions.XmlReaderExtensions.html#XRoadLib_Extensions_XmlReaderExtensions_IsHeaderNamespace_System_Xml_XmlReader_
-  commentId: M:XRoadLib.Extensions.XmlReaderExtensions.IsHeaderNamespace(System.Xml.XmlReader)
-  fullName: XRoadLib.Extensions.XmlReaderExtensions.IsHeaderNamespace(System.Xml.XmlReader)
-  nameWithType: XmlReaderExtensions.IsHeaderNamespace(XmlReader)
-- uid: XRoadLib.Extensions.XmlReaderExtensions.IsHeaderNamespace*
-  name: IsHeaderNamespace
-  href: api/XRoadLib.Extensions.XmlReaderExtensions.html#XRoadLib_Extensions_XmlReaderExtensions_IsHeaderNamespace_
-  commentId: Overload:XRoadLib.Extensions.XmlReaderExtensions.IsHeaderNamespace
-  isSpec: "True"
-  fullName: XRoadLib.Extensions.XmlReaderExtensions.IsHeaderNamespace
-  nameWithType: XmlReaderExtensions.IsHeaderNamespace
 - uid: XRoadLib.Extensions.XmlReaderExtensions.IsNilElement(System.Xml.XmlReader)
   name: IsNilElement(XmlReader)
   href: api/XRoadLib.Extensions.XmlReaderExtensions.html#XRoadLib_Extensions_XmlReaderExtensions_IsNilElement_System_Xml_XmlReader_
@@ -10593,19 +10580,6 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Serialization.Mapping.TypeMap.Deserialize
   nameWithType: TypeMap.Deserialize
-- uid: XRoadLib.Serialization.Mapping.TypeMap.MoveNextAndReturn(System.Xml.XmlReader,System.Object)
-  name: MoveNextAndReturn(XmlReader, Object)
-  href: api/XRoadLib.Serialization.Mapping.TypeMap.html#XRoadLib_Serialization_Mapping_TypeMap_MoveNextAndReturn_System_Xml_XmlReader_System_Object_
-  commentId: M:XRoadLib.Serialization.Mapping.TypeMap.MoveNextAndReturn(System.Xml.XmlReader,System.Object)
-  fullName: XRoadLib.Serialization.Mapping.TypeMap.MoveNextAndReturn(System.Xml.XmlReader, System.Object)
-  nameWithType: TypeMap.MoveNextAndReturn(XmlReader, Object)
-- uid: XRoadLib.Serialization.Mapping.TypeMap.MoveNextAndReturn*
-  name: MoveNextAndReturn
-  href: api/XRoadLib.Serialization.Mapping.TypeMap.html#XRoadLib_Serialization_Mapping_TypeMap_MoveNextAndReturn_
-  commentId: Overload:XRoadLib.Serialization.Mapping.TypeMap.MoveNextAndReturn
-  isSpec: "True"
-  fullName: XRoadLib.Serialization.Mapping.TypeMap.MoveNextAndReturn
-  nameWithType: TypeMap.MoveNextAndReturn
 - uid: XRoadLib.Serialization.Mapping.TypeMap.Serialize(System.Xml.XmlWriter,XRoadLib.Serialization.Template.IXmlTemplateNode,System.Object,XRoadLib.Schema.ContentDefinition,XRoadLib.Serialization.XRoadMessage)
   name: Serialize(XmlWriter, IXmlTemplateNode, Object, ContentDefinition, XRoadMessage)
   href: api/XRoadLib.Serialization.Mapping.TypeMap.html#XRoadLib_Serialization_Mapping_TypeMap_Serialize_System_Xml_XmlWriter_XRoadLib_Serialization_Template_IXmlTemplateNode_System_Object_XRoadLib_Schema_ContentDefinition_XRoadLib_Serialization_XRoadMessage_
@@ -11063,6 +11037,15 @@ references:
   commentId: T:XRoadLib.Serialization.XRoadAttachment
   fullName: XRoadLib.Serialization.XRoadAttachment
   nameWithType: XRoadAttachment
+- uid: XRoadLib.Serialization.XRoadAttachment.#ctor(System.Byte[])
+  name: XRoadAttachment(Byte[])
+  href: api/XRoadLib.Serialization.XRoadAttachment.html#XRoadLib_Serialization_XRoadAttachment__ctor_System_Byte___
+  commentId: M:XRoadLib.Serialization.XRoadAttachment.#ctor(System.Byte[])
+  name.vb: XRoadAttachment(Byte())
+  fullName: XRoadLib.Serialization.XRoadAttachment.XRoadAttachment(System.Byte[])
+  fullName.vb: XRoadLib.Serialization.XRoadAttachment.XRoadAttachment(System.Byte())
+  nameWithType: XRoadAttachment.XRoadAttachment(Byte[])
+  nameWithType.vb: XRoadAttachment.XRoadAttachment(Byte())
 - uid: XRoadLib.Serialization.XRoadAttachment.#ctor(System.IO.Stream)
   name: XRoadAttachment(Stream)
   href: api/XRoadLib.Serialization.XRoadAttachment.html#XRoadLib_Serialization_XRoadAttachment__ctor_System_IO_Stream_
