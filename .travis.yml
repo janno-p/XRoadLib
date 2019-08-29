@@ -2,7 +2,7 @@ language: csharp
 dotnet: 2.2.401
 mono: latest
 sudo: false
-dist: trusty
+dist: bionic
 env:
   - PATH=$PATH:/home/travis/.dotnet/tools
 script:

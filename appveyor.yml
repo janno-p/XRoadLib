@@ -4,6 +4,9 @@ branches:
   only:
     - master
 init:
+  - ps: appveyor DownloadFile https://download.visualstudio.microsoft.com/download/pr/c76aa823-bbc7-4b21-9e29-ab24ceb14b2d/9de2e14be600ef7d5067c09ab8af5063/dotnet-sdk-2.2.401-win-x64.exe -FileName "C:\dotnet.exe"
+  - cmd: call C:\dotnet.exe /install /quiet /norestart
+  - dotnet --info
   - git config --global core.autocrlf true
   - dotnet tool install fake-cli -g
   - dotnet tool install paket -g
