@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>XRoadLib.Extensions.AspNetCore</AssemblyName>
     <AssemblyTitle>XRoadLib.Extensions.AspNetCore</AssemblyTitle>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup>
     <Description>XRoadLib extension to use X-Road messages on ASP.NET Core platform</Description>

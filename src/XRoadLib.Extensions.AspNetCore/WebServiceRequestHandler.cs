@@ -44,7 +44,7 @@ namespace XRoadLib.Extensions.AspNetCore
             context.HttpContext.Response.ContentType = context.MessageFormatter.ContentType;
 
             await OnRequestLoadedAsync(context);
-            await InvokeServiceMethodAsync(context);
+            await InvokeWebServiceAsync(context);
             await SerializeXRoadResponseAsync(context);
         }
 
@@ -113,7 +113,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Calls service method which implements the X-Road operation.
         /// </summary>
-        protected virtual async Task InvokeServiceMethodAsync(WebServiceContext context)
+        protected virtual async Task InvokeWebServiceAsync(WebServiceContext context)
         {
             if (context.ServiceMap != null)
             {
@@ -132,7 +132,7 @@ namespace XRoadLib.Extensions.AspNetCore
             try
             {
                 var parameters = context.ServiceMap.RequestDefinition.ParameterInfo != null ? new[] { context.Parameters } : new object[0];
-                context.Result = context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters);
+                context.Result = InvokeRuntimeMethodAsync(context, serviceObject, parameters);
             }
             catch (Exception exception)
             {
@@ -143,6 +143,9 @@ namespace XRoadLib.Extensions.AspNetCore
                     throw;
             }
         }
+
+        protected virtual Task<object> InvokeRuntimeMethodAsync(WebServiceContext context, object serviceObject, object[] parameters) =>
+            Task.FromResult(context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters));
 
         /// <summary>
         /// Deserializes X-Road request from SOAP message payload.
@@ -191,7 +194,7 @@ namespace XRoadLib.Extensions.AspNetCore
                 if (context.MessageFormatter.TryMoveToBody(reader))
                     writer.WriteAttributes(reader, true);
 
-                context.ServiceMap.SerializeResponse(writer, context.Result, context.Response, reader);
+                await SerializeServiceResultAsync(context, reader, writer);
 
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -200,6 +203,12 @@ namespace XRoadLib.Extensions.AspNetCore
             context.Response.SaveTo(context.HttpContext, context.MessageFormatter);
 
             await OnAfterSerializationAsync(context);
+        }
+
+        protected virtual Task SerializeServiceResultAsync(WebServiceContext context, XmlReader requestReader, XmlWriter responseWriter)
+        {
+            context.ServiceMap.SerializeResponse(responseWriter, context.Result, context.Response, requestReader);
+            return Task.CompletedTask;
         }
 
         private DirectoryInfo GetStorageOrTempPath()
