@@ -1,3 +1,7 @@
+#### 1.3.9 - 12.12.2019
+
+* Fix recursive template nodes parsing on netstandard2.0.
+
 #### 1.3.9-beta002 - 12.12.2019
 
 * Regression from previous release fixed.
