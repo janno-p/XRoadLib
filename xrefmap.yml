@@ -1099,19 +1099,35 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeMetaServiceAsync
   nameWithType: WebServiceRequestHandler.InvokeMetaServiceAsync
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  name: InvokeServiceMethodAsync(WebServiceContext)
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethodAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
-  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
-  nameWithType: WebServiceRequestHandler.InvokeServiceMethodAsync(WebServiceContext)
-- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync*
-  name: InvokeServiceMethodAsync
-  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethodAsync_
-  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Object,System.Object[])
+  name: InvokeRuntimeMethodAsync(WebServiceContext, Object, Object[])
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeRuntimeMethodAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Object_System_Object___
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Object,System.Object[])
+  name.vb: InvokeRuntimeMethodAsync(WebServiceContext, Object, Object())
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext, System.Object, System.Object[])
+  fullName.vb: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext, System.Object, System.Object())
+  nameWithType: WebServiceRequestHandler.InvokeRuntimeMethodAsync(WebServiceContext, Object, Object[])
+  nameWithType.vb: WebServiceRequestHandler.InvokeRuntimeMethodAsync(WebServiceContext, Object, Object())
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync*
+  name: InvokeRuntimeMethodAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeRuntimeMethodAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync
   isSpec: "True"
-  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync
-  nameWithType: WebServiceRequestHandler.InvokeServiceMethodAsync
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync
+  nameWithType: WebServiceRequestHandler.InvokeRuntimeMethodAsync
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  name: InvokeWebServiceAsync(WebServiceContext)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeWebServiceAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
+  nameWithType: WebServiceRequestHandler.InvokeWebServiceAsync(WebServiceContext)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync*
+  name: InvokeWebServiceAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeWebServiceAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync
+  isSpec: "True"
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync
+  nameWithType: WebServiceRequestHandler.InvokeWebServiceAsync
 - uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.OnAfterDeserializationAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
   name: OnAfterDeserializationAsync(WebServiceContext)
   href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_OnAfterDeserializationAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_
@@ -1203,6 +1219,19 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.ResolveOperationName
   nameWithType: WebServiceRequestHandler.ResolveOperationName
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Xml.XmlReader,System.Xml.XmlWriter)
+  name: SerializeServiceResultAsync(WebServiceContext, XmlReader, XmlWriter)
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeServiceResultAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Xml_XmlReader_System_Xml_XmlWriter_
+  commentId: M:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Xml.XmlReader,System.Xml.XmlWriter)
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext, System.Xml.XmlReader, System.Xml.XmlWriter)
+  nameWithType: WebServiceRequestHandler.SerializeServiceResultAsync(WebServiceContext, XmlReader, XmlWriter)
+- uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync*
+  name: SerializeServiceResultAsync
+  href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeServiceResultAsync_
+  commentId: Overload:XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync
+  isSpec: "True"
+  fullName: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync
+  nameWithType: WebServiceRequestHandler.SerializeServiceResultAsync
 - uid: XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)
   name: SerializeXRoadResponseAsync(WebServiceContext)
   href: api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html#XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeXRoadResponseAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_

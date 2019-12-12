@@ -237,7 +237,7 @@ it should be able to handle and storage path of temporary files.</p>
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_DeserializeMethodInputAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/WebServiceRequestHandler.cs/#L150">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/WebServiceRequestHandler.cs/#L153">View Source</a>
   </span>
   <a id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_DeserializeMethodInputAsync_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync*"></a>
   <h4 id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_DeserializeMethodInputAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.DeserializeMethodInputAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)">DeserializeMethodInputAsync(WebServiceContext)</h4>
@@ -429,19 +429,76 @@ the operation.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethodAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeRuntimeMethodAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Object_System_Object___.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext%2CSystem.Object%2CSystem.Object%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/WebServiceRequestHandler.cs/#L147">View Source</a>
+  </span>
+  <a id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeRuntimeMethodAsync_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync*"></a>
+  <h4 id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeRuntimeMethodAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Object_System_Object___" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeRuntimeMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Object,System.Object[])">InvokeRuntimeMethodAsync(WebServiceContext, Object, Object[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Task&lt;object&gt; InvokeRuntimeMethodAsync(WebServiceContext context, object serviceObject, object[] parameters)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Extensions.AspNetCore.WebServiceContext.html">WebServiceContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">serviceObject</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span>[]</td>
+        <td><span class="parametername">parameters</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Object</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeWebServiceAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/WebServiceRequestHandler.cs/#L116">View Source</a>
   </span>
-  <a id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethodAsync_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync*"></a>
-  <h4 id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeServiceMethodAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeServiceMethodAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)">InvokeServiceMethodAsync(WebServiceContext)</h4>
+  <a id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeWebServiceAsync_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync*"></a>
+  <h4 id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_InvokeWebServiceAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.InvokeWebServiceAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)">InvokeWebServiceAsync(WebServiceContext)</h4>
   <div class="markdown level1 summary"><p>Calls service method which implements the X-Road operation.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual Task InvokeServiceMethodAsync(WebServiceContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task InvokeWebServiceAsync(WebServiceContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -817,10 +874,67 @@ the operation.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeServiceResultAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Xml_XmlReader_System_Xml_XmlWriter_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext%2CSystem.Xml.XmlReader%2CSystem.Xml.XmlWriter)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/WebServiceRequestHandler.cs/#L208">View Source</a>
+  </span>
+  <a id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeServiceResultAsync_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync*"></a>
+  <h4 id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeServiceResultAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_System_Xml_XmlReader_System_Xml_XmlWriter_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeServiceResultAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext,System.Xml.XmlReader,System.Xml.XmlWriter)">SerializeServiceResultAsync(WebServiceContext, XmlReader, XmlWriter)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Task SerializeServiceResultAsync(WebServiceContext context, XmlReader requestReader, XmlWriter responseWriter)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="XRoadLib.Extensions.AspNetCore.WebServiceContext.html">WebServiceContext</a></td>
+        <td><span class="parametername">context</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Xml.XmlReader</span></td>
+        <td><span class="parametername">requestReader</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Xml.XmlWriter</span></td>
+        <td><span class="parametername">responseWriter</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeXRoadResponseAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_.md&amp;value=---%0Auid%3A%20XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/WebServiceRequestHandler.cs/#L168">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib.Extensions.AspNetCore/WebServiceRequestHandler.cs/#L171">View Source</a>
   </span>
   <a id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeXRoadResponseAsync_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync*"></a>
   <h4 id="XRoadLib_Extensions_AspNetCore_WebServiceRequestHandler_SerializeXRoadResponseAsync_XRoadLib_Extensions_AspNetCore_WebServiceContext_" data-uid="XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.SerializeXRoadResponseAsync(XRoadLib.Extensions.AspNetCore.WebServiceContext)">SerializeXRoadResponseAsync(WebServiceContext)</h4>
