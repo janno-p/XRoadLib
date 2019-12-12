@@ -1,3 +1,8 @@
+#### 1.3.9-beta001 - 12.12.2019
+
+* Extension point added directly before calling the runtime service method.
+* Extension point to override web service result serialization.
+
 #### 1.3.8 - 29.08.2019
 
 * Fix: duplicate complex type definitions in WSDL document.
