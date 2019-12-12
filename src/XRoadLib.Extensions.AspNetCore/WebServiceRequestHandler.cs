@@ -132,7 +132,7 @@ namespace XRoadLib.Extensions.AspNetCore
             try
             {
                 var parameters = context.ServiceMap.RequestDefinition.ParameterInfo != null ? new[] { context.Parameters } : new object[0];
-                context.Result = InvokeRuntimeMethodAsync(context, serviceObject, parameters);
+                context.Result = await InvokeRuntimeMethodAsync(context, serviceObject, parameters);
             }
             catch (Exception exception)
             {
