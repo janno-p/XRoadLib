@@ -1,3 +1,7 @@
+#### 1.3.9-beta002 - 12.12.2019
+
+* Regression from previous release fixed.
+
 #### 1.3.9-beta001 - 12.12.2019
 
 * Extension point added directly before calling the runtime service method.
