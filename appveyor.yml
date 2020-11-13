@@ -4,7 +4,7 @@ branches:
   only:
     - master
 init:
-  - ps: appveyor DownloadFile https://download.visualstudio.microsoft.com/download/pr/639f7cfa-84f8-48e8-b6c9-82634314e28f/8eb04e1b5f34df0c840c1bffa363c101/dotnet-sdk-3.1.100-win-x64.exe -FileName "C:\dotnet.exe"
+  - ps: appveyor DownloadFile https://download.visualstudio.microsoft.com/download/pr/2892493e-df43-409e-af68-8b14aa75c029/53156c889fc08f01b7ed8d7135badede/dotnet-sdk-5.0.100-win-x64.exe -FileName "C:\dotnet.exe"
   - cmd: call C:\dotnet.exe /install /quiet /norestart
   - dotnet --info
   - git config --global core.autocrlf true

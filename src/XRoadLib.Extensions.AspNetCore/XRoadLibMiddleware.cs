@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions.AspNetCore
@@ -13,6 +14,7 @@ namespace XRoadLib.Extensions.AspNetCore
         {
             var options = httpContext.RequestServices.GetRequiredService<XRoadLibOptions>();
             var accessor = httpContext.RequestServices.GetRequiredService<IWebServiceContextAccessor>();
+            var logger = httpContext.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(XRoadLibMiddleware));
 
             if (handler is WebServiceRequestHandler requestHandler)
                 requestHandler.StoragePath = options.StoragePath;
@@ -35,10 +37,13 @@ namespace XRoadLib.Extensions.AspNetCore
                 }
                 catch (Exception exception)
                 {
-                    if (context.MessageFormatter == null)
-                        context.MessageFormatter = new SoapMessageFormatter();
+                    logger.LogError(exception, "Unexpected error while processing X-Road request");
 
-                    httpContext.Response.ContentType = XRoadHelper.GetContentTypeHeader(context.MessageFormatter.ContentType);
+                    if (context.MessageFormatter == null)
+                    {
+                        context.MessageFormatter = new SoapMessageFormatter();
+                        httpContext.Response.ContentType = XRoadHelper.GetContentTypeHeader(context.MessageFormatter.ContentType);
+                    }
 
                     if (httpContext.Response.Body.CanSeek)
                     {

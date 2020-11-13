@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <AssemblyName>Calculator</AssemblyName>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\XRoadLib.Extensions.AspNetCore\XRoadLib.Extensions.AspNetCore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,5 @@
 language: csharp
-dotnet: 3.1.100
-mono: latest
+dotnet: 5.0.100
 sudo: false
 dist: bionic
 env:
