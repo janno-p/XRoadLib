@@ -1,3 +1,8 @@
+#### 1.3.10 - 13.11.2020
+
+* Add error logging for unexpected errors during request processing.
+* Fix 'headers already sent' error if exception is thrown during response processing.
+
 #### 1.3.9 - 12.12.2019
 
 * Fix recursive template nodes parsing on netstandard2.0.

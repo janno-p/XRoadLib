@@ -13,6 +13,12 @@ A .NET library for implementing service interfaces of [X-Road](http://x-road.eu)
 
 Documentation and samples can be found at the [XRoadLib home page](http://janno-p.github.io/XRoadLib/).
 
+Generating documents requires DocFX to be installed:
+
+```cmd
+choco install docfx
+```
+
 ## Prerequisites
 
 * Restore 3rd party dependencies:

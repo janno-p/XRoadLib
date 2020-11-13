@@ -47,12 +47,13 @@
     "overwrite": [
       {
         "files": [
-          "apidoc/**.md"
+          "docs/apidoc/**.md"
         ],
         "exclude": [
-          "obj/**",
-          "../temp/gh-pages/**"
-        ]
+          "docs/obj/**",
+          "temp/gh-pages/**"
+        ],
+        "src": "../"
       }
     ],
     "dest": "../temp/gh-pages",

@@ -45,7 +45,6 @@ let release = ReleaseNotes.load "RELEASE_NOTES.md"
 let productProjects =
     !! "src/*/*.csproj"
 
-let docFxToolPath = __SOURCE_DIRECTORY__ </> "paket-files" </> "build" </> "github.com" </> "docfx.exe"
 let tempDocsDir = __SOURCE_DIRECTORY__ </> "temp" </> "gh-pages"
 
 // --------------------------------------------------------------------------------------
@@ -150,27 +149,18 @@ Target.create "CleanDocs" (fun _ ->
 )
 
 Target.create "Serve" (fun _ ->
-    DocFx.exec
-        (fun p -> { p with DocFxPath = docFxToolPath })
-        "serve"
-        tempDocsDir
+    DocFx.exec id "serve" tempDocsDir
 )
 
 Target.description "Generate the documentation"
 Target.create "GenerateDocs" (fun _ ->
-    DocFx.exec
-        (fun p -> { p with DocFxPath = docFxToolPath })
-        (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json")
-        ""
+    DocFx.exec id (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json") ""
 )
 
 Target.create "ReleaseDocs" (fun _ ->
     Shell.cleanDirs [ tempDocsDir ]
     Git.Repository.cloneSingleBranch "" (sprintf "%s/%s.git" gitHome gitName) "gh-pages" tempDocsDir
-    DocFx.exec
-        (fun p -> { p with DocFxPath = docFxToolPath })
-        (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json")
-        ""
+    DocFx.exec id (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json") ""
     Git.Staging.stageAll tempDocsDir
     Git.Commit.exec tempDocsDir (sprintf "Update generated documentation for version %s" release.NugetVersion)
     Git.Branches.push tempDocsDir
