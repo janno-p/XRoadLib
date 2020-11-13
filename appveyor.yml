@@ -8,6 +8,7 @@ init:
   - cmd: call C:\dotnet.exe /install /quiet /norestart
   - git config --global core.autocrlf true
 build: off
-test_script:
+before_test:
   - dotnet tool restore
+test_script:
   - dotnet fake run build.fsx target RunTests
