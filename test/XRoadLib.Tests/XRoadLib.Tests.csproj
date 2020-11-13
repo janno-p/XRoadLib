@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
-    <RuntimeFrameworkVersion>2.1.6</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.1.23</RuntimeFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net452' ">
     <FrameworkPathOverride>/usr/lib/mono/4.5.2-api</FrameworkPathOverride>

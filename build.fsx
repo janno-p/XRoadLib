@@ -1,17 +1,27 @@
-#r "paket: groupref Build //"
-open Fake.Documentation
+#r "paket:
+nuget Fake.Api.GitHub
+nuget Fake.Core.Environment
+nuget Fake.Core.ReleaseNotes
+nuget Fake.Core.Target
+nuget Fake.Documentation.DocFx
+nuget Fake.DotNet.Cli
+nuget Fake.DotNet.Paket
+nuget Fake.Tools.Git
+nuget Octokit //"
+
+// http https://github.com/dotnet/docfx/releases/download/v2.45/docfx.zip 
 
 #load "./.fake/build.fsx/intellisense.fsx"
-#load "./paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 
+open Fake.Api
 open Fake.Core
 open Fake.Core.TargetOperators
+open Fake.Documentation
 open Fake.DotNet
 open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Tools
-open Octokit
 open System.IO
 
 // Git configuration (used for publishing documentation in gh-pages branch)
@@ -192,10 +202,10 @@ Target.create "Release" (fun _ ->
     Git.Branches.pushTag "" remote release.NugetVersion
 
     // release on github
-    createClient user pw
-    |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
-    // TODO: |> uploadFile "PATH_TO_FILE"
-    |> releaseDraft
+    GitHub.createClient user pw
+    |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    // |> GitHub.uploadFile "PATH_TO_FILE"
+    |> GitHub.publishDraft
     |> Async.RunSynchronously
 )
 

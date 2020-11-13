@@ -2,10 +2,6 @@ language: csharp
 dotnet: 5.0.100
 sudo: false
 dist: bionic
-env:
-  - PATH=$PATH:/home/travis/.dotnet/tools
 script:
-  - dotnet tool install fake-cli -g
-  - dotnet tool install paket -g
-  - paket restore
-  - fake run build.fsx target RunTests
+  - dotnet tool restore
+  - dotnet fake run build.fsx target RunTests

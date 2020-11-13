@@ -6,12 +6,8 @@ branches:
 init:
   - ps: appveyor DownloadFile https://download.visualstudio.microsoft.com/download/pr/2892493e-df43-409e-af68-8b14aa75c029/53156c889fc08f01b7ed8d7135badede/dotnet-sdk-5.0.100-win-x64.exe -FileName "C:\dotnet.exe"
   - cmd: call C:\dotnet.exe /install /quiet /norestart
-  - dotnet --info
   - git config --global core.autocrlf true
-  - dotnet tool install fake-cli -g
-  - dotnet tool install paket -g
+  - dotnet tool restore
 build: off
-before_test:
-  - paket restore
 test_script:
-  - fake run build.fsx target RunTests
+  - dotnet fake run build.fsx target RunTests
