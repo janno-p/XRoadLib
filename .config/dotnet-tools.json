@@ -7,6 +7,12 @@
       "commands": [
         "fake"
       ]
+    },
+    "xunit-cli": {
+      "version": "0.1.12",
+      "commands": [
+        "xunit"
+      ]
     }
   }
 }

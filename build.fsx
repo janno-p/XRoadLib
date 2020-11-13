@@ -93,17 +93,17 @@ Target.create "CopyBinaries" (fun _ ->
 // Run tests for all target framework versions
 
 Target.create "RunTests" (fun _ ->
-    !! "test/*/*.csproj"
-    -- "test/XRoadLib.Tests.Contract/XRoadLib.Tests.Contract.csproj"
-    |> Seq.iter (fun proj ->
-        DotNet.restore id proj
-        DotNet.exec
-            (fun p -> { p with WorkingDirectory = Path.GetDirectoryName(proj) })
-            "xunit"
-            ""
-        |> ignore
-        //DotNet.test id proj
-    )
+    let testsPath = "test" </> "XRoadLib.Tests"
+    let projectPath = testsPath </> "XRoadLib.Tests.csproj"
+
+    DotNet.restore id projectPath
+
+    ["net452"; "netcoreapp2.1"]
+    |> List.iter
+        (fun fw ->
+            DotNet.build (fun p -> { p with Configuration = DotNet.BuildConfiguration.Debug; Framework = Some(fw) }) projectPath
+            DotNet.exec id "xunit" (testsPath </> "bin" </> "Debug" </> fw </> "XRoadLib.Tests.dll") |> ignore
+        )
 )
 
 // --------------------------------------------------------------------------------------
