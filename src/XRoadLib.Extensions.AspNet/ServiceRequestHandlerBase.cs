@@ -85,14 +85,13 @@ namespace XRoadLib.Extensions.AspNet
                 throw new InvalidQueryException("Empty request content");
 
             context.Request.LoadRequest(context.HttpContext, context.MessageFormatter, StoragePath.GetValueOrDefault(Path.GetTempPath()), _serviceManagers);
-            if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
+            if (context.Request.ServiceManager == null)
             {
                 var supportedProtocolsString = string.Join(", ", _serviceManagers.Select(x => $@"""{x.Name}"""));
                 throw new InvalidQueryException($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
             }
 
             context.Response.Copy(context.Request);
-            context.ServiceMap = context.Request.MetaServiceMap;
 
             OnRequestLoaded(context);
             InvokeServiceMethod(context);

@@ -208,7 +208,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Get main namespace which defines X-Road message protocol specifics.
         /// </summary>
-        public string GetXRoadNamespace() => _schemaExporter.XRoadNamespace ?? NamespaceConstants.XRoadV4;
+        public string GetXRoadNamespace() => _schemaExporter.XRoadNamespace ?? NamespaceConstants.XRoad;
 
         /// <summary>
         /// Customize X-Road message header elements.
@@ -217,15 +217,15 @@ namespace XRoadLib.Schema
         {
             var headerDefinition = new HeaderDefinition { MessageName = "RequiredHeaders" };
 
-            headerDefinition.Use<XRoadHeader40>()
+            headerDefinition.Use<XRoadHeader>()
                             .WithRequiredHeader(x => x.Client)
                             .WithRequiredHeader(x => x.Service)
                             .WithRequiredHeader(x => x.UserId)
                             .WithRequiredHeader(x => x.Id)
                             .WithRequiredHeader(x => x.Issue)
                             .WithRequiredHeader(x => x.ProtocolVersion)
-                            .WithHeaderNamespace(NamespaceConstants.XRoadV4)
-                            .WithHeaderNamespace(NamespaceConstants.XRoadV4Repr);
+                            .WithHeaderNamespace(NamespaceConstants.XRoad)
+                            .WithHeaderNamespace(NamespaceConstants.XRoadRepr);
 
             _schemaExporter.ExportHeaderDefinition(headerDefinition);
 

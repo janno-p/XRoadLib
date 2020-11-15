@@ -23,7 +23,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         public void CannotDeserializeUnknownValue()
         {
             var ex = Assert.Throws<UnexpectedValueException>(() => _deserializeValue("Random"));
-            Assert.Equal("Unexpected value `Random` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
+            Assert.Equal("Unexpected value `Random` for enumeration type `{urn:some-namespace}Gender`.", ex.Message);
             Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
             Assert.True(ex.Value.Equals("Random"));
         }
@@ -32,7 +32,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         public void CannotDeserializeEmptyValue()
         {
             var ex = Assert.Throws<UnexpectedValueException>(() => _deserializeValue(""));
-            Assert.Equal("Unexpected value `` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
+            Assert.Equal("Unexpected value `` for enumeration type `{urn:some-namespace}Gender`.", ex.Message);
             Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
             Assert.True(ex.Value.Equals(""));
         }
@@ -41,7 +41,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         public void CannotDeserializeSelfClosingEmptyValue()
         {
             var ex = Assert.Throws<UnexpectedValueException>(() => DeserializeEmptyValue(TypeMap));
-            Assert.Equal("Unexpected value `` for enumeration type `{http://producers.test-producer.xtee.riik.ee/producer/test-producer}Gender`.", ex.Message);
+            Assert.Equal("Unexpected value `` for enumeration type `{urn:some-namespace}Gender`.", ex.Message);
             Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
             Assert.True(ex.Value.Equals(""));
         }

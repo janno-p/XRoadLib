@@ -24,7 +24,7 @@ namespace XRoadLib.Tests.Serialization
 
         private static void SerializeWithContext<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, Action<XRoadMessage, string> f)
         {
-            var message = Globals.ServiceManager20.CreateMessage();
+            var message = Globals.ServiceManager.CreateMessage();
             message.IsMultipartContainer = true;
             message.BinaryMode = BinaryMode.Attachment;
 
@@ -39,7 +39,7 @@ namespace XRoadLib.Tests.Serialization
                     writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.SoapEnc, NamespaceConstants.Xmlns, NamespaceConstants.SoapEnc);
                     writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Xsi, NamespaceConstants.Xmlns, NamespaceConstants.Xsi);
                     writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Xsd, NamespaceConstants.Xmlns, NamespaceConstants.Xsd);
-                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Target, NamespaceConstants.Xmlns, Globals.ServiceManager20.ProducerNamespace);
+                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Target, NamespaceConstants.Xmlns, Globals.ServiceManager.ProducerNamespace);
                 }
 
                 writer.WriteStartElement(elementName);
@@ -50,7 +50,7 @@ namespace XRoadLib.Tests.Serialization
                 var operationDefinition = new OperationDefinition("Method", null, methodInfo);
                 var requestDefinition = new RequestDefinition(operationDefinition, _ => false);
 
-                var typeMap = Globals.ServiceManager20.GetSerializer(dtoVersion).GetTypeMap(typeof(T));
+                var typeMap = Globals.ServiceManager.GetSerializer(dtoVersion).GetTypeMap(typeof(T));
                 typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition.Content, message);
 
                 writer.WriteEndElement();
@@ -88,12 +88,12 @@ namespace XRoadLib.Tests.Serialization
             };
 
             var expected = "<keha>" +
-                           "<Objektid xsi:type=\"SOAP-ENC:Array\" SOAP-ENC:arrayType=\"xsd:long[3]\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-                           "<item xsi:type=\"xsd:long\">1</item>" +
-                           "<item xsi:type=\"xsd:long\">2</item>" +
-                           "<item xsi:type=\"xsd:long\">3</item>" +
+                           "<Objektid>" +
+                           "<item>1</item>" +
+                           "<item>2</item>" +
+                           "<item>3</item>" +
                            "</Objektid>" +
-                           "<ObjektID xsi:type=\"xsd:long\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">3</ObjektID>" +
+                           "<ObjektID>3</ObjektID>" +
                            "</keha>";
 
             SerializeWithContext("keha", cls, 1u, true, (msg, xml) =>
@@ -109,9 +109,9 @@ namespace XRoadLib.Tests.Serialization
             var value = new[] { 5, 4, 3 };
 
             var expected = "<keha>"
-                         + "<item xsi:type=\"xsd:int\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">5</item>"
-                         + "<item xsi:type=\"xsd:int\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">4</item>"
-                         + "<item xsi:type=\"xsd:int\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">3</item>"
+                         + "<item>5</item>"
+                         + "<item>4</item>"
+                         + "<item>3</item>"
                          + "</keha>";
 
             SerializeWithContext("keha", value, 1u, true, (msg, xml) =>
@@ -128,9 +128,9 @@ namespace XRoadLib.Tests.Serialization
 
             var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                          + "<keha>"
-                         + "<item p2:type=\"p3:int\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">5</item>"
-                         + "<item p2:type=\"p3:int\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">4</item>"
-                         + "<item p2:type=\"p3:int\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">3</item>"
+                         + "<item>5</item>"
+                         + "<item>4</item>"
+                         + "<item>3</item>"
                          + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
@@ -227,9 +227,9 @@ namespace XRoadLib.Tests.Serialization
 
             var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                          + "<keha>"
-                         + "<item p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">5</item>"
-                         + "<item p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">4</item>"
-                         + "<item p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">3</item>"
+                         + "<item>5</item>"
+                         + "<item>4</item>"
+                         + "<item>3</item>"
                          + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
@@ -271,9 +271,9 @@ namespace XRoadLib.Tests.Serialization
 
             var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                          + "<keha>"
-                         + "<Nimi p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Mauno</Nimi>"
-                         + "<Kood p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">1235</Kood>"
-                         + "<Loodud p2:type=\"p3:dateTime\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2000-12-12T12:12:12</Loodud>"
+                         + "<Nimi>Mauno</Nimi>"
+                         + "<Kood>1235</Kood>"
+                         + "<Loodud>2000-12-12T12:12:12</Loodud>"
                          + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
@@ -292,7 +292,7 @@ namespace XRoadLib.Tests.Serialization
 
             const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                                     + "<keha>"
-                                    + "<Sisu p2:type=\"p3:base64Binary\" href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\" />"
+                                    + "<Sisu href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" />"
                                     + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
@@ -311,7 +311,7 @@ namespace XRoadLib.Tests.Serialization
 
             const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                                     + "<keha>"
-                                    + "<Sisu p2:type=\"p3:hexBinary\" href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\" />"
+                                    + "<Sisu href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" />"
                                     + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
@@ -328,7 +328,7 @@ namespace XRoadLib.Tests.Serialization
 
             const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                                     + "<keha>"
-                                    + "<ttIsik.dSyn p2:type=\"p3:date\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2012-11-26</ttIsik.dSyn>"
+                                    + "<ttIsik.dSyn>2012-11-26</ttIsik.dSyn>"
                                     + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
@@ -355,14 +355,14 @@ namespace XRoadLib.Tests.Serialization
 
             const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                                     + "<keha>"
-                                    + "<AddedProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">1</AddedProperty>"
-                                    + "<ChangedTypeProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2</ChangedTypeProperty>"
-                                    + "<MultipleProperty p2:type=\"p3:Array\" p3:arrayType=\"p4:long[2]\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                                    + "<item p2:type=\"p4:long\">8</item>"
-                                    + "<item p2:type=\"p4:long\">9</item>"
+                                    + "<AddedProperty>1</AddedProperty>"
+                                    + "<ChangedTypeProperty>2</ChangedTypeProperty>"
+                                    + "<MultipleProperty>"
+                                    + "<item>8</item>"
+                                    + "<item>9</item>"
                                     + "</MultipleProperty>"
-                                    + "<RenamedToProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">4</RenamedToProperty>"
-                                    + "<StaticProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">6</StaticProperty>"
+                                    + "<RenamedToProperty>4</RenamedToProperty>"
+                                    + "<StaticProperty>6</StaticProperty>"
                                     + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
@@ -389,11 +389,11 @@ namespace XRoadLib.Tests.Serialization
 
             const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                                     + "<keha>"
-                                    + "<ChangedTypeProperty p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2</ChangedTypeProperty>"
-                                    + "<RemovedProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">3</RemovedProperty>"
-                                    + "<RenamedFromProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">4</RenamedFromProperty>"
-                                    + "<SingleProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">8</SingleProperty>"
-                                    + "<StaticProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">6</StaticProperty>"
+                                    + "<ChangedTypeProperty>2</ChangedTypeProperty>"
+                                    + "<RemovedProperty>3</RemovedProperty>"
+                                    + "<RenamedFromProperty>4</RenamedFromProperty>"
+                                    + "<SingleProperty>8</SingleProperty>"
+                                    + "<StaticProperty>6</StaticProperty>"
                                     + "</keha>";
 
             SerializeWithContext("keha", value, 1u, false, (msg, xml) =>
@@ -420,11 +420,11 @@ namespace XRoadLib.Tests.Serialization
             const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                                     + "<keha>"
                                     + "<AnonymousProperty>"
-                                    + "<Property1 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">1</Property1>"
-                                    + "<Property2 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">2</Property2>"
-                                    + "<Property3 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">3</Property3>"
+                                    + "<Property1>1</Property1>"
+                                    + "<Property2>2</Property2>"
+                                    + "<Property3>3</Property3>"
                                     + "</AnonymousProperty>"
-                                    + "<KnownProperty p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">value</KnownProperty>"
+                                    + "<KnownProperty>value</KnownProperty>"
                                     + "</keha>";
 
             SerializeWithContext("keha", entity, 2u, false, (msg, xml) =>
@@ -447,11 +447,11 @@ namespace XRoadLib.Tests.Serialization
             const string expected =
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
                 + "<keha>"
-                + "<Value p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Song</Value>"
-                + "<Code p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">One</Code>"
-                + "<Code p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Two</Code>"
-                + "<Code p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Three</Code>"
-                + "<Value2 p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">Joy</Value2>"
+                + "<Value>Song</Value>"
+                + "<Code>One</Code>"
+                + "<Code>Two</Code>"
+                + "<Code>Three</Code>"
+                + "<Value2>Joy</Value2>"
                 + "</keha>";
 
             SerializeWithContext("keha", entity, 2u, false, (msg, xml) =>

@@ -27,7 +27,7 @@ namespace XRoadLib.Tests.Serialization
 
             stream.Position = 0;
 
-            using var reader = new XRoadMessageReader(stream, MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager20, Globals.ServiceManager31, Globals.ServiceManager40 });
+            using var reader = new XRoadMessageReader(stream, MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager });
             using var msg = new XRoadMessage();
 
             reader.Read(msg);

@@ -39,7 +39,6 @@ namespace XRoadLib.Extensions.AspNetCore
 
             context.Request.LoadRequest(context.HttpContext, context.MessageFormatter, GetStorageOrTempPath().FullName, ServiceManager);
             context.Response.Copy(context.Request);
-            context.ServiceMap = context.Request.MetaServiceMap;
 
             context.HttpContext.Response.ContentType = context.MessageFormatter.ContentType;
 

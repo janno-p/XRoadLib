@@ -9,7 +9,7 @@ namespace XRoadLib.Headers
     /// X-Road service identifier.
     /// </summary>
     [XmlInclude(typeof(IXRoadIdentifier))]
-    [XmlType("XRoadServiceIdentifierType", Namespace = NamespaceConstants.XRoadV4Id)]
+    [XmlType("XRoadServiceIdentifierType", Namespace = NamespaceConstants.XRoadId)]
     public class XRoadServiceIdentifier : IXRoadIdentifier
     {
         private string _serviceVersion;

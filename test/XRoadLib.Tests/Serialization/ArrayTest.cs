@@ -12,7 +12,7 @@ namespace XRoadLib.Tests.Serialization
 {
     public class ArrayTest
     {
-        private static readonly IServiceManager ServiceManager = Globals.ServiceManager31;
+        private static readonly IServiceManager ServiceManager = Globals.ServiceManager;
 
         private readonly ISerializer _serializer = ServiceManager.GetSerializer(1u);
 
@@ -32,7 +32,7 @@ namespace XRoadLib.Tests.Serialization
         public void CanSerializeMergedArrayContent()
         {
             var doc = SerializeMessage(_request);
-            Assert.Equal(XName.Get("MergeArrayContent", Globals.ServiceManager31.ProducerNamespace), doc.Root?.Name);
+            Assert.Equal(XName.Get("MergeArrayContent", Globals.ServiceManager.ProducerNamespace), doc.Root?.Name);
 
             Assert.NotNull(doc.Root?.Elements());
             Assert.Single(doc.Root.Elements());

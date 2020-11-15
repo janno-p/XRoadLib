@@ -6,7 +6,6 @@ using System.Net;
 using System.Text;
 using System.Xml.Linq;
 using XRoadLib.Schema;
-using XRoadLib.Serialization.Mapping;
 using XRoadLib.Serialization.Template;
 using XRoadLib.Headers;
 using XRoadLib.Soap;
@@ -90,12 +89,6 @@ namespace XRoadLib.Serialization
         /// Shows if this X-Road message wrapped inside MIME multipart container.
         /// </summary>
         public bool IsMultipartContainer { get; set; }
-
-        /// <summary>
-        /// When X-Road message represents X-Road meta service operation, this
-        /// property is assigned to correct service map to handle the operation.
-        /// </summary>
-        public IServiceMap MetaServiceMap { get; set; }
 
         /// <summary>
         /// Entire length of the X-Road message in serialized form.

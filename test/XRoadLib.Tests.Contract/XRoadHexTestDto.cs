@@ -1,12 +1,12 @@
 ﻿using System.IO;
-using System.Xml.Serialization;
+using XRoadLib.Attributes;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
     public class XRoadHexTestDto : XRoadSerializable
     {
-        [XmlElement(DataType = "hexBinary")]
+        [XRoadXmlElement(DataType = "hexBinary", UseXop = false)]
         public Stream Sisu { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace XRoadLib.Headers
     /// X-Road service client identifier.
     /// </summary>
     [XmlInclude(typeof(IXRoadIdentifier))]
-    [XmlType("XRoadClientIdentifierType", Namespace = NamespaceConstants.XRoadV4Id)]
+    [XmlType("XRoadClientIdentifierType", Namespace = NamespaceConstants.XRoadId)]
     public class XRoadClientIdentifier : IXRoadIdentifier
     {
         /// <summary>

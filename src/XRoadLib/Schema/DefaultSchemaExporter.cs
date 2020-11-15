@@ -20,7 +20,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// X-Road specification namespace of the message protocol version.
         /// </summary>
-        public override string XRoadNamespace => NamespaceConstants.XRoadV4;
+        public override string XRoadNamespace => NamespaceConstants.XRoad;
 
         /// <summary>
         /// Defines list of supported DTO versions (for DTO based versioning).

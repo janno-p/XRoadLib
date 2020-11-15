@@ -18,7 +18,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         public void CanDeserializeXopIncludeReference()
         {
             using var attachment = new XRoadAttachment(Encoding.UTF8.GetBytes("Test"));
-            using var message = Globals.ServiceManager20.CreateMessage();
+            using var message = Globals.ServiceManager.CreateMessage();
 
             message.AllAttachments.Add(attachment);
 
@@ -81,7 +81,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         [Fact]
         public void CanDeserializeEmptySelfClosingBase64Content()
         {
-            using var message = Globals.ServiceManager20.CreateMessage();
+            using var message = Globals.ServiceManager.CreateMessage();
 
             var instance = DeserializeValue(
                 new XElement("value"),

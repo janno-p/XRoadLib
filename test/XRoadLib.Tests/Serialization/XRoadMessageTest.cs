@@ -12,12 +12,7 @@ namespace XRoadLib.Tests.Serialization
     {
         private static readonly IMessageFormatter MessageFormatter = new SoapMessageFormatter();
 
-        private readonly IServiceManager[] _serviceManagers =
-        {
-            Globals.ServiceManager20,
-            Globals.ServiceManager31,
-            Globals.ServiceManager40
-        };
+        private readonly IServiceManager[] _serviceManagers = { Globals.ServiceManager };
 
         [Fact]
         public void CanWriteEmptyContent()

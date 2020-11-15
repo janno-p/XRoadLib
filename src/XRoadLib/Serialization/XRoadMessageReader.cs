@@ -8,7 +8,6 @@ using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Schema;
-using XRoadLib.Serialization.Mapping;
 using XRoadLib.Soap;
 
 namespace XRoadLib.Serialization
@@ -74,12 +73,10 @@ namespace XRoadLib.Serialization
 
                 if (target.ServiceManager == null && target.RootElementName != null)
                     target.ServiceManager = _serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
-
-                target.MetaServiceMap = GetMetaServiceMap(target.RootElementName);
             }
 
-            if (target.Header is IXRoadHeader40 xrh4 && xrh4.ProtocolVersion?.Trim() != "4.0")
-                throw new InvalidQueryException($"Unsupported X-Road v6 protocol version value `{xrh4.ProtocolVersion ?? string.Empty}`.");
+            if (target.Header is IXRoadHeader xrh && xrh.ProtocolVersion?.Trim() != "4.0")
+                throw new InvalidQueryException($"Unsupported X-Road v6 protocol version value `{xrh.ProtocolVersion ?? string.Empty}`.");
 
             if (target.IsMultipartContainer)
                 target.BinaryMode = BinaryMode.Attachment;
@@ -386,24 +383,6 @@ namespace XRoadLib.Serialization
             target.Header = header;
             target.UnresolvedHeaders = unresolved;
             target.ServiceManager = serviceManager;
-        }
-
-        private static IServiceMap GetMetaServiceMap(XName rootElementName)
-        {
-            if (rootElementName == null || !NamespaceConstants.MetaServiceNamespaces.Contains(rootElementName.NamespaceName))
-                return null;
-
-            switch (rootElementName.LocalName)
-            {
-                case "listMethods":
-                    return new ListMethodsServiceMap(rootElementName);
-
-                case "testSystem":
-                    return new TestSystemServiceMap(rootElementName);
-
-                default:
-                    return null;
-            }
         }
 
         private XName ParseMessageRootElementName(XmlReader reader)

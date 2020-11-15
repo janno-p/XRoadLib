@@ -8,7 +8,7 @@ using Xunit;
 
 namespace XRoadLib.Tests.Serialization
 {
-    public class ParseXRoadHeader40Test
+    public class ParseXRoadHeaderTest
     {
         private static readonly Func<string, string> MinimalValidHeader = x => $"<xrd:client id:objectType=\"MEMBER\"><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion>{x}";
 
@@ -104,7 +104,7 @@ namespace XRoadLib.Tests.Serialization
             var tuple = ParseHeader(MinimalValidHeader(""));
             var header = tuple.Item1 as IXRoadHeader;
             Assert.NotNull(header);
-            Assert.Same(Globals.ServiceManager40, tuple.Item3);
+            Assert.Same(Globals.ServiceManager, tuple.Item3);
             Assert.NotNull(header.Client);
             Assert.Equal("EE", header.Client.XRoadInstance);
             Assert.Equal("GOV", header.Client.MemberClass);
@@ -142,7 +142,7 @@ namespace XRoadLib.Tests.Serialization
             var tuple = ParseHeader(@"<x /><xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><y /><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion><z />");
             var header = tuple.Item1 as IXRoadHeader;
             Assert.NotNull(header);
-            Assert.Same(Globals.ServiceManager40, tuple.Item3);
+            Assert.Same(Globals.ServiceManager, tuple.Item3);
             Assert.NotNull(header.Client);
             Assert.Equal("EE", header.Client.XRoadInstance);
             Assert.Equal("GOV", header.Client.MemberClass);
@@ -296,9 +296,9 @@ namespace XRoadLib.Tests.Serialization
         {
             var tuple = ParseHeader(MinimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance>FI</id:xRoadInstance><id:serviceCode>fun</id:serviceCode></xrd:centralService>"));
             Assert.NotNull(tuple.Item1);
-            Assert.IsType<XRoadHeader40>(tuple.Item1);
+            Assert.IsType<XRoadHeader>(tuple.Item1);
 
-            var xhr4 = (IXRoadHeader40)tuple.Item1;
+            var xhr4 = (IXRoadHeader)tuple.Item1;
             Assert.NotNull(xhr4.CentralService);
             Assert.Equal(XRoadObjectType.CentralService, xhr4.CentralService.ObjectType);
             Assert.Equal("FI", xhr4.CentralService.XRoadInstance);
@@ -331,9 +331,9 @@ namespace XRoadLib.Tests.Serialization
         {
             var tuple = ParseHeader(MinimalValidHeader(@"<repr:representedParty><repr:partyCode /></repr:representedParty>"));
             Assert.NotNull(tuple.Item1);
-            Assert.IsType<XRoadHeader40>(tuple.Item1);
+            Assert.IsType<XRoadHeader>(tuple.Item1);
 
-            var xhr4 = (IXRoadHeader40)tuple.Item1;
+            var xhr4 = (IXRoadHeader)tuple.Item1;
             Assert.NotNull(xhr4.RepresentedParty);
             Assert.Null(xhr4.RepresentedParty.Class);
             Assert.Equal("", xhr4.RepresentedParty.Code);
@@ -344,9 +344,9 @@ namespace XRoadLib.Tests.Serialization
         {
             var tuple = ParseHeader(MinimalValidHeader(@"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>"));
             Assert.NotNull(tuple.Item1);
-            Assert.IsType<XRoadHeader40>(tuple.Item1);
+            Assert.IsType<XRoadHeader>(tuple.Item1);
 
-            var xhr4 = (IXRoadHeader40)tuple.Item1;
+            var xhr4 = (IXRoadHeader)tuple.Item1;
             Assert.NotNull(xhr4.RepresentedParty);
             Assert.Equal("CLS", xhr4.RepresentedParty.Class);
             Assert.Equal("COD", xhr4.RepresentedParty.Code);
@@ -362,17 +362,17 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void WrongProtocolIsLeftUnresolved()
         {
-            var tuple = ParseHeader(MinimalValidHeader(@"<x:userId xmlns:x=""http://x-road.ee/xsd/x-road.xsd"">Mr. X</x:userId>"));
-            Assert.NotNull(tuple.Item1);
-            Assert.Same(Globals.ServiceManager40, tuple.Item3);
-            Assert.Equal(1, tuple.Item2.Count);
-            Assert.Equal("userId", tuple.Item2[0].Name.LocalName);
-            Assert.Equal(NamespaceConstants.XRoad, tuple.Item2[0].Name.NamespaceName);
+            var (header, unresolvedElements, serviceManager) = ParseHeader(MinimalValidHeader(@"<x:userId xmlns:x=""http://x-road.ee/xsd/x-road.xsd"">Mr. X</x:userId>"));
+            Assert.NotNull(header);
+            Assert.Same(Globals.ServiceManager, serviceManager);
+            Assert.Equal(1, unresolvedElements.Count);
+            Assert.Equal("userId", unresolvedElements[0].Name.LocalName);
+            Assert.Equal("http://x-road.ee/xsd/x-road.xsd", unresolvedElements[0].Name.NamespaceName);
         }
 
         private static Tuple<ISoapHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
         {
-            return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XRoadV4);
+            return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XRoad);
         }
     }
 }

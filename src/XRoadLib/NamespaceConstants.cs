@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace XRoadLib
+﻿namespace XRoadLib
 {
     /// <summary>
     /// Collection of predefined namespaces used by X-Road message protocol.
@@ -68,24 +66,19 @@ namespace XRoadLib
         public const string Xop = "http://www.w3.org/2004/08/xop/include";
 
         /// <summary>
-        /// X-Road message protocol version 3.1 namespace.
-        /// </summary>
-        public const string XRoad = "http://x-road.ee/xsd/x-road.xsd";
-
-        /// <summary>
         /// X-Road message protocol version 4.0 namespace.
         /// </summary>
-        public const string XRoadV4 = "http://x-road.eu/xsd/xroad.xsd";
+        public const string XRoad = "http://x-road.eu/xsd/xroad.xsd";
 
         /// <summary>
         /// X-Road message protocol version 4.0 identifiers namespace.
         /// </summary>
-        public const string XRoadV4Id = "http://x-road.eu/xsd/identifiers";
+        public const string XRoadId = "http://x-road.eu/xsd/identifiers";
 
         /// <summary>
         /// X-Road message protocol version 4.0 represented party namespace.
         /// </summary>
-        public const string XRoadV4Repr = "http://x-road.eu/xsd/representation.xsd";
+        public const string XRoadRepr = "http://x-road.eu/xsd/representation.xsd";
 
         /// <summary>
         /// XML Schema definition namespace.
@@ -96,22 +89,6 @@ namespace XRoadLib
         /// XML Schema serialization namespace.
         /// </summary>
         public const string Xsi = "http://www.w3.org/2001/XMLSchema-instance";
-
-        /// <summary>
-        /// X-Road message protocol version 2.0 namespace.
-        /// </summary>
-        public const string Xtee = "http://x-tee.riik.ee/xsd/xtee.xsd";
-
-        /// <summary>
-        /// List of namespaces which contain definitions for X-Road meta services.
-        /// </summary>
-        public static readonly ICollection<string> MetaServiceNamespaces = new[]
-        {
-            Xtee,
-            "http://x-rd.net/xsd/xroad.xsd",
-            XRoad,
-            "http://x-road.eu/xsd/x-road.xsd"
-        };
 
         /// <summary>
         /// Get schema location of specified schema.
@@ -133,12 +110,10 @@ namespace XRoadLib
                 case Xmime:
                 case Xop:
                 case XRoad:
-                case XRoadV4:
-                case XRoadV4Id:
-                case XRoadV4Repr:
+                case XRoadId:
+                case XRoadRepr:
                 case Xsd:
                 case Xsi:
-                case Xtee:
                     return namespaceName;
             }
 
@@ -180,13 +155,12 @@ namespace XRoadLib
                     return PrefixConstants.Xop;
 
                 case XRoad:
-                case XRoadV4:
                     return PrefixConstants.XRoad;
 
-                case XRoadV4Id:
+                case XRoadId:
                     return PrefixConstants.Id;
 
-                case XRoadV4Repr:
+                case XRoadRepr:
                     return PrefixConstants.Repr;
 
                 case Xsd:
@@ -194,9 +168,6 @@ namespace XRoadLib
 
                 case Xsi:
                     return PrefixConstants.Xsi;
-
-                case Xtee:
-                    return PrefixConstants.Xtee;
             }
 
             return null;

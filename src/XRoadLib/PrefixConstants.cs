@@ -18,6 +18,5 @@
         public const string XRoad = "xrd";
         public const string Xsd = "xsd";
         public const string Xsi = "xsi";
-        public const string Xtee = "xtee";
     }
 }

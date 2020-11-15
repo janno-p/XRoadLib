@@ -3,6 +3,7 @@
 * Add error logging for unexpected errors during request processing.
 * Fix 'headers already sent' error if exception is thrown during response processing.
 * Change minimum target framework to netstandard2.0.
+* Remove legacy X-Road protocol support.
 
 #### 1.3.9 - 12.12.2019
 

@@ -3,9 +3,8 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using XRoadLib.Headers;
-using XRoadLib.Serialization;
+using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
-using XRoadLib.Tests.Contract.Configuration;
 using Xunit;
 
 namespace XRoadLib.Tests.Serialization.Mapping
@@ -46,24 +45,10 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CanEscapeSpecialCharactersWithCDataBlock()
-        {
-            var xmlValue = SerializeValue(TypeMap, "&<>", StringSerializationMode.WrappedInCData);
-            Assert.Equal("<![CDATA[&<>]]>", xmlValue);
-        }
-
-        [Fact]
         public void CanReadStringFromCDataBlock()
         {
             var xmlValue = _deserializeValue("<![CDATA[&<>]]>");
             Assert.Equal("&<>", xmlValue);
-        }
-
-        [Fact]
-        public void CanEscapeCDataStringWithCDataBlock()
-        {
-            var xmlValue = SerializeValue(TypeMap, "<![CDATA[&<>]]>", StringSerializationMode.WrappedInCData);
-            Assert.Equal("<![CDATA[<![CDATA[&<>]]>]]<![CDATA[>]]>", xmlValue);
         }
 
         [Fact]
@@ -73,11 +58,11 @@ namespace XRoadLib.Tests.Serialization.Mapping
             Assert.Equal("<![CDATA[&<>]]>", xmlValue);
         }
 
-        private static string SerializeValue(ITypeMap typeMap, object value, StringSerializationMode mode = StringSerializationMode.HtmlEncoded)
+        private static string SerializeValue(ITypeMap typeMap, object value)
         {
             var stream = new StringBuilder();
 
-            var protocol = new ServiceManager<XRoadHeader20>("2.0", new CustomSchemaExporterXRoad20(mode));
+            var protocol = new ServiceManager<XRoadHeader>("4.0", new DefaultSchemaExporter("urn:some-namespace", typeof(Contract.Class1).Assembly));
 
             using (var textWriter = new StringWriter(stream))
             using (var writer = XmlWriter.Create(textWriter))
