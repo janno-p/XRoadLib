@@ -1,12 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>XRoadLib.Tests.Contract</AssemblyName>
-    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net452' ">
-    <FrameworkPathOverride>/usr/lib/mono/4.5.2-api</FrameworkPathOverride>
-  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>

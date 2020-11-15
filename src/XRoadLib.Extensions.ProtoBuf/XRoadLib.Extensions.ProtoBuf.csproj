@@ -2,17 +2,20 @@
   <PropertyGroup>
     <AssemblyName>XRoadLib.Extensions.ProtoBuf</AssemblyName>
     <AssemblyTitle>XRoadLib.Extensions.ProtoBuf</AssemblyTitle>
-    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
+
   <PropertyGroup>
     <Description>XRoadLib extension to use Google Protocol Buffers with X-Road messages</Description>
     <PackageId>XRoadLib.Extensions.ProtoBuf</PackageId>
     <PackageTags>x-tee;x-road;xtee;xroad;protocol;buffers</PackageTags>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.13.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.14.0" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,10 @@
 
 namespace XRoadLib.Schema
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Basic implementation for <see cref="ISchemaExporter"/>.
+    /// Base type for protocol specific implementations of schema.
+    /// </summary>
     public abstract class AbstractSchemaExporter : ISchemaExporter
     {
         /// <summary>

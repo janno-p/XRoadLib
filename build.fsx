@@ -75,20 +75,6 @@ Target.create "BuildRelease" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// Copies binaries from default location to expected bin folder
-// But keeps a subdirectory structure for each project in the
-// src folder to support multiple project outputs
-
-Target.create "CopyBinaries" (fun _ ->
-    productProjects
-    |> Seq.map (fun f -> Path.GetDirectoryName(f))
-    |> Seq.allPairs ["net452"; "net461"]
-    |> Seq.filter (fun (fw, d) -> Directory.Exists(d </> "bin" </> "Release" </> fw))
-    |> Seq.map (fun (fw, d) -> (d </> "bin" </> "Release" </> fw, "bin" </> DirectoryInfo(d).Name))
-    |> Seq.iter (fun (fromDir, toDir) -> Shell.copyDir toDir fromDir (fun _ -> true))
-)
-
-// --------------------------------------------------------------------------------------
 // Run tests for all target framework versions
 
 Target.create "RunTests" (fun _ ->
@@ -97,7 +83,7 @@ Target.create "RunTests" (fun _ ->
 
     DotNet.restore id projectPath
 
-    ["net452"; "netcoreapp2.1"]
+    ["net461"; "net5.0"]
     |> List.iter
         (fun fw ->
             DotNet.build (fun p -> { p with Configuration = DotNet.BuildConfiguration.Debug; Framework = Some(fw) }) projectPath
@@ -205,7 +191,6 @@ Target.create "All" ignore
 "Clean"
     ==> "RunTests"
     ==> "BuildRelease"
-    ==> "CopyBinaries"
     ==> "GenerateDocs"
     ==> "All"
     =?> ("ReleaseDocs", BuildServer.isLocalBuild)

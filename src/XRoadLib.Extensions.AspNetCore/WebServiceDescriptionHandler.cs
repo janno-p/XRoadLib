@@ -2,7 +2,6 @@
 
 namespace XRoadLib.Extensions.AspNetCore
 {
-    /// <inheritdoc />
     /// <summary>
     /// Handle X-Road service description request on AspNetCore platform.
     /// </summary>

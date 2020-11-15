@@ -2,7 +2,6 @@
 using Calculator.WebService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using XRoadLib.Extensions.AspNetCore;
@@ -27,15 +26,12 @@ namespace Calculator
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-            app.UseXRoadLib(routes =>
-            {
-                routes.MapWsdl<CalculatorServiceManager>("");
-                routes.MapWebService<CalculatorServiceManager>("");
-            });
+            app.UseRouting();
 
-            app.Run(async context =>
+            app.UseEndpoints(endpoints =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                endpoints.MapGet("/", c => c.ExecuteWsdlRequest<CalculatorServiceManager>());
+                endpoints.MapPost("/", c => c.ExecuteWebServiceRequest<CalculatorServiceManager>());
             });
         }
     }

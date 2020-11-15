@@ -5,6 +5,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\XRoadLib.Extensions.AspNetCore\XRoadLib.Extensions.AspNetCore.csproj" />
   </ItemGroup>

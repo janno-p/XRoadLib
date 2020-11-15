@@ -7,7 +7,6 @@ using XRoadLib.Soap;
 
 namespace XRoadLib.Extensions.AspNetCore
 {
-    /// <inheritdoc />
     /// <summary>
     /// Base X-Road message handler for AspNetCore applications.
     /// </summary>

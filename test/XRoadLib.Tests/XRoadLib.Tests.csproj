@@ -1,26 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>XRoadLib.Tests</AssemblyName>
-    <TargetFrameworks>net452;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net461;net5.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net452' ">
-    <FrameworkPathOverride>/usr/lib/mono/4.5.2-api</FrameworkPathOverride>
+
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net461' ">
+    <FrameworkPathOverride>/usr/lib/mono/4.6.1-api</FrameworkPathOverride>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\XRoadLib.Tests.Contract\XRoadLib.Tests.Contract.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp2.1' ">
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System.Web.Services" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net452' ">
-    <Reference Include="/usr/lib/mono/4.5.2-api/Facades/System.Runtime.dll" />
-    <Reference Include="/usr/lib/mono/4.5.2-api/Facades/System.Threading.Tasks.dll" />
+
+  <ItemGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net461' ">
+    <Reference Include="/usr/lib/mono/4.6.1-api/Facades/System.Runtime.dll" />
+    <Reference Include="/usr/lib/mono/4.6.1-api/Facades/System.Threading.Tasks.dll" />
   </ItemGroup>
 </Project>

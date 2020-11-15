@@ -59,6 +59,18 @@ namespace XRoadLib.Extensions.AspNetCore
             });
         }
 
+        public static async Task ExecuteWsdlRequest<T>(this HttpContext context) where T : IServiceManager
+        {
+            using (var handler = new WebServiceDescriptionHandler(context.RequestServices.GetRequiredService<T>()))
+                await XRoadLibMiddleware.Invoke(context, handler);
+        }
+
+        public static async Task ExecuteWebServiceRequest<T>(this HttpContext context) where T : IServiceManager
+        {
+            using (var handler = new WebServiceRequestHandler(context.RequestServices, context.RequestServices.GetRequiredService<T>()))
+                await XRoadLibMiddleware.Invoke(context, handler);
+        }
+
         private static async Task ExecuteWsdlRequestDelegate(HttpContext context, IServiceManager serviceManager)
         {
             using (var handler = new WebServiceDescriptionHandler(serviceManager))

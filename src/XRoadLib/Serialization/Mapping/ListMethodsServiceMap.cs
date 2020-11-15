@@ -8,7 +8,9 @@ using XRoadLib.Styles;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Provides implementation details about X-Road meta service `listMethods`.
+    /// </summary>
     public class ListMethodsServiceMap : IServiceMap
     {
         /// <inheritdoc />

@@ -6,7 +6,9 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Provides implementation details about X-Road services defined by contract.
+    /// </summary>
     public class ServiceMap : IServiceMap
     {
         private readonly ISerializer serializer;
