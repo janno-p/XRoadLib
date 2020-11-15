@@ -9,16 +9,16 @@ namespace XRoadLib.Serialization
 {
     public class XRoadMessageWriter : IDisposable
     {
-        public const string NEW_LINE = "\r\n";
+        public const string NewLine = "\r\n";
 
-        private readonly CountingStream outputStream;
+        private readonly CountingStream _outputStream;
 
-        private TextWriter writer;
+        private TextWriter _writer;
 
         public XRoadMessageWriter(Stream outputStream)
         {
-            this.outputStream = new CountingStream(outputStream);
-            writer = new StreamWriter(this.outputStream);
+            _outputStream = new CountingStream(outputStream);
+            _writer = new StreamWriter(_outputStream);
         }
 
         public void Write(XRoadMessage source, Action<string> setContentType, Action<string, string> appendHeader, IMessageFormatter messageFormatter)
@@ -28,29 +28,29 @@ namespace XRoadLib.Serialization
             if (!source.MultipartContentAttachments.Any())
             {
                 WriteContent(source);
-                writer.Flush();
-                source.ContentLength = outputStream.WriteCount;
+                _writer.Flush();
+                source.ContentLength = _outputStream.WriteCount;
                 return;
             }
 
             var boundaryMarker = Guid.NewGuid().ToString();
 
-            var contentID = Convert.ToBase64String(MD5.Create().ComputeHash(source.ContentStream));
+            var contentId = Convert.ToBase64String(MD5.Create().ComputeHash(source.ContentStream));
 
             var contentTypeType = messageFormatter.ContentType;
             var startInfo = string.Empty;
             if (source.BinaryMode == BinaryMode.Xml)
             {
-                contentTypeType = ContentTypes.XOP;
+                contentTypeType = ContentTypes.Xop;
                 startInfo = $@"start-info=""{messageFormatter.ContentType}""; ";
             }
 
-            setContentType($@"{ContentTypes.MULTIPART}; type=""{contentTypeType}""; start=""{contentID}""; {startInfo}boundary=""{boundaryMarker}""");
+            setContentType($@"{ContentTypes.Multipart}; type=""{contentTypeType}""; start=""{contentId}""; {startInfo}boundary=""{boundaryMarker}""");
             appendHeader("MIME-Version", "1.0");
 
             source.ContentStream.Position = 0;
-            SerializeMessage(source, contentID, boundaryMarker, messageFormatter);
-            writer.Flush();
+            SerializeMessage(source, contentId, boundaryMarker, messageFormatter);
+            _writer.Flush();
 
             foreach (var attachment in source.MultipartContentAttachments)
             {
@@ -59,79 +59,79 @@ namespace XRoadLib.Serialization
                 else SerializeAttachment(attachment, boundaryMarker);
             }
 
-            writer.Write(NEW_LINE);
-            writer.Write("--{0}--", boundaryMarker);
-            writer.Write(NEW_LINE);
-            writer.Flush();
+            _writer.Write(NewLine);
+            _writer.Write("--{0}--", boundaryMarker);
+            _writer.Write(NewLine);
+            _writer.Flush();
 
-            source.ContentLength = outputStream.WriteCount;
+            source.ContentLength = _outputStream.WriteCount;
         }
 
         public void Dispose()
         {
-            writer.Dispose();
-            writer = null;
+            _writer.Dispose();
+            _writer = null;
         }
 
         private void WriteContent(XRoadMessage source)
         {
-            writer.Write(new StreamReader(source.ContentStream).ReadToEnd());
+            _writer.Write(new StreamReader(source.ContentStream).ReadToEnd());
         }
 
-        private void SerializeMessage(XRoadMessage source, string contentID, string boundaryMarker, IMessageFormatter messageFormatter)
+        private void SerializeMessage(XRoadMessage source, string contentId, string boundaryMarker, IMessageFormatter messageFormatter)
         {
-            writer.Write(NEW_LINE);
-            writer.Write("--{0}", boundaryMarker);
-            writer.Write(NEW_LINE);
-            writer.Write(
+            _writer.Write(NewLine);
+            _writer.Write("--{0}", boundaryMarker);
+            _writer.Write(NewLine);
+            _writer.Write(
                 source.BinaryMode == BinaryMode.Attachment
                     ? $"Content-Type: {messageFormatter.ContentType}; charset=UTF-8"
-                    : $"Content-Type: {ContentTypes.XOP}; charset=UTF-8; type=\"{messageFormatter.ContentType}\""
+                    : $"Content-Type: {ContentTypes.Xop}; charset=UTF-8; type=\"{messageFormatter.ContentType}\""
             );
-            writer.Write(NEW_LINE);
-            writer.Write("Content-Transfer-Encoding: 8bit");
-            writer.Write(NEW_LINE);
-            writer.Write("Content-ID: <{0}>", contentID.Trim('<', '>', ' '));
-            writer.Write(NEW_LINE);
-            writer.Write(NEW_LINE);
+            _writer.Write(NewLine);
+            _writer.Write("Content-Transfer-Encoding: 8bit");
+            _writer.Write(NewLine);
+            _writer.Write("Content-ID: <{0}>", contentId.Trim('<', '>', ' '));
+            _writer.Write(NewLine);
+            _writer.Write(NewLine);
             WriteContent(source);
-            writer.Write(NEW_LINE);
+            _writer.Write(NewLine);
         }
 
         private void SerializeAttachment(XRoadAttachment attachment, string boundaryMarker)
         {
-            writer.Write(NEW_LINE);
-            writer.Write("--{0}", boundaryMarker);
-            writer.Write(NEW_LINE);
-            writer.Write("Content-Disposition: attachment; filename=notAnswering");
-            writer.Write(NEW_LINE);
-            writer.Write("Content-Type: application/octet-stream");
-            writer.Write(NEW_LINE);
-            writer.Write("Content-Transfer-Encoding: base64");
-            writer.Write(NEW_LINE);
-            writer.Write("Content-ID: <{0}>", attachment.ContentID.Trim('<', '>', ' '));
-            writer.Write(NEW_LINE);
-            writer.Write(NEW_LINE);
-            attachment.WriteAsBase64(writer);
+            _writer.Write(NewLine);
+            _writer.Write("--{0}", boundaryMarker);
+            _writer.Write(NewLine);
+            _writer.Write("Content-Disposition: attachment; filename=notAnswering");
+            _writer.Write(NewLine);
+            _writer.Write("Content-Type: application/octet-stream");
+            _writer.Write(NewLine);
+            _writer.Write("Content-Transfer-Encoding: base64");
+            _writer.Write(NewLine);
+            _writer.Write("Content-ID: <{0}>", attachment.ContentId.Trim('<', '>', ' '));
+            _writer.Write(NewLine);
+            _writer.Write(NewLine);
+            attachment.WriteAsBase64(_writer);
         }
 
         private void SerializeXopAttachment(XRoadAttachment attachment, string boundaryMarker)
         {
-            writer.Write(NEW_LINE);
-            writer.Write("--{0}", boundaryMarker);
-            writer.Write(NEW_LINE);
-            writer.Write("Content-Type: application/octet-stream");
-            writer.Write(NEW_LINE);
-            writer.Write("Content-Transfer-Encoding: binary");
-            writer.Write(NEW_LINE);
-            writer.Write("Content-ID: <{0}>", attachment.ContentID.Trim('<', '>', ' '));
-            writer.Write(NEW_LINE);
-            writer.Write(NEW_LINE);
-            writer.Flush();
+            _writer.Write(NewLine);
+            _writer.Write("--{0}", boundaryMarker);
+            _writer.Write(NewLine);
+            _writer.Write("Content-Type: application/octet-stream");
+            _writer.Write(NewLine);
+            _writer.Write("Content-Transfer-Encoding: binary");
+            _writer.Write(NewLine);
+            _writer.Write("Content-ID: <{0}>", attachment.ContentId.Trim('<', '>', ' '));
+            _writer.Write(NewLine);
+            _writer.Write(NewLine);
+            _writer.Flush();
 
             attachment.ContentStream.Position = 0;
-            attachment.ContentStream.CopyTo(outputStream);
-            outputStream.Flush();
+            attachment.ContentStream.CopyTo(_outputStream);
+            _outputStream.Flush();
         }
     }
 }

@@ -6,49 +6,49 @@ namespace XRoadLib.Headers
     /// Globally unique identifier in the XRoad system. Identifier consists of object type specifier and list of
     /// hierarchical codes (starting with code that identifiers the XRoad instance).
     /// </summary>
-    [XmlType("XRoadIdentifierType", Namespace = NamespaceConstants.XROAD_V4_ID)]
+    [XmlType("XRoadIdentifierType", Namespace = NamespaceConstants.XRoadV4Id)]
     public interface IXRoadIdentifier
     {
         /// <summary>
         /// Identifies the XRoad instance. This field is applicable to all identifier types.
         /// </summary>
-        [XmlElement("xRoadInstance", Namespace = NamespaceConstants.XROAD_V4_ID)]
+        [XmlElement("xRoadInstance", Namespace = NamespaceConstants.XRoadV4Id)]
         string XRoadInstance { get; }
 
         /// <summary>
         /// Type of the member (company, government institution, private person, etc.)
         /// </summary>
-        [XmlElement("memberClass", Namespace = NamespaceConstants.XROAD_V4_ID)]
+        [XmlElement("memberClass", Namespace = NamespaceConstants.XRoadV4Id)]
         string MemberClass { get; }
 
         /// <summary>
         /// Code that uniquely identifies a member of given member type.
         /// </summary>
-        [XmlElement("memberCode", Namespace = NamespaceConstants.XROAD_V4_ID)]
+        [XmlElement("memberCode", Namespace = NamespaceConstants.XRoadV4Id)]
         string MemberCode { get; }
 
         /// <summary>
         /// Code that uniquely identifies a subsystem of given XRoad member.
         /// </summary>
-        [XmlElement("subsystemCode", Namespace = NamespaceConstants.XROAD_V4_ID)]
+        [XmlElement("subsystemCode", Namespace = NamespaceConstants.XRoadV4Id)]
         string SubsystemCode { get; }
 
         /// <summary>
         /// Code that uniquely identifies a service offered by given XRoad member or subsystem.
         /// </summary>
-        [XmlElement("serviceCode", Namespace = NamespaceConstants.XROAD_V4_ID)]
+        [XmlElement("serviceCode", Namespace = NamespaceConstants.XRoadV4Id)]
         string ServiceCode { get; }
 
         /// <summary>
         /// Version of the service.
         /// </summary>
-        [XmlElement("serviceVersion", Namespace = NamespaceConstants.XROAD_V4_ID)]
+        [XmlElement("serviceVersion", Namespace = NamespaceConstants.XRoadV4Id)]
         string ServiceVersion { get; }
 
         /// <summary>
         /// Specifies identifier type.
         /// </summary>
-        [XmlAttribute("objectType", Namespace = NamespaceConstants.XROAD_V4_ID)]
+        [XmlAttribute("objectType", Namespace = NamespaceConstants.XRoadV4Id)]
         XRoadObjectType ObjectType { get; }
     }
 }

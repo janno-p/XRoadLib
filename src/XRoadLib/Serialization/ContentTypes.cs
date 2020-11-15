@@ -5,21 +5,21 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Content-type of SOAP 1.1 protocol messages.
         /// </summary>
-        public const string SOAP = "text/xml";
+        public const string Soap = "text/xml";
 
         /// <summary>
         /// Content-type of SOAP 1.2 protocol messages.
         /// </summary>
-        public const string SOAP12 = "application/soap+xml";
+        public const string Soap12 = "application/soap+xml";
 
         /// <summary>
         /// Content-type of messages with mime/multipart optimization.
         /// </summary>
-        public const string XOP = "application/xop+xml";
+        public const string Xop = "application/xop+xml";
 
         /// <summary>
         /// Content-type of mime/multipart messages.
         /// </summary>
-        public const string MULTIPART = "multipart/related";
+        public const string Multipart = "multipart/related";
     }
 }

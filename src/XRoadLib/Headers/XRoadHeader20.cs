@@ -12,14 +12,14 @@ namespace XRoadLib.Headers
     /// </summary>
     public class XRoadHeader20 : IXRoadHeader, IXRoadHeader20, IXRoadUniversalHeader
     {
-        private XRoadClientIdentifier client = new XRoadClientIdentifier();
-        private XRoadServiceIdentifier service = new XRoadServiceIdentifier();
+        private XRoadClientIdentifier _client = new XRoadClientIdentifier();
+        private XRoadServiceIdentifier _service = new XRoadServiceIdentifier();
 
         /// <inheritdoc />
-        XRoadClientIdentifier IXRoadHeader.Client => client;
+        XRoadClientIdentifier IXRoadHeader.Client => _client;
 
         /// <inheritdoc />
-        XRoadServiceIdentifier IXRoadHeader.Service => service;
+        XRoadServiceIdentifier IXRoadHeader.Service => _service;
 
         /// <inheritdoc />
         string IXRoadHeader.UserId => Isikukood;
@@ -33,15 +33,15 @@ namespace XRoadLib.Headers
         /// <inheritdoc />
         public virtual string Asutus
         {
-            get => client.MemberCode;
-            set => client.MemberCode = value;
+            get => _client.MemberCode;
+            set => _client.MemberCode = value;
         }
 
         /// <inheritdoc />
         public virtual string Andmekogu
         {
-            get => service.SubsystemCode;
-            set => service.SubsystemCode = value;
+            get => _service.SubsystemCode;
+            set => _service.SubsystemCode = value;
         }
 
         /// <inheritdoc />
@@ -53,12 +53,12 @@ namespace XRoadLib.Headers
         /// <inheritdoc />
         public virtual string Nimi
         {
-            get => service.ToFullName();
+            get => _service.ToFullName();
             set
             {
                 var serviceValue = XRoadServiceIdentifier.FromString(value);
-                service.ServiceCode = serviceValue.ServiceCode;
-                service.ServiceVersion = serviceValue.ServiceVersion;
+                _service.ServiceCode = serviceValue.ServiceCode;
+                _service.ServiceVersion = serviceValue.ServiceVersion;
             }
         }
 
@@ -103,7 +103,7 @@ namespace XRoadLib.Headers
         /// <inheritdoc />
         public virtual void ReadHeaderValue(XmlReader reader)
         {
-            if (reader.NamespaceURI == NamespaceConstants.XTEE)
+            if (reader.NamespaceURI == NamespaceConstants.Xtee)
             {
                 switch (reader.LocalName)
                 {
@@ -188,12 +188,12 @@ namespace XRoadLib.Headers
         /// <inheritdoc />
         public virtual void WriteTo(XmlWriter writer, Style style, HeaderDefinition definition)
         {
-            if (writer.LookupPrefix(NamespaceConstants.XTEE) == null)
-                writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XTEE, NamespaceConstants.XMLNS, NamespaceConstants.XTEE);
+            if (writer.LookupPrefix(NamespaceConstants.Xtee) == null)
+                writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Xtee, NamespaceConstants.Xmlns, NamespaceConstants.Xtee);
 
             void WriteHeaderValue(string elementName, object value, XName typeName)
             {
-                var name = XName.Get(elementName, NamespaceConstants.XTEE);
+                var name = XName.Get(elementName, NamespaceConstants.Xtee);
                 if (definition.RequiredHeaders.Contains(name) || value != null) style.WriteHeaderElement(writer, name, value, typeName);
             }
 
@@ -216,8 +216,8 @@ namespace XRoadLib.Headers
             WriteHeaderValue("salastatud_sertifikaadiga", SalastatudSertifikaadiga, XmlTypeConstants.String);
         }
 
-        XRoadClientIdentifier IXRoadUniversalHeader.Client { get => client; set => client = value; }
-        XRoadServiceIdentifier IXRoadUniversalHeader.Service { get => service; set => service = value; }
+        XRoadClientIdentifier IXRoadUniversalHeader.Client { get => _client; set => _client = value; }
+        XRoadServiceIdentifier IXRoadUniversalHeader.Service { get => _service; set => _service = value; }
 
         string IXRoadUniversalHeader.UserId { get => Isikukood; set => Isikukood = value; }
         string IXRoadUniversalHeader.Issue { get => Toimik; set => Toimik = value; }

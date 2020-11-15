@@ -9,10 +9,10 @@ namespace XRoadLib.Headers
     /// X-Road service identifier.
     /// </summary>
     [XmlInclude(typeof(IXRoadIdentifier))]
-    [XmlType("XRoadServiceIdentifierType", Namespace = NamespaceConstants.XROAD_V4_ID)]
+    [XmlType("XRoadServiceIdentifierType", Namespace = NamespaceConstants.XRoadV4Id)]
     public class XRoadServiceIdentifier : IXRoadIdentifier
     {
-        private string serviceVersion;
+        private string _serviceVersion;
 
         /// <summary>
         /// X-Road instance name.
@@ -44,10 +44,10 @@ namespace XRoadLib.Headers
         /// </summary>
         public string ServiceVersion
         {
-            get { return serviceVersion; }
+            get => _serviceVersion;
             set
             {
-                serviceVersion = value;
+                _serviceVersion = value;
                 Version = string.IsNullOrWhiteSpace(value) ? (uint?)null : Convert.ToUInt32(value.Substring(1));
             }
         }

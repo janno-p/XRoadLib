@@ -5,11 +5,11 @@ namespace XRoadLib.Tests.Protocols.Headers
 {
     public class XRoadIdentifierTest
     {
-        private const string PRODUCER_NAME = "producerName";
-        private const string SERVICE_NAME = "serviceName";
-        private const uint VERSION = 3u;
+        private const string ProducerName = "producerName";
+        private const string ServiceName = "serviceName";
+        private const uint Version = 3u;
 
-        private readonly string fullName = $"{PRODUCER_NAME}.{SERVICE_NAME}.v{VERSION}";
+        private readonly string _fullName = $"{ProducerName}.{ServiceName}.v{Version}";
 
         [Theory]
         [InlineData(null, null, null, null, "")]
@@ -77,10 +77,10 @@ namespace XRoadLib.Tests.Protocols.Headers
         [Fact]
         public void CanParseFullServiceName()
         {
-            var xsn = XRoadServiceIdentifier.FromString(fullName);
+            var xsn = XRoadServiceIdentifier.FromString(_fullName);
             Assert.Null(xsn.SubsystemCode);
-            Assert.Equal(SERVICE_NAME, xsn.ServiceCode);
-            Assert.Equal(VERSION, xsn.Version);
+            Assert.Equal(ServiceName, xsn.ServiceCode);
+            Assert.Equal(Version, xsn.Version);
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace XRoadLib.Tests.Protocols.Headers
         [Fact]
         public void InitializeWithVersion0()
         {
-            var fullName = $"{PRODUCER_NAME}.{SERVICE_NAME}.v0";
+            var fullName = $"{ProducerName}.{ServiceName}.v0";
             var xsn = XRoadServiceIdentifier.FromString(fullName);
             Assert.Null(xsn.SubsystemCode);
             Assert.Equal("serviceName", xsn.ServiceCode);
@@ -165,7 +165,7 @@ namespace XRoadLib.Tests.Protocols.Headers
         [Fact]
         public void ConvertToStringWithAllPartsAssigned()
         {
-            var xsn = XRoadServiceIdentifier.FromString(fullName);
+            var xsn = XRoadServiceIdentifier.FromString(_fullName);
             Assert.Equal("serviceName.v3", xsn.ToFullName());
             Assert.Equal("/serviceName/v3", xsn.ToString());
         }

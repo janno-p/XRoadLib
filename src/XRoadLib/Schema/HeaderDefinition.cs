@@ -30,7 +30,7 @@ namespace XRoadLib.Schema
     /// </summary>
     public class HeaderDefinition
     {
-        private readonly ISet<string> headerNamespaces = new HashSet<string>();
+        private readonly ISet<string> _headerNamespaces = new HashSet<string>();
 
         /// <summary>
         /// Names of SOAP header elements required by service description.
@@ -56,7 +56,7 @@ namespace XRoadLib.Schema
         public void Remove()
         {
             RequiredHeaders.Clear();
-            headerNamespaces.Clear();
+            _headerNamespaces.Clear();
         }
 
         /// <summary>
@@ -64,16 +64,16 @@ namespace XRoadLib.Schema
         /// </summary>
         public bool IsHeaderNamespace(string namespaceName)
         {
-            return headerNamespaces.Contains(namespaceName);
+            return _headerNamespaces.Contains(namespaceName);
         }
 
         private class HeaderDefinitionBuilder<THeader> : IHeaderDefinitionBuilder<THeader> where THeader : IXRoadHeader
         {
-            private readonly HeaderDefinition headerDefinition;
+            private readonly HeaderDefinition _headerDefinition;
 
             public HeaderDefinitionBuilder(HeaderDefinition headerDefinition)
             {
-                this.headerDefinition = headerDefinition;
+                this._headerDefinition = headerDefinition;
                 headerDefinition.Remove();
             }
 
@@ -86,14 +86,14 @@ namespace XRoadLib.Schema
                 if (string.IsNullOrWhiteSpace(attribute?.ElementName))
                     throw new SchemaDefinitionException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.");
 
-                headerDefinition.RequiredHeaders.Add(XName.Get(attribute.ElementName, attribute.Namespace));
+                _headerDefinition.RequiredHeaders.Add(XName.Get(attribute.ElementName, attribute.Namespace));
 
                 return this;
             }
 
             public IHeaderDefinitionBuilder<THeader> WithHeaderNamespace(string namespaceName)
             {
-                headerDefinition.headerNamespaces.Add(namespaceName);
+                _headerDefinition._headerNamespaces.Add(namespaceName);
 
                 return this;
             }
@@ -103,8 +103,8 @@ namespace XRoadLib.Schema
         {
             public int Compare(XName x, XName y)
             {
-                var ns = string.Compare(x.NamespaceName, y.NamespaceName, StringComparison.OrdinalIgnoreCase);
-                return ns != 0 ? ns : string.Compare(x.LocalName, y.LocalName, StringComparison.OrdinalIgnoreCase);
+                var ns = string.Compare(x?.NamespaceName ?? "", y?.NamespaceName ?? "", StringComparison.OrdinalIgnoreCase);
+                return ns != 0 ? ns : string.Compare(x?.LocalName ?? "", y?.LocalName ?? "", StringComparison.OrdinalIgnoreCase);
             }
         }
     }

@@ -5,7 +5,7 @@ namespace XRoadLib.Headers
     /// <summary>
     /// Enumeration for XRoad identifier types.
     /// </summary>
-    [XmlType("XRoadObjectType", Namespace = NamespaceConstants.XROAD_V4_ID)]
+    [XmlType("XRoadObjectType", Namespace = NamespaceConstants.XRoadV4Id)]
     public enum XRoadObjectType
     {
         /// <summary>

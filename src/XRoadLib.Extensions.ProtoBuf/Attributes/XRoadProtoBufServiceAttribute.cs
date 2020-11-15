@@ -13,28 +13,26 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class XRoadProtoBufServiceAttribute : XRoadServiceAttribute
     {
-        private const string XROAD_PROTOBUF_SCHEMA = "https://e-rik.github.io/schemas/xroad-protobuf.xsd";
+        private const string XroadProtobufSchema = "https://e-rik.github.io/schemas/xroad-protobuf.xsd";
 
-        private static readonly Type serviceMapType = typeof(ProtoBufServiceMap);
-
-        private readonly Lazy<ISchemaExporter> schemaExporter;
+        private readonly Lazy<ISchemaExporter> _schemaExporter;
 
         /// <inheritdoc />
-        public override Type ServiceMapType => serviceMapType;
+        public override Type ServiceMapType { get; } = typeof(ProtoBufServiceMap);
 
         /// <inheritdoc />
-        public override ISchemaExporter SchemaExporter => schemaExporter.Value;
+        public override ISchemaExporter SchemaExporter => _schemaExporter.Value;
 
         /// <inheritdoc />
         public XRoadProtoBufServiceAttribute(string name, Type reflectionType)
             : base(name)
         {
-            schemaExporter = new Lazy<ISchemaExporter>(() => new ProtoBufSchemaExporter(reflectionType));
+            _schemaExporter = new Lazy<ISchemaExporter>(() => new ProtoBufSchemaExporter(reflectionType));
         }
 
         private class ProtoBufSchemaExporter : AbstractSchemaExporter
         {
-            private readonly Type reflectionType;
+            private readonly Type _reflectionType;
 
             public override string XRoadPrefix => string.Empty;
             public override string XRoadNamespace => string.Empty;
@@ -42,7 +40,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
             public ProtoBufSchemaExporter(Type reflectionType)
                 : base(string.Empty)
             {
-                this.reflectionType = reflectionType;
+                this._reflectionType = reflectionType;
             }
 
             public override void ExportOperationDefinition(OperationDefinition operationDefinition)
@@ -54,25 +52,29 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
             {
                 requestDefinition.Content.RuntimeType = typeof(Stream);
                 requestDefinition.Content.UseXop = true;
-                requestDefinition.Content.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
+                requestDefinition.Content.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XroadProtobufSchema), GetPrototypeName()) };
             }
 
             public override void ExportResponseDefinition(ResponseDefinition responseDefinition)
             {
                 responseDefinition.Content.RuntimeType = typeof(Stream);
                 responseDefinition.Content.UseXop = true;
-                responseDefinition.Content.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XROAD_PROTOBUF_SCHEMA), GetPrototypeName()) };
+                responseDefinition.Content.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XroadProtobufSchema), GetPrototypeName()) };
             }
 
             public override string ExportSchemaLocation(string namespaceName)
             {
-                return namespaceName.Equals(XROAD_PROTOBUF_SCHEMA) ? XROAD_PROTOBUF_SCHEMA : null;
+                return namespaceName.Equals(XroadProtobufSchema) ? XroadProtobufSchema : null;
             }
 
             private string GetPrototypeName()
             {
-                var propertyInfo = reflectionType.GetProperty("Descriptor", BindingFlags.Public | BindingFlags.Static);
+                var propertyInfo = _reflectionType.GetProperty("Descriptor", BindingFlags.Public | BindingFlags.Static);
+                if (propertyInfo == null)
+                    throw new InvalidOperationException();
+
                 var descriptor = (FileDescriptor)propertyInfo.GetGetMethod().Invoke(null, new object[0]);
+
                 return descriptor.Name;
             }
         }

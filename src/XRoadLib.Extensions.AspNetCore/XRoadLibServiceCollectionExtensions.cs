@@ -5,8 +5,8 @@ namespace XRoadLib.Extensions.AspNetCore
 {
     public static class XRoadLibServiceCollectionExtensions
     {
-        public static IServiceCollection AddXRoadLib(this IServiceCollection services)
-            => AddXRoadLib(services, _ => {});
+        public static IServiceCollection AddXRoadLib(this IServiceCollection services) =>
+            AddXRoadLib(services, _ => {});
 
         public static IServiceCollection AddXRoadLib(this IServiceCollection services, Action<XRoadLibOptions> configureOptions)
         {

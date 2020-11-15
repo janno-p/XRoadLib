@@ -13,20 +13,17 @@ namespace XRoadLib.Soap
 {
     public class SoapMessageFormatter : IMessageFormatter
     {
-        private static readonly string soapPrefix = PrefixConstants.SOAP_ENV;
-        private static readonly string @namespace = NamespaceConstants.SOAP_ENV;
+        private static readonly XName EnvelopeName = XName.Get("Envelope", NamespaceConstants.SoapEnv);
+        private static readonly XName HeaderName = XName.Get("Header", NamespaceConstants.SoapEnv);
+        private static readonly XName BodyName = XName.Get("Body", NamespaceConstants.SoapEnv);
 
-        private static readonly XName envelopeName = XName.Get("Envelope", @namespace);
-        private static readonly XName headerName = XName.Get("Header", @namespace);
-        private static readonly XName bodyName = XName.Get("Body", @namespace);
-
-        public string ContentType { get; } = ContentTypes.SOAP;
-        public string Namespace { get; } = @namespace;
+        public string ContentType { get; } = ContentTypes.Soap;
+        public string Namespace { get; } = NamespaceConstants.SoapEnv;
 
         public void MoveToEnvelope(XmlReader reader)
         {
             if (!TryMoveToEnvelope(reader))
-                throw new InvalidQueryException($"Element `{envelopeName}` is missing from message content.");
+                throw new InvalidQueryException($"Element `{EnvelopeName}` is missing from message content.");
         }
 
         public void MoveToBody(XmlReader reader)
@@ -34,7 +31,7 @@ namespace XRoadLib.Soap
             MoveToEnvelope(reader);
 
             if (!TryMoveToBody(reader))
-                throw new InvalidQueryException($"Element `{bodyName}` is missing from message content.");
+                throw new InvalidQueryException($"Element `{BodyName}` is missing from message content.");
         }
 
         public void MoveToPayload(XmlReader reader, XName payloadName)
@@ -47,28 +44,28 @@ namespace XRoadLib.Soap
 
         public bool TryMoveToEnvelope(XmlReader reader)
         {
-            return reader.MoveToElement(0, envelopeName);
+            return reader.MoveToElement(0, EnvelopeName);
         }
 
         public bool TryMoveToHeader(XmlReader reader)
         {
-            return reader.MoveToElement(1) && reader.IsCurrentElement(1, headerName);
+            return reader.MoveToElement(1) && reader.IsCurrentElement(1, HeaderName);
         }
 
         public bool TryMoveToBody(XmlReader reader)
         {
-            return reader.MoveToElement(1, bodyName);
+            return reader.MoveToElement(1, BodyName);
         }
 
         public void WriteStartEnvelope(XmlWriter writer, string prefix = null)
         {
-            var prefixValue = string.IsNullOrEmpty(prefix) ? soapPrefix : prefix;
-            writer.WriteStartElement(prefixValue, envelopeName.LocalName, envelopeName.NamespaceName);
+            var prefixValue = string.IsNullOrEmpty(prefix) ? PrefixConstants.SoapEnv : prefix;
+            writer.WriteStartElement(prefixValue, EnvelopeName.LocalName, EnvelopeName.NamespaceName);
         }
 
         public void WriteStartBody(XmlWriter writer)
         {
-            writer.WriteStartElement(bodyName);
+            writer.WriteStartElement(BodyName);
         }
 
         public IFault CreateFault(Exception exception)
@@ -87,10 +84,10 @@ namespace XRoadLib.Soap
             writer.WriteStartDocument();
 
             WriteStartEnvelope(writer);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, soapPrefix, NamespaceConstants.XMLNS, @namespace);
+            writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.SoapEnv, NamespaceConstants.Xmlns, NamespaceConstants.SoapEnv);
 
             WriteStartBody(writer);
-            writer.WriteStartElement("Fault", @namespace);
+            writer.WriteStartElement("Fault", NamespaceConstants.SoapEnv);
 
             writer.WriteStartElement("faultcode");
             writer.WriteString(soapFault.FaultCode);
@@ -126,7 +123,7 @@ namespace XRoadLib.Soap
             if (header == null)
                 return;
 
-            writer.WriteStartElement("Header", @namespace);
+            writer.WriteStartElement("Header", NamespaceConstants.SoapEnv);
 
             header.WriteTo(writer, style, definition);
 
@@ -138,7 +135,7 @@ namespace XRoadLib.Soap
 
         public void ThrowSoapFaultIfPresent(XmlReader reader)
         {
-            if (reader.NamespaceURI == @namespace && reader.LocalName == "Fault")
+            if (reader.NamespaceURI == NamespaceConstants.SoapEnv && reader.LocalName == "Fault")
                 throw new SoapFaultException(DeserializeSoapFault(reader));
         }
 

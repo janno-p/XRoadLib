@@ -15,25 +15,25 @@ namespace XRoadLib.Serialization
 {
     public sealed class Serializer : ISerializer
     {
-        private readonly Assembly contractAssembly;
-        private readonly SchemaDefinitionProvider schemaDefinitionProvider;
-        private readonly ICollection<string> availableFilters;
-        private readonly string producerNamespace;
+        private readonly Assembly _contractAssembly;
+        private readonly SchemaDefinitionProvider _schemaDefinitionProvider;
+        private readonly ICollection<string> _availableFilters;
+        private readonly string _producerNamespace;
 
-        private readonly ConcurrentDictionary<Type, ITypeMap> customTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
-        private readonly ConcurrentDictionary<XName, IServiceMap> serviceMaps = new ConcurrentDictionary<XName, IServiceMap>();
-        private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
-        private readonly ConcurrentDictionary<Type, ITypeMap> runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
+        private readonly ConcurrentDictionary<Type, ITypeMap> _customTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
+        private readonly ConcurrentDictionary<XName, IServiceMap> _serviceMaps = new ConcurrentDictionary<XName, IServiceMap>();
+        private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> _xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
+        private readonly ConcurrentDictionary<Type, ITypeMap> _runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
 
         public uint? Version { get; }
 
         public Serializer(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
-            this.schemaDefinitionProvider = schemaDefinitionProvider;
+            this._schemaDefinitionProvider = schemaDefinitionProvider;
 
-            availableFilters = schemaDefinitionProvider.ProtocolDefinition.EnabledFilters;
-            contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
-            producerNamespace = schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace;
+            _availableFilters = schemaDefinitionProvider.ProtocolDefinition.EnabledFilters;
+            _contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
+            _producerNamespace = schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace;
 
             Version = version;
 
@@ -65,7 +65,7 @@ namespace XRoadLib.Serialization
 
         public IServiceMap GetServiceMap(string operationName)
         {
-            return GetServiceMap(XName.Get(operationName, producerNamespace));
+            return GetServiceMap(XName.Get(operationName, _producerNamespace));
         }
 
         public IServiceMap GetServiceMap(XName qualifiedName)
@@ -73,18 +73,18 @@ namespace XRoadLib.Serialization
             if (qualifiedName == null)
                 return null;
 
-            return serviceMaps.TryGetValue(qualifiedName, out var serviceMap)
+            return _serviceMaps.TryGetValue(qualifiedName, out var serviceMap)
                 ? serviceMap
                 : AddServiceMap(qualifiedName);
         }
 
         private IServiceMap AddServiceMap(XName qualifiedName)
         {
-            var operationDefinition = GetOperationDefinition(contractAssembly, qualifiedName);
+            var operationDefinition = GetOperationDefinition(_contractAssembly, qualifiedName);
             if (operationDefinition == null || qualifiedName.NamespaceName != operationDefinition.Name.NamespaceName)
                 throw new UnknownOperationException(qualifiedName);
 
-            var requestDefinition = schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
+            var requestDefinition = _schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
             var inputTypeMap = GetParticleDefinitionTypeMap(requestDefinition, null);
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
@@ -101,7 +101,7 @@ namespace XRoadLib.Serialization
                 outputTypeMap
             );
 
-            return serviceMaps.GetOrAdd(qualifiedName, serviceMap);
+            return _serviceMaps.GetOrAdd(qualifiedName, serviceMap);
         }
 
         private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
@@ -112,7 +112,7 @@ namespace XRoadLib.Serialization
                                 .Where(x => x.GetServices()
                                              .Any(m => m.Name == qualifiedName.LocalName
                                                        && (!Version.HasValue || m.ExistsInVersion(Version.Value))))
-                                .Select(mi => schemaDefinitionProvider.GetOperationDefinition(mi, qualifiedName, Version))
+                                .Select(mi => _schemaDefinitionProvider.GetOperationDefinition(mi, qualifiedName, Version))
                                 .SingleOrDefault(d => d.State != DefinitionState.Ignored);
         }
 
@@ -129,7 +129,7 @@ namespace XRoadLib.Serialization
 
             var normalizedType = Nullable.GetUnderlyingType(runtimeType) ?? runtimeType;
 
-            return runtimeTypeMaps.TryGetValue(normalizedType, out var typeMap) || (partialTypeMaps != null && partialTypeMaps.TryGetValue(normalizedType, out typeMap))
+            return _runtimeTypeMaps.TryGetValue(normalizedType, out var typeMap) || (partialTypeMaps != null && partialTypeMaps.TryGetValue(normalizedType, out typeMap))
                 ? typeMap
                 : AddTypeMap(normalizedType, partialTypeMaps);
         }
@@ -139,7 +139,7 @@ namespace XRoadLib.Serialization
             if (qualifiedName == null)
                 return null;
 
-            if (!xmlTypeMaps.TryGetValue(qualifiedName, out var typeMaps))
+            if (!_xmlTypeMaps.TryGetValue(qualifiedName, out var typeMaps))
                 typeMaps = AddTypeMap(particleDefinition, qualifiedName);
 
             return particleDefinition.Content is ArrayContentDefiniton ? typeMaps?.Item2 : typeMaps?.Item1;
@@ -150,20 +150,20 @@ namespace XRoadLib.Serialization
             if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.GetTypeInfo().ExistsInVersion(Version.Value))
                 throw new SchemaDefinitionException($"The runtime type `{runtimeType.Name}` is not defined for DTO version `{Version.Value}`.");
 
-            var typeDefinition = schemaDefinitionProvider.GetTypeDefinition(runtimeType);
+            var typeDefinition = _schemaDefinitionProvider.GetTypeDefinition(runtimeType);
 
             ITypeMap typeMap;
 
             if (typeDefinition.TypeMapType != null)
             {
                 typeMap = (ITypeMap)Activator.CreateInstance(typeDefinition.TypeMapType, this, typeDefinition);
-                return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
+                return _runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
             }
 
             if (typeDefinition is CollectionDefinition collectionDefinition)
             {
                 var elementType = typeDefinition.Type.GetElementType();
-                if (!ReferenceEquals(elementType.GetTypeInfo().Assembly, contractAssembly))
+                if (!ReferenceEquals(elementType.GetTypeInfo().Assembly, _contractAssembly))
                     return null;
 
                 var itemTypeMap = GetTypeMap(elementType, partialTypeMaps);
@@ -171,10 +171,10 @@ namespace XRoadLib.Serialization
 
                 var typeMapType = typeof(ArrayTypeMap<>).MakeGenericType(itemTypeMap.Definition.Type);
                 typeMap = (ITypeMap)Activator.CreateInstance(typeMapType, this, collectionDefinition, itemTypeMap);
-                return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
+                return _runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
             }
 
-            if (!ReferenceEquals(typeDefinition.Type.GetTypeInfo().Assembly, contractAssembly))
+            if (!ReferenceEquals(typeDefinition.Type.GetTypeInfo().Assembly, _contractAssembly))
                 return null;
 
             if (typeDefinition.IsCompositeType && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
@@ -190,14 +190,14 @@ namespace XRoadLib.Serialization
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
 
             if (!(typeMap is ICompositeTypeMap compositeTypeMap))
-                return runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
+                return _runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
 
             partialTypeMaps = partialTypeMaps ?? new Dictionary<Type, ITypeMap>();
             partialTypeMaps.Add(typeDefinition.Type, compositeTypeMap);
-            compositeTypeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), availableFilters);
+            compositeTypeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), _availableFilters);
             partialTypeMaps.Remove(typeDefinition.Type);
 
-            return runtimeTypeMaps.GetOrAdd(runtimeType, compositeTypeMap);
+            return _runtimeTypeMaps.GetOrAdd(runtimeType, compositeTypeMap);
         }
 
         private Tuple<ITypeMap, ITypeMap> AddTypeMap(ParticleDefinition particleDefinition, XName qualifiedName)
@@ -225,11 +225,11 @@ namespace XRoadLib.Serialization
             else
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
 
-            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.Type), this, schemaDefinitionProvider.GetCollectionDefinition(typeDefinition), typeMap);
+            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.Type), this, _schemaDefinitionProvider.GetCollectionDefinition(typeDefinition), typeMap);
             var typeMapTuple = Tuple.Create(typeMap, arrayTypeMap);
 
             if (!(typeMap is ICompositeTypeMap compositeTypeMap))
-                return xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
+                return _xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
 
             var partialTypeMaps = new Dictionary<Type, ITypeMap>
             {
@@ -237,23 +237,23 @@ namespace XRoadLib.Serialization
                 { arrayTypeMap.Definition.Type, arrayTypeMap }
             };
 
-            compositeTypeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), availableFilters);
+            compositeTypeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), _availableFilters);
 
-            return xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
+            return _xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
         }
 
         private TypeDefinition GetRuntimeTypeDefinition(ParticleDefinition particleDefinition, XName qualifiedName)
         {
             if (!qualifiedName.NamespaceName.StartsWith("http://"))
             {
-                var type = contractAssembly.GetType($"{qualifiedName.Namespace}.{qualifiedName.LocalName}");
-                return type != null && type.IsXRoadSerializable() ? schemaDefinitionProvider.GetTypeDefinition(type) : null;
+                var type = _contractAssembly.GetType($"{qualifiedName.Namespace}.{qualifiedName.LocalName}");
+                return type != null && type.IsXRoadSerializable() ? _schemaDefinitionProvider.GetTypeDefinition(type) : null;
             }
 
-            var typeDefinition = contractAssembly.GetTypes()
+            var typeDefinition = _contractAssembly.GetTypes()
                                                  .Where(type => type.IsXRoadSerializable())
                                                  .Where(type => !Version.HasValue || type.GetTypeInfo().ExistsInVersion(Version.Value))
-                                                 .Select(type => schemaDefinitionProvider.GetTypeDefinition(type))
+                                                 .Select(type => _schemaDefinitionProvider.GetTypeDefinition(type))
                                                  .SingleOrDefault(definition => definition.Name == qualifiedName);
             if (typeDefinition != null)
                 return typeDefinition;
@@ -268,47 +268,47 @@ namespace XRoadLib.Serialization
 
             switch (type.FullName)
             {
-                case "System.Byte": return XName.Get("byte", NamespaceConstants.XSD);
-                case "System.DateTime": return XName.Get("dateTime", NamespaceConstants.XSD);
-                case "System.Boolean": return XName.Get("boolean", NamespaceConstants.XSD);
-                case "System.Single": return XName.Get("float", NamespaceConstants.XSD);
-                case "System.Double": return XName.Get("double", NamespaceConstants.XSD);
-                case "System.Decimal": return XName.Get("decimal", NamespaceConstants.XSD);
-                case "System.Int64": return XName.Get("long", NamespaceConstants.XSD);
-                case "System.Int32": return XName.Get("int", NamespaceConstants.XSD);
-                case "System.String": return XName.Get("string", NamespaceConstants.XSD);
-                case "System.TimeSpan": return XName.Get("duration", NamespaceConstants.XSD);
+                case "System.Byte": return XName.Get("byte", NamespaceConstants.Xsd);
+                case "System.DateTime": return XName.Get("dateTime", NamespaceConstants.Xsd);
+                case "System.Boolean": return XName.Get("boolean", NamespaceConstants.Xsd);
+                case "System.Single": return XName.Get("float", NamespaceConstants.Xsd);
+                case "System.Double": return XName.Get("double", NamespaceConstants.Xsd);
+                case "System.Decimal": return XName.Get("decimal", NamespaceConstants.Xsd);
+                case "System.Int64": return XName.Get("long", NamespaceConstants.Xsd);
+                case "System.Int32": return XName.Get("int", NamespaceConstants.Xsd);
+                case "System.String": return XName.Get("string", NamespaceConstants.Xsd);
+                case "System.TimeSpan": return XName.Get("duration", NamespaceConstants.Xsd);
             }
 
-            if (ReferenceEquals(type.GetTypeInfo().Assembly, contractAssembly))
-                return XName.Get(type.Name, producerNamespace);
+            if (ReferenceEquals(type.GetTypeInfo().Assembly, _contractAssembly))
+                return XName.Get(type.Name, _producerNamespace);
 
             throw new SchemaDefinitionException($"XML namespace of runtime type `{type.FullName}` is undefined.");
         }
 
         private void AddSystemType<T>(string typeName, Func<TypeDefinition, ITypeMap> createTypeMap)
         {
-            var typeDefinition = schemaDefinitionProvider.GetSimpleTypeDefinition<T>(typeName);
+            var typeDefinition = _schemaDefinitionProvider.GetSimpleTypeDefinition<T>(typeName);
 
             var typeMap = GetCustomTypeMap(typeDefinition.TypeMapType) ?? createTypeMap(typeDefinition);
 
             if (typeDefinition.Type != null)
-                runtimeTypeMaps.TryAdd(typeDefinition.Type, typeMap);
+                _runtimeTypeMaps.TryAdd(typeDefinition.Type, typeMap);
 
-            var collectionDefinition = schemaDefinitionProvider.GetCollectionDefinition(typeDefinition);
+            var collectionDefinition = _schemaDefinitionProvider.GetCollectionDefinition(typeDefinition);
             var arrayTypeMap = GetCustomTypeMap(collectionDefinition.TypeMapType) ?? new ArrayTypeMap<T>(this, collectionDefinition, typeMap);
 
             if (collectionDefinition.Type != null)
-                runtimeTypeMaps.TryAdd(collectionDefinition.Type, arrayTypeMap);
+                _runtimeTypeMaps.TryAdd(collectionDefinition.Type, arrayTypeMap);
 
             if (typeDefinition.Name != null)
-                xmlTypeMaps.TryAdd(typeDefinition.Name, Tuple.Create(typeMap, arrayTypeMap));
+                _xmlTypeMaps.TryAdd(typeDefinition.Name, Tuple.Create(typeMap, arrayTypeMap));
         }
 
         private IEnumerable<Tuple<PropertyDefinition, ITypeMap>> GetRuntimeProperties(TypeDefinition typeDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
             return typeDefinition.Type
-                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, Version, p => schemaDefinitionProvider.GetPropertyDefinition(p, typeDefinition))
+                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, Version, p => _schemaDefinitionProvider.GetPropertyDefinition(p, typeDefinition))
                                  .Where(d => d.Content.State != DefinitionState.Ignored)
                                  .Select(p =>
                                  {
@@ -330,17 +330,17 @@ namespace XRoadLib.Serialization
             if (typeMapType == null)
                 return null;
 
-            if (customTypeMaps.TryGetValue(typeMapType, out var typeMap))
+            if (_customTypeMaps.TryGetValue(typeMapType, out var typeMap))
                 return typeMap;
 
             typeMap = (ITypeMap)Activator.CreateInstance(typeMapType, null, this);
 
-            return customTypeMaps.GetOrAdd(typeMapType, typeMap);
+            return _customTypeMaps.GetOrAdd(typeMapType, typeMap);
         }
 
         private Tuple<ResponseDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
-            var returnDefinition = schemaDefinitionProvider.GetResponseDefinition(operationDefinition, xRoadFaultPresentation);
+            var returnDefinition = _schemaDefinitionProvider.GetResponseDefinition(operationDefinition, xRoadFaultPresentation);
             if (returnDefinition.Content.State == DefinitionState.Ignored)
                 return null;
 

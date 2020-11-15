@@ -36,10 +36,10 @@ namespace XRoadLib.Tests.Serialization
                 if (addEnvelope)
                 {
                     writer.WriteStartElement("Envelope");
-                    writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.SOAP_ENC, NamespaceConstants.XMLNS, NamespaceConstants.SOAP_ENC);
-                    writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSI, NamespaceConstants.XMLNS, NamespaceConstants.XSI);
-                    writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XSD, NamespaceConstants.XMLNS, NamespaceConstants.XSD);
-                    writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.TARGET, NamespaceConstants.XMLNS, Globals.ServiceManager20.ProducerNamespace);
+                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.SoapEnc, NamespaceConstants.Xmlns, NamespaceConstants.SoapEnc);
+                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Xsi, NamespaceConstants.Xmlns, NamespaceConstants.Xsi);
+                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Xsd, NamespaceConstants.Xmlns, NamespaceConstants.Xsd);
+                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Target, NamespaceConstants.Xmlns, Globals.ServiceManager20.ProducerNamespace);
                 }
 
                 writer.WriteStartElement(elementName);
@@ -286,41 +286,39 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeBinaryValue()
         {
-            using (var stream = new MemoryStream())
+            using var stream = new MemoryStream();
+
+            var value = new XRoadBinaryTestDto { Sisu = stream };
+
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<Sisu p2:type=\"p3:base64Binary\" href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\" />"
+                                    + "</keha>";
+
+            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
-                var value = new XRoadBinaryTestDto { Sisu = stream };
-
-                var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                             + "<keha>"
-                             + "<Sisu p2:type=\"p3:base64Binary\" href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\" />"
-                             + "</keha>";
-
-                SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
-                {
-                    Assert.Equal(expected, xml);
-                    Assert.Equal(1, msg.AllAttachments.Count);
-                });
-            }
+                Assert.Equal(expected, xml);
+                Assert.Equal(1, msg.AllAttachments.Count);
+            });
         }
 
         [Fact]
         public void CanSerializeHexBinaryValue()
         {
-            using (var stream = new MemoryStream())
+            using var stream = new MemoryStream();
+
+            var value = new XRoadHexTestDto { Sisu = stream };
+
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<Sisu p2:type=\"p3:hexBinary\" href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\" />"
+                                    + "</keha>";
+
+            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
-                var value = new XRoadHexTestDto { Sisu = stream };
-
-                var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                             + "<keha>"
-                             + "<Sisu p2:type=\"p3:hexBinary\" href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\" />"
-                             + "</keha>";
-
-                SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
-                {
-                    Assert.Equal(expected, xml);
-                    Assert.Equal(1, msg.AllAttachments.Count);
-                });
-            }
+                Assert.Equal(expected, xml);
+                Assert.Equal(1, msg.AllAttachments.Count);
+            });
         }
 
         [Fact]
@@ -328,10 +326,10 @@ namespace XRoadLib.Tests.Serialization
         {
             var value = new DateTestDto { Synniaeg = new DateTime(2012, 11, 26, 16, 29, 13) };
 
-            var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                         + "<keha>"
-                         + "<ttIsik.dSyn p2:type=\"p3:date\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2012-11-26</ttIsik.dSyn>"
-                         + "</keha>";
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<ttIsik.dSyn p2:type=\"p3:date\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2012-11-26</ttIsik.dSyn>"
+                                    + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
@@ -355,17 +353,17 @@ namespace XRoadLib.Tests.Serialization
                 MultipleProperty = new [] { 8L, 9L }
             };
 
-            var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                         + "<keha>"
-                         + "<AddedProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">1</AddedProperty>"
-                         + "<ChangedTypeProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2</ChangedTypeProperty>"
-                         + "<MultipleProperty p2:type=\"p3:Array\" p3:arrayType=\"p4:long[2]\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                         + "<item p2:type=\"p4:long\">8</item>"
-                         + "<item p2:type=\"p4:long\">9</item>"
-                         + "</MultipleProperty>"
-                         + "<RenamedToProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">4</RenamedToProperty>"
-                         + "<StaticProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">6</StaticProperty>"
-                         + "</keha>";
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<AddedProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">1</AddedProperty>"
+                                    + "<ChangedTypeProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2</ChangedTypeProperty>"
+                                    + "<MultipleProperty p2:type=\"p3:Array\" p3:arrayType=\"p4:long[2]\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                                    + "<item p2:type=\"p4:long\">8</item>"
+                                    + "<item p2:type=\"p4:long\">9</item>"
+                                    + "</MultipleProperty>"
+                                    + "<RenamedToProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">4</RenamedToProperty>"
+                                    + "<StaticProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">6</StaticProperty>"
+                                    + "</keha>";
 
             SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
             {
@@ -389,14 +387,14 @@ namespace XRoadLib.Tests.Serialization
                 MultipleProperty = new[] { 8L, 9L }
             };
 
-            var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                         + "<keha>"
-                         + "<ChangedTypeProperty p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2</ChangedTypeProperty>"
-                         + "<RemovedProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">3</RemovedProperty>"
-                         + "<RenamedFromProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">4</RenamedFromProperty>"
-                         + "<SingleProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">8</SingleProperty>"
-                         + "<StaticProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">6</StaticProperty>"
-                         + "</keha>";
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<ChangedTypeProperty p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">2</ChangedTypeProperty>"
+                                    + "<RemovedProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">3</RemovedProperty>"
+                                    + "<RenamedFromProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">4</RenamedFromProperty>"
+                                    + "<SingleProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">8</SingleProperty>"
+                                    + "<StaticProperty p2:type=\"p3:long\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">6</StaticProperty>"
+                                    + "</keha>";
 
             SerializeWithContext("keha", value, 1u, false, (msg, xml) =>
             {
@@ -419,15 +417,15 @@ namespace XRoadLib.Tests.Serialization
                 }
             };
 
-            var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                         + "<keha>"
-                         + "<AnonymousProperty>"
-                         + "<Property1 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">1</Property1>"
-                         + "<Property2 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">2</Property2>"
-                         + "<Property3 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">3</Property3>"
-                         + "</AnonymousProperty>"
-                         + "<KnownProperty p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">value</KnownProperty>"
-                         + "</keha>";
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<AnonymousProperty>"
+                                    + "<Property1 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">1</Property1>"
+                                    + "<Property2 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">2</Property2>"
+                                    + "<Property3 p3:type=\"p4:string\" xmlns:p4=\"http://www.w3.org/2001/XMLSchema\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema-instance\">3</Property3>"
+                                    + "</AnonymousProperty>"
+                                    + "<KnownProperty p2:type=\"p3:string\" xmlns:p3=\"http://www.w3.org/2001/XMLSchema\" xmlns:p2=\"http://www.w3.org/2001/XMLSchema-instance\">value</KnownProperty>"
+                                    + "</keha>";
 
             SerializeWithContext("keha", entity, 2u, false, (msg, xml) =>
             {

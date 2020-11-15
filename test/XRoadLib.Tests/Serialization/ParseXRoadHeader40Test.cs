@@ -10,7 +10,7 @@ namespace XRoadLib.Tests.Serialization
 {
     public class ParseXRoadHeader40Test
     {
-        private static readonly Func<string, string> minimalValidHeader = x => $"<xrd:client id:objectType=\"MEMBER\"><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion>{x}";
+        private static readonly Func<string, string> MinimalValidHeader = x => $"<xrd:client id:objectType=\"MEMBER\"><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion>{x}";
 
         [Fact]
         public void NoHeader()
@@ -101,7 +101,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CollectsClientMandatoryValues()
         {
-            var tuple = ParseHeader(minimalValidHeader(""));
+            var tuple = ParseHeader(MinimalValidHeader(""));
             var header = tuple.Item1 as IXRoadHeader;
             Assert.NotNull(header);
             Assert.Same(Globals.ServiceManager40, tuple.Item3);
@@ -129,7 +129,7 @@ namespace XRoadLib.Tests.Serialization
             var elX = tuple.Item2.SingleOrDefault(x => x.Name.LocalName == "x");
             Assert.NotNull(elX);
 
-            var elXTest = elX.Element(XName.Get("test", NamespaceConstants.SOAP_ENV));
+            var elXTest = elX.Element(XName.Get("test", NamespaceConstants.SoapEnv));
             Assert.NotNull(elXTest);
             Assert.Equal("bla", elXTest.Value);
             Assert.Contains(tuple.Item2, x => x.Name.LocalName == "y");
@@ -170,56 +170,56 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void EmptyServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:service />")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:service />")));
             Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` cannot be empty.", exception.Message);
         }
 
         [Fact]
         public void MissingObjectTypeAttributeForServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:service></xrd:service>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:service></xrd:service>")));
         	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.", exception.Message);
         }
 
         [Fact]
         public void MissingXRoadInstanceElementForServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""></xrd:service>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:service id:objectType=""SERVICE""></xrd:service>")));
             Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.", exception.Message);
         }
 
         [Fact]
         public void InvalidElementInServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><x /></xrd:service>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><x /></xrd:service>")));
             Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.", exception.Message);
         }
 
         [Fact]
         public void MissingMemberClassElementForServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /></xrd:service>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /></xrd:service>")));
         	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}memberClass`.", exception.Message);
         }
 
         [Fact]
         public void MissingMemberCodeElementForServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /></xrd:service>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /></xrd:service>")));
             Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}memberCode`.", exception.Message);
         }
 
         [Fact]
         public void MissingServiceCodeElementForServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:service>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /></xrd:service>")));
         	Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}service` must have child element `{http://x-road.eu/xsd/identifiers}serviceCode`.", exception.Message);
         }
 
         [Fact]
         public void ReadMinimalGroupOfElementsForServiceElement()
         {
-            var tuple = ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /></xrd:service>"));
+            var tuple = ParseHeader(MinimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /></xrd:service>"));
             var header = tuple.Item1 as IXRoadHeader;
             Assert.NotNull(header);
             Assert.NotNull(header.Service);
@@ -234,7 +234,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void ReadAllElementsForServiceElement()
         {
-            var tuple = ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:subsystemCode /><id:serviceCode /><id:serviceVersion /></xrd:service>"));
+            var tuple = ParseHeader(MinimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:subsystemCode /><id:serviceCode /><id:serviceVersion /></xrd:service>"));
             var header = tuple.Item1 as IXRoadHeader;
             Assert.NotNull(header);
             Assert.NotNull(header.Service);
@@ -249,14 +249,14 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void OptionalParameterAtWrongPositionForServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /><id:subsystemCode /></xrd:service>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:service id:objectType=""SERVICE""><id:xRoadInstance /><id:memberClass /><id:memberCode /><id:serviceCode /><id:subsystemCode /></xrd:service>")));
             Assert.Equal("Unexpected element `{http://x-road.eu/xsd/identifiers}subsystemCode` in element `{http://x-road.eu/xsd/xroad.xsd}service`.", exception.Message);
         }
 
         [Fact]
         public void ReadSimpleOptionalElementValues()
         {
-            var tuple = ParseHeader(minimalValidHeader(@"<xrd:userId>Kalle</xrd:userId><xrd:issue>TOIMIK</xrd:issue>"));
+            var tuple = ParseHeader(MinimalValidHeader(@"<xrd:userId>Kalle</xrd:userId><xrd:issue>TOIMIK</xrd:issue>"));
             var header = tuple.Item1 as IXRoadHeader;
             Assert.NotNull(header);
             Assert.Equal("Kalle", header.UserId);
@@ -266,35 +266,35 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void EmptyCentralServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:centralService />")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:centralService />")));
             Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}centralService` cannot be empty.", exception.Message);
         }
 
         [Fact]
         public void MissingObjectTypeAttributeForCentralServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:centralService></xrd:centralService>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:centralService></xrd:centralService>")));
             Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have attribute `{http://x-road.eu/xsd/identifiers}objectType` value.", exception.Message);
         }
 
         [Fact]
         public void MissingXRoadInstanceElementForCentralServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""></xrd:centralService>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""></xrd:centralService>")));
             Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have child element `{http://x-road.eu/xsd/identifiers}xRoadInstance`.", exception.Message);
         }
 
         [Fact]
         public void MissingServiceCodeElementForCentralServiceElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance /></xrd:centralService>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance /></xrd:centralService>")));
             Assert.Equal("Element `{http://x-road.eu/xsd/xroad.xsd}centralService` must have child element `{http://x-road.eu/xsd/identifiers}serviceCode`.", exception.Message);
         }
 
         [Fact]
         public void ValidCentralServiceElement()
         {
-            var tuple = ParseHeader(minimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance>FI</id:xRoadInstance><id:serviceCode>fun</id:serviceCode></xrd:centralService>"));
+            var tuple = ParseHeader(MinimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance>FI</id:xRoadInstance><id:serviceCode>fun</id:serviceCode></xrd:centralService>"));
             Assert.NotNull(tuple.Item1);
             Assert.IsType<XRoadHeader40>(tuple.Item1);
 
@@ -308,28 +308,28 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void EmptyRepresentedPartyElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<repr:representedParty />")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<repr:representedParty />")));
             Assert.Equal("Element `{http://x-road.eu/xsd/representation.xsd}representedParty` cannot be empty.", exception.Message);
         }
 
         [Fact]
         public void ElementPartyCodeIsRequiredForRepresentedPartyElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<repr:representedParty></repr:representedParty>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<repr:representedParty></repr:representedParty>")));
             Assert.Equal("Element `{http://x-road.eu/xsd/representation.xsd}representedParty` must have child element `{http://x-road.eu/xsd/representation.xsd}partyCode`.", exception.Message);
         }
 
         [Fact]
         public void WrongElementOrderForRepresentedPartyElement()
         {
-            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(minimalValidHeader(@"<repr:representedParty><repr:partyCode /><repr:partyClass /></repr:representedParty>")));
+            var exception = Assert.Throws<InvalidQueryException>(() => ParseHeader(MinimalValidHeader(@"<repr:representedParty><repr:partyCode /><repr:partyClass /></repr:representedParty>")));
             Assert.Equal("Unexpected element `{http://x-road.eu/xsd/representation.xsd}partyClass` in element `{http://x-road.eu/xsd/representation.xsd}representedParty`.", exception.Message);
         }
 
         [Fact]
         public void CanHandleMissingOptionalElementForRepresentedPartyElement()
         {
-            var tuple = ParseHeader(minimalValidHeader(@"<repr:representedParty><repr:partyCode /></repr:representedParty>"));
+            var tuple = ParseHeader(MinimalValidHeader(@"<repr:representedParty><repr:partyCode /></repr:representedParty>"));
             Assert.NotNull(tuple.Item1);
             Assert.IsType<XRoadHeader40>(tuple.Item1);
 
@@ -342,7 +342,7 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanHandleOptionalElementValueForRepresentedPartyElement()
         {
-            var tuple = ParseHeader(minimalValidHeader(@"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>"));
+            var tuple = ParseHeader(MinimalValidHeader(@"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>"));
             Assert.NotNull(tuple.Item1);
             Assert.IsType<XRoadHeader40>(tuple.Item1);
 
@@ -362,17 +362,17 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void WrongProtocolIsLeftUnresolved()
         {
-            var tuple = ParseHeader(minimalValidHeader(@"<x:userId xmlns:x=""http://x-road.ee/xsd/x-road.xsd"">Mr. X</x:userId>"));
+            var tuple = ParseHeader(MinimalValidHeader(@"<x:userId xmlns:x=""http://x-road.ee/xsd/x-road.xsd"">Mr. X</x:userId>"));
             Assert.NotNull(tuple.Item1);
             Assert.Same(Globals.ServiceManager40, tuple.Item3);
             Assert.Equal(1, tuple.Item2.Count);
             Assert.Equal("userId", tuple.Item2[0].Name.LocalName);
-            Assert.Equal(NamespaceConstants.XROAD, tuple.Item2[0].Name.NamespaceName);
+            Assert.Equal(NamespaceConstants.XRoad, tuple.Item2[0].Name.NamespaceName);
         }
 
-        public static Tuple<ISoapHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
+        private static Tuple<ISoapHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
         {
-            return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD_V4);
+            return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XRoadV4);
         }
     }
 }

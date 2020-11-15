@@ -10,10 +10,8 @@ namespace XRoadLib.Attributes
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class XRoadServiceAttribute : Attribute
     {
-        private static readonly Type serviceMapType = typeof(ServiceMap);
-
-        internal uint? addedInVersion;
-        internal uint? removedInVersion;
+        internal uint? AddedInVersionValue;
+        internal uint? RemovedInVersionValue;
 
         /// <summary>
         /// Operation name.
@@ -23,7 +21,7 @@ namespace XRoadLib.Attributes
         /// <summary>
         /// ServiceMap type which implements operation definition.
         /// </summary>
-        public virtual Type ServiceMapType => serviceMapType;
+        public virtual Type ServiceMapType { get; } = typeof(ServiceMap);
 
         /// <summary>
         /// Abstract operations do not define binding details.
@@ -38,12 +36,12 @@ namespace XRoadLib.Attributes
         /// <summary>
         /// X-Road service version which first defined given operation.
         /// </summary>
-        public virtual uint AddedInVersion { get => addedInVersion.GetValueOrDefault(1u); set => addedInVersion = value; }
+        public virtual uint AddedInVersion { get => AddedInVersionValue.GetValueOrDefault(1u); set => AddedInVersionValue = value; }
 
         /// <summary>
         /// X-Road service version which removed given operation.
         /// </summary>
-        public virtual uint RemovedInVersion { get => removedInVersion.GetValueOrDefault(uint.MaxValue); set => removedInVersion = value; }
+        public virtual uint RemovedInVersion { get => RemovedInVersionValue.GetValueOrDefault(uint.MaxValue); set => RemovedInVersionValue = value; }
 
         /// <summary>
         /// Provides extension specific customizations for the schema.

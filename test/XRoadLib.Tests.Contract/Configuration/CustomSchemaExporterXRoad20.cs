@@ -10,12 +10,12 @@ namespace XRoadLib.Tests.Contract.Configuration
 {
     public class CustomSchemaExporterXRoad20 : SchemaExporterXRoad20
     {
-        private readonly StringSerializationMode stringSerializationMode;
+        private readonly StringSerializationMode _stringSerializationMode;
 
         public CustomSchemaExporterXRoad20(StringSerializationMode stringSerializationMode = StringSerializationMode.HtmlEncoded)
             : base("test-producer", typeof(Class1).GetTypeInfo().Assembly)
         {
-            this.stringSerializationMode = stringSerializationMode;
+            _stringSerializationMode = stringSerializationMode;
         }
 
         public override void ExportOperationDefinition(OperationDefinition operationDefinition)
@@ -69,7 +69,7 @@ namespace XRoadLib.Tests.Contract.Configuration
         {
             base.ExportProtocolDefinition(protocolDefinition);
 
-            if (stringSerializationMode == StringSerializationMode.WrappedInCData)
+            if (_stringSerializationMode == StringSerializationMode.WrappedInCData)
                 protocolDefinition.Style = new CDataRpcEncodedStyle();
 
             foreach (var version in Enumerable.Range(1, 3))

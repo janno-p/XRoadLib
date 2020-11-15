@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Reflection.Emit;
 using XRoadLib.Attributes;
 
@@ -23,7 +24,13 @@ namespace XRoadLib.Extensions
             generator.Emit(OpCodes.Ldarg_0);
 
             if (converterType != null)
-                generator.Emit(OpCodes.Call, converterType.GetTypeInfo().GetMethod("ConvertBack", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static));
+            {
+                var convertBackMethod = converterType.GetTypeInfo().GetMethod("ConvertBack", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                if (convertBackMethod == null)
+                    throw new InvalidOperationException();
+
+                generator.Emit(OpCodes.Call, convertBackMethod);
+            }
             else
                 generator.Emit(OpCodes.Callvirt, propertyInfo.GetGetMethod(true));
 
@@ -56,7 +63,13 @@ namespace XRoadLib.Extensions
                 generator.Emit(OpCodes.Unbox_Any, propertyType);
 
             if (converterType != null)
-                generator.Emit(OpCodes.Call, converterType.GetTypeInfo().GetMethod("Convert", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static));
+            {
+                var convertMethod = converterType.GetTypeInfo().GetMethod("Convert", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                if (convertMethod == null)
+                    throw new InvalidOperationException();
+
+                generator.Emit(OpCodes.Call, convertMethod);
+            }
             else
                 generator.Emit(OpCodes.Callvirt, propertyInfo.GetSetMethod(true));
 

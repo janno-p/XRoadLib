@@ -11,9 +11,9 @@ namespace XRoadLib.Serialization.Mapping
     /// </summary>
     public class ServiceMap : IServiceMap
     {
-        private readonly ISerializer serializer;
-        private readonly ITypeMap inputTypeMap;
-        private readonly ITypeMap outputTypeMap;
+        private readonly ISerializer _serializer;
+        private readonly ITypeMap _inputTypeMap;
+        private readonly ITypeMap _outputTypeMap;
 
         /// <inheritdoc />
         public OperationDefinition OperationDefinition { get; }
@@ -40,17 +40,17 @@ namespace XRoadLib.Serialization.Mapping
         /// </summary>
         public ServiceMap(ISerializer serializer, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
         {
-            this.serializer = serializer;
+            _serializer = serializer;
 
             RequestDefinition = requestDefinition;
             ResponseDefinition = responseDefinition;
             OperationDefinition = operationDefinition;
 
-            this.inputTypeMap = inputTypeMap is IContentTypeMap inputContentTypeMap && requestDefinition.Content.UseXop
+            _inputTypeMap = inputTypeMap is IContentTypeMap inputContentTypeMap && requestDefinition.Content.UseXop
                 ? inputContentTypeMap.GetOptimizedContentTypeMap()
                 : inputTypeMap;
 
-            this.outputTypeMap = outputTypeMap is IContentTypeMap outputContentTypeMap && responseDefinition.Content.UseXop
+            _outputTypeMap = outputTypeMap is IContentTypeMap outputContentTypeMap && responseDefinition.Content.UseXop
                 ? outputContentTypeMap.GetOptimizedContentTypeMap()
                 : outputTypeMap;
         }
@@ -64,7 +64,7 @@ namespace XRoadLib.Serialization.Mapping
                 throw new InvalidQueryException($"Request wrapper element `{requestName}` was not found in incoming SOAP message.");
 
             return RequestDefinition.ParameterInfo != null
-                ? ProcessRequestValue(DeserializeValue(reader, inputTypeMap, message.RequestNode, RequestDefinition, message))
+                ? ProcessRequestValue(DeserializeValue(reader, _inputTypeMap, message.RequestNode, RequestDefinition, message))
                 : null;
         }
 
@@ -93,7 +93,7 @@ namespace XRoadLib.Serialization.Mapping
             if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.ResultElementName))
                 throw new InvalidQueryException($"Expected result wrapper element `{ResponseDefinition.ResultElementName}` was not found in SOAP message.");
 
-            return ProcessResponseValue(DeserializeValue(reader, outputTypeMap, message.ResponseNode, ResponseDefinition, message));
+            return ProcessResponseValue(DeserializeValue(reader, _outputTypeMap, message.ResponseNode, ResponseDefinition, message));
         }
 
         private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, ParticleDefinition particleDefinition, XRoadMessage message)
@@ -110,7 +110,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = typeMap;
             if (!particleDefinition.Content.IgnoreExplicitType)
-                concreteTypeMap = (typeMap.Definition.IsInheritable ? serializer.GetTypeMapFromXsiType(reader, particleDefinition) : null) ?? typeMap;
+                concreteTypeMap = (typeMap.Definition.IsInheritable ? _serializer.GetTypeMapFromXsiType(reader, particleDefinition) : null) ?? typeMap;
 
             return concreteTypeMap.Deserialize(reader, templateNode, particleDefinition.Content, message);
         }
@@ -122,14 +122,14 @@ namespace XRoadLib.Serialization.Mapping
             var ns = string.IsNullOrEmpty(requestNamespace) ? requestWrapperElementName.NamespaceName : requestNamespace;
             var addPrefix = writer.LookupPrefix(ns) == null;
 
-            if (addPrefix) writer.WriteStartElement(PrefixConstants.TARGET, requestWrapperElementName.LocalName, ns);
+            if (addPrefix) writer.WriteStartElement(PrefixConstants.Target, requestWrapperElementName.LocalName, ns);
             else writer.WriteStartElement(requestWrapperElementName.LocalName, ns);
 
             if (!RequestDefinition.Content.MergeContent)
                 writer.WriteStartElement(RequestDefinition.Content.Name);
 
             if (RequestDefinition.ParameterInfo != null)
-                SerializeValue(writer, PrepareRequestValue(value), inputTypeMap, message.RequestNode, message, RequestDefinition.Content);
+                SerializeValue(writer, PrepareRequestValue(value), _inputTypeMap, message.RequestNode, message, RequestDefinition.Content);
 
             if (!RequestDefinition.Content.MergeContent)
                 writer.WriteEndElement();
@@ -157,19 +157,19 @@ namespace XRoadLib.Serialization.Mapping
                 message.Style.SerializeFault(writer, fault);
                 writer.WriteEndElement();
             }
-            else if (outputTypeMap != null)
+            else if (_outputTypeMap != null)
             {
                 writer.WriteStartElement(ResponseDefinition.Content.Name);
 
                 if (fault != null)
                     message.Style.SerializeFault(writer, fault);
-                else if (outputTypeMap != null)
+                else if (_outputTypeMap != null)
                 {
                     var addWrapperElement = HasWrapperResultElement;
                     if (addWrapperElement)
                         writer.WriteStartElement(ResponseDefinition.ResultElementName);
 
-                    SerializeValue(writer, PrepareResponseValue(value), outputTypeMap, message.ResponseNode, message, ResponseDefinition.Content);
+                    SerializeValue(writer, PrepareResponseValue(value), _outputTypeMap, message.ResponseNode, message, ResponseDefinition.Content);
 
                     if (addWrapperElement)
                         writer.WriteEndElement();
@@ -196,7 +196,7 @@ namespace XRoadLib.Serialization.Mapping
                 return;
             }
 
-            var concreteTypeMap = typeMap.Definition.IsInheritable ? serializer.GetTypeMap(value.GetType()) : typeMap;
+            var concreteTypeMap = typeMap.Definition.IsInheritable ? _serializer.GetTypeMap(value.GetType()) : typeMap;
 
             concreteTypeMap.Serialize(writer, templateNode, value, content, message);
         }

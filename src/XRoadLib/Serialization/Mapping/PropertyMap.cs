@@ -10,63 +10,63 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class PropertyMap : IPropertyMap
     {
-        private readonly ISet<string> filters = new HashSet<string>();
-        private readonly ISerializer serializer;
-        private readonly ITypeMap typeMap;
-        private readonly GetValueMethod getValueMethod;
-        private readonly SetValueMethod setValueMethod;
+        private readonly ISet<string> _filters = new HashSet<string>();
+        private readonly ISerializer _serializer;
+        private readonly ITypeMap _typeMap;
+        private readonly GetValueMethod _getValueMethod;
+        private readonly SetValueMethod _setValueMethod;
 
         public PropertyDefinition Definition { get; }
 
         public PropertyMap(ISerializer serializer, PropertyDefinition propertyDefinition, ITypeMap typeMap, IEnumerable<string> availableFilters)
         {
-            this.serializer = serializer;
+            _serializer = serializer;
 
-            this.typeMap = typeMap is IContentTypeMap contentTypeMap && propertyDefinition.Content.UseXop
+            _typeMap = typeMap is IContentTypeMap contentTypeMap && propertyDefinition.Content.UseXop
                 ? contentTypeMap.GetOptimizedContentTypeMap()
                 : typeMap;
 
             Definition = propertyDefinition;
 
-            getValueMethod = Definition.PropertyInfo.CreateGetValueMethod();
-            setValueMethod = Definition.PropertyInfo.CreateSetValueMethod();
+            _getValueMethod = Definition.PropertyInfo.CreateGetValueMethod();
+            _setValueMethod = Definition.PropertyInfo.CreateSetValueMethod();
 
             if (availableFilters == null)
                 return;
 
             foreach (var availableFilter in availableFilters.Where(f => Definition.DeclaringTypeDefinition.Type.IsFilterableField(Definition.RuntimeName, f)))
-                filters.Add(availableFilter);
+                _filters.Add(availableFilter);
         }
 
         public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
         {
-            if (message.EnableFiltering && !filters.Contains(message.FilterName))
+            if (message.EnableFiltering && !_filters.Contains(message.FilterName))
             {
                 reader.ConsumeUnusedElement();
                 return false;
             }
 
             XName typeAttribute;
-            if (typeMap.Definition.IsAnonymous && !(typeMap is IArrayTypeMap) && (typeAttribute = reader.GetTypeAttributeValue()) != null)
-                throw new UnknownTypeException($"Expected anonymous type, but `{typeAttribute}` was given.", Definition, typeMap.Definition, typeAttribute);
+            if (_typeMap.Definition.IsAnonymous && !(_typeMap is IArrayTypeMap) && (typeAttribute = reader.GetTypeAttributeValue()) != null)
+                throw new UnknownTypeException($"Expected anonymous type, but `{typeAttribute}` was given.", Definition, _typeMap.Definition, typeAttribute);
 
-            var concreteTypeMap = (typeMap.Definition.IsInheritable ? serializer.GetTypeMapFromXsiType(reader, Definition) : null) ?? typeMap;
+            var concreteTypeMap = (_typeMap.Definition.IsInheritable ? _serializer.GetTypeMapFromXsiType(reader, Definition) : null) ?? _typeMap;
 
             var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, Definition.Content, message);
             if (propertyValue == null)
                 return true;
 
-            setValueMethod(dtoObject, propertyValue);
+            _setValueMethod(dtoObject, propertyValue);
 
             return true;
         }
 
         public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message)
         {
-            if (message.EnableFiltering && !filters.Contains(message.FilterName))
+            if (message.EnableFiltering && !_filters.Contains(message.FilterName))
                 return;
 
-            var propertyValue = value != null ? getValueMethod(value) : null;
+            var propertyValue = value != null ? _getValueMethod(value) : null;
 
             if (Definition.Content.IsOptional && !Definition.Content.IsNullable && propertyValue == null)
                 return;
@@ -81,7 +81,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (propertyValue != null)
             {
-                var concreteTypeMap = typeMap.Definition.IsInheritable ? serializer.GetTypeMap(propertyValue.GetType()) : typeMap;
+                var concreteTypeMap = _typeMap.Definition.IsInheritable ? _serializer.GetTypeMap(propertyValue.GetType()) : _typeMap;
                 concreteTypeMap.Serialize(writer, templateNode, propertyValue, Definition.Content, message);
             }
 

@@ -171,7 +171,7 @@ namespace XRoadLib.Tests.Serialization
 
         public static Tuple<ISoapHeader, IList<XElement>, IServiceManager> ParseHeader(string xml)
         {
-            return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XROAD);
+            return ParseXRoadHeaderHelper.ParseHeader(xml, NamespaceConstants.XRoad);
         }
 
         public static IXRoadHeader31 CreateHeader(string name, string value)

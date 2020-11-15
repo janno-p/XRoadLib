@@ -11,12 +11,12 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Preferred X-Road namespace prefix of the message protocol version.
         /// </summary>
-        public override string XRoadPrefix => PrefixConstants.XROAD;
+        public override string XRoadPrefix => PrefixConstants.XRoad;
 
         /// <summary>
         /// X-Road specification namespace of the message protocol version.
         /// </summary>
-        public override string XRoadNamespace => NamespaceConstants.XROAD;
+        public override string XRoadNamespace => NamespaceConstants.XRoad;
 
         /// <summary>
         /// Initializes schema exporter for X-Road message protocol version 3.1.
@@ -39,7 +39,7 @@ namespace XRoadLib.Schema
                             .WithRequiredHeader(x => x.UserId)
                             .WithRequiredHeader(x => x.Id)
                             .WithRequiredHeader(x => x.UserName)
-                            .WithHeaderNamespace(NamespaceConstants.XROAD);
+                            .WithHeaderNamespace(NamespaceConstants.XRoad);
         }
     }
 }

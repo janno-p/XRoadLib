@@ -13,28 +13,25 @@ namespace XRoadLib.Soap
 {
     public class Soap12MessageFormatter : IMessageFormatter
     {
-        private static readonly string envPrefix = PrefixConstants.SOAP12_ENV;
-        private static readonly string @namespace = NamespaceConstants.SOAP12_ENV;
+        private static readonly XName EnvelopeName = XName.Get("Envelope", NamespaceConstants.Soap12Env);
+        private static readonly XName HeaderName = XName.Get("Header", NamespaceConstants.Soap12Env);
+        private static readonly XName BodyName = XName.Get("Body", NamespaceConstants.Soap12Env);
+        private static readonly XName FaultCodeName = XName.Get("Code", NamespaceConstants.Soap12Env);
+        private static readonly XName FaultReasonName = XName.Get("Reason", NamespaceConstants.Soap12Env);
+        private static readonly XName FaultNodeName = XName.Get("Node", NamespaceConstants.Soap12Env);
+        private static readonly XName FaultRoleName = XName.Get("Role", NamespaceConstants.Soap12Env);
+        private static readonly XName FaultDetailName = XName.Get("Detail", NamespaceConstants.Soap12Env);
+        private static readonly XName FaultCodeValueName = XName.Get("Value", NamespaceConstants.Soap12Env);
+        private static readonly XName FaultCodeSubcodeName = XName.Get("Subcode", NamespaceConstants.Soap12Env);
+        private static readonly XName FaultReasonTextName = XName.Get("Text", NamespaceConstants.Soap12Env);
 
-        private static readonly XName envelopeName = XName.Get("Envelope", @namespace);
-        private static readonly XName headerName = XName.Get("Header", @namespace);
-        private static readonly XName bodyName = XName.Get("Body", @namespace);
-        private static readonly XName faultCodeName = XName.Get("Code", @namespace);
-        private static readonly XName faultReasonName = XName.Get("Reason", @namespace);
-        private static readonly XName faultNodeName = XName.Get("Node", @namespace);
-        private static readonly XName faultRoleName = XName.Get("Role", @namespace);
-        private static readonly XName faultDetailName = XName.Get("Detail", @namespace);
-        private static readonly XName faultCodeValueName = XName.Get("Value", @namespace);
-        private static readonly XName faultCodeSubcodeName = XName.Get("Subcode", @namespace);
-        private static readonly XName faultReasonTextName = XName.Get("Text", @namespace);
-
-        public string ContentType { get; } = ContentTypes.SOAP12;
-        public string Namespace { get; } = @namespace;
+        public string ContentType { get; } = ContentTypes.Soap12;
+        public string Namespace { get; } = NamespaceConstants.Soap12Env;
 
         public void MoveToEnvelope(XmlReader reader)
         {
             if (!TryMoveToEnvelope(reader))
-                throw new InvalidQueryException($"Element `{envelopeName}` is missing from message content.");
+                throw new InvalidQueryException($"Element `{EnvelopeName}` is missing from message content.");
         }
 
         public void MoveToBody(XmlReader reader)
@@ -42,7 +39,7 @@ namespace XRoadLib.Soap
             MoveToEnvelope(reader);
 
             if (!TryMoveToBody(reader))
-                throw new InvalidQueryException($"Element `{bodyName}` is missing from message content.");
+                throw new InvalidQueryException($"Element `{BodyName}` is missing from message content.");
         }
 
         public void MoveToPayload(XmlReader reader, XName payloadName)
@@ -55,28 +52,28 @@ namespace XRoadLib.Soap
 
         public bool TryMoveToEnvelope(XmlReader reader)
         {
-            return reader.MoveToElement(0, envelopeName);
+            return reader.MoveToElement(0, EnvelopeName);
         }
 
         public bool TryMoveToHeader(XmlReader reader)
         {
-            return reader.MoveToElement(1) && reader.IsCurrentElement(1, headerName);
+            return reader.MoveToElement(1) && reader.IsCurrentElement(1, HeaderName);
         }
 
         public bool TryMoveToBody(XmlReader reader)
         {
-            return reader.MoveToElement(1, bodyName);
+            return reader.MoveToElement(1, BodyName);
         }
 
         public void WriteStartEnvelope(XmlWriter writer, string prefix = null)
         {
-            var prefixValue = string.IsNullOrEmpty(prefix) ? envPrefix : prefix;
-            writer.WriteStartElement(prefixValue, envelopeName.LocalName, envelopeName.NamespaceName);
+            var prefixValue = string.IsNullOrEmpty(prefix) ? PrefixConstants.Soap12Env : prefix;
+            writer.WriteStartElement(prefixValue, EnvelopeName.LocalName, EnvelopeName.NamespaceName);
         }
 
         public void WriteStartBody(XmlWriter writer)
         {
-            writer.WriteStartElement(bodyName);
+            writer.WriteStartElement(BodyName);
         }
 
         public IFault CreateFault(Exception exception)
@@ -106,31 +103,31 @@ namespace XRoadLib.Soap
             writer.WriteStartDocument();
 
             WriteStartEnvelope(writer);
-            writer.WriteAttributeString(PrefixConstants.XMLNS, envPrefix, NamespaceConstants.XMLNS, @namespace);
+            writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Soap12Env, NamespaceConstants.Xmlns, NamespaceConstants.Soap12Env);
 
             WriteStartBody(writer);
-            writer.WriteStartElement("Fault", @namespace);
+            writer.WriteStartElement("Fault", NamespaceConstants.Soap12Env);
 
             WriteSoapFaultCode(writer, soapFault.Code);
             WriteSoapFaultReason(writer, soapFault.Reason);
 
             if (!string.IsNullOrWhiteSpace(soapFault.Node))
             {
-                writer.WriteStartElement(faultNodeName);
+                writer.WriteStartElement(FaultNodeName);
                 writer.WriteString(soapFault.Node);
                 writer.WriteEndElement();
             }
 
             if (!string.IsNullOrWhiteSpace(soapFault.Role))
             {
-                writer.WriteStartElement(faultRoleName);
+                writer.WriteStartElement(FaultRoleName);
                 writer.WriteString(soapFault.Role);
                 writer.WriteEndElement();
             }
 
             if (!string.IsNullOrWhiteSpace(soapFault.Detail))
             {
-                writer.WriteStartElement(faultDetailName);
+                writer.WriteStartElement(FaultDetailName);
                 writer.WriteValue(soapFault.Detail);
                 writer.WriteEndElement();
             }
@@ -144,9 +141,9 @@ namespace XRoadLib.Soap
 
         private static void WriteSoapFaultCode(XmlWriter writer, Soap12FaultCode faultCode)
         {
-            writer.WriteStartElement(faultCodeName);
+            writer.WriteStartElement(FaultCodeName);
 
-            writer.WriteStartElement(faultCodeValueName);
+            writer.WriteStartElement(FaultCodeValueName);
             WriteSoapFaultValueEnum(writer, faultCode.Value);
             writer.WriteEndElement();
 
@@ -160,9 +157,9 @@ namespace XRoadLib.Soap
             if (subcode == null)
                 return;
 
-            writer.WriteStartElement("Subcode", @namespace);
+            writer.WriteStartElement("Subcode", NamespaceConstants.Soap12Env);
 
-            writer.WriteStartElement("Value", @namespace);
+            writer.WriteStartElement("Value", NamespaceConstants.Soap12Env);
             writer.WriteString(subcode.Value);
             writer.WriteEndElement();
 
@@ -176,23 +173,23 @@ namespace XRoadLib.Soap
             switch (value)
             {
                 case Soap12FaultCodeEnum.Receiver:
-                    writer.WriteQualifiedName("Receiver", @namespace);
+                    writer.WriteQualifiedName("Receiver", NamespaceConstants.Soap12Env);
                     break;
 
                 case Soap12FaultCodeEnum.Sender:
-                    writer.WriteQualifiedName("Sender", @namespace);
+                    writer.WriteQualifiedName("Sender", NamespaceConstants.Soap12Env);
                     break;
 
                 case Soap12FaultCodeEnum.MustUnderstand:
-                    writer.WriteQualifiedName("MustUnderstand", @namespace);
+                    writer.WriteQualifiedName("MustUnderstand", NamespaceConstants.Soap12Env);
                     break;
 
                 case Soap12FaultCodeEnum.VersionMismatch:
-                    writer.WriteQualifiedName("VersionMismatch", @namespace);
+                    writer.WriteQualifiedName("VersionMismatch", NamespaceConstants.Soap12Env);
                     break;
 
                 case Soap12FaultCodeEnum.DataEncodingUnknown:
-                    writer.WriteQualifiedName("DataEncodingUnknown", @namespace);
+                    writer.WriteQualifiedName("DataEncodingUnknown", NamespaceConstants.Soap12Env);
                     break;
 
                 default:
@@ -202,12 +199,12 @@ namespace XRoadLib.Soap
 
         private static void WriteSoapFaultReason(XmlWriter writer, IList<Soap12FaultReasonText> faultReasons)
         {
-            writer.WriteStartElement(faultReasonName);
+            writer.WriteStartElement(FaultReasonName);
 
             foreach (var text in faultReasons)
             {
-                writer.WriteStartElement(faultReasonTextName);
-                writer.WriteAttributeString("xml", "lang", NamespaceConstants.XML, text.LanguageCode);
+                writer.WriteStartElement(FaultReasonTextName);
+                writer.WriteAttributeString("xml", "lang", NamespaceConstants.Xml, text.LanguageCode);
                 writer.WriteString(text.Text);
                 writer.WriteEndElement();
             }
@@ -220,7 +217,7 @@ namespace XRoadLib.Soap
             if (header == null)
                 return;
 
-            writer.WriteStartElement("Header", @namespace);
+            writer.WriteStartElement("Header", NamespaceConstants.Soap12Env);
 
             header.WriteTo(writer, style, definition);
 
@@ -232,7 +229,7 @@ namespace XRoadLib.Soap
 
         public void ThrowSoapFaultIfPresent(XmlReader reader)
         {
-            if (reader.NamespaceURI == @namespace && reader.LocalName == "Fault")
+            if (reader.NamespaceURI == NamespaceConstants.Soap12Env && reader.LocalName == "Fault")
                 throw new Soap12FaultException(DeserializeSoapFault(reader));
         }
 
@@ -242,28 +239,28 @@ namespace XRoadLib.Soap
 
             var fault = new Soap12Fault();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, faultCodeName))
-                throw new InvalidQueryException($"SOAP 1.2 Fault must have `{faultCodeName}` element.");
+            if (reader.IsEmptyElement || !reader.MoveToElement(depth, FaultCodeName))
+                throw new InvalidQueryException($"SOAP 1.2 Fault must have `{FaultCodeName}` element.");
             fault.Code = DeserializeSoapFaultCode(reader);
 
-            if (!reader.MoveToElement(depth, faultReasonName))
-                throw new InvalidQueryException($"SOAP 1.2 Fault must have `{faultReasonName}` element.");
+            if (!reader.MoveToElement(depth, FaultReasonName))
+                throw new InvalidQueryException($"SOAP 1.2 Fault must have `{FaultReasonName}` element.");
             fault.Reason = DeserializeSoapFaultReason(reader);
 
             var success = reader.MoveToElement(depth);
-            if (success && reader.IsCurrentElement(depth, faultNodeName))
+            if (success && reader.IsCurrentElement(depth, FaultNodeName))
             {
                 fault.Node = reader.ReadElementContentAsString();
                 success = reader.MoveToElement(depth);
             }
 
-            if (success && reader.IsCurrentElement(depth, faultRoleName))
+            if (success && reader.IsCurrentElement(depth, FaultRoleName))
             {
                 fault.Role = reader.ReadInnerXml();
                 success = reader.MoveToElement(depth);
             }
 
-            if (success && reader.IsCurrentElement(depth, faultDetailName))
+            if (success && reader.IsCurrentElement(depth, FaultDetailName))
             {
                 fault.Detail = reader.ReadInnerXml();
                 success = reader.MoveToElement(depth);
@@ -281,12 +278,12 @@ namespace XRoadLib.Soap
 
             var faultCode = new Soap12FaultCode();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, faultCodeValueName))
-                throw new InvalidQueryException($"SOAP 1.2 Fault Code must have `{faultCodeValueName}` element.");
+            if (reader.IsEmptyElement || !reader.MoveToElement(depth, FaultCodeValueName))
+                throw new InvalidQueryException($"SOAP 1.2 Fault Code must have `{FaultCodeValueName}` element.");
             faultCode.Value = DeserializeFaultCodeValue(reader);
 
             var success = reader.MoveToElement(depth);
-            if (success && reader.IsCurrentElement(depth, faultCodeSubcodeName))
+            if (success && reader.IsCurrentElement(depth, FaultCodeSubcodeName))
             {
                 faultCode.Subcode = DeserializeFaultCodeSubcode(reader, depth + 1);
                 success = reader.MoveToElement(depth);
@@ -302,12 +299,12 @@ namespace XRoadLib.Soap
         {
             var faultSubcode = new Soap12FaultSubcode();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, faultCodeValueName))
-                throw new InvalidQueryException($"SOAP 1.2 Fault Subcode must have `{faultCodeValueName}` element.");
+            if (reader.IsEmptyElement || !reader.MoveToElement(depth, FaultCodeValueName))
+                throw new InvalidQueryException($"SOAP 1.2 Fault Subcode must have `{FaultCodeValueName}` element.");
             faultSubcode.Value = reader.ReadElementContentAsString();
 
             var success = reader.MoveToElement(depth);
-            if (success && reader.IsCurrentElement(depth, faultCodeSubcodeName))
+            if (success && reader.IsCurrentElement(depth, FaultCodeSubcodeName))
             {
                 faultSubcode.Subcode = DeserializeFaultCodeSubcode(reader, depth + 1);
                 success = reader.MoveToElement(depth);
@@ -324,7 +321,7 @@ namespace XRoadLib.Soap
             var qualifiedValue = reader.ReadElementContentAsString();
             var enumName = reader.ParseQualifiedValue(qualifiedValue);
 
-            if (!enumName.NamespaceName.Equals(@namespace))
+            if (!enumName.NamespaceName.Equals(NamespaceConstants.Soap12Env))
                 return Soap12FaultCodeEnum.None;
 
             switch (enumName.LocalName)
@@ -350,17 +347,17 @@ namespace XRoadLib.Soap
 
             var faultReasons = new List<Soap12FaultReasonText>();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, faultReasonTextName))
-                throw new InvalidQueryException($"SOAP 1.2 Fault Reason must have `{faultReasonTextName}` element.");
+            if (reader.IsEmptyElement || !reader.MoveToElement(depth, FaultReasonTextName))
+                throw new InvalidQueryException($"SOAP 1.2 Fault Reason must have `{FaultReasonTextName}` element.");
 
             do
             {
                 faultReasons.Add(new Soap12FaultReasonText
                 {
-                    LanguageCode = reader.GetAttribute("lang", NamespaceConstants.XML),
+                    LanguageCode = reader.GetAttribute("lang", NamespaceConstants.Xml),
                     Text = reader.ReadElementContentAsString()
                 });
-            } while (reader.MoveToElement(depth, faultReasonTextName));
+            } while (reader.MoveToElement(depth, FaultReasonTextName));
 
             if (reader.Depth > 3)
                 throw new InvalidQueryException($"Unexpected element `{reader.GetXName()}` in SOAP 1.2 Fault Reason element.");

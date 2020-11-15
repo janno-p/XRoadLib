@@ -10,10 +10,9 @@ namespace XRoadLib.Serialization
     /// </summary>
     public class XRoadAttachment : IDisposable
     {
-        private const int BASE64_LINE_LENGTH = 76;
+        private const int Base64LineLength = 76;
 
-        private readonly string contentID;
-        private readonly string contentPath;
+        private readonly string _contentPath;
 
         /// <summary>
         /// Underlying stream which contains the content.
@@ -29,12 +28,12 @@ namespace XRoadLib.Serialization
         /// Attachments unique identificator inside the request
         /// which references the multipart content.
         /// </summary>
-        public string ContentID { get { return contentID; } }
+        public string ContentId { get; }
 
         /// <summary>
         /// Does the attachment have any content.
         /// </summary>
-        public bool HasContent { get { return ContentStream.Length > 0; } }
+        public bool HasContent => ContentStream.Length > 0;
 
         private XRoadAttachment()
         {
@@ -47,7 +46,7 @@ namespace XRoadLib.Serialization
         public XRoadAttachment(byte[] contentBytes) : this()
         {
             var contentStream = new MemoryStream(contentBytes);
-            contentID = Convert.ToBase64String(MD5.Create().ComputeHash(contentStream));
+            ContentId = Convert.ToBase64String(MD5.Create().ComputeHash(contentStream));
             ContentStream = contentStream;
         }
 
@@ -56,7 +55,7 @@ namespace XRoadLib.Serialization
         /// </summary>
         public XRoadAttachment(Stream contentStream) : this()
         {
-            contentID = Convert.ToBase64String(MD5.Create().ComputeHash(contentStream));
+            ContentId = Convert.ToBase64String(MD5.Create().ComputeHash(contentStream));
             ContentStream = contentStream;
         }
 
@@ -64,16 +63,15 @@ namespace XRoadLib.Serialization
         /// Initializes new attachment from temporary file, which is specified
         /// by fullPath.
         /// </summary>
-        public XRoadAttachment(string contentID, string fullPath) : this()
+        public XRoadAttachment(string contentId, string fullPath) : this()
         {
             ContentStream = new FileStream(fullPath, FileMode.Create);
 
-            if (string.IsNullOrEmpty(contentID))
-                contentID = Convert.ToBase64String(MD5.Create().ComputeHash(ContentStream));
+            if (string.IsNullOrEmpty(contentId))
+                contentId = Convert.ToBase64String(MD5.Create().ComputeHash(ContentStream));
 
-            this.contentID = contentID;
-
-            contentPath = fullPath;
+            ContentId = contentId;
+            _contentPath = fullPath;
         }
 
         private void Close()
@@ -82,8 +80,8 @@ namespace XRoadLib.Serialization
             ContentStream = null;
 
             // kui path on teada, siis on temp fail ja see tuleb kustutada ..
-            if (!string.IsNullOrEmpty(contentPath) && File.Exists(contentPath))
-                File.Delete(contentPath);
+            if (!string.IsNullOrEmpty(_contentPath) && File.Exists(_contentPath))
+                File.Delete(_contentPath);
         }
 
         /// <summary>
@@ -109,7 +107,7 @@ namespace XRoadLib.Serialization
         /// </summary>
         public void WriteAsBase64(TextWriter writer)
         {
-            const int bufferSize = (BASE64_LINE_LENGTH / 4) * 3;
+            const int bufferSize = (Base64LineLength / 4) * 3;
             var buffer = new byte[bufferSize];
 
             ContentStream.Position = 0;
@@ -121,11 +119,11 @@ namespace XRoadLib.Serialization
             {
                 noContent = false;
                 writer.Write(Convert.ToBase64String(buffer, 0, bytesRead));
-                writer.Write(XRoadMessageWriter.NEW_LINE);
+                writer.Write(XRoadMessageWriter.NewLine);
             }
 
             if (noContent)
-                writer.Write(XRoadMessageWriter.NEW_LINE);
+                writer.Write(XRoadMessageWriter.NewLine);
         }
 
         /// <summary>

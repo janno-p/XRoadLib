@@ -12,11 +12,11 @@ namespace XRoadLib.Tests.Serialization
 {
     public class ArrayTest
     {
-        private static readonly IServiceManager serviceManager = Globals.ServiceManager31;
+        private static readonly IServiceManager ServiceManager = Globals.ServiceManager31;
 
-        private readonly ISerializer serializer = serviceManager.GetSerializer(1u);
+        private readonly ISerializer _serializer = ServiceManager.GetSerializer(1u);
 
-        private readonly MergeArrayContentRequest request = new MergeArrayContentRequest
+        private readonly MergeArrayContentRequest _request = new MergeArrayContentRequest
         {
             StartDate = new DateTime(2016, 2, 10),
             EndDate = new DateTime(2016, 2, 11),
@@ -31,8 +31,10 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanSerializeMergedArrayContent()
         {
-            var doc = SerializeMessage(request);
-            Assert.Equal(XName.Get("MergeArrayContent", Globals.ServiceManager31.ProducerNamespace), doc.Root.Name);
+            var doc = SerializeMessage(_request);
+            Assert.Equal(XName.Get("MergeArrayContent", Globals.ServiceManager31.ProducerNamespace), doc.Root?.Name);
+
+            Assert.NotNull(doc.Root?.Elements());
             Assert.Single(doc.Root.Elements());
 
             var req = doc.Root.Elements("request").Single();
@@ -77,11 +79,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public void CanDeserializeMergedArrayContent()
         {
-            var result = DeserializeMessage(SerializeMessage(request));
+            var result = DeserializeMessage(SerializeMessage(_request));
             Assert.NotNull(result);
             Assert.IsType<MergeArrayContentRequest>(result);
 
-            var req = result as MergeArrayContentRequest;
+            var req = Assert.IsType<MergeArrayContentRequest>(result);
             Assert.Equal(new DateTime(2016, 2, 10), req.StartDate);
             Assert.Equal(new DateTime(2016, 2, 11), req.EndDate);
             Assert.NotNull(req.Content);
@@ -99,34 +101,32 @@ namespace XRoadLib.Tests.Serialization
 
         private XDocument SerializeMessage(object request)
         {
-            var serviceMap = serializer.GetServiceMap("MergeArrayContent");
+            var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
 
-            using (var message = new XRoadMessage(serviceManager, null))
-            using (var stream = new MemoryStream())
+            using var message = new XRoadMessage(ServiceManager, null);
+            using var stream = new MemoryStream();
+
+            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false }))
             {
-                using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false }))
-                {
-                    serviceMap.SerializeRequest(writer, request, message);
-                    writer.Flush();
-                }
-
-                stream.Position = 0;
-
-                return XDocument.Load(stream);
+                serviceMap.SerializeRequest(writer, request, message);
+                writer.Flush();
             }
+
+            stream.Position = 0;
+
+            return XDocument.Load(stream);
         }
 
         private object DeserializeMessage(XDocument document)
         {
-            var serviceMap = serializer.GetServiceMap("MergeArrayContent");
+            var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
             var doc2 = new XDocument(new XElement("envelope", new XElement("body", document.Root)));
 
-            using (var message = new XRoadMessage(serviceManager, null))
-            using (var reader = doc2.CreateReader())
-            {
-                Enumerable.Range(0, 3).ToList().ForEach(i => reader.MoveToElement(i));
-                return serviceMap.DeserializeRequest(reader, message);
-            }
+            using var message = new XRoadMessage(ServiceManager, null);
+            using var reader = doc2.CreateReader();
+
+            Enumerable.Range(0, 3).ToList().ForEach(i => reader.MoveToElement(i));
+            return serviceMap.DeserializeRequest(reader, message);
         }
     }
 }

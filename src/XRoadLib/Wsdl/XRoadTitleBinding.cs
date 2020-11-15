@@ -21,7 +21,7 @@ namespace XRoadLib.Wsdl
             writer.WriteStartElement(Prefix, "title", Namespace);
 
             if (!string.IsNullOrWhiteSpace(Language))
-                writer.WriteAttributeString("lang", NamespaceConstants.XML, Language);
+                writer.WriteAttributeString("lang", NamespaceConstants.Xml, Language);
 
             writer.WriteString(Text);
 

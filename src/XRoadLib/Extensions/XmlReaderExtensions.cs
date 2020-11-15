@@ -9,17 +9,17 @@ namespace XRoadLib.Extensions
     /// </summary>
     public static class XmlReaderExtensions
     {
-        private static readonly XName qnXsiNil = XName.Get("nil", NamespaceConstants.XSI);
-        private static readonly XName qnXsiType = XName.Get("type", NamespaceConstants.XSI);
-        private static readonly XName qnSoapEncArray = XName.Get("Array", NamespaceConstants.SOAP_ENC);
-        private static readonly XName qnSoapEncArrayType = XName.Get("arrayType", NamespaceConstants.SOAP_ENC);
+        private static readonly XName QnXsiNil = XName.Get("nil", NamespaceConstants.Xsi);
+        private static readonly XName QnXsiType = XName.Get("type", NamespaceConstants.Xsi);
+        private static readonly XName QnSoapEncArray = XName.Get("Array", NamespaceConstants.SoapEnc);
+        private static readonly XName QnSoapEncArrayType = XName.Get("arrayType", NamespaceConstants.SoapEnc);
 
         /// <summary>
         /// Test if current element is marked as nil with xsi attribute.
         /// </summary>
         public static bool IsNilElement(this XmlReader reader)
         {
-            var value = reader.GetAttribute(qnXsiNil.LocalName, qnXsiNil.NamespaceName);
+            var value = reader.GetAttribute(QnXsiNil.LocalName, QnXsiNil.NamespaceName);
 
             switch (value)
             {
@@ -33,13 +33,13 @@ namespace XRoadLib.Extensions
                     return false;
 
                 default:
-                    throw new InvalidQueryException($"Invalid {qnXsiNil} attribute value: `{value}`");
+                    throw new InvalidQueryException($"Invalid {QnXsiNil} attribute value: `{value}`");
             }
         }
 
         internal static XName GetTypeAttributeValue(this XmlReader reader)
         {
-            return GetTypeAttributeValue(reader, qnXsiType);
+            return GetTypeAttributeValue(reader, QnXsiType);
         }
 
         private static XName GetTypeAttributeValue(XmlReader reader, XName attributeName, bool isArrayType = false)
@@ -66,7 +66,7 @@ namespace XRoadLib.Extensions
 
             var qualifiedName = XName.Get(typeName, typeNamespace);
 
-            return qualifiedName != qnSoapEncArray ? qualifiedName : GetTypeAttributeValue(reader, qnSoapEncArrayType, true);
+            return qualifiedName != QnSoapEncArray ? qualifiedName : GetTypeAttributeValue(reader, QnSoapEncArrayType, true);
         }
 
         /// <summary>

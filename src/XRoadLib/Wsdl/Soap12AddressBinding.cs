@@ -8,7 +8,7 @@ namespace XRoadLib.Wsdl
 
         internal override void Write(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.SOAP12, "address", NamespaceConstants.SOAP12);
+            writer.WriteStartElement(PrefixConstants.Soap12, "address", NamespaceConstants.Soap12);
             writer.WriteAttributeString("location", Location);
             writer.WriteEndElement();
         }

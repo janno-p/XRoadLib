@@ -20,13 +20,13 @@ namespace XRoadLib.Serialization.Mapping
 
             var validateRequired = content.Particle is RequestDefinition;
 
-            if (contentPropertyMap != null)
+            if (ContentPropertyMap != null)
             {
-                ReadPropertyValue(reader, contentPropertyMap, templateNode[contentPropertyMap.Definition.TemplateName, message.Version], message, validateRequired, entity);
+                ReadPropertyValue(reader, ContentPropertyMap, templateNode[ContentPropertyMap.Definition.TemplateName, message.Version], message, validateRequired, entity);
                 return entity;
             }
 
-            var properties = propertyMaps.GetEnumerator();
+            var properties = PropertyMaps.GetEnumerator();
 
             if (reader.IsEmptyElement)
             {

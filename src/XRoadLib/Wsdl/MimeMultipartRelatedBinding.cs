@@ -9,7 +9,7 @@ namespace XRoadLib.Wsdl
 
         internal override void Write(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.MIME, "multipartRelated", NamespaceConstants.MIME);
+            writer.WriteStartElement(PrefixConstants.Mime, "multipartRelated", NamespaceConstants.Mime);
             Parts.ForEach(x => x.Write(writer));
             writer.WriteEndElement();
         }

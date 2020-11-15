@@ -19,8 +19,8 @@ namespace XRoadLib
 {
     public class ServiceManager : IServiceManager
     {
-        private readonly IDictionary<uint, ISerializer> serializers = new Dictionary<uint, ISerializer>();
-        private readonly SchemaDefinitionProvider schemaDefinitionProvider;
+        private readonly IDictionary<uint, ISerializer> _serializers = new Dictionary<uint, ISerializer>();
+        private readonly SchemaDefinitionProvider _schemaDefinitionProvider;
 
         /// <inheritdoc />
         public string Name { get; }
@@ -52,10 +52,10 @@ namespace XRoadLib
 
             Name = name;
 
-            schemaDefinitionProvider = new SchemaDefinitionProvider(schemaExporter);
+            _schemaDefinitionProvider = new SchemaDefinitionProvider(schemaExporter);
 
-            HeaderDefinition = schemaDefinitionProvider.GetXRoadHeaderDefinition();
-            ProtocolDefinition = schemaDefinitionProvider.ProtocolDefinition;
+            HeaderDefinition = _schemaDefinitionProvider.GetXRoadHeaderDefinition();
+            ProtocolDefinition = _schemaDefinitionProvider.ProtocolDefinition;
 
             SetContractAssembly();
         }
@@ -74,7 +74,7 @@ namespace XRoadLib
 
                     writer.WriteSoapEnvelope(messageFormatter, ProtocolDefinition);
                     if (!string.IsNullOrEmpty(options?.RequestNamespace) && writer.LookupPrefix(options.RequestNamespace) == null)
-                        writer.WriteAttributeString(PrefixConstants.XMLNS, "req", NamespaceConstants.XMLNS, options.RequestNamespace);
+                        writer.WriteAttributeString(PrefixConstants.Xmlns, "req", NamespaceConstants.Xmlns, options.RequestNamespace);
 
                     messageFormatter.WriteSoapHeader(writer, Style, header, HeaderDefinition);
                     messageFormatter.WriteStartBody(writer);
@@ -118,7 +118,7 @@ namespace XRoadLib
             if (version.HasValue && !ProtocolDefinition.SupportedVersions.Contains(version.Value))
                 throw new SchemaDefinitionException($"Version {version.Value} is not supported.");
 
-            var producerDefinition = new ServiceDescriptionBuilder(schemaDefinitionProvider, operationFilter, version);
+            var producerDefinition = new ServiceDescriptionBuilder(_schemaDefinitionProvider, operationFilter, version);
 
             return producerDefinition.GetServiceDescription();
         }
@@ -134,18 +134,18 @@ namespace XRoadLib
         /// <inheritdoc />
         public virtual ISerializer GetSerializer(uint? version = null)
         {
-            if (!serializers.Any())
+            if (!_serializers.Any())
                 throw new SchemaDefinitionException($"This protocol instance (message protocol version `{Name}`) is not configured with contract assembly.");
 
             if (!ProtocolDefinition.SupportedVersions.Any())
-                return serializers.Single().Value;
+                return _serializers.Single().Value;
 
             if (!version.HasValue)
                 throw new SchemaDefinitionException($"This protocol instance (message protocol version `{Name}`) requires specific version value.");
 
             var serializerVersion = version.Value > 0u ? version.Value : ProtocolDefinition.SupportedVersions.Max();
 
-            if (serializers.TryGetValue(serializerVersion, out var versionSerializer))
+            if (_serializers.TryGetValue(serializerVersion, out var versionSerializer))
                 return versionSerializer;
 
             throw new SchemaDefinitionException($"This protocol instance (message protocol version `{Name}`) does not support `v{version.Value}`.");
@@ -158,12 +158,12 @@ namespace XRoadLib
 
             if (!ProtocolDefinition.SupportedVersions.Any())
             {
-                serializers.Add(0, new Serializer(schemaDefinitionProvider));
+                _serializers.Add(0, new Serializer(_schemaDefinitionProvider));
                 return;
             }
 
             foreach (var dtoVersion in ProtocolDefinition.SupportedVersions)
-                serializers.Add(dtoVersion, new Serializer(schemaDefinitionProvider, dtoVersion));
+                _serializers.Add(dtoVersion, new Serializer(_schemaDefinitionProvider, dtoVersion));
         }
 
         protected virtual ISoapHeader CreateHeader() =>

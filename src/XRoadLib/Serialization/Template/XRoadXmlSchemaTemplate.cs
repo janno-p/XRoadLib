@@ -8,56 +8,56 @@ namespace XRoadLib.Serialization.Template
 {
     public class XRoadXmlSchemaTemplate : IXmlTemplate
     {
-        private readonly XmlSchema schema;
-        private readonly XmlSchemaElement requestElement;
-        private readonly XmlSchemaElement responseElement;
+        private readonly XmlSchema _schema;
+        private readonly XmlSchemaElement _requestElement;
+        private readonly XmlSchemaElement _responseElement;
 
         public IDictionary<string, Type> ParameterTypes => throw new NotImplementedException();
         public IEnumerable<IXmlTemplateNode> ParameterNodes => throw new NotImplementedException();
-        public IXmlTemplateNode RequestNode => new XRoadXmlSchemaTemplateNode(requestElement, schema);
-        public IXmlTemplateNode ResponseNode => new XRoadXmlSchemaTemplateNode(responseElement, schema);
+        public IXmlTemplateNode RequestNode => new XRoadXmlSchemaTemplateNode(_requestElement, _schema);
+        public IXmlTemplateNode ResponseNode => new XRoadXmlSchemaTemplateNode(_responseElement, _schema);
 
         public XRoadXmlSchemaTemplate(XmlSchema schema, string elementName)
         {
-            this.schema = schema;
+            _schema = schema;
 
-            requestElement = schema.Items
+            _requestElement = schema.Items
                                    .OfType<XmlSchemaElement>()
                                    .Single(e => e.Name == elementName);
 
-            responseElement = schema.Items
+            _responseElement = schema.Items
                                     .OfType<XmlSchemaElement>()
                                     .Single(e => e.Name == elementName);
         }
 
         private class XRoadXmlSchemaTemplateNode : IXmlTemplateNode
         {
-            private static readonly XmlQualifiedName arrayTypeName = new XmlQualifiedName("Array", NamespaceConstants.SOAP_ENC);
+            private static readonly XmlQualifiedName ArrayTypeName = new XmlQualifiedName("Array", NamespaceConstants.SoapEnc);
 
-            private readonly XmlSchema schema;
-            private readonly XmlSchemaElement nodeElement;
-            private readonly IDictionary<string, XmlSchemaElement> childElements = new Dictionary<string, XmlSchemaElement>();
+            private readonly XmlSchema _schema;
+            private readonly XmlSchemaElement _nodeElement;
+            private readonly IDictionary<string, XmlSchemaElement> _childElements = new Dictionary<string, XmlSchemaElement>();
 
             public IXmlTemplateNode this[string childNodeName, uint version] =>
-                childElements.TryGetValue(childNodeName, out var childElement)
-                    ? new XRoadXmlSchemaTemplateNode(childElement, schema)
+                _childElements.TryGetValue(childNodeName, out var childElement)
+                    ? new XRoadXmlSchemaTemplateNode(childElement, _schema)
                     : null;
 
-            public bool IsRequired => !nodeElement.IsNillable;
-            public string Name => nodeElement.Name;
+            public bool IsRequired => !_nodeElement.IsNillable;
+            public string Name => _nodeElement.Name;
 
-            public IEnumerable<string> ChildNames => childElements.Keys;
+            public IEnumerable<string> ChildNames => _childElements.Keys;
 
             public XRoadXmlSchemaTemplateNode(XmlSchemaElement element, XmlSchema schema)
             {
-                this.schema = schema;
+                this._schema = schema;
 
-                nodeElement = element;
+                _nodeElement = element;
 
                 if (element.SchemaType is XmlSchemaComplexType complexType)
                 {
                     var complexContent = complexType.ContentModel as XmlSchemaComplexContent;
-                    if (complexContent?.Content is XmlSchemaComplexContentRestriction restriction && restriction.BaseTypeName == arrayTypeName)
+                    if (complexContent?.Content is XmlSchemaComplexContentRestriction restriction && restriction.BaseTypeName == ArrayTypeName)
                         AddChildElements(((XmlSchemaSequence)restriction.Particle).Items.Cast<XmlSchemaElement>().Single());
                 }
 
@@ -71,10 +71,10 @@ namespace XRoadLib.Serialization.Template
 
             private void AddChildElements(XmlSchemaElement element)
             {
-                if (element.SchemaTypeName == null || element.SchemaTypeName.Namespace != schema.TargetNamespace)
+                if (element.SchemaTypeName == null || element.SchemaTypeName.Namespace != _schema.TargetNamespace)
                     return;
 
-                var schemaType = schema.Items
+                var schemaType = _schema.Items
                                        .OfType<XmlSchemaType>()
                                        .Single(tp => tp.Name == element.SchemaTypeName.Name);
 
@@ -85,17 +85,17 @@ namespace XRoadLib.Serialization.Template
                 {
                     case XmlSchemaChoice choice:
                         foreach (var childElement in choice.Items.Cast<XmlSchemaSequence>().SelectMany(s => s.Items.Cast<XmlSchemaElement>()))
-                            childElements.Add(childElement.Name, childElement);
+                            _childElements.Add(childElement.Name, childElement);
                         break;
 
                     case XmlSchemaSequence sequence:
                         foreach (var childElement in sequence.Items.Cast<XmlSchemaElement>())
-                            childElements.Add(childElement.Name, childElement);
+                            _childElements.Add(childElement.Name, childElement);
                         break;
                 }
             }
 
-            public string Namespace => schema.TargetNamespace;
+            public string Namespace => _schema.TargetNamespace;
         }
     }
 }

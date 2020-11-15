@@ -15,7 +15,7 @@ namespace XRoadLib.Extensions.AspNetCore
     /// </summary>
     public class WebServiceRequestHandler : WebServiceHandler
     {
-        protected readonly IServiceProvider serviceProvider;
+        protected readonly IServiceProvider ServiceProvider;
 
         public DirectoryInfo StoragePath { get; set; }
 
@@ -26,7 +26,7 @@ namespace XRoadLib.Extensions.AspNetCore
         public WebServiceRequestHandler(IServiceProvider serviceProvider, IServiceManager serviceManager)
             : base(serviceManager)
         {
-            this.serviceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -62,7 +62,10 @@ namespace XRoadLib.Extensions.AspNetCore
         {
             var operationDefinition = context.ServiceMap.OperationDefinition;
 
-            var service = serviceProvider.GetRequiredService(operationDefinition.MethodInfo.DeclaringType);
+            var service = operationDefinition.MethodInfo.DeclaringType != null
+                ? ServiceProvider.GetRequiredService(operationDefinition.MethodInfo.DeclaringType)
+                : null;
+
             if (service == null)
                 throw new SchemaDefinitionException($"Operation {operationDefinition.Name} is not implemented by contract.");
 
@@ -177,27 +180,27 @@ namespace XRoadLib.Extensions.AspNetCore
             using (var textWriter = new StreamWriter(context.Response.ContentStream, context.Response.ContentEncoding, 1024, true))
             using (var writer = XmlWriter.Create(textWriter))
             {
-                writer.WriteStartDocument();
+                await writer.WriteStartDocumentAsync();
 
                 if (context.MessageFormatter.TryMoveToEnvelope(reader))
                 {
                     context.MessageFormatter.WriteStartEnvelope(writer, reader.Prefix);
-                    writer.WriteAttributes(reader, true);
+                    await writer.WriteAttributesAsync(reader, true);
                     writer.WriteMissingAttributes(ServiceManager.ProtocolDefinition);
                 }
                 else writer.WriteSoapEnvelope(context.MessageFormatter, ServiceManager.ProtocolDefinition);
 
                 if (context.MessageFormatter.TryMoveToHeader(reader))
-                    writer.WriteNode(reader, true);
+                    await writer.WriteNodeAsync(reader, true);
 
                 context.MessageFormatter.WriteStartBody(writer);
                 if (context.MessageFormatter.TryMoveToBody(reader))
-                    writer.WriteAttributes(reader, true);
+                    await writer.WriteAttributesAsync(reader, true);
 
                 await SerializeServiceResultAsync(context, reader, writer);
 
-                writer.WriteEndDocument();
-                writer.Flush();
+                await writer.WriteEndDocumentAsync();
+                await writer.FlushAsync();
             }
 
             context.Response.SaveTo(context.HttpContext, context.MessageFormatter);

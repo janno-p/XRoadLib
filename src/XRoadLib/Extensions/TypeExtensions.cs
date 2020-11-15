@@ -97,7 +97,7 @@ namespace XRoadLib.Extensions
 
         public static bool ExistsInVersion(this XRoadServiceAttribute attribute, uint version)
         {
-            return IsVersionInRange(version, attribute.addedInVersion, attribute.removedInVersion);
+            return IsVersionInRange(version, attribute.AddedInVersionValue, attribute.RemovedInVersionValue);
         }
 
         public static IEnumerable<string> GetServicesInVersion(this MethodInfo methodInfo, uint version, bool includeHidden = false)
@@ -105,7 +105,7 @@ namespace XRoadLib.Extensions
             return methodInfo.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
                              .OfType<XRoadServiceAttribute>()
                              .Where(x => includeHidden || !x.IsHidden)
-                             .Where(x => IsVersionInRange(version, x.addedInVersion, x.removedInVersion))
+                             .Where(x => IsVersionInRange(version, x.AddedInVersionValue, x.RemovedInVersionValue))
                              .Select(x => x.Name)
                              .ToList();
         }
@@ -124,14 +124,14 @@ namespace XRoadLib.Extensions
 
         internal static XName GetSystemTypeName(this Type type)
         {
-            if (type == typeof(bool)) return XName.Get("boolean", NamespaceConstants.XSD);
-            if (type == typeof(DateTime)) return XName.Get("dateTime", NamespaceConstants.XSD);
-            if (type == typeof(decimal)) return XName.Get("decimal", NamespaceConstants.XSD);
-            if (type == typeof(int)) return XName.Get("int", NamespaceConstants.XSD);
-            if (type == typeof(long)) return XName.Get("long", NamespaceConstants.XSD);
-            if (type == typeof(string)) return XName.Get("string", NamespaceConstants.XSD);
-            if (type == typeof(TimeSpan)) return XName.Get("duration", NamespaceConstants.XSD);
-            return typeof(Stream).GetTypeInfo().IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.XSD) : null;
+            if (type == typeof(bool)) return XName.Get("boolean", NamespaceConstants.Xsd);
+            if (type == typeof(DateTime)) return XName.Get("dateTime", NamespaceConstants.Xsd);
+            if (type == typeof(decimal)) return XName.Get("decimal", NamespaceConstants.Xsd);
+            if (type == typeof(int)) return XName.Get("int", NamespaceConstants.Xsd);
+            if (type == typeof(long)) return XName.Get("long", NamespaceConstants.Xsd);
+            if (type == typeof(string)) return XName.Get("string", NamespaceConstants.Xsd);
+            if (type == typeof(TimeSpan)) return XName.Get("duration", NamespaceConstants.Xsd);
+            return typeof(Stream).GetTypeInfo().IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.Xsd) : null;
         }
 
         public static bool HasMergeAttribute(this ICustomAttributeProvider customAttributeProvider)

@@ -9,30 +9,30 @@ namespace XRoadLib.Serialization.Mapping
 {
     public abstract class CompositeTypeMap<T> : TypeMap, ICompositeTypeMap where T : class, IXRoadSerializable, new()
     {
-        protected readonly ISerializer serializer;
-        protected readonly IList<IPropertyMap> propertyMaps = new List<IPropertyMap>();
+        protected readonly ISerializer Serializer;
+        protected readonly IList<IPropertyMap> PropertyMaps = new List<IPropertyMap>();
 
-        protected IPropertyMap contentPropertyMap;
+        protected IPropertyMap ContentPropertyMap;
 
         protected CompositeTypeMap(ISerializer serializer, TypeDefinition typeDefinition)
             : base(typeDefinition)
         {
-            this.serializer = serializer;
+            Serializer = serializer;
         }
 
         public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
             message.Style.WriteType(writer, Definition, content);
 
-            if (contentPropertyMap != null)
+            if (ContentPropertyMap != null)
             {
-                var childTemplateNode = templateNode?[contentPropertyMap.Definition.TemplateName, message.Version];
+                var childTemplateNode = templateNode?[ContentPropertyMap.Definition.TemplateName, message.Version];
                 if (templateNode == null || childTemplateNode != null)
-                    contentPropertyMap.Serialize(writer, childTemplateNode, value, message);
+                    ContentPropertyMap.Serialize(writer, childTemplateNode, value, message);
                 return;
             }
 
-            foreach (var propertyMap in propertyMaps)
+            foreach (var propertyMap in PropertyMaps)
             {
                 var childTemplateNode = templateNode?[propertyMap.Definition.TemplateName, message.Version];
                 if (templateNode == null || childTemplateNode != null)
@@ -42,15 +42,15 @@ namespace XRoadLib.Serialization.Mapping
 
         public void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions, IEnumerable<string> availableFilters)
         {
-            if (propertyMaps.Count > 0)
+            if (PropertyMaps.Count > 0)
                 return;
 
-            var createdPropertyMaps = propertyDefinitions.Select(x => new PropertyMap(serializer, x.Item1, x.Item2, availableFilters))
+            var createdPropertyMaps = propertyDefinitions.Select(x => new PropertyMap(Serializer, x.Item1, x.Item2, availableFilters))
                                                          .ToList();
 
             if (createdPropertyMaps.Count == 1 && createdPropertyMaps[0].Definition.Content.MergeContent && createdPropertyMaps[0].Definition.Content is SingularContentDefinition)
             {
-                contentPropertyMap = createdPropertyMaps[0];
+                ContentPropertyMap = createdPropertyMaps[0];
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace XRoadLib.Serialization.Mapping
 
         protected virtual void AddPropertyMap(IPropertyMap propertyMap)
         {
-            propertyMaps.Add(propertyMap);
+            PropertyMaps.Add(propertyMap);
         }
     }
 }

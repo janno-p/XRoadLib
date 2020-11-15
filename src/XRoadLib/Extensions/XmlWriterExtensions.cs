@@ -13,7 +13,7 @@ namespace XRoadLib.Extensions
     /// </summary>
     public static class XmlWriterExtensions
     {
-        private static readonly XmlQualifiedName qnXsiType = new XmlQualifiedName("type", NamespaceConstants.XSI);
+        private static readonly XmlQualifiedName QnXsiType = new XmlQualifiedName("type", NamespaceConstants.Xsi);
 
         /// <summary>
         /// Serializes attribute with qualified name content.
@@ -40,7 +40,7 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static void WriteTypeAttribute(this XmlWriter writer, string typeName, string typeNamespace)
         {
-            writer.WriteQualifiedAttribute(qnXsiType.Name, qnXsiType.Namespace, typeName, typeNamespace);
+            writer.WriteQualifiedAttribute(QnXsiType.Name, QnXsiType.Namespace, typeName, typeNamespace);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace XRoadLib.Extensions
 
         private static void WriteArrayTypeAttribute(this XmlWriter writer, string typeName, string typeNamespace, int arraySize)
         {
-            writer.WriteStartAttribute("arrayType", NamespaceConstants.SOAP_ENC);
+            writer.WriteStartAttribute("arrayType", NamespaceConstants.SoapEnc);
             writer.WriteQualifiedName(typeName, typeNamespace);
             writer.WriteString($"[{arraySize}]");
             writer.WriteEndAttribute();
@@ -72,7 +72,7 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static void WriteNilAttribute(this XmlWriter writer)
         {
-            writer.WriteAttributeString("nil", NamespaceConstants.XSI, "1");
+            writer.WriteAttributeString("nil", NamespaceConstants.Xsi, "1");
         }
 
         private static void WriteCDataEscape(this XmlWriter writer, string value)
@@ -120,7 +120,7 @@ namespace XRoadLib.Extensions
         /// </summary>
         public static void WriteSoapEnvelope(this XmlWriter writer, IMessageFormatter messageFormatter, ProtocolDefinition protocolDefinition)
         {
-            var soapEnvPrefix = protocolDefinition != null ? protocolDefinition.GlobalNamespacePrefixes[messageFormatter.Namespace] : PrefixConstants.SOAP_ENV;
+            var soapEnvPrefix = protocolDefinition != null ? protocolDefinition.GlobalNamespacePrefixes[messageFormatter.Namespace] : PrefixConstants.SoapEnv;
 
             messageFormatter.WriteStartEnvelope(writer, soapEnvPrefix);
 
@@ -128,10 +128,10 @@ namespace XRoadLib.Extensions
                 return;
 
             foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
-                writer.WriteAttributeString(PrefixConstants.XMLNS, kvp.Value, NamespaceConstants.XMLNS, kvp.Key.NamespaceName);
+                writer.WriteAttributeString(PrefixConstants.Xmlns, kvp.Value, NamespaceConstants.Xmlns, kvp.Key.NamespaceName);
 
             if (protocolDefinition.Style is RpcEncodedStyle)
-                writer.WriteAttributeString("encodingStyle", messageFormatter.Namespace, NamespaceConstants.SOAP_ENC);
+                writer.WriteAttributeString("encodingStyle", messageFormatter.Namespace, NamespaceConstants.SoapEnc);
         }
 
         public static void WriteMissingAttributes(this XmlWriter writer, ProtocolDefinition protocolDefinition)
@@ -141,7 +141,7 @@ namespace XRoadLib.Extensions
 
             foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
                 if (writer.LookupPrefix(kvp.Key.NamespaceName) == null)
-                    writer.WriteAttributeString(PrefixConstants.XMLNS, kvp.Value, NamespaceConstants.XMLNS, kvp.Key.NamespaceName);
+                    writer.WriteAttributeString(PrefixConstants.Xmlns, kvp.Value, NamespaceConstants.Xmlns, kvp.Key.NamespaceName);
         }
     }
 }

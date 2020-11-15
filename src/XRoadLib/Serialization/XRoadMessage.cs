@@ -21,7 +21,7 @@ namespace XRoadLib.Serialization
     {
         public IServiceManager ServiceManager { get; internal set; }
 
-        private readonly List<XRoadAttachment> attachments = new List<XRoadAttachment>();
+        private readonly List<XRoadAttachment> _attachments = new List<XRoadAttachment>();
 
         /// <summary>
         /// When enabled, serialization/deserialization process applies filter specified in
@@ -106,12 +106,12 @@ namespace XRoadLib.Serialization
         /// All attachments (including inline content) that are packaged together
         /// with current X-Road message.
         /// </summary>
-        public IList<XRoadAttachment> AllAttachments => attachments;
+        public IList<XRoadAttachment> AllAttachments => _attachments;
 
         /// <summary>
         /// Multipart attachments that are packaged together with current X-Road message.
         /// </summary>
-        public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return attachments.Where(x => x.IsMultipartContent); } }
+        public IEnumerable<XRoadAttachment> MultipartContentAttachments { get { return _attachments.Where(x => x.IsMultipartContent); } }
 
         /// <summary>
         /// Operation version of current X-Road message.
@@ -155,9 +155,9 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Find X-Road message attachment by content ID.
         /// </summary>
-        public XRoadAttachment GetAttachment(string contentID)
+        public XRoadAttachment GetAttachment(string contentId)
         {
-            return attachments.FirstOrDefault(attachment => attachment.ContentID.Contains(contentID));
+            return _attachments.FirstOrDefault(attachment => attachment.ContentId.Contains(contentId));
         }
 
         /// <summary>
@@ -225,10 +225,10 @@ namespace XRoadLib.Serialization
                 ContentStream = null;
             }
 
-            foreach (var attachment in attachments)
+            foreach (var attachment in _attachments)
                 attachment.Dispose();
 
-            attachments.Clear();
+            _attachments.Clear();
         }
 
         /// <summary>

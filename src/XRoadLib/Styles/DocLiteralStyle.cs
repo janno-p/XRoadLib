@@ -17,7 +17,7 @@ namespace XRoadLib.Styles
         {
             return new SoapBinding
             {
-                Transport = NamespaceConstants.HTTP
+                Transport = NamespaceConstants.Http
             };
         }
 

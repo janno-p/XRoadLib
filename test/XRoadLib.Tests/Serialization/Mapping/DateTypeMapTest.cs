@@ -6,13 +6,13 @@ namespace XRoadLib.Tests.Serialization.Mapping
 {
     public class DateTypeMapTest : TypeMapTestBase
     {
-        private static readonly DateTypeMap dateTypeMap = new DateTypeMap(schemaDefinitionProvider.GetSimpleTypeDefinition<DateTime>("date"));
-        private static readonly Func<string, object> deserializeValue = x => DeserializeValue(dateTypeMap, x);
+        private static readonly DateTypeMap DateTypeMap = new DateTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<DateTime>("date"));
+        private static readonly Func<string, object> DeserializeDateValue = x => DeserializeValue(DateTypeMap, x);
 
         [Fact]
         public void CanDeserializePlainDate()
         {
-            var instance = deserializeValue("2013-08-27");
+            var instance = DeserializeDateValue("2013-08-27");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;
@@ -29,7 +29,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         [Fact]
         public void CannotDeserializeWrongFormat()
         {
-            var exception = Assert.Throws<FormatException>(() => deserializeValue("2013-08-40"));
+            var exception = Assert.Throws<FormatException>(() => DeserializeDateValue("2013-08-40"));
 #if NETFRAMEWORK
             Assert.Equal("String was not recognized as a valid DateTime.", exception.Message);
 #else
@@ -40,7 +40,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         [Fact]
         public void CannotDeserializeDateTimeFormat()
         {
-            var exception = Assert.Throws<FormatException>(() => deserializeValue("2013-08-04T11:11:11"));
+            var exception = Assert.Throws<FormatException>(() => DeserializeDateValue("2013-08-04T11:11:11"));
 #if NETFRAMEWORK
             Assert.Equal("String was not recognized as a valid DateTime.", exception.Message);
 #else
@@ -52,7 +52,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         public void DeserializesUniversalTimezoneToLocalTimezone()
         {
             var expected = TimeZoneInfo.ConvertTime(new DateTime(2013, 8, 27), TimeZoneInfo.Utc, TimeZoneInfo.Local);
-            var instance = deserializeValue("2013-08-27Z");
+            var instance = DeserializeDateValue("2013-08-27Z");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;
@@ -63,7 +63,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         public void DeserializesExplicitTimezoneToLocalTimezone()
         {
             var expected = TimeZoneInfo.ConvertTime(new DateTime(2013, 8, 27, 3, 0, 0), TimeZoneInfo.Utc, TimeZoneInfo.Local);
-            var instance = deserializeValue("2013-08-27-03:00");
+            var instance = DeserializeDateValue("2013-08-27-03:00");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;

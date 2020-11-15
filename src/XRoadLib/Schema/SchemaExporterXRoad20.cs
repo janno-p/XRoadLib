@@ -9,10 +9,10 @@ namespace XRoadLib.Schema
     public class SchemaExporterXRoad20 : SchemaExporterXRoadLegacy
     {
         /// <inheritdoc />
-        public override string XRoadPrefix => PrefixConstants.XTEE;
+        public override string XRoadPrefix => PrefixConstants.Xtee;
 
         /// <inheritdoc />
-        public override string XRoadNamespace => NamespaceConstants.XTEE;
+        public override string XRoadNamespace => NamespaceConstants.Xtee;
 
         /// <inheritdoc />
         public SchemaExporterXRoad20(string producerName, Assembly contractAssembly, string producerNamespace = null)
@@ -48,7 +48,7 @@ namespace XRoadLib.Schema
                             .WithRequiredHeader(x => x.Isikukood)
                             .WithRequiredHeader(x => x.Id)
                             .WithRequiredHeader(x => x.AmetnikNimi)
-                            .WithHeaderNamespace(NamespaceConstants.XTEE);
+                            .WithHeaderNamespace(NamespaceConstants.Xtee);
         }
 
         /// <summary>
@@ -58,10 +58,10 @@ namespace XRoadLib.Schema
         {
             base.ExportProtocolDefinition(protocolDefinition);
 
-            protocolDefinition.DetectEnvelope = reader => NamespaceConstants.SOAP_ENC.Equals(reader.GetAttribute("encodingStyle", NamespaceConstants.SOAP_ENV));
+            protocolDefinition.DetectEnvelope = reader => NamespaceConstants.SoapEnc.Equals(reader.GetAttribute("encodingStyle", NamespaceConstants.SoapEnv));
             protocolDefinition.Style = new RpcEncodedStyle();
 
-            protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.SOAP_ENC), PrefixConstants.SOAP_ENC);
+            protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.SoapEnc), PrefixConstants.SoapEnc);
         }
     }
 }

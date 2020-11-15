@@ -17,7 +17,7 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Use this instance to create XmlNodes.
         /// </summary>
-        protected readonly XmlDocument document = new XmlDocument();
+        protected readonly XmlDocument Document = new XmlDocument();
 
         /// <summary>
         /// Writes explicit type attribute if style requires it.
@@ -58,7 +58,7 @@ namespace XRoadLib.Styles
 
             WriteExplicitType(writer, typeName);
 
-            if (typeName.LocalName == "string" && typeName.NamespaceName == NamespaceConstants.XSD)
+            if (typeName.LocalName == "string" && typeName.NamespaceName == NamespaceConstants.Xsd)
                 writer.WriteStringWithMode((string)value ?? "", StringSerializationMode);
             else writer.WriteValue(value);
 
@@ -85,7 +85,7 @@ namespace XRoadLib.Styles
         /// </summary>
         public virtual XmlAttribute CreateExpectedContentType(string contentType)
         {
-            var attribute = document.CreateAttribute(PrefixConstants.XMIME, "expectedContentTypes", NamespaceConstants.XMIME);
+            var attribute = Document.CreateAttribute(PrefixConstants.Xmime, "expectedContentTypes", NamespaceConstants.Xmime);
             attribute.Value = contentType;
             return attribute;
         }
@@ -113,12 +113,12 @@ namespace XRoadLib.Styles
         public virtual void SerializeFault(XmlWriter writer, IXRoadFault fault)
         {
             writer.WriteStartElement("faultCode");
-            WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));
+            WriteExplicitType(writer, XName.Get("string", NamespaceConstants.Xsd));
             writer.WriteValue(fault.FaultCode);
             writer.WriteEndElement();
 
             writer.WriteStartElement("faultString");
-            WriteExplicitType(writer, XName.Get("string", NamespaceConstants.XSD));
+            WriteExplicitType(writer, XName.Get("string", NamespaceConstants.Xsd));
             writer.WriteValue(fault.FaultString);
             writer.WriteEndElement();
         }

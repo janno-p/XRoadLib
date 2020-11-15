@@ -10,106 +10,106 @@ namespace XRoadLib
         /// <summary>
         /// Defines HTTP transport protocol.
         /// </summary>
-        public const string HTTP = "http://schemas.xmlsoap.org/soap/http";
+        public const string Http = "http://schemas.xmlsoap.org/soap/http";
 
         /// <summary>
         /// Extends SOAP specification with mime multipart attachments.
         /// </summary>
-        public const string MIME = "http://schemas.xmlsoap.org/wsdl/mime/";
+        public const string Mime = "http://schemas.xmlsoap.org/wsdl/mime/";
 
         /// <summary>
         /// Namespace for describing SOAP messages.
         /// </summary>
-        public const string SOAP = "http://schemas.xmlsoap.org/wsdl/soap/";
+        public const string Soap = "http://schemas.xmlsoap.org/wsdl/soap/";
 
         /// <summary>
         /// Namespace for describing SOAP 1.2 messages.
         /// </summary>
-        public const string SOAP12 = "http://schemas.xmlsoap.org/wsdl/soap12/";
+        public const string Soap12 = "http://schemas.xmlsoap.org/wsdl/soap12/";
 
         /// <summary>
         /// Defines encoding style to be used with RPC/Encoded SOAP messages.
         /// </summary>
-        public const string SOAP_ENC = "http://schemas.xmlsoap.org/soap/encoding/";
+        public const string SoapEnc = "http://schemas.xmlsoap.org/soap/encoding/";
 
         /// <summary>
         /// Defines main parts of SOAP message.
         /// </summary>
-        public const string SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/";
+        public const string SoapEnv = "http://schemas.xmlsoap.org/soap/envelope/";
 
         /// <summary>
         /// Defines main parts of SOAP 1.2 message.
         /// </summary>
-        public const string SOAP12_ENV = "http://www.w3.org/2003/05/soap-envelope";
+        public const string Soap12Env = "http://www.w3.org/2003/05/soap-envelope";
 
         /// <summary>
         /// Namespace for describing WSDL documents.
         /// </summary>
-        public const string WSDL = "http://schemas.xmlsoap.org/wsdl/";
+        public const string Wsdl = "http://schemas.xmlsoap.org/wsdl/";
 
         /// <summary>
         /// Default XML namespace.
         /// </summary>
-        public const string XML = "http://www.w3.org/XML/1998/namespace";
+        public const string Xml = "http://www.w3.org/XML/1998/namespace";
 
         /// <summary>
         /// Namespace for defining XML namespaces.
         /// </summary>
-        public const string XMLNS = "http://www.w3.org/2000/xmlns/";
+        public const string Xmlns = "http://www.w3.org/2000/xmlns/";
 
         /// <summary>
         /// Describes content type for binary content in service descriptions.
         /// </summary>
-        public const string XMIME = "http://www.w3.org/2005/05/xmlmime";
+        public const string Xmime = "http://www.w3.org/2005/05/xmlmime";
 
         /// <summary>
         /// Connects SOAP message with binary content container (SOAP attachment).
         /// </summary>
-        public const string XOP = "http://www.w3.org/2004/08/xop/include";
+        public const string Xop = "http://www.w3.org/2004/08/xop/include";
 
         /// <summary>
         /// X-Road message protocol version 3.1 namespace.
         /// </summary>
-        public const string XROAD = "http://x-road.ee/xsd/x-road.xsd";
+        public const string XRoad = "http://x-road.ee/xsd/x-road.xsd";
 
         /// <summary>
         /// X-Road message protocol version 4.0 namespace.
         /// </summary>
-        public const string XROAD_V4 = "http://x-road.eu/xsd/xroad.xsd";
+        public const string XRoadV4 = "http://x-road.eu/xsd/xroad.xsd";
 
         /// <summary>
         /// X-Road message protocol version 4.0 identifiers namespace.
         /// </summary>
-        public const string XROAD_V4_ID = "http://x-road.eu/xsd/identifiers";
+        public const string XRoadV4Id = "http://x-road.eu/xsd/identifiers";
 
         /// <summary>
         /// X-Road message protocol version 4.0 represented party namespace.
         /// </summary>
-        public const string XROAD_V4_REPR = "http://x-road.eu/xsd/representation.xsd";
+        public const string XRoadV4Repr = "http://x-road.eu/xsd/representation.xsd";
 
         /// <summary>
         /// XML Schema definition namespace.
         /// </summary>
-        public const string XSD = "http://www.w3.org/2001/XMLSchema";
+        public const string Xsd = "http://www.w3.org/2001/XMLSchema";
 
         /// <summary>
         /// XML Schema serialization namespace.
         /// </summary>
-        public const string XSI = "http://www.w3.org/2001/XMLSchema-instance";
+        public const string Xsi = "http://www.w3.org/2001/XMLSchema-instance";
 
         /// <summary>
         /// X-Road message protocol version 2.0 namespace.
         /// </summary>
-        public const string XTEE = "http://x-tee.riik.ee/xsd/xtee.xsd";
+        public const string Xtee = "http://x-tee.riik.ee/xsd/xtee.xsd";
 
         /// <summary>
         /// List of namespaces which contain definitions for X-Road meta services.
         /// </summary>
         public static readonly ICollection<string> MetaServiceNamespaces = new[]
         {
-            XTEE,
+            Xtee,
             "http://x-rd.net/xsd/xroad.xsd",
-            XROAD,
+            XRoad,
             "http://x-road.eu/xsd/x-road.xsd"
         };
 
@@ -120,25 +120,25 @@ namespace XRoadLib
         {
             switch (namespaceName)
             {
-                case HTTP:
-                case MIME:
-                case SOAP:
-                case SOAP12:
-                case SOAP_ENC:
-                case SOAP_ENV:
-                case SOAP12_ENV:
-                case WSDL:
-                case XML:
-                case XMLNS:
-                case XMIME:
-                case XOP:
-                case XROAD:
-                case XROAD_V4:
-                case XROAD_V4_ID:
-                case XROAD_V4_REPR:
-                case XSD:
-                case XSI:
-                case XTEE:
+                case Http:
+                case Mime:
+                case Soap:
+                case Soap12:
+                case SoapEnc:
+                case SoapEnv:
+                case Soap12Env:
+                case Wsdl:
+                case Xml:
+                case Xmlns:
+                case Xmime:
+                case Xop:
+                case XRoad:
+                case XRoadV4:
+                case XRoadV4Id:
+                case XRoadV4Repr:
+                case Xsd:
+                case Xsi:
+                case Xtee:
                     return namespaceName;
             }
 
@@ -152,51 +152,51 @@ namespace XRoadLib
         {
             switch (namespaceName)
             {
-                case MIME:
-                    return PrefixConstants.MIME;
+                case Mime:
+                    return PrefixConstants.Mime;
 
-                case SOAP:
-                    return PrefixConstants.SOAP;
+                case Soap:
+                    return PrefixConstants.Soap;
 
-                case SOAP12:
-                    return PrefixConstants.SOAP12;
+                case Soap12:
+                    return PrefixConstants.Soap12;
 
-                case SOAP_ENC:
-                    return PrefixConstants.SOAP_ENC;
+                case SoapEnc:
+                    return PrefixConstants.SoapEnc;
 
-                case SOAP_ENV:
-                    return PrefixConstants.SOAP_ENV;
+                case SoapEnv:
+                    return PrefixConstants.SoapEnv;
 
-                case SOAP12_ENV:
-                    return PrefixConstants.SOAP12_ENV;
+                case Soap12Env:
+                    return PrefixConstants.Soap12Env;
 
-                case WSDL:
-                    return PrefixConstants.WSDL;
+                case Wsdl:
+                    return PrefixConstants.Wsdl;
 
-                case XMIME:
-                    return PrefixConstants.XMIME;
+                case Xmime:
+                    return PrefixConstants.Xmime;
 
-                case XOP:
-                    return PrefixConstants.XOP;
+                case Xop:
+                    return PrefixConstants.Xop;
 
-                case XROAD:
-                case XROAD_V4:
-                    return PrefixConstants.XROAD;
+                case XRoad:
+                case XRoadV4:
+                    return PrefixConstants.XRoad;
 
-                case XROAD_V4_ID:
-                    return PrefixConstants.ID;
+                case XRoadV4Id:
+                    return PrefixConstants.Id;
 
-                case XROAD_V4_REPR:
-                    return PrefixConstants.REPR;
+                case XRoadV4Repr:
+                    return PrefixConstants.Repr;
 
-                case XSD:
-                    return PrefixConstants.XSD;
+                case Xsd:
+                    return PrefixConstants.Xsd;
 
-                case XSI:
-                    return PrefixConstants.XSI;
+                case Xsi:
+                    return PrefixConstants.Xsi;
 
-                case XTEE:
-                    return PrefixConstants.XTEE;
+                case Xtee:
+                    return PrefixConstants.Xtee;
             }
 
             return null;

@@ -9,7 +9,7 @@ namespace XRoadLib.Wsdl
 
         internal override void Write(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.SOAP, "operation", NamespaceConstants.SOAP);
+            writer.WriteStartElement(PrefixConstants.Soap, "operation", NamespaceConstants.Soap);
 
             writer.WriteAttributeString("soapAction", SoapAction);
 

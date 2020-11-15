@@ -22,41 +22,41 @@ namespace XRoadLib.Serialization
             EndOfStream
         }
 
-        private const int BUFFER_SIZE = 1024;
+        private const int BufferSize = 1024;
 
-        private static readonly byte[] newLine = { (byte)'\r', (byte)'\n' };
+        private static readonly byte[] NewLine = { (byte)'\r', (byte)'\n' };
 
-        private readonly ICollection<IServiceManager> serviceManagers;
-        private readonly IMessageFormatter messageFormatter;
-        private readonly string storagePath;
-        private readonly string contentTypeHeader;
+        private readonly ICollection<IServiceManager> _serviceManagers;
+        private readonly IMessageFormatter _messageFormatter;
+        private readonly string _storagePath;
+        private readonly string _contentTypeHeader;
 
-        private Stream stream;
-        private int? peekedByte;
-        private long streamPosition;
+        private Stream _stream;
+        private int? _peekedByte;
+        private long _streamPosition;
 
         public XRoadMessageReader(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
-            this.contentTypeHeader = contentTypeHeader;
-            this.storagePath = storagePath;
-            this.stream = stream;
-            this.serviceManagers = serviceManagers.ToList();
-            this.messageFormatter = messageFormatter;
+            _contentTypeHeader = contentTypeHeader;
+            _storagePath = storagePath;
+            _stream = stream;
+            _serviceManagers = serviceManagers.ToList();
+            _messageFormatter = messageFormatter;
         }
 
         public void Read(XRoadMessage target, bool isResponse = false)
         {
-            target.IsMultipartContainer = XRoadHelper.IsMultipartMsg(contentTypeHeader);
+            target.IsMultipartContainer = XRoadHelper.IsMultipartMsg(_contentTypeHeader);
             if (target.IsMultipartContainer)
-                target.MultipartContentType = XRoadHelper.GetMultipartContentType(contentTypeHeader);
+                target.MultipartContentType = XRoadHelper.GetMultipartContentType(_contentTypeHeader);
 
-            if (stream.CanSeek && stream.Length == 0)
+            if (_stream.CanSeek && _stream.Length == 0)
                 return;
 
-            if (stream.CanSeek)
-                stream.Position = 0;
+            if (_stream.CanSeek)
+                _stream.Position = 0;
 
-            streamPosition = 0;
+            _streamPosition = 0;
 
             target.ContentEncoding = GetContentEncoding();
             target.ContentStream = new MemoryStream();
@@ -73,7 +73,7 @@ namespace XRoadLib.Serialization
                 target.RootElementName = ParseMessageRootElementName(reader);
 
                 if (target.ServiceManager == null && target.RootElementName != null)
-                    target.ServiceManager = serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
+                    target.ServiceManager = _serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
 
                 target.MetaServiceMap = GetMetaServiceMap(target.RootElementName);
             }
@@ -84,7 +84,7 @@ namespace XRoadLib.Serialization
             if (target.IsMultipartContainer)
                 target.BinaryMode = BinaryMode.Attachment;
 
-            if (ContentTypes.XOP.Equals(target.MultipartContentType))
+            if (ContentTypes.Xop.Equals(target.MultipartContentType))
                 target.BinaryMode = BinaryMode.Xml;
 
             if (isResponse)
@@ -101,8 +101,8 @@ namespace XRoadLib.Serialization
 
         public void Dispose()
         {
-            stream.Dispose();
-            stream = null;
+            _stream.Dispose();
+            _stream = null;
         }
 
         private void ReadMessageParts(XRoadMessage target)
@@ -110,11 +110,11 @@ namespace XRoadLib.Serialization
             if (!target.IsMultipartContainer)
             {
                 ReadNextPart(target.ContentStream, GetByteDecoder(null), target.ContentEncoding, null);
-                target.ContentLength = streamPosition;
+                target.ContentLength = _streamPosition;
                 return;
             }
 
-            var multipartStartContentID = GetMultipartStartContentID();
+            var multipartStartContentId = GetMultipartStartContentId();
             var multipartBoundary = GetMultipartBoundary();
             var multipartBoundaryMarker = target.ContentEncoding.GetBytes("--" + multipartBoundary);
             var multipartEndMarker = target.ContentEncoding.GetBytes("--" + multipartBoundary + "--");
@@ -129,12 +129,12 @@ namespace XRoadLib.Serialization
                     continue;
                 }
 
-                ExtractMultipartHeader(target.ContentEncoding, out var partID, out var partTransferEncoding);
+                ExtractMultipartHeader(target.ContentEncoding, out var partId, out var partTransferEncoding);
 
                 var targetStream = target.ContentStream;
-                if (targetStream.Length > 0 || (!string.IsNullOrEmpty(multipartStartContentID) && !multipartStartContentID.Contains(partID)))
+                if (targetStream.Length > 0 || (!string.IsNullOrEmpty(multipartStartContentId) && !multipartStartContentId.Contains(partId)))
                 {
-                    var attachment = new XRoadAttachment(partID, Path.Combine(storagePath, Path.GetRandomFileName()));
+                    var attachment = new XRoadAttachment(partId, Path.Combine(_storagePath, Path.GetRandomFileName()));
                     target.AllAttachments.Add(attachment);
                     targetStream = attachment.ContentStream;
                 }
@@ -142,7 +142,7 @@ namespace XRoadLib.Serialization
                 lastLine = ReadNextPart(targetStream, GetByteDecoder(partTransferEncoding), target.ContentEncoding, multipartBoundaryMarker);
             } while (PeekByte() != -1 && !BufferStartsWith(lastLine, multipartEndMarker));
 
-            target.ContentLength = streamPosition;
+            target.ContentLength = _streamPosition;
         }
 
         private byte[] ReadNextPart(Stream targetStream, Func<byte[], Encoding, byte[]> decoder, Encoding useEncoding, byte[] boundaryMarker)
@@ -151,7 +151,7 @@ namespace XRoadLib.Serialization
 
             while (true)
             {
-                var chunkStop = ReadChunkOrLine(out var buffer, BUFFER_SIZE);
+                var chunkStop = ReadChunkOrLine(out var buffer, BufferSize);
 
                 if (boundaryMarker != null && BufferStartsWith(buffer, boundaryMarker))
                     return buffer;
@@ -163,7 +163,7 @@ namespace XRoadLib.Serialization
                     buffer = decoder(buffer, useEncoding);
 
                 if (decoder == null && addNewLine)
-                    targetStream.Write(newLine, 0, newLine.Length);
+                    targetStream.Write(NewLine, 0, NewLine.Length);
 
                 targetStream.Write(buffer, 0, buffer.Length);
 
@@ -174,9 +174,9 @@ namespace XRoadLib.Serialization
             }
         }
 
-        private void ExtractMultipartHeader(Encoding contentEncoding, out string partID, out string partTransferEncoding)
+        private void ExtractMultipartHeader(Encoding contentEncoding, out string partId, out string partTransferEncoding)
         {
-            partID = partTransferEncoding = null;
+            partId = partTransferEncoding = null;
 
             while (true)
             {
@@ -186,9 +186,9 @@ namespace XRoadLib.Serialization
                 if (string.IsNullOrEmpty(lastLine))
                     break;
 
-                var tempContentID = XRoadHelper.ExtractValue("content-id:", lastLine, null);
-                if (tempContentID != null)
-                    partID = tempContentID.Trim().Trim('<', '>');
+                var tempContentId = XRoadHelper.ExtractValue("content-id:", lastLine, null);
+                if (tempContentId != null)
+                    partId = tempContentId.Trim().Trim('<', '>');
 
                 var tempTransferEncoding = XRoadHelper.ExtractValue("content-transfer-encoding:", lastLine, null);
                 if (tempTransferEncoding != null)
@@ -202,7 +202,7 @@ namespace XRoadLib.Serialization
 
             while (true)
             {
-                var chunkStop = ReadChunkOrLine(out var buffer, BUFFER_SIZE);
+                var chunkStop = ReadChunkOrLine(out var buffer, BufferSize);
 
                 Array.Resize(ref chunk, chunk.Length + buffer.Length);
                 Array.Copy(buffer, chunk, buffer.Length);
@@ -247,42 +247,42 @@ namespace XRoadLib.Serialization
 
         private int ReadByte()
         {
-            if (peekedByte == null)
+            if (_peekedByte == null)
             {
-                var @byte = stream.ReadByte();
+                var @byte = _stream.ReadByte();
                 if (@byte >= 0)
-                    streamPosition++;
+                    _streamPosition++;
                 return @byte;
             }
 
-            var result = peekedByte.Value;
+            var result = _peekedByte.Value;
             if (result >= 0)
-                streamPosition++;
+                _streamPosition++;
 
-            peekedByte = null;
+            _peekedByte = null;
             return result;
         }
 
         private int PeekByte()
         {
-            peekedByte = peekedByte ?? stream.ReadByte();
-            return peekedByte.Value;
+            _peekedByte = _peekedByte ?? _stream.ReadByte();
+            return _peekedByte.Value;
         }
 
         private Encoding GetContentEncoding()
         {
-            var contentType = XRoadHelper.ExtractValue("charset=", contentTypeHeader, ";")?.Trim().Trim('"');
+            var contentType = XRoadHelper.ExtractValue("charset=", _contentTypeHeader, ";")?.Trim().Trim('"');
             return string.IsNullOrWhiteSpace(contentType) || contentType.ToUpper().Equals("UTF-8") ? XRoadEncoding.Utf8 : Encoding.GetEncoding(contentType);
         }
 
-        private string GetMultipartStartContentID()
+        private string GetMultipartStartContentId()
         {
-            return XRoadHelper.ExtractValue("start=", contentTypeHeader, ";")?.Trim().Trim('"');
+            return XRoadHelper.ExtractValue("start=", _contentTypeHeader, ";")?.Trim().Trim('"');
         }
 
         private string GetMultipartBoundary()
         {
-            return XRoadHelper.ExtractValue("boundary=", contentTypeHeader, ";")?.Trim().Trim('"');
+            return XRoadHelper.ExtractValue("boundary=", _contentTypeHeader, ";")?.Trim().Trim('"');
         }
 
         private static Func<byte[], Encoding, byte[]> GetByteDecoder(string contentTransferEncoding)
@@ -349,13 +349,13 @@ namespace XRoadLib.Serialization
 
         private IServiceManager DetectServiceManager(XmlReader reader, XRoadMessage target)
         {
-            messageFormatter.MoveToEnvelope(reader);
-            return target.ServiceManager ?? serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
+            _messageFormatter.MoveToEnvelope(reader);
+            return target.ServiceManager ?? _serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
         }
 
         private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IServiceManager serviceManager)
         {
-            if (!messageFormatter.TryMoveToHeader(reader))
+            if (!_messageFormatter.TryMoveToHeader(reader))
                 return;
 
             var header = serviceManager?.CreateHeader();
@@ -367,7 +367,7 @@ namespace XRoadLib.Serialization
             {
                 if (serviceManager == null)
                 {
-                    serviceManager = serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(reader.NamespaceURI));
+                    serviceManager = _serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(reader.NamespaceURI));
                     header = serviceManager?.CreateHeader();
                     xRoadHeader = header as IXRoadHeader;
                 }
@@ -408,7 +408,7 @@ namespace XRoadLib.Serialization
 
         private XName ParseMessageRootElementName(XmlReader reader)
         {
-            return messageFormatter.TryMoveToBody(reader) && reader.MoveToElement(2) ? reader.GetXName() : null;
+            return _messageFormatter.TryMoveToBody(reader) && reader.MoveToElement(2) ? reader.GetXName() : null;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace XRoadLib.Extensions.AspNet
     /// <inheritdoc />
     public abstract class ServiceRequestHandlerBase : ServiceHandlerBase
     {
-        private readonly ICollection<IServiceManager> serviceManagers;
+        private readonly ICollection<IServiceManager> _serviceManagers;
 
         /// <summary>
         /// Temporary file storage location.
@@ -28,7 +28,7 @@ namespace XRoadLib.Extensions.AspNet
         /// </summary>
         protected ServiceRequestHandlerBase(IEnumerable<IServiceManager> serviceManagers)
         {
-            this.serviceManagers = serviceManagers?.ToList() ?? throw new ArgumentNullException(nameof(serviceManagers));
+            _serviceManagers = serviceManagers?.ToList() ?? throw new ArgumentNullException(nameof(serviceManagers));
         }
 
         /// <summary>
@@ -84,10 +84,10 @@ namespace XRoadLib.Extensions.AspNet
             if (context.HttpContext.Request.InputStream.Length == 0)
                 throw new InvalidQueryException("Empty request content");
 
-            context.Request.LoadRequest(context.HttpContext, context.MessageFormatter, StoragePath.GetValueOrDefault(Path.GetTempPath()), serviceManagers);
+            context.Request.LoadRequest(context.HttpContext, context.MessageFormatter, StoragePath.GetValueOrDefault(Path.GetTempPath()), _serviceManagers);
             if (context.Request.ServiceManager == null && context.Request.MetaServiceMap == null)
             {
-                var supportedProtocolsString = string.Join(", ", serviceManagers.Select(x => $@"""{x.Name}"""));
+                var supportedProtocolsString = string.Join(", ", _serviceManagers.Select(x => $@"""{x.Name}"""));
                 throw new InvalidQueryException($"Could not detect X-Road message protocol version from request message. Adapter supports following protocol versions: {supportedProtocolsString}.");
             }
 

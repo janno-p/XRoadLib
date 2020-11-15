@@ -12,63 +12,64 @@ namespace XRoadLib.Tests.Serialization.Mapping
 {
     public class StringTypeMapTest : TypeMapTestBase
     {
-        private static readonly ITypeMap typeMap = new StringTypeMap(schemaDefinitionProvider.GetSimpleTypeDefinition<string>("string"));
-        private readonly Func<string, object> deserializeValue = x => DeserializeValue(typeMap, x);
-        private readonly Func<object, string> serializeValue = x => SerializeValue(typeMap, x);
+        private static readonly ITypeMap TypeMap = new StringTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<string>("string"));
+
+        private readonly Func<string, object> _deserializeValue = x => DeserializeValue(TypeMap, x);
+        private readonly Func<object, string> _serializeValue = x => SerializeValue(TypeMap, x);
 
         [Fact]
         public void CanEscapeSpecialCharactersWithHtmlEncoding()
         {
-            var xmlValue = serializeValue("&<>");
+            var xmlValue = _serializeValue("&<>");
             Assert.Equal("&amp;&lt;&gt;", xmlValue);
         }
 
         [Fact]
         public void CanReadStringWithHtmlEncodedCharacters()
         {
-            var value = deserializeValue("&amp;&lt;&gt;");
+            var value = _deserializeValue("&amp;&lt;&gt;");
             Assert.Equal("&<>", value);
         }
 
         [Fact]
         public void CanEscapeCDataStringWithHtmlEncoding()
         {
-            var xmlValue = serializeValue("<![CDATA[&<>]]>");
+            var xmlValue = _serializeValue("<![CDATA[&<>]]>");
             Assert.Equal("&lt;![CDATA[&amp;&lt;&gt;]]&gt;", xmlValue);
         }
 
         [Fact]
         public void CanReadCDataStringWithHtmlEncodedCharacters()
         {
-            var value = deserializeValue("&lt;![CDATA[&amp;&lt;&gt;]]&gt;");
+            var value = _deserializeValue("&lt;![CDATA[&amp;&lt;&gt;]]&gt;");
             Assert.Equal("<![CDATA[&<>]]>", value);
         }
 
         [Fact]
         public void CanEscapeSpecialCharactersWithCDataBlock()
         {
-            var xmlValue = SerializeValue(typeMap, "&<>", StringSerializationMode.WrappedInCData);
+            var xmlValue = SerializeValue(TypeMap, "&<>", StringSerializationMode.WrappedInCData);
             Assert.Equal("<![CDATA[&<>]]>", xmlValue);
         }
 
         [Fact]
         public void CanReadStringFromCDataBlock()
         {
-            var xmlValue = deserializeValue("<![CDATA[&<>]]>");
+            var xmlValue = _deserializeValue("<![CDATA[&<>]]>");
             Assert.Equal("&<>", xmlValue);
         }
 
         [Fact]
         public void CanEscapeCDataStringWithCDataBlock()
         {
-            var xmlValue = SerializeValue(typeMap, "<![CDATA[&<>]]>", StringSerializationMode.WrappedInCData);
+            var xmlValue = SerializeValue(TypeMap, "<![CDATA[&<>]]>", StringSerializationMode.WrappedInCData);
             Assert.Equal("<![CDATA[<![CDATA[&<>]]>]]<![CDATA[>]]>", xmlValue);
         }
 
         [Fact]
         public void CanReadCDataStringFromCDataBlock()
         {
-            var xmlValue = deserializeValue("<![CDATA[<![CDATA[&<>]]>]]<![CDATA[>]]>");
+            var xmlValue = _deserializeValue("<![CDATA[<![CDATA[&<>]]>]]<![CDATA[>]]>");
             Assert.Equal("<![CDATA[&<>]]>", xmlValue);
         }
 

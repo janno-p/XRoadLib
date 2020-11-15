@@ -11,13 +11,13 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class AllTypeMap<T> : CompositeTypeMap<T> where T : class, IXRoadSerializable, new()
     {
-        private readonly IDictionary<XName, IPropertyMap> deserializationPropertyMaps = new Dictionary<XName, IPropertyMap>();
-        private readonly Lazy<int> requiredPropertiesCount;
+        private readonly IDictionary<XName, IPropertyMap> _deserializationPropertyMaps = new Dictionary<XName, IPropertyMap>();
+        private readonly Lazy<int> _requiredPropertiesCount;
 
         public AllTypeMap(ISerializer serializer, TypeDefinition typeDefinition)
             : base(serializer, typeDefinition)
         {
-            requiredPropertiesCount = new Lazy<int>(() => deserializationPropertyMaps.Count(x => !x.Value.Definition.Content.IsOptional));
+            _requiredPropertiesCount = new Lazy<int>(() => _deserializationPropertyMaps.Count(x => !x.Value.Definition.Content.IsOptional));
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
@@ -27,9 +27,9 @@ namespace XRoadLib.Serialization.Mapping
 
             var validateRequired = content.Particle is RequestDefinition;
 
-            if (contentPropertyMap != null)
+            if (ContentPropertyMap != null)
             {
-                ReadPropertyValue(reader, contentPropertyMap, templateNode, message, validateRequired, dtoObject);
+                ReadPropertyValue(reader, ContentPropertyMap, templateNode, message, validateRequired, dtoObject);
                 return dtoObject;
             }
 
@@ -104,14 +104,14 @@ namespace XRoadLib.Serialization.Mapping
                                .Select(n => templateNode[n, message.Version])
                                .Where(n => n.IsRequired)
                                .Where(n => !dtoObject.IsSpecified(n.Name))
-                               .Select(n => deserializationPropertyMaps[n.Name].Definition);
+                               .Select(n => _deserializationPropertyMaps[n.Name].Definition);
         }
 
         private IPropertyMap GetPropertyMap(XmlReader reader)
         {
             var readerName = reader.GetXName();
 
-            return deserializationPropertyMaps.TryGetValue(readerName, out var propertyMap)
+            return _deserializationPropertyMaps.TryGetValue(readerName, out var propertyMap)
                 ? propertyMap
                 : throw new UnknownPropertyException($"Type `{Definition.Name}` does not define property `{readerName}` (property names are case-sensitive).", Definition, readerName);
         }
@@ -120,16 +120,16 @@ namespace XRoadLib.Serialization.Mapping
         {
             base.AddPropertyMap(propertyMap);
 
-            deserializationPropertyMaps.Add(propertyMap.Definition.Content.SerializedName.LocalName, propertyMap);
+            _deserializationPropertyMaps.Add(propertyMap.Definition.Content.SerializedName.LocalName, propertyMap);
         }
 
         private void ValidateRemainingProperties(ICollection<XName> existingPropertyNames, ContentDefinition content)
         {
-            if (existingPropertyNames.Count == requiredPropertiesCount.Value)
+            if (existingPropertyNames.Count == _requiredPropertiesCount.Value)
                 return;
 
             var typeName = Definition?.Name ?? ((content.Particle as ArrayItemDefinition)?.Array as PropertyDefinition)?.DeclaringTypeDefinition?.Name;
-            var missingProperties = deserializationPropertyMaps.Where(kv => !existingPropertyNames.Contains(kv.Key) && !kv.Value.Definition.Content.IsOptional).Select(kv => $"`{kv.Key}`").ToList();
+            var missingProperties = _deserializationPropertyMaps.Where(kv => !existingPropertyNames.Contains(kv.Key) && !kv.Value.Definition.Content.IsOptional).Select(kv => $"`{kv.Key}`").ToList();
 
             var propertyMessage = string.Join(", ", missingProperties);
             if (missingProperties.Count > 0)

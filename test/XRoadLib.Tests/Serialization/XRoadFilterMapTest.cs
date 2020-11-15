@@ -1,5 +1,4 @@
-﻿using System;
-using XRoadLib.Schema;
+﻿using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using Xunit;
 
@@ -11,7 +10,7 @@ namespace XRoadLib.Tests.Serialization
         {
             public string Member1 { get; set; } = "";
             public int Member2 { get; set; }
-            public CustomClass Member3 { get; set; } = new CustomClass();
+            public CustomClass Member3 { get; set; }
         }
 
         private class NoCustomMap : XRoadFilterMap<CustomClass>

@@ -9,26 +9,26 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class ContentTypeMap : TypeMap, IContentTypeMap
     {
-        private readonly XName encodedTypeName;
-        private readonly ITypeMap optimizedContentTypeMap;
+        private readonly XName _encodedTypeName;
+        private readonly ITypeMap _optimizedContentTypeMap;
 
         public ContentTypeMap(TypeDefinition typeDefinition)
             : base(typeDefinition)
         {
-            encodedTypeName = XName.Get(Definition.Name.LocalName, NamespaceConstants.SOAP_ENC);
-            optimizedContentTypeMap = new OptimizedContentTypeMap(this);
+            _encodedTypeName = XName.Get(Definition.Name.LocalName, NamespaceConstants.SoapEnc);
+            _optimizedContentTypeMap = new OptimizedContentTypeMap(this);
         }
 
         public ITypeMap GetOptimizedContentTypeMap()
         {
-            return optimizedContentTypeMap;
+            return _optimizedContentTypeMap;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
-            var contentID = reader.GetAttribute("href");
+            var contentId = reader.GetAttribute("href");
 
-            if (string.IsNullOrWhiteSpace(contentID))
+            if (string.IsNullOrWhiteSpace(contentId))
             {
                 if (message.IsMultipartContainer)
                     throw new InvalidQueryException("Missing `href` attribute to multipart content.");
@@ -52,9 +52,9 @@ namespace XRoadLib.Serialization.Mapping
                 return tempAttachment.ContentStream;
             }
 
-            var attachment = message.GetAttachment(contentID.Substring(4));
+            var attachment = message.GetAttachment(contentId.Substring(4));
             if (attachment == null)
-                throw new InvalidQueryException($"MIME multipart message does not contain message part with ID `{contentID}`.");
+                throw new InvalidQueryException($"MIME multipart message does not contain message part with ID `{contentId}`.");
 
             if (reader.IsEmptyElement)
                 return reader.MoveNextAndReturn(attachment.ContentStream);
@@ -72,9 +72,9 @@ namespace XRoadLib.Serialization.Mapping
             if (message.BinaryMode == BinaryMode.Attachment)
             {
                 if (!(content.Particle is RequestDefinition))
-                    message.Style.WriteExplicitType(writer, encodedTypeName);
+                    message.Style.WriteExplicitType(writer, _encodedTypeName);
 
-                writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
+                writer.WriteAttributeString("href", $"cid:{attachment.ContentId}");
                 return;
             }
 

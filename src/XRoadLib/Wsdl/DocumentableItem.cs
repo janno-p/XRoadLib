@@ -15,7 +15,7 @@ namespace XRoadLib.Wsdl
 
         public string Documentation
         {
-            get { return DocumentationElement != null ? DocumentationElement.InnerText : ""; }
+            get => DocumentationElement != null ? DocumentationElement.InnerText : "";
             set
             {
                 if (string.IsNullOrEmpty(value))
@@ -24,8 +24,8 @@ namespace XRoadLib.Wsdl
                     return;
                 }
 
-                XmlDocument doc = new XmlDocument();
-                DocumentationElement = doc.CreateElement(PrefixConstants.WSDL, "documentation", NamespaceConstants.WSDL);
+                var doc = new XmlDocument();
+                DocumentationElement = doc.CreateElement(PrefixConstants.Wsdl, "documentation", NamespaceConstants.Wsdl);
                 DocumentationElement.InnerText = value;
             }
         }
@@ -42,7 +42,7 @@ namespace XRoadLib.Wsdl
         {
             Namespaces.Where(x => !string.IsNullOrWhiteSpace(x.Value) && writer.LookupPrefix(x.Value) != x.Key)
                       .ToList()
-                      .ForEach(ns => writer.WriteAttributeString(PrefixConstants.XMLNS, ns.Key, NamespaceConstants.XMLNS, ns.Value));
+                      .ForEach(ns => writer.WriteAttributeString(PrefixConstants.Xmlns, ns.Key, NamespaceConstants.Xmlns, ns.Value));
 
             ExtensibleAttributes.ForEach(x => x.WriteTo(writer));
         }
@@ -55,9 +55,14 @@ namespace XRoadLib.Wsdl
 
         protected void WriteStartElement(XmlWriter writer, string name)
         {
-            var prefix = Namespaces.Where(kvp => kvp.Value == NamespaceConstants.WSDL)
-                                   .Select(kvp => kvp.Key).SingleOrDefault() ?? writer.LookupPrefix(NamespaceConstants.WSDL);
-            writer.WriteStartElement(prefix, name, NamespaceConstants.WSDL);
+            var prefix =
+                Namespaces.Where(kvp => kvp.Value == NamespaceConstants.Wsdl)
+                          .Select(kvp => kvp.Key)
+                          .SingleOrDefault()
+                ?? writer.LookupPrefix(NamespaceConstants.Wsdl)
+                ?? "";
+
+            writer.WriteStartElement(prefix, name, NamespaceConstants.Wsdl);
         }
     }
 }

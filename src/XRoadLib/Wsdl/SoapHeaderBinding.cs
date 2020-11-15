@@ -13,7 +13,7 @@ namespace XRoadLib.Wsdl
 
         internal override void Write(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.SOAP, "header", NamespaceConstants.SOAP);
+            writer.WriteStartElement(PrefixConstants.Soap, "header", NamespaceConstants.Soap);
 
             writer.WriteQualifiedAttribute("message", Message);
 

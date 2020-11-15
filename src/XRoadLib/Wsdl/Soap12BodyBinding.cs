@@ -10,7 +10,7 @@ namespace XRoadLib.Wsdl
 
         internal override void Write(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.SOAP12, "body", NamespaceConstants.SOAP12);
+            writer.WriteStartElement(PrefixConstants.Soap12, "body", NamespaceConstants.Soap12);
 
             if (!string.IsNullOrEmpty(Encoding))
                 writer.WriteAttributeString("encodingStyle", Encoding);

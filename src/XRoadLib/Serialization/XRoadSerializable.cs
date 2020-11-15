@@ -5,33 +5,32 @@ namespace XRoadLib.Serialization
 {
     public abstract class XRoadSerializable : IXRoadSerializable
     {
-        private readonly IDictionary<string, bool> initializedMembers = new Dictionary<string, bool>();
+        private readonly IDictionary<string, bool> _initializedMembers = new Dictionary<string, bool>();
 
         public IDictionary<string, bool> GetInitializedMembers()
         {
-            return initializedMembers;
+            return _initializedMembers;
         }
 
         public bool IsSpecified(string memberName)
         {
-            bool value;
-            return initializedMembers.TryGetValue(memberName, out value) && value;
+            return _initializedMembers.TryGetValue(memberName, out var value) && value;
         }
 
         public bool IsAcceptedByTemplate(string memberName)
         {
-            return initializedMembers.ContainsKey(memberName);
+            return _initializedMembers.ContainsKey(memberName);
         }
 
         void IXRoadSerializable.OnMemberDeserialized(string memberName)
         {
-            initializedMembers[memberName] = true;
+            _initializedMembers[memberName] = true;
         }
 
         void IXRoadSerializable.SetTemplateMembers(IEnumerable<string> memberNames)
         {
-            foreach (var memberName in memberNames.Where(x => !initializedMembers.ContainsKey(x)))
-                initializedMembers.Add(memberName, false);
+            foreach (var memberName in memberNames.Where(x => !_initializedMembers.ContainsKey(x)))
+                _initializedMembers.Add(memberName, false);
         }
     }
 }

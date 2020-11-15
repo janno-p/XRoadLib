@@ -59,7 +59,7 @@ namespace XRoadLib.Tests.Contract
 
         public static string ConvertBack(WsdlChangesTestDto entity)
         {
-            return entity.ChangedTypeProperty.HasValue ? entity.ChangedTypeProperty.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : null;
+            return entity.ChangedTypeProperty?.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 

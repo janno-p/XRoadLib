@@ -14,17 +14,17 @@ namespace XRoadLib
 
             if (!IsMultipartMsg(contentTypeHeader))
                 contentType = (contentTypeHeader ?? "").Split(new[] { ';' }, 2).First().Trim();
-            else if (contentType?.Equals(ContentTypes.XOP) == true)
+            else if (contentType?.Equals(ContentTypes.Xop) == true)
                 contentType = GetContentTypeStartInfo(contentTypeHeader);
 
             switch (contentType)
             {
                 case null:
                 case "":
-                case ContentTypes.SOAP:
+                case ContentTypes.Soap:
                     return new SoapMessageFormatter();
 
-                case ContentTypes.SOAP12:
+                case ContentTypes.Soap12:
                     return new Soap12MessageFormatter();
 
                 default:
@@ -62,7 +62,7 @@ namespace XRoadLib
             return keyValuePair.Substring(fromIndex, toIndex - fromIndex).Trim();
         }
 
-        public static string GenerateRequestID()
+        public static string GenerateRequestId()
         {
             const int randomLength = 32;
             const int nonceLength = (int)(4.0d / 3.0d * randomLength);

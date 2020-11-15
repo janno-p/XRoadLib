@@ -6,32 +6,32 @@ namespace XRoadLib.Tests.Serialization
 {
     public class XRoadSerializableTest
     {
-        private const string MEMBER_NAME = "Member";
-        private const string NO_MEMBER_NAME = "No Member";
+        private const string MemberName = "Member";
+        private const string NoMemberName = "No Member";
 
         [Fact]
         public void AddsMemberNamesAfterSerialization()
         {
             var instance = new Class1();
 
-            Assert.False(instance.IsSpecified(MEMBER_NAME));
-            Assert.False(instance.IsAcceptedByTemplate(MEMBER_NAME));
-            Assert.False(instance.IsSpecified(NO_MEMBER_NAME));
-            Assert.False(instance.IsAcceptedByTemplate(NO_MEMBER_NAME));
+            Assert.False(instance.IsSpecified(MemberName));
+            Assert.False(instance.IsAcceptedByTemplate(MemberName));
+            Assert.False(instance.IsSpecified(NoMemberName));
+            Assert.False(instance.IsAcceptedByTemplate(NoMemberName));
 
-            ((IXRoadSerializable)instance).OnMemberDeserialized(MEMBER_NAME);
+            ((IXRoadSerializable)instance).OnMemberDeserialized(MemberName);
 
-            Assert.True(instance.IsSpecified(MEMBER_NAME));
-            Assert.True(instance.IsAcceptedByTemplate(MEMBER_NAME));
-            Assert.False(instance.IsSpecified(NO_MEMBER_NAME));
-            Assert.False(instance.IsAcceptedByTemplate(NO_MEMBER_NAME));
+            Assert.True(instance.IsSpecified(MemberName));
+            Assert.True(instance.IsAcceptedByTemplate(MemberName));
+            Assert.False(instance.IsSpecified(NoMemberName));
+            Assert.False(instance.IsAcceptedByTemplate(NoMemberName));
 
-            ((IXRoadSerializable)instance).SetTemplateMembers(new[] { MEMBER_NAME });
+            ((IXRoadSerializable)instance).SetTemplateMembers(new[] { MemberName });
 
-            Assert.True(instance.IsSpecified(MEMBER_NAME));
-            Assert.True(instance.IsAcceptedByTemplate(MEMBER_NAME));
-            Assert.False(instance.IsSpecified(NO_MEMBER_NAME));
-            Assert.False(instance.IsAcceptedByTemplate(NO_MEMBER_NAME));
+            Assert.True(instance.IsSpecified(MemberName));
+            Assert.True(instance.IsAcceptedByTemplate(MemberName));
+            Assert.False(instance.IsSpecified(NoMemberName));
+            Assert.False(instance.IsAcceptedByTemplate(NoMemberName));
         }
 
         [Fact]
@@ -39,18 +39,18 @@ namespace XRoadLib.Tests.Serialization
         {
             var instance = new Class1();
 
-            Assert.False(instance.IsSpecified(MEMBER_NAME));
-            Assert.False(instance.IsAcceptedByTemplate(MEMBER_NAME));
+            Assert.False(instance.IsSpecified(MemberName));
+            Assert.False(instance.IsAcceptedByTemplate(MemberName));
 
-            ((IXRoadSerializable)instance).SetTemplateMembers(new [] { MEMBER_NAME });
+            ((IXRoadSerializable)instance).SetTemplateMembers(new [] { MemberName });
 
-            Assert.False(instance.IsSpecified(MEMBER_NAME));
-            Assert.True(instance.IsAcceptedByTemplate(MEMBER_NAME));
+            Assert.False(instance.IsSpecified(MemberName));
+            Assert.True(instance.IsAcceptedByTemplate(MemberName));
 
-            ((IXRoadSerializable)instance).OnMemberDeserialized(MEMBER_NAME);
+            ((IXRoadSerializable)instance).OnMemberDeserialized(MemberName);
 
-            Assert.True(instance.IsSpecified(MEMBER_NAME));
-            Assert.True(instance.IsAcceptedByTemplate(MEMBER_NAME));
+            Assert.True(instance.IsSpecified(MemberName));
+            Assert.True(instance.IsAcceptedByTemplate(MemberName));
         }
 
         [Fact]
@@ -58,13 +58,13 @@ namespace XRoadLib.Tests.Serialization
         {
             var instance = new Class1();
 
-            Assert.False(instance.IsSpecified(MEMBER_NAME));
-            Assert.False(instance.IsAcceptedByTemplate(MEMBER_NAME));
+            Assert.False(instance.IsSpecified(MemberName));
+            Assert.False(instance.IsAcceptedByTemplate(MemberName));
 
-            ((IXRoadSerializable)instance).SetTemplateMembers(new [] { MEMBER_NAME, "muu", "kolmas", MEMBER_NAME });
+            ((IXRoadSerializable)instance).SetTemplateMembers(new [] { MemberName, "muu", "kolmas", MemberName });
 
-            Assert.False(instance.IsSpecified(MEMBER_NAME));
-            Assert.True(instance.IsAcceptedByTemplate(MEMBER_NAME));
+            Assert.False(instance.IsSpecified(MemberName));
+            Assert.True(instance.IsAcceptedByTemplate(MemberName));
         }
     }
 }

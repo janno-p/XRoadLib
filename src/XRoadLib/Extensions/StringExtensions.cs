@@ -6,7 +6,7 @@ namespace XRoadLib.Extensions
     {
         public static TResult MapNotEmpty<TResult>(this string value, Func<string, TResult> mapper)
         {
-            return string.IsNullOrWhiteSpace(value) ? default(TResult) : mapper(value);
+            return string.IsNullOrWhiteSpace(value) ? default : mapper(value);
         }
         
         public static string GetStringOrDefault(this string value, string defaultValue)

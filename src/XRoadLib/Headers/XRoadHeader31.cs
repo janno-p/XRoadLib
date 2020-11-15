@@ -12,14 +12,14 @@ namespace XRoadLib.Headers
     /// </summary>
     public class XRoadHeader31 : IXRoadHeader, IXRoadHeader31, IXRoadUniversalHeader
     {
-        private XRoadClientIdentifier client = new XRoadClientIdentifier();
-        private XRoadServiceIdentifier service = new XRoadServiceIdentifier();
+        private XRoadClientIdentifier _client = new XRoadClientIdentifier();
+        private XRoadServiceIdentifier _service = new XRoadServiceIdentifier();
 
         /// <inheritdoc />
-        XRoadClientIdentifier IXRoadHeader.Client => client;
+        XRoadClientIdentifier IXRoadHeader.Client => _client;
 
         /// <inheritdoc />
-        XRoadServiceIdentifier IXRoadHeader.Service => service;
+        XRoadServiceIdentifier IXRoadHeader.Service => _service;
 
         /// <summary>
         /// Identifies user who sent X-Road message.
@@ -37,26 +37,26 @@ namespace XRoadLib.Headers
         /// <inheritdoc />
         public virtual string Consumer
         {
-            get => client.MemberCode;
-            set => client.MemberCode = value;
+            get => _client.MemberCode;
+            set => _client.MemberCode = value;
         }
 
         /// <inheritdoc />
         public virtual string Producer
         {
-            get => service.SubsystemCode;
-            set => service.SubsystemCode = value;
+            get => _service.SubsystemCode;
+            set => _service.SubsystemCode = value;
         }
 
         /// <inheritdoc />
         public virtual string ServiceName
         {
-            get => service.ToFullName();
+            get => _service.ToFullName();
             set
             {
                 var serviceValue = XRoadServiceIdentifier.FromString(value);
-                service.ServiceCode = serviceValue.ServiceCode;
-                service.ServiceVersion = serviceValue.ServiceVersion;
+                _service.ServiceCode = serviceValue.ServiceCode;
+                _service.ServiceVersion = serviceValue.ServiceVersion;
             }
         }
 
@@ -98,7 +98,7 @@ namespace XRoadLib.Headers
         /// <inheritdoc />
         public virtual void ReadHeaderValue(XmlReader reader)
         {
-            if (reader.NamespaceURI == NamespaceConstants.XROAD)
+            if (reader.NamespaceURI == NamespaceConstants.XRoad)
             {
                 switch (reader.LocalName)
                 {
@@ -179,12 +179,12 @@ namespace XRoadLib.Headers
         /// <inheritdoc />
         public virtual void WriteTo(XmlWriter writer, Style style, HeaderDefinition definition)
         {
-            if (writer.LookupPrefix(NamespaceConstants.XROAD) == null)
-                writer.WriteAttributeString(PrefixConstants.XMLNS, PrefixConstants.XROAD, NamespaceConstants.XMLNS, NamespaceConstants.XROAD);
+            if (writer.LookupPrefix(NamespaceConstants.XRoad) == null)
+                writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.XRoad, NamespaceConstants.Xmlns, NamespaceConstants.XRoad);
 
             void WriteHeaderValue(string elementName, object value, XName typeName)
             {
-                var name = XName.Get(elementName, NamespaceConstants.XROAD);
+                var name = XName.Get(elementName, NamespaceConstants.XRoad);
                 if (definition.RequiredHeaders.Contains(name) || value != null)
                     style.WriteHeaderElement(writer, name, value, typeName);
             }
@@ -207,8 +207,8 @@ namespace XRoadLib.Headers
             WriteHeaderValue("encryptedCert", EncryptedCert, XmlTypeConstants.String);
         }
 
-        XRoadClientIdentifier IXRoadUniversalHeader.Client { get => client; set => client = value; }
-        XRoadServiceIdentifier IXRoadUniversalHeader.Service { get => service; set => service = value; }
+        XRoadClientIdentifier IXRoadUniversalHeader.Client { get => _client; set => _client = value; }
+        XRoadServiceIdentifier IXRoadUniversalHeader.Service { get => _service; set => _service = value; }
 
         string IXRoadUniversalHeader.ProtocolVersion { get => "3.1"; set { } }
     }

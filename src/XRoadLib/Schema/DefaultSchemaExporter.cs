@@ -10,17 +10,17 @@ namespace XRoadLib.Schema
     /// </summary>
     public class DefaultSchemaExporter : AbstractSchemaExporter
     {
-        private readonly Assembly contractAssembly;
+        private readonly Assembly _contractAssembly;
 
         /// <summary>
         /// Preferred X-Road namespace prefix of the message protocol version.
         /// </summary>
-        public override string XRoadPrefix => PrefixConstants.XROAD;
+        public override string XRoadPrefix => PrefixConstants.XRoad;
 
         /// <summary>
         /// X-Road specification namespace of the message protocol version.
         /// </summary>
-        public override string XRoadNamespace => NamespaceConstants.XROAD_V4;
+        public override string XRoadNamespace => NamespaceConstants.XRoadV4;
 
         /// <summary>
         /// Defines list of supported DTO versions (for DTO based versioning).
@@ -39,7 +39,7 @@ namespace XRoadLib.Schema
         public DefaultSchemaExporter(string producerNamespace, Assembly contractAssembly)
             : base(producerNamespace)
         {
-            this.contractAssembly = contractAssembly;
+            this._contractAssembly = contractAssembly;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace XRoadLib.Schema
         {
             base.ExportProtocolDefinition(protocolDefinition);
 
-            protocolDefinition.ContractAssembly = contractAssembly;
+            protocolDefinition.ContractAssembly = _contractAssembly;
 
             foreach (var version in SupportedVersions)
                 protocolDefinition.SupportedVersions.Add(version);

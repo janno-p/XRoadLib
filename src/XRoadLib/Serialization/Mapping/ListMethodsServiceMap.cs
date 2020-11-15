@@ -37,7 +37,7 @@ namespace XRoadLib.Serialization.Mapping
                 ContainsNonTechnicalFault = true,
                 Content =
                 {
-                    Name = XName.Get(operationName.NamespaceName == NamespaceConstants.XTEE ? "keha" : "response")
+                    Name = XName.Get(operationName.NamespaceName == NamespaceConstants.Xtee ? "keha" : "response")
                 }
             };
         }
@@ -71,14 +71,14 @@ namespace XRoadLib.Serialization.Mapping
 
             var namespaceInContext = requestReader.NamespaceURI;
 
-            var responsePartName = OperationDefinition.Name.NamespaceName.Equals(NamespaceConstants.XTEE) ? "keha" : "response";
-            var style = OperationDefinition.Name.NamespaceName.Equals(NamespaceConstants.XTEE) ? (Style)new RpcEncodedStyle() : new DocLiteralStyle();
+            var responsePartName = OperationDefinition.Name.NamespaceName.Equals(NamespaceConstants.Xtee) ? "keha" : "response";
+            var style = OperationDefinition.Name.NamespaceName.Equals(NamespaceConstants.Xtee) ? (Style)new RpcEncodedStyle() : new DocLiteralStyle();
 
             if (Equals(namespaceInContext, ""))
                 writer.WriteStartElement(responsePartName);
             else writer.WriteStartElement(responsePartName, "");
 
-            var typeName = XName.Get("string", NamespaceConstants.XSD);
+            var typeName = XName.Get("string", NamespaceConstants.Xsd);
             var methodNames = value as ICollection<string> ?? new string[0];
 
             style.WriteExplicitArrayType(writer, typeName, methodNames.Count);

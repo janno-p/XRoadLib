@@ -6,19 +6,19 @@ namespace XRoadLib.Schema
     /// <inheritdoc />
     public abstract class SchemaExporterXRoadLegacy : AbstractSchemaExporter
     {
-        private readonly Assembly contractAssembly;
+        private readonly Assembly _contractAssembly;
 
         /// <summary>
         /// X-Road producer name for legacy protocols.
         /// </summary>
-        protected readonly string producerName;
+        protected string ProducerName { get; }
 
         /// <inheritdoc />
         protected SchemaExporterXRoadLegacy(string producerName, Assembly contractAssembly, string producerNamespace)
             : base(producerNamespace)
         {
-            this.contractAssembly = contractAssembly;
-            this.producerName = producerName;
+            _contractAssembly = contractAssembly;
+            ProducerName = producerName;
         }
 
         /// <inheritdoc />
@@ -37,7 +37,7 @@ namespace XRoadLib.Schema
             if (!serviceDescription.Namespaces.ContainsKey(XRoadPrefix))
                 serviceDescription.Namespaces.Add(XRoadPrefix, XRoadNamespace);
 
-            var address = new XRoadAddressBinding(XRoadPrefix, XRoadNamespace) { Producer = producerName };
+            var address = new XRoadAddressBinding(XRoadPrefix, XRoadNamespace) { Producer = ProducerName };
 
             var servicePort = serviceDescription.Services[0].Ports[0];
             servicePort.Extensions.Add(address);
@@ -73,7 +73,7 @@ namespace XRoadLib.Schema
         {
             base.ExportProtocolDefinition(protocolDefinition);
 
-            protocolDefinition.ContractAssembly = contractAssembly;
+            protocolDefinition.ContractAssembly = _contractAssembly;
             protocolDefinition.TechNotesElementName = "technotes";
         }
     }

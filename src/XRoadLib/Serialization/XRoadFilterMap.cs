@@ -7,15 +7,15 @@ namespace XRoadLib.Serialization
 {
     public abstract class XRoadFilterMap<T> : IXRoadFilterMap
     {
-        private readonly string groupName;
-        private readonly ISet<string> enabledProperties = new SortedSet<string>();
+        private readonly string _groupName;
+        private readonly ISet<string> _enabledProperties = new SortedSet<string>();
 
-        string IXRoadFilterMap.GroupName => groupName;
-        ISet<string> IXRoadFilterMap.EnabledProperties => enabledProperties;
+        string IXRoadFilterMap.GroupName => _groupName;
+        ISet<string> IXRoadFilterMap.EnabledProperties => _enabledProperties;
 
         protected XRoadFilterMap(string groupName)
         {
-            this.groupName = groupName;
+            _groupName = groupName;
         }
 
         protected void Enable<TValue>(Expression<Func<T, TValue>> expression)
@@ -26,7 +26,7 @@ namespace XRoadLib.Serialization
             if (memberExpression.Expression != expression.Parameters[0])
                 throw new SchemaDefinitionException($"Only parameter members should be used in mapping definition ({GetType().Name}).");
 
-            enabledProperties.Add(memberExpression.Member.Name);
+            _enabledProperties.Add(memberExpression.Member.Name);
         }
     }
 }

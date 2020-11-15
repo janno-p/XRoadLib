@@ -11,15 +11,15 @@ namespace XRoadLib.Serialization.Mapping
 
     public class ArrayTypeMap<T> : TypeMap, IArrayTypeMap
     {
-        private readonly ISerializer serializer;
+        private readonly ISerializer _serializer;
 
-        private readonly ITypeMap elementTypeMap;
+        private readonly ITypeMap _elementTypeMap;
 
         public ArrayTypeMap(ISerializer serializer, CollectionDefinition collectionDefinition, ITypeMap elementTypeMap)
             : base(collectionDefinition)
         {
-            this.serializer = serializer;
-            this.elementTypeMap = elementTypeMap;
+            _serializer = serializer;
+            _elementTypeMap = elementTypeMap;
         }
 
         public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
@@ -60,12 +60,12 @@ namespace XRoadLib.Serialization.Mapping
 
                 if (reader.IsNilElement())
                 {
-                    items.Add(default(T));
+                    items.Add(default);
                     reader.Read();
                     continue;
                 }
 
-                var typeMap = serializer.GetTypeMapFromXsiType(reader, arrayContent.Item) ?? elementTypeMap;
+                var typeMap = _serializer.GetTypeMapFromXsiType(reader, arrayContent.Item) ?? _elementTypeMap;
 
                 var value = typeMap.Deserialize(reader, templateNode, arrayContent.Item.Content, message);
 
@@ -80,7 +80,7 @@ namespace XRoadLib.Serialization.Mapping
             var valueArray = (Array)value;
 
             if (!(content.Particle is RequestDefinition) && !content.MergeContent)
-                message.Style.WriteExplicitArrayType(writer, elementTypeMap.Definition.Name, valueArray.Length);
+                message.Style.WriteExplicitArrayType(writer, _elementTypeMap.Definition.Name, valueArray.Length);
 
             var arrayContent = (ArrayContentDefiniton)content;
             var itemName = arrayContent.Item.Content.Name;
@@ -91,7 +91,7 @@ namespace XRoadLib.Serialization.Mapping
 
                 if (valueItem != null)
                 {
-                    var typeMap = serializer != null ? serializer.GetTypeMap(valueItem.GetType()) : elementTypeMap;
+                    var typeMap = _serializer != null ? _serializer.GetTypeMap(valueItem.GetType()) : _elementTypeMap;
                     typeMap.Serialize(writer, templateNode, valueItem, arrayContent.Item.Content, message);
                 }
                 else writer.WriteNilAttribute();

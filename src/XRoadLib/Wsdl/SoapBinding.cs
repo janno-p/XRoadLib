@@ -9,7 +9,7 @@ namespace XRoadLib.Wsdl
 
         internal override void Write(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.SOAP, "binding", NamespaceConstants.SOAP);
+            writer.WriteStartElement(PrefixConstants.Soap, "binding", NamespaceConstants.Soap);
 
             if (Style != SoapBindingStyle.Default)
                 writer.WriteAttributeString("style", Style == SoapBindingStyle.Rpc ? "rpc" : "document");

@@ -16,22 +16,22 @@ namespace XRoadLib.Styles
 
         public override void WriteExplicitArrayType(XmlWriter writer, XName itemQualifiedName, int arraySize)
         {
-            writer.WriteTypeAttribute("Array", NamespaceConstants.SOAP_ENC);
+            writer.WriteTypeAttribute("Array", NamespaceConstants.SoapEnc);
             writer.WriteArrayTypeAttribute(itemQualifiedName, arraySize);
         }
 
         private XmlAttribute CreateArrayTypeAttribute(XName qualifiedName)
         {
-            var attribute = document.CreateAttribute(PrefixConstants.WSDL, "arrayType", NamespaceConstants.WSDL);
+            var attribute = Document.CreateAttribute(PrefixConstants.Wsdl, "arrayType", NamespaceConstants.Wsdl);
             attribute.Value = $"{qualifiedName.NamespaceName}:{qualifiedName.LocalName}[]";
             return attribute;
         }
 
         public override void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, Action<string> addSchemaImport)
         {
-            addSchemaImport(NamespaceConstants.SOAP_ENC);
+            addSchemaImport(NamespaceConstants.SoapEnc);
 
-            var schemaAttribute = new XmlSchemaAttribute { RefName = new XmlQualifiedName("arrayType", NamespaceConstants.SOAP_ENC) };
+            var schemaAttribute = new XmlSchemaAttribute { RefName = new XmlQualifiedName("arrayType", NamespaceConstants.SoapEnc) };
 
             if (itemElement.SchemaTypeName != null)
             {
@@ -41,7 +41,7 @@ namespace XRoadLib.Styles
 
             var restriction = new XmlSchemaComplexContentRestriction
             {
-                BaseTypeName = new XmlQualifiedName("Array", NamespaceConstants.SOAP_ENC),
+                BaseTypeName = new XmlQualifiedName("Array", NamespaceConstants.SoapEnc),
                 Particle = new XmlSchemaSequence { Items = { itemElement } },
                 Attributes = { schemaAttribute }
             };
@@ -54,7 +54,7 @@ namespace XRoadLib.Styles
             return new SoapBinding
             {
                 Style = SoapBindingStyle.Rpc,
-                Transport = NamespaceConstants.HTTP
+                Transport = NamespaceConstants.Http
             };
         }
 
@@ -62,7 +62,7 @@ namespace XRoadLib.Styles
 
         public override SoapBodyBinding CreateSoapBodyBinding(string targetNamespace)
         {
-            return new SoapBodyBinding { Use = SoapBindingUse.Encoded, Namespace = targetNamespace, Encoding = NamespaceConstants.SOAP_ENC };
+            return new SoapBodyBinding { Use = SoapBindingUse.Encoded, Namespace = targetNamespace, Encoding = NamespaceConstants.SoapEnc };
         }
 
         public override SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace)
@@ -73,7 +73,7 @@ namespace XRoadLib.Styles
                 Part = headerName.LocalName,
                 Use = SoapBindingUse.Encoded,
                 Namespace = headerName.NamespaceName,
-                Encoding = NamespaceConstants.SOAP_ENC
+                Encoding = NamespaceConstants.SoapEnc
             };
         }
 

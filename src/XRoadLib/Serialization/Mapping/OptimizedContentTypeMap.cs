@@ -32,16 +32,16 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.NodeType != XmlNodeType.Element)
                 return DeserializeBase64Content(reader, message);
 
-            if (!reader.MoveToElement(reader.Depth, XName.Get("Include", NamespaceConstants.XOP)))
+            if (!reader.MoveToElement(reader.Depth, XName.Get("Include", NamespaceConstants.Xop)))
                 throw new InvalidQueryException("Missing `xop:Include` reference to multipart content.");
 
-            var contentID = reader.GetAttribute("href");
-            if (string.IsNullOrWhiteSpace(contentID))
+            var contentId = reader.GetAttribute("href");
+            if (string.IsNullOrWhiteSpace(contentId))
                 throw new InvalidQueryException("Missing `href` attribute to multipart content.");
 
-            var attachment = message.GetAttachment(contentID.Substring(4));
+            var attachment = message.GetAttachment(contentId.Substring(4));
             if (attachment == null)
-                throw new InvalidQueryException($"MIME multipart message does not contain message part with ID `{contentID}`.");
+                throw new InvalidQueryException($"MIME multipart message does not contain message part with ID `{contentId}`.");
 
             return attachment.ContentStream;
         }
@@ -78,9 +78,9 @@ namespace XRoadLib.Serialization.Mapping
 
             message.Style.WriteType(writer, Definition, content);
 
-            writer.WriteStartElement(PrefixConstants.XOP, "Include", NamespaceConstants.XOP);
+            writer.WriteStartElement(PrefixConstants.Xop, "Include", NamespaceConstants.Xop);
 
-            writer.WriteAttributeString("href", $"cid:{attachment.ContentID}");
+            writer.WriteAttributeString("href", $"cid:{attachment.ContentId}");
 
             writer.WriteEndElement();
         }

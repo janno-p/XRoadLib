@@ -12,8 +12,8 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class EnumTypeMap : TypeMap
     {
-        private readonly IDictionary<string, int> deserializationMapping = new Dictionary<string, int>();
-        private readonly IDictionary<int, string> serializationMapping = new Dictionary<int, string>();
+        private readonly IDictionary<string, int> _deserializationMapping = new Dictionary<string, int>();
+        private readonly IDictionary<int, string> _serializationMapping = new Dictionary<int, string>();
 
         public EnumTypeMap(TypeDefinition typeDefinition)
             : base(typeDefinition)
@@ -24,8 +24,8 @@ namespace XRoadLib.Serialization.Mapping
                 var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
                 var value = (attribute?.Name).GetValueOrDefault(name);
                 var enumValue = (int)Enum.Parse(typeDefinition.Type, name);
-                deserializationMapping.Add(value, enumValue);
-                serializationMapping.Add(enumValue, value);
+                _deserializationMapping.Add(value, enumValue);
+                _serializationMapping.Add(enumValue, value);
             }
         }
 
@@ -35,7 +35,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var stringValue = isEmptyElement ? "" : reader.ReadElementContentAsString();
 
-            if (!deserializationMapping.TryGetValue(stringValue, out var enumerationValue))
+            if (!_deserializationMapping.TryGetValue(stringValue, out var enumerationValue))
                 throw new UnexpectedValueException($"Unexpected value `{stringValue}` for enumeration type `{Definition.Name}`.", Definition, stringValue);
 
             var result = Enum.ToObject(Definition.Type, enumerationValue);
@@ -47,7 +47,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             message.Style.WriteType(writer, Definition, content);
 
-            if (!serializationMapping.TryGetValue((int)value, out var enumerationValue))
+            if (!_serializationMapping.TryGetValue((int)value, out var enumerationValue))
                 throw new UnexpectedValueException($"Cannot map value `{value}` to enumeration type `{Definition.Name}`.", Definition, value);
 
             writer.WriteValue(enumerationValue);
