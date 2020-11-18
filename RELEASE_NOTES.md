@@ -1,4 +1,4 @@
-#### 1.4.0 - Unreleased
+#### 1.4.0 - 18.11.2020
 
 * Add error logging for unexpected errors during request processing.
 * Fix 'headers already sent' error if exception is thrown during response processing.

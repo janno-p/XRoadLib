@@ -1,7 +1,11 @@
-#### 1.3.10 - 13.11.2020
+#### 1.4.0 - 18.11.2020
 
 * Add error logging for unexpected errors during request processing.
 * Fix 'headers already sent' error if exception is thrown during response processing.
+* Change minimum target framework to netstandard2.0.
+* Remove legacy X-Road protocol support.
+* Refactor to asynchronous IO.
+* Remove ASP.NET Classic support library.
 
 #### 1.3.9 - 12.12.2019
 
