@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 
@@ -11,16 +12,18 @@ namespace XRoadLib.Wsdl
         public List<OperationBinding> Operations { get; } = new List<OperationBinding>();
         public XmlQualifiedName Type { get; set; }
 
-        protected override void WriteAttributes(XmlWriter writer)
+        protected override async Task WriteAttributesAsync(XmlWriter writer)
         {
-            base.WriteAttributes(writer);
-            writer.WriteQualifiedAttribute("type", Type);
+            await base.WriteAttributesAsync(writer).ConfigureAwait(false);
+            await writer.WriteQualifiedAttributeAsync("type", Type).ConfigureAwait(false);
         }
 
-        protected override void WriteElements(XmlWriter writer)
+        protected override async Task WriteElementsAsync(XmlWriter writer)
         {
-            base.WriteElements(writer);
-            Operations.ForEach(x => x.Write(writer));
+            await base.WriteElementsAsync(writer).ConfigureAwait(false);
+
+            foreach (var operation in Operations)
+                await operation.WriteAsync(writer).ConfigureAwait(false);
         }
     }
 }

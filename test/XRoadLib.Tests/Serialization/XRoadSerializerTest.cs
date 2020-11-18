@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -22,7 +23,7 @@ namespace XRoadLib.Tests.Serialization
             { }
         }
 
-        private static void SerializeWithContext<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, Action<XRoadMessage, string> f)
+        private static async Task SerializeWithContextAsync<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, Action<XRoadMessage, string> f)
         {
             var message = Globals.ServiceManager.CreateMessage();
             message.IsMultipartContainer = true;
@@ -31,18 +32,18 @@ namespace XRoadLib.Tests.Serialization
             using (message)
             using (var stream = new MemoryStream())
             using (var tw = new StreamWriter(stream, Encoding.UTF8))
-            using (var writer = XmlWriter.Create(tw))
+            using (var writer = XmlWriter.Create(tw, new XmlWriterSettings { Async = true }))
             {
                 if (addEnvelope)
                 {
-                    writer.WriteStartElement("Envelope");
-                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.SoapEnc, NamespaceConstants.Xmlns, NamespaceConstants.SoapEnc);
-                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Xsi, NamespaceConstants.Xmlns, NamespaceConstants.Xsi);
-                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Xsd, NamespaceConstants.Xmlns, NamespaceConstants.Xsd);
-                    writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Target, NamespaceConstants.Xmlns, Globals.ServiceManager.ProducerNamespace);
+                    await writer.WriteStartElementAsync("Envelope");
+                    await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.SoapEnc, NamespaceConstants.Xmlns, NamespaceConstants.SoapEnc);
+                    await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.Xsi, NamespaceConstants.Xmlns, NamespaceConstants.Xsi);
+                    await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.Xsd, NamespaceConstants.Xmlns, NamespaceConstants.Xsd);
+                    await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.Target, NamespaceConstants.Xmlns, Globals.ServiceManager.ProducerNamespace);
                 }
 
-                writer.WriteStartElement(elementName);
+                await writer.WriteStartElementAsync(elementName);
 
                 var propType = typeof(X<>).MakeGenericType(typeof(T));
                 var methodInfo = propType.GetTypeInfo().GetMethod("Method");
@@ -51,35 +52,33 @@ namespace XRoadLib.Tests.Serialization
                 var requestDefinition = new RequestDefinition(operationDefinition, _ => false);
 
                 var typeMap = Globals.ServiceManager.GetSerializer(dtoVersion).GetTypeMap(typeof(T));
-                typeMap.Serialize(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition.Content, message);
+                await typeMap.SerializeAsync(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition.Content, message);
 
-                writer.WriteEndElement();
+                await writer.WriteEndElementAsync();
 
                 if (addEnvelope)
-                    writer.WriteEndElement();
+                    await writer.WriteEndElementAsync();
 
-                writer.Flush();
+                await writer.FlushAsync();
 
                 stream.Position = 0;
-                using (var reader = new StreamReader(stream))
-                {
-                    if (!addEnvelope)
-                    {
-                        f(message, reader.ReadToEnd());
-                        return;
-                    }
+                using var reader = new StreamReader(stream);
 
-                    using (var xmlReader = XmlReader.Create(reader))
-                    {
-                        xmlReader.MoveToElement(0, "Envelope");
-                        f(message, xmlReader.ReadInnerXml());
-                    }
+                if (!addEnvelope)
+                {
+                    f(message, await reader.ReadToEndAsync());
+                    return;
                 }
+
+                using var xmlReader = XmlReader.Create(reader, new XmlReaderSettings { Async = true });
+
+                await xmlReader.MoveToElementAsync(0, "Envelope");
+                f(message, await xmlReader.ReadInnerXmlAsync());
             }
         }
 
         [Fact]
-        public void CanSerializeTypeWithIdenticalPropertyNamesWhenCaseIgnored()
+        public async Task CanSerializeTypeWithIdenticalPropertyNamesWhenCaseIgnored()
         {
             var cls = new IgnoreCaseClass
             {
@@ -96,7 +95,7 @@ namespace XRoadLib.Tests.Serialization
                            "<ObjektID>3</ObjektID>" +
                            "</keha>";
 
-            SerializeWithContext("keha", cls, 1u, true, (msg, xml) =>
+            await SerializeWithContextAsync("keha", cls, 1u, true, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -104,7 +103,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeArrayContentInEnvelope()
+        public async Task CanSerializeArrayContentInEnvelope()
         {
             var value = new[] { 5, 4, 3 };
 
@@ -114,7 +113,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<item>3</item>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 1u, true, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 1u, true, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -122,7 +121,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeArrayContent()
+        public async Task CanSerializeArrayContent()
         {
             var value = new[] { 5, 4, 3 };
 
@@ -133,7 +132,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<item>3</item>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -141,9 +140,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeBooleanFalseValue()
+        public async Task CanSerializeBooleanFalseValue()
         {
-            SerializeWithContext("keha", false, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", false, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>false</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -151,9 +150,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeBooleanTrueValue()
+        public async Task CanSerializeBooleanTrueValue()
         {
-            SerializeWithContext("keha", true, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", true, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>true</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -161,9 +160,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeDateTimeValue()
+        public async Task CanSerializeDateTimeValue()
         {
-            SerializeWithContext("keha", new DateTime(2000, 10, 12, 4, 14, 55, 989), 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", new DateTime(2000, 10, 12, 4, 14, 55, 989), 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>2000-10-12T04:14:55.989</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -171,9 +170,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeDecimalValue()
+        public async Task CanSerializeDecimalValue()
         {
-            SerializeWithContext("keha", 0.4M, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", 0.4M, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>0.4</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -181,9 +180,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeFloatValue()
+        public async Task CanSerializeFloatValue()
         {
-            SerializeWithContext("keha", 0.1f, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", 0.1f, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>0.1</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -191,9 +190,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeIntValue()
+        public async Task CanSerializeIntValue()
         {
-            SerializeWithContext("keha", 44345, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", 44345, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>44345</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -201,9 +200,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeShortValue()
+        public async Task CanSerializeShortValue()
         {
-            SerializeWithContext("keha", (short)445, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", (short)445, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>445</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -211,9 +210,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeLongValue()
+        public async Task CanSerializeLongValue()
         {
-            SerializeWithContext("keha", 44345L, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", 44345L, 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>44345</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -221,7 +220,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeLongArrayValue()
+        public async Task CanSerializeLongArrayValue()
         {
             var value = new[] { 5L, 4L, 3L };
 
@@ -232,7 +231,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<item>3</item>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -240,9 +239,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeShortDateTimeValue()
+        public async Task CanSerializeShortDateTimeValue()
         {
-            SerializeWithContext("keha", new DateTime(2000, 10, 12), 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", new DateTime(2000, 10, 12), 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>2000-10-12T00:00:00</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -250,9 +249,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeStringValue()
+        public async Task CanSerializeStringValue()
         {
-            SerializeWithContext("keha", "someString", 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", "someString", 2u, false, (msg, xml) =>
             {
                 Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>someString</keha>", xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -260,7 +259,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeStructValue()
+        public async Task CanSerializeStructValue()
         {
             var value = new TestDto
             {
@@ -276,7 +275,7 @@ namespace XRoadLib.Tests.Serialization
                          + "<Loodud>2000-12-12T12:12:12</Loodud>"
                          + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -284,7 +283,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeBinaryValue()
+        public async Task CanSerializeBinaryValue()
         {
             using var stream = new MemoryStream();
 
@@ -295,7 +294,7 @@ namespace XRoadLib.Tests.Serialization
                                     + "<Sisu href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" />"
                                     + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(1, msg.AllAttachments.Count);
@@ -303,7 +302,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeHexBinaryValue()
+        public async Task CanSerializeHexBinaryValue()
         {
             using var stream = new MemoryStream();
 
@@ -314,7 +313,7 @@ namespace XRoadLib.Tests.Serialization
                                     + "<Sisu href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" />"
                                     + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(1, msg.AllAttachments.Count);
@@ -322,7 +321,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeDateTypeWithCustomName()
+        public async Task CanSerializeDateTypeWithCustomName()
         {
             var value = new DateTestDto { Synniaeg = new DateTime(2012, 11, 26, 16, 29, 13) };
 
@@ -331,7 +330,7 @@ namespace XRoadLib.Tests.Serialization
                                     + "<ttIsik.dSyn>2012-11-26</ttIsik.dSyn>"
                                     + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -339,7 +338,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void SerializeDefaultDtoVersion()
+        public async Task SerializeDefaultDtoVersion()
         {
             var value = new WsdlChangesTestDto
             {
@@ -365,7 +364,7 @@ namespace XRoadLib.Tests.Serialization
                                     + "<StaticProperty>6</StaticProperty>"
                                     + "</keha>";
 
-            SerializeWithContext("keha", value, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -373,7 +372,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void SerializeV1DtoVersion()
+        public async Task SerializeV1DtoVersion()
         {
             var value = new WsdlChangesTestDto
             {
@@ -396,7 +395,7 @@ namespace XRoadLib.Tests.Serialization
                                     + "<StaticProperty>6</StaticProperty>"
                                     + "</keha>";
 
-            SerializeWithContext("keha", value, 1u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", value, 1u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -404,7 +403,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeAnonymousType()
+        public async Task CanSerializeAnonymousType()
         {
             var entity = new ContainerType
             {
@@ -427,7 +426,7 @@ namespace XRoadLib.Tests.Serialization
                                     + "<KnownProperty>value</KnownProperty>"
                                     + "</keha>";
 
-            SerializeWithContext("keha", entity, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", entity, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);
@@ -435,7 +434,7 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanSerializeMergedArrayContent()
+        public async Task CanSerializeMergedArrayContent()
         {
             var entity = new TestMergedArrayContent
             {
@@ -454,7 +453,7 @@ namespace XRoadLib.Tests.Serialization
                 + "<Value2>Joy</Value2>"
                 + "</keha>";
 
-            SerializeWithContext("keha", entity, 2u, false, (msg, xml) =>
+            await SerializeWithContextAsync("keha", entity, 2u, false, (msg, xml) =>
             {
                 Assert.Equal(expected, xml);
                 Assert.Equal(0, msg.AllAttachments.Count);

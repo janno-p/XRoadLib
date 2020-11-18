@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -30,30 +31,35 @@ namespace XRoadLib.Wsdl
             }
         }
 
-        internal void Write(XmlWriter writer)
+        internal async Task WriteAsync(XmlWriter writer)
         {
-            WriteStartElement(writer, ElementName);
-            WriteAttributes(writer);
-            WriteElements(writer);
-            writer.WriteEndElement();
+            await WriteStartElementAsync(writer, ElementName).ConfigureAwait(false);
+            await WriteAttributesAsync(writer).ConfigureAwait(false);
+            await WriteElementsAsync(writer).ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
-        protected virtual void WriteAttributes(XmlWriter writer)
+        protected virtual async Task WriteAttributesAsync(XmlWriter writer)
         {
-            Namespaces.Where(x => !string.IsNullOrWhiteSpace(x.Value) && writer.LookupPrefix(x.Value) != x.Key)
-                      .ToList()
-                      .ForEach(ns => writer.WriteAttributeString(PrefixConstants.Xmlns, ns.Key, NamespaceConstants.Xmlns, ns.Value));
+            var namespaces =
+                Namespaces.Where(x => !string.IsNullOrWhiteSpace(x.Value) && writer.LookupPrefix(x.Value) != x.Key)
+                          .ToList();
+
+            foreach (var ns in namespaces)
+                await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, ns.Key, NamespaceConstants.Xmlns, ns.Value).ConfigureAwait(false);
 
             ExtensibleAttributes.ForEach(x => x.WriteTo(writer));
         }
 
-        protected virtual void WriteElements(XmlWriter writer)
+        protected virtual async Task WriteElementsAsync(XmlWriter writer)
         {
-            Extensions.ForEach(x => x.Write(writer));
+            foreach (var extension in Extensions)
+                await extension.WriteAsync(writer).ConfigureAwait(false);
+
             DocumentationElement?.WriteTo(writer);
         }
 
-        protected void WriteStartElement(XmlWriter writer, string name)
+        protected Task WriteStartElementAsync(XmlWriter writer, string name)
         {
             var prefix =
                 Namespaces.Where(kvp => kvp.Value == NamespaceConstants.Wsdl)
@@ -62,7 +68,7 @@ namespace XRoadLib.Wsdl
                 ?? writer.LookupPrefix(NamespaceConstants.Wsdl)
                 ?? "";
 
-            writer.WriteStartElement(prefix, name, NamespaceConstants.Wsdl);
+            return writer.WriteStartElementAsync(prefix, name, NamespaceConstants.Wsdl);
         }
     }
 }

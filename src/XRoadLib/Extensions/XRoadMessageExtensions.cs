@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.XPath;
 using XRoadLib.Schema;
@@ -17,28 +18,27 @@ namespace XRoadLib.Extensions
         /// Deserializes X-Road message response or throws <see>XRoadFaultException</see> when
         /// X-Road fault is parsed from the message instead of expected result value.
         /// </summary>
-        public static object DeserializeMessageContent(this XRoadMessage message, IServiceMap serviceMap, IMessageFormatter messageFormatter)
+        public static async Task<object> DeserializeMessageContentAsync(this XRoadMessage message, IServiceMap serviceMap, IMessageFormatter messageFormatter)
         {
             if (serviceMap.ResponseDefinition.ContainsNonTechnicalFault)
-                ThrowIfXRoadFault(message, serviceMap, messageFormatter);
+                await ThrowIfXRoadFaultAsync(message, serviceMap, messageFormatter).ConfigureAwait(false);
 
             message.ContentStream.Position = 0;
-            using (var reader = XmlReader.Create(message.ContentStream))
-            {
-                messageFormatter.MoveToBody(reader);
+            using var reader = XmlReader.Create(message.ContentStream, new XmlReaderSettings { Async = true });
 
-                if (!reader.MoveToElement(2))
-                    throw new InvalidQueryException("No payload element in SOAP message.");
+            await messageFormatter.MoveToBodyAsync(reader).ConfigureAwait(false);
 
-                messageFormatter.ThrowSoapFaultIfPresent(reader);
+            if (!await reader.MoveToElementAsync(2).ConfigureAwait(false))
+                throw new InvalidQueryException("No payload element in SOAP message.");
 
-                var result = serviceMap.DeserializeResponse(reader, message);
+            await messageFormatter.ThrowSoapFaultIfPresentAsync(reader).ConfigureAwait(false);
 
-                return result is XRoadFault fault ? throw new XRoadFaultException(fault) : result;
-            }
+            var result = await serviceMap.DeserializeResponseAsync(reader, message).ConfigureAwait(false);
+
+            return result is XRoadFault fault ? throw new XRoadFaultException(fault) : result;
         }
 
-        private static void ThrowIfXRoadFault(XRoadMessage message, IServiceMap serviceMap, IMessageFormatter messageFormatter)
+        private static async Task ThrowIfXRoadFaultAsync(XRoadMessage message, IServiceMap serviceMap, IMessageFormatter messageFormatter)
         {
             message.ContentStream.Position = 0;
 
@@ -46,24 +46,21 @@ namespace XRoadLib.Extensions
             var responseElement = serviceMap.ResponseDefinition.Content.Name;
             var pathRoot = $"/*[local-name()='Envelope' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='Body' and namespace-uri()='http://schemas.xmlsoap.org/soap/envelope/']/*[local-name()='{wrapperElement.LocalName}' and namespace-uri()='{wrapperElement.NamespaceName}']/*[local-name()='{responseElement.LocalName}' and namespace-uri()='{responseElement.NamespaceName}']";
 
-            var doc = new XPathDocument(XmlReader.Create(message.ContentStream));
+            var doc = new XPathDocument(XmlReader.Create(message.ContentStream, new XmlReaderSettings { Async = true }));
             var navigator = doc.CreateNavigator();
 
             if (navigator.SelectSingleNode($"{pathRoot}/faultCode | {pathRoot}/faultString") != null)
-                throw new XRoadFaultException(serviceMap.DeserializeXRoadFault(message, messageFormatter));
+                throw new XRoadFaultException(await serviceMap.DeserializeXRoadFaultAsync(message, messageFormatter).ConfigureAwait(false));
         }
 
         public static T? HandleEmptyElementOfValueType<T>(this XRoadMessage message, ContentDefinition content, Func<T?> getStrictValue) where T : struct
         {
-            switch (content.EmptyTagHandlingMode ?? message.ServiceManager.ProtocolDefinition.EmptyTagHandlingMode)
+            return (content.EmptyTagHandlingMode ?? message.ServiceManager.ProtocolDefinition.EmptyTagHandlingMode) switch
             {
-                case EmptyTagHandlingMode.DefaultValue:
-                    return default(T);
-                case EmptyTagHandlingMode.Null:
-                    return null;
-                default:
-                    return getStrictValue();
-            }
+                EmptyTagHandlingMode.DefaultValue => default,
+                EmptyTagHandlingMode.Null => null,
+                _ => getStrictValue()
+            };
         }
     }
 }

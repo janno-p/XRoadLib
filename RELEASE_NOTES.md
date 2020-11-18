@@ -4,6 +4,8 @@
 * Fix 'headers already sent' error if exception is thrown during response processing.
 * Change minimum target framework to netstandard2.0.
 * Remove legacy X-Road protocol support.
+* Refactor to asynchronous IO.
+* Remove ASP.NET Classic support library.
 
 #### 1.3.9 - 12.12.2019
 

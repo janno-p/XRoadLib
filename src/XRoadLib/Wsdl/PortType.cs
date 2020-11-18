@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -9,10 +10,12 @@ namespace XRoadLib.Wsdl
 
         public List<Operation> Operations { get; } = new List<Operation>();
 
-        protected override void WriteElements(XmlWriter writer)
+        protected override async Task WriteElementsAsync(XmlWriter writer)
         {
-            base.WriteElements(writer);
-            Operations.ForEach(x => x.Write(writer));
+            await base.WriteElementsAsync(writer).ConfigureAwait(false);
+
+            foreach (var operation in Operations)
+                await operation.WriteAsync(writer).ConfigureAwait(false);
         }
     }
 }

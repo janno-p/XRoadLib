@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -20,15 +21,15 @@ namespace XRoadLib.Serialization.Mapping
             Serializer = serializer;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+        public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            message.Style.WriteType(writer, Definition, content);
+            await message.Style.WriteTypeAsync(writer, Definition, content).ConfigureAwait(false);
 
             if (ContentPropertyMap != null)
             {
                 var childTemplateNode = templateNode?[ContentPropertyMap.Definition.TemplateName, message.Version];
                 if (templateNode == null || childTemplateNode != null)
-                    ContentPropertyMap.Serialize(writer, childTemplateNode, value, message);
+                    await ContentPropertyMap.SerializeAsync(writer, childTemplateNode, value, message).ConfigureAwait(false);
                 return;
             }
 
@@ -36,7 +37,7 @@ namespace XRoadLib.Serialization.Mapping
             {
                 var childTemplateNode = templateNode?[propertyMap.Definition.TemplateName, message.Version];
                 if (templateNode == null || childTemplateNode != null)
-                    propertyMap.Serialize(writer, childTemplateNode, value, message);
+                    await propertyMap.SerializeAsync(writer, childTemplateNode, value, message).ConfigureAwait(false);
             }
         }
 

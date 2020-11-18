@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Headers;
 using XRoadLib.Schema;
@@ -32,7 +33,7 @@ namespace XRoadLib
         /// <summary>
         /// Check if envelope defines given protocol schema.
         /// </summary>
-        bool IsDefinedByEnvelope(XmlReader reader);
+        Task<bool> IsDefinedByEnvelopeAsync(XmlReader reader);
 
         /// <summary>
         /// Main namespace which defines current producer operations and types.
@@ -78,6 +79,6 @@ namespace XRoadLib
         /// <param name="header">Soap header part of outgoing serialized X-Road message.</param>
         /// <param name="options">Additional options to configure service call execution.</param>
         /// <returns>Deserialized value of X-Road response message Soap body.</returns>
-        object Execute(WebRequest webRequest, object body, ISoapHeader header, ServiceExecutionOptions options = null);
+        Task<object> ExecuteAsync(WebRequest webRequest, object body, ISoapHeader header, ServiceExecutionOptions options = null);
     }
 }

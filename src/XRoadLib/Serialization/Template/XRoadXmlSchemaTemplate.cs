@@ -50,7 +50,7 @@ namespace XRoadLib.Serialization.Template
 
             public XRoadXmlSchemaTemplateNode(XmlSchemaElement element, XmlSchema schema)
             {
-                this._schema = schema;
+                _schema = schema;
 
                 _nodeElement = element;
 

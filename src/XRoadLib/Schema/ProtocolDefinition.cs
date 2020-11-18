@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Serialization;
@@ -26,7 +27,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Callback function to be used to detect protocol from SOAP envelope element.
         /// </summary>
-        public Func<XmlReader, bool> DetectEnvelope { get; set; }
+        public Func<XmlReader, Task<bool>> DetectEnvelopeAsync { get; set; }
 
         /// <summary>
         /// Assembly that defines types for serialization.

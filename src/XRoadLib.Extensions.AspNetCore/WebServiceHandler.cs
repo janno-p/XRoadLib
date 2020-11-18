@@ -23,12 +23,13 @@ namespace XRoadLib.Extensions.AspNetCore
         public abstract Task HandleRequestAsync(WebServiceContext context);
 
         /// <inheritdoc />
-        public virtual Task HandleExceptionAsync(WebServiceContext context, Exception exception, IFault fault)
+        public virtual async Task HandleExceptionAsync(WebServiceContext context, Exception exception, IFault fault)
         {
-            using (var writer = XmlWriter.Create(new StreamWriter(context.HttpContext.Response.Body, XRoadEncoding.Utf8)))
-                context.MessageFormatter.WriteSoapFault(writer, fault);
+            var writer = XmlWriter.Create(context.HttpContext.Response.Body, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 });
 
-            return Task.CompletedTask;
+            await context.MessageFormatter.WriteSoapFaultAsync(writer, fault).ConfigureAwait(false);
+
+            await writer.FlushAsync().ConfigureAwait(false);
         }
 
         public virtual void Dispose()

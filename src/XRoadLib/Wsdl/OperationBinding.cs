@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -9,11 +10,15 @@ namespace XRoadLib.Wsdl
         public InputBinding Input { get; set; }
         public OutputBinding Output { get; set; }
 
-        protected override void WriteElements(XmlWriter writer)
+        protected override async Task WriteElementsAsync(XmlWriter writer)
         {
-            base.WriteElements(writer);
-            Input?.Write(writer);
-            Output?.Write(writer);
+            await base.WriteElementsAsync(writer).ConfigureAwait(false);
+
+            if (Input != null)
+                await Input.WriteAsync(writer).ConfigureAwait(false);
+
+            if (Output != null)
+                await Output.WriteAsync(writer).ConfigureAwait(false);
         }
     }
 }

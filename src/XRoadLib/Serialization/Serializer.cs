@@ -29,7 +29,7 @@ namespace XRoadLib.Serialization
 
         public Serializer(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
         {
-            this._schemaDefinitionProvider = schemaDefinitionProvider;
+            _schemaDefinitionProvider = schemaDefinitionProvider;
 
             _availableFilters = schemaDefinitionProvider.ProtocolDefinition.EnabledFilters;
             _contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
@@ -192,7 +192,7 @@ namespace XRoadLib.Serialization
             if (!(typeMap is ICompositeTypeMap compositeTypeMap))
                 return _runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
 
-            partialTypeMaps = partialTypeMaps ?? new Dictionary<Type, ITypeMap>();
+            partialTypeMaps ??= new Dictionary<Type, ITypeMap>();
             partialTypeMaps.Add(typeDefinition.Type, compositeTypeMap);
             compositeTypeMap.InitializeProperties(GetRuntimeProperties(typeDefinition, partialTypeMaps), _availableFilters);
             partialTypeMaps.Remove(typeDefinition.Type);

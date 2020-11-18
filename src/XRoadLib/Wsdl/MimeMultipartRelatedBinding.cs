@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -7,11 +8,14 @@ namespace XRoadLib.Wsdl
     {
         public List<MimePart> Parts { get; } = new List<MimePart>();
 
-        internal override void Write(XmlWriter writer)
+        internal override async Task WriteAsync(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.Mime, "multipartRelated", NamespaceConstants.Mime);
-            Parts.ForEach(x => x.Write(writer));
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync(PrefixConstants.Mime, "multipartRelated", NamespaceConstants.Mime).ConfigureAwait(false);
+
+            foreach (var part in Parts)
+                await part.WriteAsync(writer).ConfigureAwait(false);
+
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }

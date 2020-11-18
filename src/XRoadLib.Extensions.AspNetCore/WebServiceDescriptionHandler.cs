@@ -15,12 +15,8 @@ namespace XRoadLib.Extensions.AspNetCore
         { }
 
         /// <inheritdoc />
-        public override Task HandleRequestAsync(WebServiceContext context)
-        {
+        public override Task HandleRequestAsync(WebServiceContext context) =>
             ServiceManager.CreateServiceDescription()
-                          .SaveTo(context.HttpContext.Response.Body);
-
-            return Task.CompletedTask;
-        }
+                          .WriteAsync(context.HttpContext.Response.Body);
     }
 }

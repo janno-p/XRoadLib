@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -75,11 +76,11 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Read next header value from the XML reader object.
         /// </summary>
-        public virtual void ReadHeaderValue(XmlReader reader)
+        public virtual async Task ReadHeaderValueAsync(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.XRoadRepr && reader.LocalName == "representedParty")
             {
-                RepresentedParty = ReadRepresentedParty(reader);
+                RepresentedParty = await ReadRepresentedPartyAsync(reader).ConfigureAwait(false);
                 return;
             }
 
@@ -88,35 +89,35 @@ namespace XRoadLib.Headers
                 switch (reader.LocalName)
                 {
                     case "client":
-                        Client = ReadClient(reader);
+                        Client = await ReadClientAsync(reader).ConfigureAwait(false);
                         return;
 
                     case "service":
-                        Service = ReadService(reader);
+                        Service = await ReadServiceAsync(reader).ConfigureAwait(false);
                         return;
 
                     case "centralService":
-                        CentralService = ReadCentralService(reader);
+                        CentralService = await ReadCentralServiceAsync(reader).ConfigureAwait(false);
                         return;
 
                     case "id":
-                        Id = reader.ReadElementContentAsString();
+                        Id = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                         return;
 
                     case "userId":
-                        UserId = reader.ReadElementContentAsString();
+                        UserId = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                         return;
 
                     case "issue":
-                        Issue = reader.ReadElementContentAsString();
+                        Issue = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                         return;
 
                     case "protocolVersion":
-                        ProtocolVersion = reader.ReadElementContentAsString();
+                        ProtocolVersion = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                         return;
 
                     case "requestHash":
-                        RequestHash = ReadRequestHash(reader);
+                        RequestHash = await ReadRequestHashAsync(reader).ConfigureAwait(false);
                         return;
                 }
             }
@@ -124,7 +125,7 @@ namespace XRoadLib.Headers
             throw new InvalidQueryException($"Unexpected X-Road header element `{reader.GetXName()}`.");
         }
 
-        private static XRoadRepresentedParty ReadRepresentedParty(XmlReader reader)
+        private static async Task<XRoadRepresentedParty> ReadRepresentedPartyAsync(XmlReader reader)
         {
             var qualifiedName = reader.GetXName();
 
@@ -134,12 +135,12 @@ namespace XRoadLib.Headers
             var representedParty = new XRoadRepresentedParty();
 
             var depth = reader.Depth;
-            var success = reader.MoveToElement(depth + 1);
+            var success = await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false);
 
             if (success && reader.LocalName == "partyClass" && reader.NamespaceURI == NamespaceConstants.XRoadRepr)
             {
-                representedParty.Class = reader.ReadElementContentAsString();
-                success = reader.MoveToElement(depth + 1);
+                representedParty.Class = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false);
             }
 
             if (!success)
@@ -147,15 +148,15 @@ namespace XRoadLib.Headers
 
             if (reader.LocalName == "partyCode" && reader.NamespaceURI == NamespaceConstants.XRoadRepr)
             {
-                representedParty.Code = reader.ReadElementContentAsString();
-                if (!reader.MoveToElement(depth + 1))
+                representedParty.Code = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false))
                     return representedParty;
             }
 
             throw new InvalidQueryException($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
         }
 
-        private static XRoadClientIdentifier ReadClient(XmlReader reader)
+        private static async Task<XRoadClientIdentifier> ReadClientAsync(XmlReader reader)
         {
             var qualifiedName = reader.GetXName();
 
@@ -171,24 +172,24 @@ namespace XRoadLib.Headers
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have attribute `{XName.Get("objectType", NamespaceConstants.XRoadId)}` value.");
             client.ObjectType = GetObjectType(objectType);
 
-            if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XRoadId)
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("xRoadInstance", NamespaceConstants.XRoadId)}`.");
-            client.XRoadInstance = reader.ReadElementContentAsString();
+            client.XRoadInstance = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberClass" || reader.NamespaceURI != NamespaceConstants.XRoadId)
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false) || reader.LocalName != "memberClass" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("memberClass", NamespaceConstants.XRoadId)}`.");
-            client.MemberClass = reader.ReadElementContentAsString();
+            client.MemberClass = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberCode" || reader.NamespaceURI != NamespaceConstants.XRoadId)
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false) || reader.LocalName != "memberCode" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("memberCode", NamespaceConstants.XRoadId)}`.");
-            client.MemberCode = reader.ReadElementContentAsString();
+            client.MemberCode = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            var success = reader.MoveToElement(depth + 1);
+            var success = await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false);
 
             if (success && reader.LocalName == "subsystemCode" && reader.NamespaceURI == NamespaceConstants.XRoadId)
             {
-                client.SubsystemCode = reader.ReadElementContentAsString();
-                success = reader.MoveToElement(depth + 1);
+                client.SubsystemCode = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false);
             }
 
             if (success)
@@ -197,7 +198,7 @@ namespace XRoadLib.Headers
             return client;
         }
 
-        private static XRoadServiceIdentifier ReadService(XmlReader reader)
+        private static async Task<XRoadServiceIdentifier> ReadServiceAsync(XmlReader reader)
         {
             var qualifiedName = reader.GetXName();
 
@@ -213,34 +214,34 @@ namespace XRoadLib.Headers
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have attribute `{XName.Get("objectType", NamespaceConstants.XRoadId)}` value.");
             service.ObjectType = GetObjectType(objectType);
 
-            if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XRoadId)
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("xRoadInstance", NamespaceConstants.XRoadId)}`.");
-            service.XRoadInstance = reader.ReadElementContentAsString();
+            service.XRoadInstance = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberClass" || reader.NamespaceURI != NamespaceConstants.XRoadId)
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false) || reader.LocalName != "memberClass" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("memberClass", NamespaceConstants.XRoadId)}`.");
-            service.MemberClass = reader.ReadElementContentAsString();
+            service.MemberClass = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            if (!reader.MoveToElement(depth + 1) || reader.LocalName != "memberCode" || reader.NamespaceURI != NamespaceConstants.XRoadId)
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false) || reader.LocalName != "memberCode" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("memberCode", NamespaceConstants.XRoadId)}`.");
-            service.MemberCode = reader.ReadElementContentAsString();
+            service.MemberCode = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            var success = reader.MoveToElement(depth + 1);
+            var success = await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false);
             if (success && reader.LocalName == "subsystemCode" && reader.NamespaceURI == NamespaceConstants.XRoadId)
             {
-                service.SubsystemCode = reader.ReadElementContentAsString();
-                success = reader.MoveToElement(depth + 1);
+                service.SubsystemCode = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false);
             }
 
             if (!success || reader.LocalName != "serviceCode" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("serviceCode", NamespaceConstants.XRoadId)}`.");
-            service.ServiceCode = reader.ReadElementContentAsString();
+            service.ServiceCode = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            success = reader.MoveToElement(depth + 1);
+            success = await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false);
             if (success && reader.LocalName == "serviceVersion" && reader.NamespaceURI == NamespaceConstants.XRoadId)
             {
-                service.ServiceVersion = reader.ReadElementContentAsString();
-                success = reader.MoveToElement(depth + 1);
+                service.ServiceVersion = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false);
             }
 
             if (success)
@@ -249,7 +250,7 @@ namespace XRoadLib.Headers
             return service;
         }
 
-        private static XRoadCentralServiceIdentifier ReadCentralService(XmlReader reader)
+        private static async Task<XRoadCentralServiceIdentifier> ReadCentralServiceAsync(XmlReader reader)
         {
             var qualifiedName = reader.GetXName();
 
@@ -265,24 +266,24 @@ namespace XRoadLib.Headers
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have attribute `{XName.Get("objectType", NamespaceConstants.XRoadId)}` value.");
             centralService.ObjectType = GetObjectType(objectType);
 
-            if (!reader.MoveToElement(depth + 1) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XRoadId)
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false) || reader.LocalName != "xRoadInstance" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("xRoadInstance", NamespaceConstants.XRoadId)}`.");
-            centralService.XRoadInstance = reader.ReadElementContentAsString();
+            centralService.XRoadInstance = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            if (!reader.MoveToElement(depth + 1) || reader.LocalName != "serviceCode" || reader.NamespaceURI != NamespaceConstants.XRoadId)
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false) || reader.LocalName != "serviceCode" || reader.NamespaceURI != NamespaceConstants.XRoadId)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("serviceCode", NamespaceConstants.XRoadId)}`.");
-            centralService.ServiceCode = reader.ReadElementContentAsString();
+            centralService.ServiceCode = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            if (reader.MoveToElement(depth + 1))
+            if (await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false))
                 throw new InvalidQueryException($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
 
             return centralService;
         }
 
-        private static XRoadRequestHash ReadRequestHash(XmlReader reader)
+        private static async Task<XRoadRequestHash> ReadRequestHashAsync(XmlReader reader)
         {
             var algorithm = reader.GetAttribute("requestHash");
-            var value = reader.ReadElementContentAsString();
+            var value = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
             return new XRoadRequestHash(value, algorithm);
         }
 
@@ -306,60 +307,71 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.
         /// </summary>
-        public virtual void WriteTo(XmlWriter writer, Style style, HeaderDefinition definition)
+        public virtual async Task WriteToAsync(XmlWriter writer, Style style, HeaderDefinition definition)
         {
             if (writer.LookupPrefix(NamespaceConstants.XRoad) == null)
-                writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.XRoad, NamespaceConstants.Xmlns, NamespaceConstants.XRoad);
+                await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.XRoad, NamespaceConstants.Xmlns, NamespaceConstants.XRoad).ConfigureAwait(false);
 
             if (writer.LookupPrefix(NamespaceConstants.XRoadId) == null)
-                writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Id, NamespaceConstants.Xmlns, NamespaceConstants.XRoadId);
+                await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.Id, NamespaceConstants.Xmlns, NamespaceConstants.XRoadId).ConfigureAwait(false);
 
             if (definition.RequiredHeaders.Contains(XName.Get("client", NamespaceConstants.XRoad)) || Client != null)
             {
-                var element = new XElement(XName.Get("client", NamespaceConstants.XRoad),
-                    new XAttribute(XName.Get("objectType", NamespaceConstants.XRoadId), string.IsNullOrWhiteSpace(Client.SubsystemCode) ? "MEMBER" : "SUBSYSTEM"),
-                    new XElement(XName.Get("xRoadInstance", NamespaceConstants.XRoadId), Client.XRoadInstance),
-                    new XElement(XName.Get("memberClass", NamespaceConstants.XRoadId), Client.MemberClass),
-                    new XElement(XName.Get("memberCode", NamespaceConstants.XRoadId), Client.MemberCode));
+                await writer.WriteStartElementAsync(null, "client", NamespaceConstants.XRoad).ConfigureAwait(false);
+                await writer.WriteAttributeStringAsync(null, "objectType", NamespaceConstants.XRoadId, string.IsNullOrWhiteSpace(Client.SubsystemCode) ? "MEMBER" : "SUBSYSTEM").ConfigureAwait(false);
+
+                await writer.WriteElementStringAsync(null, "xRoadInstance", NamespaceConstants.XRoadId, Client.XRoadInstance).ConfigureAwait(false);
+                await writer.WriteElementStringAsync(null, "memberClass", NamespaceConstants.XRoadId, Client.MemberClass).ConfigureAwait(false);
+                await writer.WriteElementStringAsync(null, "memberCode", NamespaceConstants.XRoadId, Client.MemberCode).ConfigureAwait(false);
+
                 if (!string.IsNullOrWhiteSpace(Client.SubsystemCode))
-                    element.Add(new XElement(XName.Get("subsystemCode", NamespaceConstants.XRoadId), Client.SubsystemCode));
-                element.WriteTo(writer);
+                    await writer.WriteElementStringAsync(null, "subsystemCode", NamespaceConstants.XRoadId, Client.SubsystemCode).ConfigureAwait(false);
+
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
             if (definition.RequiredHeaders.Contains(XName.Get("service", NamespaceConstants.XRoad)) || Service != null)
             {
-                var element = new XElement(XName.Get("service", NamespaceConstants.XRoad),
-                    new XAttribute(XName.Get("objectType", NamespaceConstants.XRoadId), "SERVICE"),
-                    new XElement(XName.Get("xRoadInstance", NamespaceConstants.XRoadId), Service.XRoadInstance),
-                    new XElement(XName.Get("memberClass", NamespaceConstants.XRoadId), Service.MemberClass),
-                    new XElement(XName.Get("memberCode", NamespaceConstants.XRoadId), Service.MemberCode));
+                await writer.WriteStartElementAsync(null, "service", NamespaceConstants.XRoad).ConfigureAwait(false);
+                await writer.WriteAttributeStringAsync(null, "objectType", NamespaceConstants.XRoadId, "SERVICE").ConfigureAwait(false);
+
+                await writer.WriteElementStringAsync(null, "xRoadInstance", NamespaceConstants.XRoadId, Service.XRoadInstance).ConfigureAwait(false);
+                await writer.WriteElementStringAsync(null, "memberClass", NamespaceConstants.XRoadId, Service.MemberClass).ConfigureAwait(false);
+                await writer.WriteElementStringAsync(null, "memberCode", NamespaceConstants.XRoadId, Service.MemberCode).ConfigureAwait(false);
+
                 if (!string.IsNullOrWhiteSpace(Service.SubsystemCode))
-                    element.Add(new XElement(XName.Get("subsystemCode", NamespaceConstants.XRoadId), Service.SubsystemCode));
-                element.Add(new XElement(XName.Get("serviceCode", NamespaceConstants.XRoadId), Service.ServiceCode));
+                    await writer.WriteElementStringAsync(null, "subsystemCode", NamespaceConstants.XRoadId, Service.SubsystemCode).ConfigureAwait(false);
+
+                await writer.WriteElementStringAsync(null, "serviceCode", NamespaceConstants.XRoadId, Service.ServiceCode).ConfigureAwait(false);
+
                 if (!string.IsNullOrWhiteSpace(Service.ServiceVersion))
-                    element.Add(new XElement(XName.Get("serviceVersion", NamespaceConstants.XRoadId), Service.ServiceVersion));
-                element.WriteTo(writer);
+                    await writer.WriteElementStringAsync(null, "serviceVersion", NamespaceConstants.XRoadId, Service.ServiceVersion).ConfigureAwait(false);
+
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
             if (definition.RequiredHeaders.Contains(XName.Get("centralService", NamespaceConstants.XRoad)) || CentralService != null)
             {
-                var element = new XElement(XName.Get("centralService", NamespaceConstants.XRoad),
-                    new XAttribute(XName.Get("objectType", NamespaceConstants.XRoadId), "CENTRALSERVICE"),
-                    new XElement(XName.Get("xRoadInstance", NamespaceConstants.XRoadId), CentralService.XRoadInstance),
-                    new XElement(XName.Get("serviceCode", NamespaceConstants.XRoadId), CentralService.ServiceCode));
-                element.WriteTo(writer);
+                await writer.WriteStartElementAsync(null, "centralService", NamespaceConstants.XRoad).ConfigureAwait(false);
+                await writer.WriteAttributeStringAsync(null, "objectType", NamespaceConstants.XRoadId, "CENTRALSERVICE").ConfigureAwait(false);
+
+                await writer.WriteElementStringAsync(null, "xRoadInstance", NamespaceConstants.XRoadId, CentralService.XRoadInstance).ConfigureAwait(false);
+                await writer.WriteElementStringAsync(null, "serviceCode", NamespaceConstants.XRoadId, CentralService.ServiceCode).ConfigureAwait(false);
+
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
-            void WriteHeaderValue(string elementName, object value, XName typeName)
+            async Task WriteHeaderValueAsync(string elementName, object value, XName typeName)
             {
                 var name = XName.Get(elementName, NamespaceConstants.XRoad);
-                if (definition.RequiredHeaders.Contains(name) || value != null) style.WriteHeaderElement(writer, name, value, typeName);
+                if (definition.RequiredHeaders.Contains(name) || value != null)
+                    await style.WriteHeaderElementAsync(writer, name, value, typeName).ConfigureAwait(false);
             }
 
-            WriteHeaderValue("id", Id, XmlTypeConstants.String);
-            WriteHeaderValue("userId", UserId, XmlTypeConstants.String);
-            WriteHeaderValue("issue", Issue, XmlTypeConstants.String);
-            WriteHeaderValue("protocolVersion", ProtocolVersion, XmlTypeConstants.String);
+            await WriteHeaderValueAsync("id", Id, XmlTypeConstants.String).ConfigureAwait(false);
+            await WriteHeaderValueAsync("userId", UserId, XmlTypeConstants.String).ConfigureAwait(false);
+            await WriteHeaderValueAsync("issue", Issue, XmlTypeConstants.String).ConfigureAwait(false);
+            await WriteHeaderValueAsync("protocolVersion", ProtocolVersion, XmlTypeConstants.String).ConfigureAwait(false);
         }
     }
 }

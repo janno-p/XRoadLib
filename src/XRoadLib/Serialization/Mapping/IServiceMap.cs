@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 using XRoadLib.Schema;
 
 namespace XRoadLib.Serialization.Mapping
@@ -26,21 +27,21 @@ namespace XRoadLib.Serialization.Mapping
         /// <summary>
         /// Deserializes X-Road message protocol requests according to operation definitions.
         /// </summary>
-        object DeserializeRequest(XmlReader reader, XRoadMessage message);
+        Task<object> DeserializeRequestAsync(XmlReader reader, XRoadMessage message);
 
         /// <summary>
         /// Deserializes X-Road message protocol responses according to operation definitions.
         /// </summary>
-        object DeserializeResponse(XmlReader reader, XRoadMessage message);
+        Task<object> DeserializeResponseAsync(XmlReader reader, XRoadMessage message);
 
         /// <summary>
         /// Serializes X-Road message protocol requests according to operation definitions.
         /// </summary>
-        void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null);
+        Task SerializeRequestAsync(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null);
 
         /// <summary>
         /// Serializes X-Road message protocol responses according to operation definitions.
         /// </summary>
-        void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null);
+        Task SerializeResponseAsync(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null);
     }
 }

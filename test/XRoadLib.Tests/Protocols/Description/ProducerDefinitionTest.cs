@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using Xunit;
@@ -15,18 +16,18 @@ namespace XRoadLib.Tests.Protocols.Description
         private static readonly Func<string, XName> Xsd = x => XName.Get(x, NamespaceConstants.Xsd);
 
         [Fact]
-        public void ShouldDefineServiceLocationIfGiven()
+        public async Task ShouldDefineServiceLocationIfGiven()
         {
             const string url = "http://INSERT_CORRECT_SERVICE_URL";
-            var doc = GetDocument(Globals.ServiceManager, 1);
+            var doc = await GetDocumentAsync(Globals.ServiceManager, 1);
             var port = GetPort(doc, XRoad);
             Assert.Equal(url, port.Elements(Soap("address")).Single().Attribute("location")?.Value);
         }
 
         [Fact]
-        public void AnonymousTypeShouldBeNestedUnderContainerType()
+        public async Task AnonymousTypeShouldBeNestedUnderContainerType()
         {
-            var doc = GetDocument(Globals.ServiceManager, 1u);
+            var doc = await GetDocumentAsync(Globals.ServiceManager, 1u);
             var definitions = doc.Elements(Wsdl("definitions")).Single();
             var types = definitions.Elements(Wsdl("types")).Single();
             var schema = types.Elements(Xsd("schema")).Single(x => x.Attribute("targetNamespace")?.Value == Globals.ServiceManager.ProducerNamespace);
@@ -57,7 +58,7 @@ namespace XRoadLib.Tests.Protocols.Description
                               x => Assert.Equal("Property3", x.Attribute("name")?.Value));
         }
 
-        private XElement GetPort(XContainer doc, Func<string, XName> xrdns)
+        private static XElement GetPort(XContainer doc, Func<string, XName> xrdns)
         {
             var root = doc.Elements(Wsdl("definitions")).SingleOrDefault();
             Assert.NotNull(root);
@@ -84,10 +85,10 @@ namespace XRoadLib.Tests.Protocols.Description
             return port;
         }
 
-        private static XDocument GetDocument(IServiceManager serviceManager, uint version)
+        private static async Task<XDocument> GetDocumentAsync(IServiceManager serviceManager, uint version)
         {
             using var stream = new MemoryStream();
-            serviceManager.CreateServiceDescription(version: version).SaveTo(stream);
+            await serviceManager.CreateServiceDescription(version: version).WriteAsync(stream);
             stream.Position = 0;
             return XDocument.Load(stream);
         }

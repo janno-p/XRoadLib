@@ -78,16 +78,26 @@ Target.create "BuildRelease" (fun _ ->
 // Run tests for all target framework versions
 
 Target.create "RunTests" (fun _ ->
-    let testsPath = "test" </> "XRoadLib.Tests"
-    let projectPath = testsPath </> "XRoadLib.Tests.csproj"
+    let testProjects =
+        [
+            ("test", "XRoadLib.Tests", ["net461"; "net5.0"])
+            ("samples", "Calculator.Tests", ["net5.0"])
+        ]
 
-    DotNet.restore id projectPath
-
-    ["net461"; "net5.0"]
+    testProjects
     |> List.iter
-        (fun fw ->
-            DotNet.build (fun p -> { p with Configuration = DotNet.BuildConfiguration.Debug; Framework = Some(fw) }) projectPath
-            DotNet.exec id "xunit" (testsPath </> "bin" </> "Debug" </> fw </> "XRoadLib.Tests.dll") |> ignore
+        (fun (dir, proj, fws) ->
+            let testsPath = dir </> proj
+            let projectPath = testsPath </> (sprintf "%s.csproj" proj)
+
+            DotNet.restore id projectPath
+
+            fws
+            |> List.iter
+                (fun fw ->
+                    DotNet.build (fun p -> { p with Configuration = DotNet.BuildConfiguration.Debug; Framework = Some(fw) }) projectPath
+                    DotNet.exec id "xunit" (testsPath </> "bin" </> "Debug" </> fw </> (sprintf "%s.dll" proj)) |> ignore
+                )
         )
 )
 

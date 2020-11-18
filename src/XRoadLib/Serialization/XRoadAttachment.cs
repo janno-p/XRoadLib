@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Serialization
@@ -10,8 +11,6 @@ namespace XRoadLib.Serialization
     /// </summary>
     public class XRoadAttachment : IDisposable
     {
-        private const int Base64LineLength = 76;
-
         private readonly string _contentPath;
 
         /// <summary>
@@ -88,7 +87,7 @@ namespace XRoadLib.Serialization
         /// Writes attachments contents to the specificed XML writer object
         /// using base64 encoding.
         /// </summary>
-        public void WriteAsBase64(XmlWriter writer)
+        public async Task WriteAsBase64Async(XmlWriter writer)
         {
             ContentStream.Position = 0;
 
@@ -97,33 +96,8 @@ namespace XRoadLib.Serialization
             int bytesRead;
             var buffer = new byte[bufferSize];
 
-            while ((bytesRead = ContentStream.Read(buffer, 0, bufferSize)) > 0)
-                writer.WriteBase64(buffer, 0, bytesRead);
-        }
-
-        /// <summary>
-        /// Writes attachments contents to the specificed output stream object
-        /// using base64 encoding.
-        /// </summary>
-        public void WriteAsBase64(TextWriter writer)
-        {
-            const int bufferSize = (Base64LineLength / 4) * 3;
-            var buffer = new byte[bufferSize];
-
-            ContentStream.Position = 0;
-
-            var noContent = true;
-
-            int bytesRead;
-            while ((bytesRead = ContentStream.Read(buffer, 0, bufferSize)) > 0)
-            {
-                noContent = false;
-                writer.Write(Convert.ToBase64String(buffer, 0, bytesRead));
-                writer.Write(XRoadMessageWriter.NewLine);
-            }
-
-            if (noContent)
-                writer.Write(XRoadMessageWriter.NewLine);
+            while ((bytesRead = await ContentStream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false)) > 0)
+                await writer.WriteBase64Async(buffer, 0, bytesRead).ConfigureAwait(false);
         }
 
         /// <summary>

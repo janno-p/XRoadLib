@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 using XRoadLib.Schema;
 using XRoadLib.Soap;
 
@@ -9,27 +11,25 @@ namespace XRoadLib.Serialization
 {
     public class XRoadMessageWriter : IDisposable
     {
-        public const string NewLine = "\r\n";
+        private const string NewLine = "\r\n";
+        private const int Base64LineLength = 76;
 
-        private readonly CountingStream _outputStream;
-
-        private TextWriter _writer;
+        private StreamCounter _streamCounter;
 
         public XRoadMessageWriter(Stream outputStream)
         {
-            _outputStream = new CountingStream(outputStream);
-            _writer = new StreamWriter(_outputStream);
+            _streamCounter = new StreamCounter(outputStream);
         }
 
-        public void Write(XRoadMessage source, Action<string> setContentType, Action<string, string> appendHeader, IMessageFormatter messageFormatter)
+        public async Task WriteAsync(XRoadMessage source, Action<string> setContentType, Action<string, string> appendHeader, IMessageFormatter messageFormatter)
         {
             source.ContentStream.Position = 0;
 
             if (!source.MultipartContentAttachments.Any())
             {
-                WriteContent(source);
-                _writer.Flush();
-                source.ContentLength = _outputStream.WriteCount;
+                await WriteContentAsync(source).ConfigureAwait(false);
+                await _streamCounter.FlushAsync().ConfigureAwait(false);
+                source.ContentLength = _streamCounter.WriteCount;
                 return;
             }
 
@@ -49,89 +49,133 @@ namespace XRoadLib.Serialization
             appendHeader("MIME-Version", "1.0");
 
             source.ContentStream.Position = 0;
-            SerializeMessage(source, contentId, boundaryMarker, messageFormatter);
-            _writer.Flush();
+            await SerializeMessageAsync(source, contentId, boundaryMarker, messageFormatter).ConfigureAwait(false);
+            await _streamCounter.FlushAsync().ConfigureAwait(false);
 
             foreach (var attachment in source.MultipartContentAttachments)
             {
                 if (source.BinaryMode == BinaryMode.Xml)
-                    SerializeXopAttachment(attachment, boundaryMarker);
-                else SerializeAttachment(attachment, boundaryMarker);
+                    await SerializeXopAttachmentAsync(attachment, boundaryMarker).ConfigureAwait(false);
+                else await SerializeAttachmentAsync(attachment, boundaryMarker).ConfigureAwait(false);
             }
 
-            _writer.Write(NewLine);
-            _writer.Write("--{0}--", boundaryMarker);
-            _writer.Write(NewLine);
-            _writer.Flush();
+            var endMarker = Encoding.UTF8.GetBytes($"{NewLine}--{boundaryMarker}--{NewLine}");
+            await _streamCounter.WriteAsync(endMarker, 0, endMarker.Length).ConfigureAwait(false);
 
-            source.ContentLength = _outputStream.WriteCount;
+            await _streamCounter.FlushAsync().ConfigureAwait(false);
+
+            source.ContentLength = _streamCounter.WriteCount;
         }
 
         public void Dispose()
         {
-            _writer.Dispose();
-            _writer = null;
+            _streamCounter.Dispose();
+            _streamCounter = null;
         }
 
-        private void WriteContent(XRoadMessage source)
-        {
-            _writer.Write(new StreamReader(source.ContentStream).ReadToEnd());
-        }
+        private Task WriteContentAsync(XRoadMessage source) =>
+            _streamCounter.WriteAsync(source.ContentStream);
 
-        private void SerializeMessage(XRoadMessage source, string contentId, string boundaryMarker, IMessageFormatter messageFormatter)
+        private async Task SerializeMessageAsync(XRoadMessage source, string contentId, string boundaryMarker, IMessageFormatter messageFormatter)
         {
-            _writer.Write(NewLine);
-            _writer.Write("--{0}", boundaryMarker);
-            _writer.Write(NewLine);
-            _writer.Write(
-                source.BinaryMode == BinaryMode.Attachment
+            var headers = new StringBuilder()
+                .Append(NewLine)
+                .Append($"--{boundaryMarker}")
+                .Append(NewLine)
+                .Append(source.BinaryMode == BinaryMode.Attachment
                     ? $"Content-Type: {messageFormatter.ContentType}; charset=UTF-8"
-                    : $"Content-Type: {ContentTypes.Xop}; charset=UTF-8; type=\"{messageFormatter.ContentType}\""
-            );
-            _writer.Write(NewLine);
-            _writer.Write("Content-Transfer-Encoding: 8bit");
-            _writer.Write(NewLine);
-            _writer.Write("Content-ID: <{0}>", contentId.Trim('<', '>', ' '));
-            _writer.Write(NewLine);
-            _writer.Write(NewLine);
-            WriteContent(source);
-            _writer.Write(NewLine);
+                    : $"Content-Type: {ContentTypes.Xop}; charset=UTF-8; type=\"{messageFormatter.ContentType}\"")
+                .Append(NewLine)
+                .Append("Content-Transfer-Encoding: 8bit")
+                .Append(NewLine)
+                .Append($"Content-ID: <{contentId.Trim('<', '>', ' ')}>")
+                .Append(NewLine)
+                .Append(NewLine)
+                .ToString();
+
+            var headerBytes = Encoding.UTF8.GetBytes(headers);
+            await _streamCounter.WriteAsync(headerBytes, 0, headerBytes.Length).ConfigureAwait(false);
+
+            await WriteContentAsync(source).ConfigureAwait(false);
+
+            var newLineBytes = Encoding.UTF8.GetBytes(NewLine);
+
+            await _streamCounter.WriteAsync(newLineBytes, 0, newLineBytes.Length).ConfigureAwait(false);
         }
 
-        private void SerializeAttachment(XRoadAttachment attachment, string boundaryMarker)
+        private async Task SerializeAttachmentAsync(XRoadAttachment attachment, string boundaryMarker)
         {
-            _writer.Write(NewLine);
-            _writer.Write("--{0}", boundaryMarker);
-            _writer.Write(NewLine);
-            _writer.Write("Content-Disposition: attachment; filename=notAnswering");
-            _writer.Write(NewLine);
-            _writer.Write("Content-Type: application/octet-stream");
-            _writer.Write(NewLine);
-            _writer.Write("Content-Transfer-Encoding: base64");
-            _writer.Write(NewLine);
-            _writer.Write("Content-ID: <{0}>", attachment.ContentId.Trim('<', '>', ' '));
-            _writer.Write(NewLine);
-            _writer.Write(NewLine);
-            attachment.WriteAsBase64(_writer);
+            var headers = new StringBuilder()
+                .Append(NewLine)
+                .Append($"--{boundaryMarker}")
+                .Append(NewLine)
+                .Append("Content-Disposition: attachment; filename=notAnswering")
+                .Append(NewLine)
+                .Append("Content-Type: application/octet-stream")
+                .Append(NewLine)
+                .Append("Content-Transfer-Encoding: base64")
+                .Append(NewLine)
+                .Append($"Content-ID: <{attachment.ContentId.Trim('<', '>', ' ')}>")
+                .Append(NewLine)
+                .Append(NewLine)
+                .ToString();
+
+            var headerBytes = Encoding.UTF8.GetBytes(headers);
+            await _streamCounter.WriteAsync(headerBytes, 0, headerBytes.Length).ConfigureAwait(false);
+
+            await WriteAttachmentAsBase64Async(attachment).ConfigureAwait(false);
         }
 
-        private void SerializeXopAttachment(XRoadAttachment attachment, string boundaryMarker)
+        private async Task SerializeXopAttachmentAsync(XRoadAttachment attachment, string boundaryMarker)
         {
-            _writer.Write(NewLine);
-            _writer.Write("--{0}", boundaryMarker);
-            _writer.Write(NewLine);
-            _writer.Write("Content-Type: application/octet-stream");
-            _writer.Write(NewLine);
-            _writer.Write("Content-Transfer-Encoding: binary");
-            _writer.Write(NewLine);
-            _writer.Write("Content-ID: <{0}>", attachment.ContentId.Trim('<', '>', ' '));
-            _writer.Write(NewLine);
-            _writer.Write(NewLine);
-            _writer.Flush();
+            var headers = new StringBuilder()
+                .Append(NewLine)
+                .Append($"--{boundaryMarker}")
+                .Append(NewLine)
+                .Append("Content-Type: application/octet-stream")
+                .Append(NewLine)
+                .Append("Content-Transfer-Encoding: binary")
+                .Append(NewLine)
+                .Append($"Content-ID: <{attachment.ContentId.Trim('<', '>', ' ')}>")
+                .Append(NewLine)
+                .Append(NewLine)
+                .ToString();
+
+            var headerBytes = Encoding.UTF8.GetBytes(headers);
+            await _streamCounter.WriteAsync(headerBytes, 0, headerBytes.Length).ConfigureAwait(false);
+            await _streamCounter.FlushAsync().ConfigureAwait(false);
 
             attachment.ContentStream.Position = 0;
-            attachment.ContentStream.CopyTo(_outputStream);
-            _outputStream.Flush();
+            await _streamCounter.WriteAsync(attachment.ContentStream).ConfigureAwait(false);
+
+            await _streamCounter.FlushAsync().ConfigureAwait(false);
+        }
+
+        internal async Task WriteAttachmentAsBase64Async(XRoadAttachment attachment)
+        {
+            const int bufferSize = Base64LineLength / 4 * 3;
+            var buffer = new byte[bufferSize];
+
+            attachment.ContentStream.Position = 0;
+
+            var noContent = true;
+
+            int bytesRead;
+            while ((bytesRead = await attachment.ContentStream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false)) > 0)
+            {
+                noContent = false;
+
+                var row = new StringBuilder(Convert.ToBase64String(buffer, 0, bytesRead)).Append(NewLine).ToString();
+                var rowBytes = Encoding.UTF8.GetBytes(row);
+
+                await _streamCounter.WriteAsync(rowBytes, 0, rowBytes.Length).ConfigureAwait(false);
+            }
+
+            if (noContent)
+            {
+                var newLineBytes = Encoding.UTF8.GetBytes(NewLine);
+                await _streamCounter.WriteAsync(newLineBytes, 0, newLineBytes.Length).ConfigureAwait(false);
+            }
         }
     }
 }

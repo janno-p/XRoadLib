@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Styles;
@@ -9,6 +10,6 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.
         /// </summary>
-        void WriteTo(XmlWriter writer, Style style, HeaderDefinition headerDefinition);
+        Task WriteToAsync(XmlWriter writer, Style style, HeaderDefinition headerDefinition);
     }
 }

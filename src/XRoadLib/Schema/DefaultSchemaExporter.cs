@@ -39,7 +39,7 @@ namespace XRoadLib.Schema
         public DefaultSchemaExporter(string producerNamespace, Assembly contractAssembly)
             : base(producerNamespace)
         {
-            this._contractAssembly = contractAssembly;
+            _contractAssembly = contractAssembly;
         }
 
         /// <summary>

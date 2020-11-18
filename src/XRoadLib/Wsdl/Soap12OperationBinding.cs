@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -7,16 +8,16 @@ namespace XRoadLib.Wsdl
         public string SoapAction { get; set; } = string.Empty;
         public SoapBindingStyle Style { get; set; } = SoapBindingStyle.Default;
 
-        internal override void Write(XmlWriter writer)
+        internal override async Task WriteAsync(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.Soap12, "operation", NamespaceConstants.Soap12);
+            await writer.WriteStartElementAsync(PrefixConstants.Soap12, "operation", NamespaceConstants.Soap12).ConfigureAwait(false);
 
-            writer.WriteAttributeString("soapAction", SoapAction);
+            await writer.WriteAttributeStringAsync(null, "soapAction", null, SoapAction).ConfigureAwait(false);
 
             if (Style != SoapBindingStyle.Default)
-                writer.WriteAttributeString("style", Style == SoapBindingStyle.Rpc ? "rpc" : "document");
+                await writer.WriteAttributeStringAsync(null, "style", null, Style == SoapBindingStyle.Rpc ? "rpc" : "document").ConfigureAwait(false);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }

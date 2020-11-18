@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -7,11 +8,14 @@ namespace XRoadLib.Wsdl
     {
         public List<ServiceDescriptionFormatExtension> Extensions { get; } = new List<ServiceDescriptionFormatExtension>();
 
-        internal override void Write(XmlWriter writer)
+        internal override async Task WriteAsync(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.Mime, "part", NamespaceConstants.Mime);
-            Extensions.ForEach(x => x.Write(writer));
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync(PrefixConstants.Mime, "part", NamespaceConstants.Mime).ConfigureAwait(false);
+
+            foreach (var extension in Extensions)
+                await extension.WriteAsync(writer).ConfigureAwait(false);
+
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }

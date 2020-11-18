@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Serialization;
 
@@ -72,45 +73,44 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Reposition XML reader to matching end element of the current element.
         /// </summary>
-        public static void ReadToEndElement(this XmlReader reader)
+        public static async Task ReadToEndElementAsync(this XmlReader reader)
         {
             if (reader.IsEmptyElement)
                 return;
 
             var currentDepth = reader.Depth;
 
-            while (reader.Read() && currentDepth < reader.Depth)
+            while (await reader.ReadAsync().ConfigureAwait(false) && currentDepth < reader.Depth)
             { }
         }
 
         /// <summary>
         /// Reposition XML reader to the next element if it's currently at nil element.
         /// </summary>
-        public static void ConsumeNilElement(this XmlReader reader, bool isNil)
+        public static async Task ConsumeNilElementAsync(this XmlReader reader, bool isNil)
         {
             if (!isNil)
                 return;
 
             if (reader.IsEmptyElement)
             {
-                reader.Read();
+                await reader.ReadAsync().ConfigureAwait(false);
                 return;
             }
 
-            var content = reader.ReadElementContentAsString();
+            var content = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
             if (!string.IsNullOrEmpty(content))
                 throw new InvalidQueryException($@"An element labeled with `xsi:nil=""true""` must be empty, but had `{content}` as content.");
 
-            reader.ReadToEndElement();
+            await reader.ReadToEndElementAsync().ConfigureAwait(false);
         }
 
         /// <summary>
         /// Reposition reader at location where next Read() call will navigate to next node.
         /// </summary>
-        public static void ConsumeUnusedElement(this XmlReader reader)
+        public static Task ConsumeUnusedElementAsync(this XmlReader reader)
         {
-            if (reader.IsEmptyElement) reader.Read();
-            else reader.ReadToEndElement();
+            return reader.IsEmptyElement ? reader.ReadAsync() : reader.ReadToEndElementAsync();
         }
 
         /// <summary>
@@ -124,14 +124,14 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Move XML reader current position to next element which matches the given arguments.
         /// </summary>
-        public static bool MoveToElement(this XmlReader reader, int depth, XName name = null)
+        public static async Task<bool> MoveToElementAsync(this XmlReader reader, int depth, XName name = null)
         {
             while (true)
             {
                 if (reader.Depth == depth && reader.NodeType == XmlNodeType.Element && (name == null || reader.IsCurrentElement(depth, name)))
                     return true;
 
-                if (!reader.Read() || reader.Depth < depth)
+                if (!await reader.ReadAsync().ConfigureAwait(false) || reader.Depth < depth)
                     return false;
             }
         }
@@ -147,32 +147,32 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Deserialize current node as XRoadFault entity.
         /// </summary>
-        public static IXRoadFault ReadXRoadFault(this XmlReader reader, int depth)
+        public static async Task<IXRoadFault> ReadXRoadFaultAsync(this XmlReader reader, int depth)
         {
             var fault = new XRoadFault();
 
-            while (reader.Read() && reader.MoveToElement(depth))
+            while (await reader.ReadAsync().ConfigureAwait(false) && await reader.MoveToElementAsync(depth).ConfigureAwait(false))
             {
                 if (reader.NodeType != XmlNodeType.Element)
                     continue;
 
                 if (string.IsNullOrWhiteSpace(reader.NamespaceURI) && reader.LocalName == "faultCode")
-                    fault.FaultCode = reader.ReadElementContentAsString();
+                    fault.FaultCode = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
                 if (string.IsNullOrWhiteSpace(reader.NamespaceURI) && reader.LocalName == "faultString")
-                    fault.FaultString = reader.ReadElementContentAsString();
+                    fault.FaultString = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
             }
 
             return fault;
         }
 
-        internal static object MoveNextAndReturn(this XmlReader reader, object value)
+        internal static async Task<object> MoveNextAndReturnAsync(this XmlReader reader, object value)
         {
-            reader.Read();
+            await reader.ReadAsync().ConfigureAwait(false);
             return value;
         }
 
-        internal static bool ReadToContent(this XmlReader reader)
+        internal static async Task<bool> ReadToContentAsync(this XmlReader reader)
         {
             var depth = reader.Depth;
             var childDepth = depth + 1;
@@ -182,7 +182,7 @@ namespace XRoadLib.Extensions
                 if (reader.Depth == childDepth && (reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.Text || reader.NodeType == XmlNodeType.CDATA))
                     return true;
 
-                if (!reader.Read() || reader.Depth < childDepth)
+                if (!await reader.ReadAsync().ConfigureAwait(false) || reader.Depth < childDepth)
                     return false;
             }
         }

@@ -40,7 +40,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
             public ProtoBufSchemaExporter(Type reflectionType)
                 : base(string.Empty)
             {
-                this._reflectionType = reflectionType;
+                _reflectionType = reflectionType;
             }
 
             public override void ExportOperationDefinition(OperationDefinition operationDefinition)

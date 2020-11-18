@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Wsdl;
 
@@ -9,15 +10,21 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Outputs service description to specified stream.
         /// </summary>
-        public static void SaveTo(this ServiceDescription serviceDescription, Stream stream)
+        public static async Task WriteAsync(this ServiceDescription serviceDescription, Stream stream)
         {
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Indent = true, IndentChars = "  ", NewLineChars = "\r\n" }))
+            var writer = XmlWriter.Create(stream, new XmlWriterSettings
             {
-                writer.WriteStartDocument();
-                serviceDescription.Write(writer);
-                writer.WriteEndDocument();
-                writer.Flush();
-            }
+                Async = true,
+                Indent = true,
+                IndentChars = "  ",
+                NewLineChars = "\r\n"
+            });
+
+            await writer.WriteStartDocumentAsync().ConfigureAwait(false);
+            await serviceDescription.WriteAsync(writer).ConfigureAwait(false);
+            await writer.WriteEndDocumentAsync().ConfigureAwait(false);
+
+            await writer.FlushAsync().ConfigureAwait(false);
         }
     }
 }

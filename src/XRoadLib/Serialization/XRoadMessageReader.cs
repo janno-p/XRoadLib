@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -30,46 +31,39 @@ namespace XRoadLib.Serialization
         private readonly string _storagePath;
         private readonly string _contentTypeHeader;
 
-        private Stream _stream;
-        private int? _peekedByte;
-        private long _streamPosition;
+        private DataReader _dataReader;
 
-        public XRoadMessageReader(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public XRoadMessageReader(DataReader dataReader, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             _contentTypeHeader = contentTypeHeader;
+            _dataReader = dataReader;
             _storagePath = storagePath;
-            _stream = stream;
             _serviceManagers = serviceManagers.ToList();
             _messageFormatter = messageFormatter;
         }
 
-        public void Read(XRoadMessage target, bool isResponse = false)
+        public async Task ReadAsync(XRoadMessage target, bool isResponse = false)
         {
             target.IsMultipartContainer = XRoadHelper.IsMultipartMsg(_contentTypeHeader);
             if (target.IsMultipartContainer)
                 target.MultipartContentType = XRoadHelper.GetMultipartContentType(_contentTypeHeader);
 
-            if (_stream.CanSeek && _stream.Length == 0)
+            if (!_dataReader.Reset())
                 return;
-
-            if (_stream.CanSeek)
-                _stream.Position = 0;
-
-            _streamPosition = 0;
 
             target.ContentEncoding = GetContentEncoding();
             target.ContentStream = new MemoryStream();
 
-            ReadMessageParts(target);
+            await ReadMessagePartsAsync(target).ConfigureAwait(false);
 
             target.ContentStream.Position = 0;
 
-            using (var reader = XmlReader.Create(target.ContentStream, new XmlReaderSettings { CloseInput = false }))
+            using (var reader = XmlReader.Create(target.ContentStream, new XmlReaderSettings { Async = true, CloseInput = false }))
             {
-                var serviceManager = DetectServiceManager(reader, target);
-                ParseXRoadHeader(target, reader, serviceManager);
+                var serviceManager = await DetectServiceManagerAsync(reader, target).ConfigureAwait(false);
+                await ParseXRoadHeaderAsync(target, reader, serviceManager).ConfigureAwait(false);
 
-                target.RootElementName = ParseMessageRootElementName(reader);
+                target.RootElementName = await ParseMessageRootElementNameAsync(reader).ConfigureAwait(false);
 
                 if (target.ServiceManager == null && target.RootElementName != null)
                     target.ServiceManager = _serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(target.RootElementName.NamespaceName));
@@ -98,16 +92,16 @@ namespace XRoadLib.Serialization
 
         public void Dispose()
         {
-            _stream.Dispose();
-            _stream = null;
+            _dataReader.Dispose();
+            _dataReader = null;
         }
 
-        private void ReadMessageParts(XRoadMessage target)
+        private async Task ReadMessagePartsAsync(XRoadMessage target)
         {
             if (!target.IsMultipartContainer)
             {
-                ReadNextPart(target.ContentStream, GetByteDecoder(null), target.ContentEncoding, null);
-                target.ContentLength = _streamPosition;
+                await ReadNextPartAsync(target.ContentStream, GetByteDecoder(null), target.ContentEncoding, null).ConfigureAwait(false);
+                target.ContentLength = _dataReader.Position;
                 return;
             }
 
@@ -122,11 +116,11 @@ namespace XRoadLib.Serialization
             {
                 if (!BufferStartsWith(lastLine, multipartBoundaryMarker))
                 {
-                    lastLine = ReadLine();
+                    lastLine = await ReadLineAsync().ConfigureAwait(false);
                     continue;
                 }
 
-                ExtractMultipartHeader(target.ContentEncoding, out var partId, out var partTransferEncoding);
+                var (partId, partTransferEncoding) = await ExtractMultipartHeaderAsync(target.ContentEncoding).ConfigureAwait(false);
 
                 var targetStream = target.ContentStream;
                 if (targetStream.Length > 0 || (!string.IsNullOrEmpty(multipartStartContentId) && !multipartStartContentId.Contains(partId)))
@@ -136,19 +130,19 @@ namespace XRoadLib.Serialization
                     targetStream = attachment.ContentStream;
                 }
 
-                lastLine = ReadNextPart(targetStream, GetByteDecoder(partTransferEncoding), target.ContentEncoding, multipartBoundaryMarker);
-            } while (PeekByte() != -1 && !BufferStartsWith(lastLine, multipartEndMarker));
+                lastLine = await ReadNextPartAsync(targetStream, GetByteDecoder(partTransferEncoding), target.ContentEncoding, multipartBoundaryMarker).ConfigureAwait(false);
+            } while (await _dataReader.PeekByteAsync().ConfigureAwait(false) != -1 && !BufferStartsWith(lastLine, multipartEndMarker));
 
-            target.ContentLength = _streamPosition;
+            target.ContentLength = _dataReader.Position;
         }
 
-        private byte[] ReadNextPart(Stream targetStream, Func<byte[], Encoding, byte[]> decoder, Encoding useEncoding, byte[] boundaryMarker)
+        private async Task<byte[]> ReadNextPartAsync(Stream targetStream, Func<byte[], Encoding, byte[]> decoder, Encoding useEncoding, byte[] boundaryMarker)
         {
             var addNewLine = false;
 
             while (true)
             {
-                var chunkStop = ReadChunkOrLine(out var buffer, BufferSize);
+                var (chunkStop, buffer) = await ReadChunkOrLineAsync(BufferSize).ConfigureAwait(false);
 
                 if (boundaryMarker != null && BufferStartsWith(buffer, boundaryMarker))
                     return buffer;
@@ -160,9 +154,9 @@ namespace XRoadLib.Serialization
                     buffer = decoder(buffer, useEncoding);
 
                 if (decoder == null && addNewLine)
-                    targetStream.Write(NewLine, 0, NewLine.Length);
+                    await targetStream.WriteAsync(NewLine, 0, NewLine.Length).ConfigureAwait(false);
 
-                targetStream.Write(buffer, 0, buffer.Length);
+                await targetStream.WriteAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
 
                 if (chunkStop == ChunkStop.EndOfStream)
                     return buffer;
@@ -171,13 +165,14 @@ namespace XRoadLib.Serialization
             }
         }
 
-        private void ExtractMultipartHeader(Encoding contentEncoding, out string partId, out string partTransferEncoding)
+        private async Task<(string, string)> ExtractMultipartHeaderAsync(Encoding contentEncoding)
         {
-            partId = partTransferEncoding = null;
+            string partId = null;
+            string partTransferEncoding = null;
 
             while (true)
             {
-                var buffer = ReadLine();
+                var buffer = await ReadLineAsync().ConfigureAwait(false);
 
                 var lastLine = contentEncoding.GetString(buffer).Trim();
                 if (string.IsNullOrEmpty(lastLine))
@@ -191,15 +186,17 @@ namespace XRoadLib.Serialization
                 if (tempTransferEncoding != null)
                     partTransferEncoding = tempTransferEncoding;
             }
+
+            return (partId, partTransferEncoding);
         }
 
-        private byte[] ReadLine()
+        private async Task<byte[]> ReadLineAsync()
         {
             var chunk = new byte[0];
 
             while (true)
             {
-                var chunkStop = ReadChunkOrLine(out var buffer, BufferSize);
+                var (chunkStop, buffer) = await ReadChunkOrLineAsync(BufferSize).ConfigureAwait(false);
 
                 Array.Resize(ref chunk, chunk.Length + buffer.Length);
                 Array.Copy(buffer, chunk, buffer.Length);
@@ -211,7 +208,7 @@ namespace XRoadLib.Serialization
             return chunk;
         }
 
-        internal ChunkStop ReadChunkOrLine(out byte[] chunk, int chunkSize)
+        internal async Task<(ChunkStop, byte[])> ReadChunkOrLineAsync(int chunkSize)
         {
             var result = ChunkStop.BufferLimit;
             var buffer = new byte[chunkSize];
@@ -219,16 +216,16 @@ namespace XRoadLib.Serialization
             var curPos = -1;
             while (curPos < chunkSize - 1)
             {
-                var lastByte = ReadByte();
+                var lastByte = await _dataReader.ReadByteAsync().ConfigureAwait(false);
                 if (lastByte == -1)
                 {
                     result = ChunkStop.EndOfStream;
                     break;
                 }
 
-                if (lastByte == '\r' && PeekByte() == '\n')
+                if (lastByte == '\r' && await _dataReader.PeekByteAsync().ConfigureAwait(false) == '\n')
                 {
-                    ReadByte();
+                    await _dataReader.ReadByteAsync().ConfigureAwait(false);
                     result = ChunkStop.NewLine;
                     break;
                 }
@@ -236,34 +233,10 @@ namespace XRoadLib.Serialization
                 buffer[++curPos] = (byte)lastByte;
             }
 
-            chunk = new byte[curPos + 1];
+            var chunk = new byte[curPos + 1];
             Array.Copy(buffer, chunk, curPos + 1);
 
-            return result;
-        }
-
-        private int ReadByte()
-        {
-            if (_peekedByte == null)
-            {
-                var @byte = _stream.ReadByte();
-                if (@byte >= 0)
-                    _streamPosition++;
-                return @byte;
-            }
-
-            var result = _peekedByte.Value;
-            if (result >= 0)
-                _streamPosition++;
-
-            _peekedByte = null;
-            return result;
-        }
-
-        private int PeekByte()
-        {
-            _peekedByte = _peekedByte ?? _stream.ReadByte();
-            return _peekedByte.Value;
+            return (result, chunk);
         }
 
         private Encoding GetContentEncoding()
@@ -344,15 +317,23 @@ namespace XRoadLib.Serialization
             return (posArr2 == -1);
         }
 
-        private IServiceManager DetectServiceManager(XmlReader reader, XRoadMessage target)
+        private async Task<IServiceManager> DetectServiceManagerAsync(XmlReader reader, XRoadMessage target)
         {
-            _messageFormatter.MoveToEnvelope(reader);
-            return target.ServiceManager ?? _serviceManagers.SingleOrDefault(p => p.IsDefinedByEnvelope(reader));
+            await _messageFormatter.MoveToEnvelopeAsync(reader).ConfigureAwait(false);
+
+            if (target.ServiceManager != null)
+                return target.ServiceManager;
+
+            foreach (var serviceManager in _serviceManagers)
+                if (await serviceManager.IsDefinedByEnvelopeAsync(reader).ConfigureAwait(false))
+                    return serviceManager;
+
+            return null;
         }
 
-        private void ParseXRoadHeader(XRoadMessage target, XmlReader reader, IServiceManager serviceManager)
+        private async Task ParseXRoadHeaderAsync(XRoadMessage target, XmlReader reader, IServiceManager serviceManager)
         {
-            if (!_messageFormatter.TryMoveToHeader(reader))
+            if (!await _messageFormatter.TryMoveToHeaderAsync(reader).ConfigureAwait(false))
                 return;
 
             var header = serviceManager?.CreateHeader();
@@ -360,7 +341,7 @@ namespace XRoadLib.Serialization
 
             var unresolved = new List<XElement>();
 
-            while (reader.MoveToElement(2))
+            while (await reader.MoveToElementAsync(2).ConfigureAwait(false))
             {
                 if (serviceManager == null)
                 {
@@ -375,7 +356,7 @@ namespace XRoadLib.Serialization
                     continue;
                 }
 
-                xRoadHeader.ReadHeaderValue(reader);
+                await xRoadHeader.ReadHeaderValueAsync(reader).ConfigureAwait(false);
             }
 
             xRoadHeader?.Validate();
@@ -385,9 +366,11 @@ namespace XRoadLib.Serialization
             target.ServiceManager = serviceManager;
         }
 
-        private XName ParseMessageRootElementName(XmlReader reader)
+        private async Task<XName> ParseMessageRootElementNameAsync(XmlReader reader)
         {
-            return _messageFormatter.TryMoveToBody(reader) && reader.MoveToElement(2) ? reader.GetXName() : null;
+            return await _messageFormatter.TryMoveToBodyAsync(reader).ConfigureAwait(false) && await reader.MoveToElementAsync(2).ConfigureAwait(false)
+                ? reader.GetXName()
+                : null;
         }
     }
 }

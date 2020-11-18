@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -10,23 +11,23 @@ namespace XRoadLib.Serialization.Mapping
     {
         public TimeSpanTypeMap(TypeDefinition typeDefinition) : base(typeDefinition) { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return reader.MoveNextAndReturn(HandleEmptyElement(content, message));
+                return await reader.MoveNextAndReturnAsync(HandleEmptyElement(content, message)).ConfigureAwait(false);
 
-            var value = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(value))
-                return HandleEmptyElement(content, message);
+            var value = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            return XmlConvert.ToTimeSpan(value);
+            return string.IsNullOrEmpty(value)
+                ? HandleEmptyElement(content, message)
+                : XmlConvert.ToTimeSpan(value);
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+        public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            message.Style.WriteType(writer, Definition, content);
+            await message.Style.WriteTypeAsync(writer, Definition, content).ConfigureAwait(false);
 
-            writer.WriteValue(XmlConvert.ToString((TimeSpan)value));
+            await writer.WriteStringAsync(XmlConvert.ToString((TimeSpan)value)).ConfigureAwait(false);
         }
 
         private static TimeSpan? HandleEmptyElement(ContentDefinition content, XRoadMessage message)

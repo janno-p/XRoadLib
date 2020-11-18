@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -9,15 +10,15 @@ namespace XRoadLib.Styles
 {
     public class RpcEncodedStyle : Style
     {
-        public override void WriteExplicitType(XmlWriter writer, XName qualifiedName)
+        public override Task WriteExplicitTypeAsync(XmlWriter writer, XName qualifiedName)
         {
-            writer.WriteTypeAttribute(qualifiedName);
+            return writer.WriteTypeAttributeAsync(qualifiedName);
         }
 
-        public override void WriteExplicitArrayType(XmlWriter writer, XName itemQualifiedName, int arraySize)
+        public override async Task WriteExplicitArrayTypeAsync(XmlWriter writer, XName itemQualifiedName, int arraySize)
         {
-            writer.WriteTypeAttribute("Array", NamespaceConstants.SoapEnc);
-            writer.WriteArrayTypeAttribute(itemQualifiedName, arraySize);
+            await writer.WriteTypeAttributeAsync("Array", NamespaceConstants.SoapEnc).ConfigureAwait(false);
+            await writer.WriteArrayTypeAttributeAsync(itemQualifiedName, arraySize).ConfigureAwait(false);
         }
 
         private XmlAttribute CreateArrayTypeAttribute(XName qualifiedName)

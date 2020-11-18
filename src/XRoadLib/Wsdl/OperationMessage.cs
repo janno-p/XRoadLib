@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 
@@ -7,10 +8,10 @@ namespace XRoadLib.Wsdl
     {
         public XmlQualifiedName Message { get; set; }
 
-        protected override void WriteAttributes(XmlWriter writer)
+        protected override async Task WriteAttributesAsync(XmlWriter writer)
         {
-            base.WriteAttributes(writer);
-            writer.WriteQualifiedAttribute("message", Message);
+            await base.WriteAttributesAsync(writer).ConfigureAwait(false);
+            await writer.WriteQualifiedAttributeAsync("message", Message).ConfigureAwait(false);
         }
     }
 }

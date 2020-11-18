@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
@@ -8,8 +9,8 @@ namespace XRoadLib.Serialization.Mapping
     {
         PropertyDefinition Definition { get; }
 
-        bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message);
+        Task<bool> DeserializeAsync(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message);
 
-        void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message);
+        Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message);
     }
 }

@@ -17,8 +17,6 @@ namespace Calculator
             services.AddSingleton<ICalculate, CalculateWebService>();
             services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
             services.AddSingleton<CalculatorServiceManager>();
-
-            services.Configure<IISServerOptions>(options => options.AllowSynchronousIO = true);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

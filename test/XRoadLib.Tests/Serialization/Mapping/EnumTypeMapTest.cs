@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Tests.Contract;
@@ -10,37 +11,37 @@ namespace XRoadLib.Tests.Serialization.Mapping
     {
         private static readonly ITypeMap TypeMap = new EnumTypeMap(SchemaDefinitionProvider.GetTypeDefinition(typeof(Gender)));
 
-        private readonly Func<string, object> _deserializeValue = x => DeserializeValue(TypeMap, x);
+        private readonly Func<string, Task<object>> _deserializeValueAsync = x => DeserializeValueAsync(TypeMap, x);
 
         [Fact]
-        public void CanDeserializeEnumValue()
+        public async Task CanDeserializeEnumValue()
         {
-            var value = _deserializeValue("Female");
+            var value = await _deserializeValueAsync("Female");
             Assert.Equal(Gender.Female, value);
         }
 
         [Fact]
-        public void CannotDeserializeUnknownValue()
+        public async Task CannotDeserializeUnknownValue()
         {
-            var ex = Assert.Throws<UnexpectedValueException>(() => _deserializeValue("Random"));
+            var ex = await Assert.ThrowsAsync<UnexpectedValueException>(() => _deserializeValueAsync("Random"));
             Assert.Equal("Unexpected value `Random` for enumeration type `{urn:some-namespace}Gender`.", ex.Message);
             Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
             Assert.True(ex.Value.Equals("Random"));
         }
 
         [Fact]
-        public void CannotDeserializeEmptyValue()
+        public async Task CannotDeserializeEmptyValue()
         {
-            var ex = Assert.Throws<UnexpectedValueException>(() => _deserializeValue(""));
+            var ex = await Assert.ThrowsAsync<UnexpectedValueException>(() => _deserializeValueAsync(""));
             Assert.Equal("Unexpected value `` for enumeration type `{urn:some-namespace}Gender`.", ex.Message);
             Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
             Assert.True(ex.Value.Equals(""));
         }
 
         [Fact]
-        public void CannotDeserializeSelfClosingEmptyValue()
+        public async Task CannotDeserializeSelfClosingEmptyValue()
         {
-            var ex = Assert.Throws<UnexpectedValueException>(() => DeserializeEmptyValue(TypeMap));
+            var ex = await Assert.ThrowsAsync<UnexpectedValueException>(() => DeserializeEmptyValueAsync(TypeMap));
             Assert.Equal("Unexpected value `` for enumeration type `{urn:some-namespace}Gender`.", ex.Message);
             Assert.Same(ex.TypeDefinition.Type, typeof(Gender));
             Assert.True(ex.Value.Equals(""));

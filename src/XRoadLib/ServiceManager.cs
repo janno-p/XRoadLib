@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Events;
@@ -61,52 +62,53 @@ namespace XRoadLib
         }
 
         /// <inheritdoc />
-        object IServiceManager.Execute(WebRequest webRequest, object body, ISoapHeader header, ServiceExecutionOptions options)
+        async Task<object> IServiceManager.ExecuteAsync(WebRequest webRequest, object body, ISoapHeader header, ServiceExecutionOptions options)
         {
             var messageFormatter = options?.MessageFormatter ?? new SoapMessageFormatter();
 
-            using (var requestMessage = new XRoadMessage(this, header))
+            using var requestMessage = new XRoadMessage(this, header);
+
+            IServiceMap operationServiceMap;
+            using (var writer = XmlWriter.Create(requestMessage.ContentStream, new XmlWriterSettings { Async = true }))
             {
-                IServiceMap operationServiceMap;
-                using (var writer = XmlWriter.Create(requestMessage.ContentStream))
-                {
-                    writer.WriteStartDocument();
+                await writer.WriteStartDocumentAsync().ConfigureAwait(false);
 
-                    writer.WriteSoapEnvelope(messageFormatter, ProtocolDefinition);
-                    if (!string.IsNullOrEmpty(options?.RequestNamespace) && writer.LookupPrefix(options.RequestNamespace) == null)
-                        writer.WriteAttributeString(PrefixConstants.Xmlns, "req", NamespaceConstants.Xmlns, options.RequestNamespace);
+                await writer.WriteSoapEnvelopeAsync(messageFormatter, ProtocolDefinition).ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(options?.RequestNamespace) && writer.LookupPrefix(options.RequestNamespace) == null)
+                    await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, "req", NamespaceConstants.Xmlns, options.RequestNamespace).ConfigureAwait(false);
 
-                    messageFormatter.WriteSoapHeader(writer, Style, header, HeaderDefinition);
-                    messageFormatter.WriteStartBody(writer);
+                await messageFormatter.WriteSoapHeaderAsync(writer, Style, header, HeaderDefinition).ConfigureAwait(false);
+                await messageFormatter.WriteStartBodyAsync(writer).ConfigureAwait(false);
 
-                    var serviceCode = (header as IXRoadHeader)?.Service?.ServiceCode ?? string.Empty;
+                var serviceCode = (header as IXRoadHeader)?.Service?.ServiceCode ?? string.Empty;
 
-                    var operationName = XName.Get(options?.OperationName ?? serviceCode, ProducerNamespace);
-                    operationServiceMap = options?.ServiceMap ?? GetSerializer(options?.Version ?? requestMessage.Version).GetServiceMap(operationName);
-                    operationServiceMap.SerializeRequest(writer, body, requestMessage, options?.RequestNamespace);
+                var operationName = XName.Get(options?.OperationName ?? serviceCode, ProducerNamespace);
+                operationServiceMap = options?.ServiceMap ?? GetSerializer(options?.Version ?? requestMessage.Version).GetServiceMap(operationName);
+                await operationServiceMap.SerializeRequestAsync(writer, body, requestMessage, options?.RequestNamespace).ConfigureAwait(false);
 
-                    writer.WriteEndElement();
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-                    writer.WriteEndElement();
-                    writer.WriteEndDocument();
-                    writer.Flush();
-                }
-
-                options?.BeforeRequest?.Invoke(this, new XRoadRequestEventArgs(requestMessage));
-
-                requestMessage.SaveTo(webRequest, messageFormatter);
-
-                using (var response = webRequest.GetResponseAsync().Result)
-                using (var responseStream = response.GetResponseStream())
-                using (var seekableStream = new MemoryStream())
-                using (var responseMessage = new XRoadMessage())
-                {
-                    responseStream?.CopyTo(seekableStream);
-                    options?.BeforeDeserialize?.Invoke(this, new XRoadResponseEventArgs(response, seekableStream));
-                    responseMessage.LoadResponse(seekableStream, messageFormatter, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), this);
-                    return responseMessage.DeserializeMessageContent(operationServiceMap, messageFormatter);
-                }
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
+                await writer.WriteEndDocumentAsync().ConfigureAwait(false);
+                await writer.FlushAsync().ConfigureAwait(false);
             }
+
+            options?.BeforeRequest?.Invoke(this, new XRoadRequestEventArgs(requestMessage));
+
+            await requestMessage.SaveToAsync(webRequest, messageFormatter).ConfigureAwait(false);
+
+            using var response = await webRequest.GetResponseAsync().ConfigureAwait(false);
+            using var responseStream = response.GetResponseStream();
+            using var seekableStream = new MemoryStream();
+            using var responseMessage = new XRoadMessage();
+
+            if (responseStream != null)
+                await responseStream.CopyToAsync(seekableStream).ConfigureAwait(false);
+
+            options?.BeforeDeserialize?.Invoke(this, new XRoadResponseEventArgs(response, seekableStream));
+            await responseMessage.LoadResponseAsync(seekableStream, messageFormatter, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), this).ConfigureAwait(false);
+
+            return await responseMessage.DeserializeMessageContentAsync(operationServiceMap, messageFormatter).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -128,8 +130,13 @@ namespace XRoadLib
             HeaderDefinition.IsHeaderNamespace(namespaceName);
 
         /// <inheritdoc />
-        public bool IsDefinedByEnvelope(XmlReader reader) =>
-            ProtocolDefinition.DetectEnvelope?.Invoke(reader) ?? false;
+        public async Task<bool> IsDefinedByEnvelopeAsync(XmlReader reader)
+        {
+            if (ProtocolDefinition.DetectEnvelopeAsync != null)
+                return await ProtocolDefinition.DetectEnvelopeAsync(reader).ConfigureAwait(false);
+
+            return false;
+        }
 
         /// <inheritdoc />
         public virtual ISerializer GetSerializer(uint? version = null)
@@ -193,8 +200,8 @@ namespace XRoadLib
         /// <param name="options">Additional options to configure service call execution.</param>
         /// <typeparam name="TResult">Expected result type of the operation.</typeparam>
         /// <returns>Deserialized value of X-Road response message Soap body.</returns>
-        public virtual TResult Execute<TResult>(WebRequest webRequest, object body, THeader header, ServiceExecutionOptions options = null) =>
-            (TResult)((IServiceManager)this).Execute(webRequest, body, header, options);
+        public virtual async Task<TResult> ExecuteAsync<TResult>(WebRequest webRequest, object body, THeader header, ServiceExecutionOptions options = null) =>
+            (TResult)await ((IServiceManager)this).ExecuteAsync(webRequest, body, header, options).ConfigureAwait(false);
 
         /// <summary>
         /// Initialize new X-Road message of this X-Road message protocol instance.

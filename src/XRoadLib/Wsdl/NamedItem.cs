@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -6,12 +7,12 @@ namespace XRoadLib.Wsdl
     {
         public string Name { get; set; }
 
-        protected override void WriteAttributes(XmlWriter writer)
+        protected override async Task WriteAttributesAsync(XmlWriter writer)
         {
-            base.WriteAttributes(writer);
+            await base.WriteAttributesAsync(writer).ConfigureAwait(false);
 
             if (!string.IsNullOrWhiteSpace(Name))
-                writer.WriteAttributeString("name", Name);
+                await writer.WriteAttributeStringAsync(null, "name", null, Name).ConfigureAwait(false);
         }
     }
 }

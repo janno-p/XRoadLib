@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -13,7 +14,7 @@ namespace XRoadLib.Serialization.Mapping
             : base(serializer, typeDefinition)
         { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             var entity = new T();
             entity.SetTemplateMembers(templateNode.ChildNames);
@@ -22,7 +23,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (ContentPropertyMap != null)
             {
-                ReadPropertyValue(reader, ContentPropertyMap, templateNode[ContentPropertyMap.Definition.TemplateName, message.Version], message, validateRequired, entity);
+                await ReadPropertyValueAsync(reader, ContentPropertyMap, templateNode[ContentPropertyMap.Definition.TemplateName, message.Version], message, validateRequired, entity).ConfigureAwait(false);
                 return entity;
             }
 
@@ -31,25 +32,25 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.IsEmptyElement)
             {
                 ValidateRemainingProperties(properties, content);
-                return reader.MoveNextAndReturn(entity);
+                return await reader.MoveNextAndReturnAsync(entity).ConfigureAwait(false);
             }
 
             var parentDepth = reader.Depth;
             var itemDepth = parentDepth + 1;
 
-            reader.Read();
+            await reader.ReadAsync().ConfigureAwait(false);
 
             while (parentDepth < reader.Depth)
             {
                 if (reader.NodeType != XmlNodeType.Element || reader.Depth != itemDepth)
                 {
-                    reader.Read();
+                    await reader.ReadAsync().ConfigureAwait(false);
                     continue;
                 }
 
                 var propertyNode = MoveToProperty(reader, properties, templateNode, message, validateRequired);
 
-                ReadPropertyValue(reader, properties.Current, propertyNode, message, validateRequired, entity);
+                await ReadPropertyValueAsync(reader, properties.Current, propertyNode, message, validateRequired, entity).ConfigureAwait(false);
             }
 
             ValidateRemainingProperties(properties, content);
@@ -57,11 +58,11 @@ namespace XRoadLib.Serialization.Mapping
             return entity;
         }
 
-        private void ReadPropertyValue(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode propertyNode, XRoadMessage message, bool validateRequired, T dtoObject)
+        private async Task ReadPropertyValueAsync(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode propertyNode, XRoadMessage message, bool validateRequired, T dtoObject)
         {
             if (propertyNode == null)
             {
-                reader.ConsumeUnusedElement();
+                await reader.ConsumeUnusedElementAsync().ConfigureAwait(false);
                 return;
             }
 
@@ -70,10 +71,10 @@ namespace XRoadLib.Serialization.Mapping
                 throw new ParameterRequiredException(Definition, propertyMap.Definition);
 
             var templateName = propertyMap.Definition.TemplateName;
-            if ((isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message)) && !string.IsNullOrWhiteSpace(templateName))
+            if ((isNull || await propertyMap.DeserializeAsync(reader, dtoObject, propertyNode, message).ConfigureAwait(false)) && !string.IsNullOrWhiteSpace(templateName))
                 dtoObject.OnMemberDeserialized(templateName);
 
-            reader.ConsumeNilElement(isNull);
+            await reader.ConsumeNilElementAsync(isNull).ConfigureAwait(false);
         }
 
         private IXmlTemplateNode MoveToProperty(XmlReader reader, IEnumerator<IPropertyMap> properties, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired)

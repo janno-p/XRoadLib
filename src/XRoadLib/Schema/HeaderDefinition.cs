@@ -73,7 +73,7 @@ namespace XRoadLib.Schema
 
             public HeaderDefinitionBuilder(HeaderDefinition headerDefinition)
             {
-                this._headerDefinition = headerDefinition;
+                _headerDefinition = headerDefinition;
                 headerDefinition.Remove();
             }
 

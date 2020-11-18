@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using XRoadLib.Headers;
 using XRoadLib.Serialization;
@@ -13,24 +14,24 @@ namespace XRoadLib.Tests.Serialization
     {
         private static readonly IMessageFormatter MessageFormatter = new SoapMessageFormatter();
 
-        public static Tuple<ISoapHeader, IList<XElement>, IServiceManager> ParseHeader(string xml, string ns)
+        public static async Task<Tuple<ISoapHeader, IList<XElement>, IServiceManager>> ParseHeaderAsync(string xml, string ns)
         {
             using var stream = new MemoryStream();
             using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
 
-            streamWriter.WriteLine(@"<Envelope xmlns=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:id=""http://x-road.eu/xsd/identifiers"" xmlns:repr=""http://x-road.eu/xsd/representation.xsd"">");
-            streamWriter.WriteLine($"<Header xmlns:xrd=\"{ns}\">");
-            streamWriter.WriteLine(xml);
-            streamWriter.WriteLine(@"</Header>");
-            streamWriter.WriteLine(@"</Envelope>");
-            streamWriter.Flush();
+            await streamWriter.WriteLineAsync(@"<Envelope xmlns=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:id=""http://x-road.eu/xsd/identifiers"" xmlns:repr=""http://x-road.eu/xsd/representation.xsd"">");
+            await streamWriter.WriteLineAsync($"<Header xmlns:xrd=\"{ns}\">");
+            await streamWriter.WriteLineAsync(xml);
+            await streamWriter.WriteLineAsync(@"</Header>");
+            await streamWriter.WriteLineAsync(@"</Envelope>");
+            await streamWriter.FlushAsync();
 
             stream.Position = 0;
 
-            using var reader = new XRoadMessageReader(stream, MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager });
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager });
             using var msg = new XRoadMessage();
 
-            reader.Read(msg);
+            await reader.ReadAsync(msg);
 
             return Tuple.Create(msg.Header, msg.UnresolvedHeaders, msg.ServiceManager);
         }

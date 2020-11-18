@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using XRoadLib.Serialization;
 using Xunit;
 
@@ -9,37 +10,41 @@ namespace XRoadLib.Tests.Serialization
     public class XRoadAttachmentTest
     {
         [Fact]
-        public void CanWriteBase64()
+        public async Task CanWriteBase64()
         {
-            var output = new StringBuilder();
+            using var outputStream = new MemoryStream();
+            using var writer = new XRoadMessageWriter(outputStream);
 
             using (var contentStream = new MemoryStream(Encoding.UTF8.GetBytes("ABC")))
             using (var attachment = new XRoadAttachment(contentStream))
-            using (var writer = new StringWriter(output))
             {
-                attachment.WriteAsBase64(writer);
-                writer.Flush();
+                await writer.WriteAttachmentAsBase64Async(attachment);
+                await outputStream.FlushAsync();
             }
 
-            Assert.Equal("QUJD\r\n", output.ToString());
+            outputStream.Position = 0;
+            var output = await new StreamReader(outputStream).ReadToEndAsync();
+
+            Assert.Equal("QUJD\r\n", output);
         }
 
         [Fact]
-        public void CanWriteMultilineBase64()
+        public async Task CanWriteMultilineBase64()
         {
             const string text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-            var output = new StringBuilder();
+            using var outputStream = new MemoryStream();
+            using var writer = new XRoadMessageWriter(outputStream);
 
             using (var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(text)))
             using (var attachment = new XRoadAttachment(contentStream))
-            using (var writer = new StringWriter(output))
             {
-                attachment.WriteAsBase64(writer);
-                writer.Flush();
+                await writer.WriteAttachmentAsBase64Async(attachment);
+                await outputStream.FlushAsync();
             }
 
-            var encodedOutput = output.ToString();
+            outputStream.Position = 0;
+            var encodedOutput = await new StreamReader(outputStream).ReadToEndAsync();
 
             var lines = encodedOutput.Split(new [] { "\r\n" }, StringSplitOptions.None);
             Assert.Equal(9, lines.Length);
@@ -60,19 +65,22 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanWriteEmptyBase64()
+        public async Task CanWriteEmptyBase64()
         {
-            var output = new StringBuilder();
+            using var outputStream = new MemoryStream();
+            using var writer = new XRoadMessageWriter(outputStream);
 
             using (var contentStream = new MemoryStream())
             using (var attachment = new XRoadAttachment(contentStream))
-            using (var writer = new StringWriter(output))
             {
-                attachment.WriteAsBase64(writer);
-                writer.Flush();
+                await writer.WriteAttachmentAsBase64Async(attachment);
+                await outputStream.FlushAsync();
             }
 
-            Assert.Equal("\r\n", output.ToString());
+            outputStream.Position = 0;
+            var output = await new StreamReader(outputStream).ReadToEndAsync();
+
+            Assert.Equal("\r\n", output);
         }
     }
 }

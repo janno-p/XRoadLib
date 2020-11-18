@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -22,47 +23,47 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Writes explicit type attribute if style requires it.
         /// </summary>
-        public virtual void WriteExplicitType(XmlWriter writer, XName qualifiedName)
-        { }
+        public virtual Task WriteExplicitTypeAsync(XmlWriter writer, XName qualifiedName) =>
+            Task.CompletedTask;
 
         /// <summary>
         /// Writes explicit array type attribute if style requires it.
         /// </summary>
-        public virtual void WriteExplicitArrayType(XmlWriter writer, XName itemQualifiedName, int arraySize)
-        { }
+        public virtual Task WriteExplicitArrayTypeAsync(XmlWriter writer, XName itemQualifiedName, int arraySize) =>
+            Task.CompletedTask;
 
         /// <summary>
         /// Writes element type attribute according to style preferences.
         /// </summary>
-        public virtual void WriteType(XmlWriter writer, TypeDefinition typeDefinition, ContentDefinition contentDefinition)
+        public virtual async Task WriteTypeAsync(XmlWriter writer, TypeDefinition typeDefinition, ContentDefinition contentDefinition)
         {
             if (typeDefinition.IsAnonymous)
                 return;
 
             if (typeDefinition.Type != contentDefinition.RuntimeType)
             {
-                writer.WriteTypeAttribute(typeDefinition.Name);
+                await writer.WriteTypeAttributeAsync(typeDefinition.Name).ConfigureAwait(false);
                 return;
             }
 
             if (!(contentDefinition.Particle is RequestDefinition))
-                WriteExplicitType(writer, typeDefinition.Name);
+                await WriteExplicitTypeAsync(writer, typeDefinition.Name).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Serializes X-Road SOAP message header element.
         /// </summary>
-        public void WriteHeaderElement(XmlWriter writer, XName name, object value, XName typeName)
+        public async Task WriteHeaderElementAsync(XmlWriter writer, XName name, object value, XName typeName)
         {
-            writer.WriteStartElement(name.LocalName, name.NamespaceName);
+            await writer.WriteStartElementAsync(null, name.LocalName, name.NamespaceName).ConfigureAwait(false);
 
-            WriteExplicitType(writer, typeName);
+            await WriteExplicitTypeAsync(writer, typeName).ConfigureAwait(false);
 
             if (typeName.LocalName == "string" && typeName.NamespaceName == NamespaceConstants.Xsd)
-                writer.WriteStringWithMode((string)value ?? "", StringSerializationMode);
+                await writer.WriteStringWithModeAsync((string)value ?? "", StringSerializationMode).ConfigureAwait(false);
             else writer.WriteValue(value);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,17 +111,17 @@ namespace XRoadLib.Styles
         /// </summary>
         public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
         
-        public virtual void SerializeFault(XmlWriter writer, IXRoadFault fault)
+        public virtual async Task SerializeFaultAsync(XmlWriter writer, IXRoadFault fault)
         {
-            writer.WriteStartElement("faultCode");
-            WriteExplicitType(writer, XName.Get("string", NamespaceConstants.Xsd));
-            writer.WriteValue(fault.FaultCode);
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync("faultCode").ConfigureAwait(false);
+            await WriteExplicitTypeAsync(writer, XName.Get("string", NamespaceConstants.Xsd)).ConfigureAwait(false);
+            await writer.WriteStringAsync(fault.FaultCode).ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-            writer.WriteStartElement("faultString");
-            WriteExplicitType(writer, XName.Get("string", NamespaceConstants.Xsd));
-            writer.WriteValue(fault.FaultString);
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync("faultString").ConfigureAwait(false);
+            await WriteExplicitTypeAsync(writer, XName.Get("string", NamespaceConstants.Xsd)).ConfigureAwait(false);
+            await writer.WriteStringAsync(fault.FaultString).ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }

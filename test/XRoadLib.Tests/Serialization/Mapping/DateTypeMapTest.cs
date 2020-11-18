@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using XRoadLib.Serialization.Mapping;
 using Xunit;
 
@@ -7,12 +8,12 @@ namespace XRoadLib.Tests.Serialization.Mapping
     public class DateTypeMapTest : TypeMapTestBase
     {
         private static readonly DateTypeMap DateTypeMap = new DateTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<DateTime>("date"));
-        private static readonly Func<string, object> DeserializeDateValue = x => DeserializeValue(DateTypeMap, x);
+        private static readonly Func<string, Task<object>> DeserializeDateValueAsync = x => DeserializeValueAsync(DateTypeMap, x);
 
         [Fact]
-        public void CanDeserializePlainDate()
+        public async Task CanDeserializePlainDate()
         {
-            var instance = DeserializeDateValue("2013-08-27");
+            var instance = await DeserializeDateValueAsync("2013-08-27");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;
@@ -27,9 +28,9 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CannotDeserializeWrongFormat()
+        public async Task CannotDeserializeWrongFormat()
         {
-            var exception = Assert.Throws<FormatException>(() => DeserializeDateValue("2013-08-40"));
+            var exception = await Assert.ThrowsAsync<FormatException>(() => DeserializeDateValueAsync("2013-08-40"));
 #if NETFRAMEWORK
             Assert.Equal("String was not recognized as a valid DateTime.", exception.Message);
 #else
@@ -38,9 +39,9 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CannotDeserializeDateTimeFormat()
+        public async Task CannotDeserializeDateTimeFormat()
         {
-            var exception = Assert.Throws<FormatException>(() => DeserializeDateValue("2013-08-04T11:11:11"));
+            var exception = await Assert.ThrowsAsync<FormatException>(() => DeserializeDateValueAsync("2013-08-04T11:11:11"));
 #if NETFRAMEWORK
             Assert.Equal("String was not recognized as a valid DateTime.", exception.Message);
 #else
@@ -49,10 +50,10 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void DeserializesUniversalTimezoneToLocalTimezone()
+        public async Task DeserializesUniversalTimezoneToLocalTimezone()
         {
             var expected = TimeZoneInfo.ConvertTime(new DateTime(2013, 8, 27), TimeZoneInfo.Utc, TimeZoneInfo.Local);
-            var instance = DeserializeDateValue("2013-08-27Z");
+            var instance = await DeserializeDateValueAsync("2013-08-27Z");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;
@@ -60,10 +61,10 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void DeserializesExplicitTimezoneToLocalTimezone()
+        public async Task DeserializesExplicitTimezoneToLocalTimezone()
         {
             var expected = TimeZoneInfo.ConvertTime(new DateTime(2013, 8, 27, 3, 0, 0), TimeZoneInfo.Utc, TimeZoneInfo.Local);
-            var instance = DeserializeDateValue("2013-08-27-03:00");
+            var instance = await DeserializeDateValueAsync("2013-08-27-03:00");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;

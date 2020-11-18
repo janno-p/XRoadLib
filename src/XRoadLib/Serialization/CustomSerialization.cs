@@ -1,10 +1,11 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 
 namespace XRoadLib.Serialization
 {
     public class CustomSerialization : ICustomSerialization
     {
-        public virtual void OnContentComplete(XmlWriter writer)
-        { }
+        public virtual Task OnContentCompleteAsync(XmlWriter writer) =>
+            Task.CompletedTask;
     }
 }

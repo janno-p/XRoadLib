@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -15,11 +16,11 @@ namespace XRoadLib.Wsdl
             Namespace = ns;
         }
 
-        internal override void Write(XmlWriter writer)
+        internal override async Task WriteAsync(XmlWriter writer)
         {
-            writer.WriteStartElement(Prefix, "address", Namespace);
-            writer.WriteAttributeString("producer", Producer);
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync(Prefix, "address", Namespace).ConfigureAwait(false);
+            await writer.WriteAttributeStringAsync(null, "producer", null, Producer).ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }

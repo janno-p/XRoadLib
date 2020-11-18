@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Serialization;
@@ -12,17 +13,17 @@ namespace XRoadLib.Tests.Serialization.Mapping
     public class OptimizedContentTypeMapTest : TypeMapTestBase
     {
         private static readonly OptimizedContentTypeMap OptimizedContentTypeMap = new OptimizedContentTypeMap(new ContentTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<Stream>("base64")));
-        private static readonly Func<string, object> DeserializeOptimizedContentValue = x => DeserializeValue(OptimizedContentTypeMap, x);
+        private static readonly Func<string, Task<object>> DeserializeOptimizedContentValueAsync = x => DeserializeValueAsync(OptimizedContentTypeMap, x);
 
         [Fact]
-        public void CanDeserializeXopIncludeReference()
+        public async Task CanDeserializeXopIncludeReference()
         {
             using var attachment = new XRoadAttachment(Encoding.UTF8.GetBytes("Test"));
             using var message = Globals.ServiceManager.CreateMessage();
 
             message.AllAttachments.Add(attachment);
 
-            var instance = DeserializeValue(
+            var instance = await DeserializeValueAsync(
                 new XElement(
                     "value",
                     new XElement(
@@ -39,9 +40,9 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CanDeserializeBase64Content()
+        public async Task CanDeserializeBase64Content()
         {
-            var instance = DeserializeOptimizedContentValue("VsOkaWtl");
+            var instance = await DeserializeOptimizedContentValueAsync("VsOkaWtl");
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
             var sisu = Encoding.UTF8.GetString(stream.ToArray());
@@ -49,9 +50,9 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CanDeserializeBase64ContentWithSpaces()
+        public async Task CanDeserializeBase64ContentWithSpaces()
         {
-            var instance = DeserializeOptimizedContentValue("\r\n\t   VsOkaWtl\n");
+            var instance = await DeserializeOptimizedContentValueAsync("\r\n\t   VsOkaWtl\n");
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
             var sisu = Encoding.UTF8.GetString(stream.ToArray());
@@ -59,9 +60,9 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CanDeserializeBase64ContentWithCData()
+        public async Task CanDeserializeBase64ContentWithCData()
         {
-            var instance = DeserializeOptimizedContentValue("<![CDATA[VsOkaWtl]]>");
+            var instance = await DeserializeOptimizedContentValueAsync("<![CDATA[VsOkaWtl]]>");
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
             var sisu = Encoding.UTF8.GetString(stream.ToArray());
@@ -69,9 +70,9 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CanDeserializeEmptyBase64Content()
+        public async Task CanDeserializeEmptyBase64Content()
         {
-            var instance = DeserializeOptimizedContentValue("");
+            var instance = await DeserializeOptimizedContentValueAsync("");
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
             var sisu = Encoding.UTF8.GetString(stream.ToArray());
@@ -79,11 +80,11 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CanDeserializeEmptySelfClosingBase64Content()
+        public async Task CanDeserializeEmptySelfClosingBase64Content()
         {
             using var message = Globals.ServiceManager.CreateMessage();
 
-            var instance = DeserializeValue(
+            var instance = await DeserializeValueAsync(
                 new XElement("value"),
                 message
             );
@@ -94,16 +95,16 @@ namespace XRoadLib.Tests.Serialization.Mapping
             Assert.Equal("", sisu);
         }
 
-        private static object DeserializeValue(XElement rootElement, XRoadMessage message)
+        private static async Task<object> DeserializeValueAsync(XElement rootElement, XRoadMessage message)
         {
             var document = new XDocument();
             document.Add(rootElement);
 
-            using var reader = document.CreateReader();
+            using var reader = document.CreateAsyncReader();
 
-            while (reader.Read() && reader.NodeType != XmlNodeType.Element) { }
+            while (await reader.ReadAsync() && reader.NodeType != XmlNodeType.Element) { }
 
-            return OptimizedContentTypeMap.Deserialize(
+            return await OptimizedContentTypeMap.DeserializeAsync(
                 reader,
                 null,
                 Globals.GetTestDefinition(OptimizedContentTypeMap.Definition.Type),

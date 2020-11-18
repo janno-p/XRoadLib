@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Headers;
@@ -13,21 +14,21 @@ namespace XRoadLib.Soap
         string ContentType { get; }
         string Namespace { get; }
 
-        void MoveToEnvelope(XmlReader reader);
-        void MoveToBody(XmlReader reader);
-        void MoveToPayload(XmlReader reader, XName payloadName);
+        Task MoveToEnvelopeAsync(XmlReader reader);
+        Task MoveToBodyAsync(XmlReader reader);
+        Task MoveToPayloadAsync(XmlReader reader, XName payloadName);
 
-        bool TryMoveToEnvelope(XmlReader reader);
-        bool TryMoveToHeader(XmlReader reader);
-        bool TryMoveToBody(XmlReader reader);
+        Task<bool> TryMoveToEnvelopeAsync(XmlReader reader);
+        Task<bool> TryMoveToHeaderAsync(XmlReader reader);
+        Task<bool> TryMoveToBodyAsync(XmlReader reader);
 
-        void WriteStartEnvelope(XmlWriter writer, string prefix = null);
-        void WriteStartBody(XmlWriter writer);
+        Task WriteStartEnvelopeAsync(XmlWriter writer, string prefix = null);
+        Task WriteStartBodyAsync(XmlWriter writer);
 
-        void WriteSoapFault(XmlWriter writer, IFault fault);
-        void WriteSoapHeader(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null);
+        Task WriteSoapFaultAsync(XmlWriter writer, IFault fault);
+        Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null);
 
-        void ThrowSoapFaultIfPresent(XmlReader reader);
+        Task ThrowSoapFaultIfPresentAsync(XmlReader reader);
 
         IFault CreateFault(Exception exception);
     }

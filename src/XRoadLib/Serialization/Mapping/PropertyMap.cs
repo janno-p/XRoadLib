@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -38,11 +39,11 @@ namespace XRoadLib.Serialization.Mapping
                 _filters.Add(availableFilter);
         }
 
-        public bool Deserialize(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
+        public async Task<bool> DeserializeAsync(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
         {
             if (message.EnableFiltering && !_filters.Contains(message.FilterName))
             {
-                reader.ConsumeUnusedElement();
+                await reader.ConsumeUnusedElementAsync().ConfigureAwait(false);
                 return false;
             }
 
@@ -52,7 +53,7 @@ namespace XRoadLib.Serialization.Mapping
 
             var concreteTypeMap = (_typeMap.Definition.IsInheritable ? _serializer.GetTypeMapFromXsiType(reader, Definition) : null) ?? _typeMap;
 
-            var propertyValue = concreteTypeMap.Deserialize(reader, templateNode, Definition.Content, message);
+            var propertyValue = await concreteTypeMap.DeserializeAsync(reader, templateNode, Definition.Content, message).ConfigureAwait(false);
             if (propertyValue == null)
                 return true;
 
@@ -61,7 +62,7 @@ namespace XRoadLib.Serialization.Mapping
             return true;
         }
 
-        public void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message)
+        public async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message)
         {
             if (message.EnableFiltering && !_filters.Contains(message.FilterName))
                 return;
@@ -73,20 +74,20 @@ namespace XRoadLib.Serialization.Mapping
 
             if (!Definition.Content.MergeContent)
             {
-                writer.WriteStartElement(Definition.Content.Name);
+                await writer.WriteStartElementAsync(Definition.Content.Name).ConfigureAwait(false);
 
                 if (propertyValue == null)
-                    writer.WriteNilAttribute();
+                    await writer.WriteNilAttributeAsync().ConfigureAwait(false);
             }
 
             if (propertyValue != null)
             {
                 var concreteTypeMap = _typeMap.Definition.IsInheritable ? _serializer.GetTypeMap(propertyValue.GetType()) : _typeMap;
-                concreteTypeMap.Serialize(writer, templateNode, propertyValue, Definition.Content, message);
+                await concreteTypeMap.SerializeAsync(writer, templateNode, propertyValue, Definition.Content, message).ConfigureAwait(false);
             }
 
             if (!Definition.Content.MergeContent)
-                writer.WriteEndElement();
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }

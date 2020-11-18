@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 
@@ -9,10 +10,10 @@ namespace XRoadLib.Wsdl
 
         public XmlQualifiedName Binding { get; set; }
 
-        protected override void WriteAttributes(XmlWriter writer)
+        protected override async Task WriteAttributesAsync(XmlWriter writer)
         {
-            base.WriteAttributes(writer);
-            writer.WriteQualifiedAttribute("binding", Binding);
+            await base.WriteAttributesAsync(writer).ConfigureAwait(false);
+            await writer.WriteQualifiedAttributeAsync("binding", Binding).ConfigureAwait(false);
         }
     }
 }

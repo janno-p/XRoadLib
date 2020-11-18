@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Schema;
@@ -18,68 +19,68 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Serializes attribute with qualified name content.
         /// </summary>
-        public static void WriteQualifiedAttribute(this XmlWriter writer, string name, XmlQualifiedName qualifiedName)
+        public static async Task WriteQualifiedAttributeAsync(this XmlWriter writer, string name, XmlQualifiedName qualifiedName)
         {
             if (qualifiedName == null || qualifiedName.IsEmpty)
                 return;
 
             writer.WriteStartAttribute(name);
-            writer.WriteQualifiedName(qualifiedName.Name, qualifiedName.Namespace);
+            await writer.WriteQualifiedNameAsync(qualifiedName.Name, qualifiedName.Namespace).ConfigureAwait(false);
             writer.WriteEndAttribute();
         }
 
-        private static void WriteQualifiedAttribute(this XmlWriter writer, string attributeName, string attributeNamespace, string valueName, string valueNamespace)
+        private static async Task WriteQualifiedAttributeAsync(this XmlWriter writer, string attributeName, string attributeNamespace, string valueName, string valueNamespace)
         {
             writer.WriteStartAttribute(attributeName, attributeNamespace);
-            writer.WriteQualifiedName(valueName, valueNamespace);
+            await writer.WriteQualifiedNameAsync(valueName, valueNamespace).ConfigureAwait(false);
             writer.WriteEndAttribute();
         }
 
         /// <summary>
         /// Serializes xsi:type attribute.
         /// </summary>
-        public static void WriteTypeAttribute(this XmlWriter writer, string typeName, string typeNamespace)
+        public static Task WriteTypeAttributeAsync(this XmlWriter writer, string typeName, string typeNamespace)
         {
-            writer.WriteQualifiedAttribute(QnXsiType.Name, QnXsiType.Namespace, typeName, typeNamespace);
+            return writer.WriteQualifiedAttributeAsync(QnXsiType.Name, QnXsiType.Namespace, typeName, typeNamespace);
         }
 
         /// <summary>
         /// Serializes xsi:type attribute.
         /// </summary>
-        public static void WriteTypeAttribute(this XmlWriter writer, XName qualifiedName, string ns = null)
+        public static Task WriteTypeAttributeAsync(this XmlWriter writer, XName qualifiedName, string ns = null)
         {
-            writer.WriteTypeAttribute(qualifiedName.LocalName, ns ?? qualifiedName.NamespaceName);
+            return writer.WriteTypeAttributeAsync(qualifiedName.LocalName, ns ?? qualifiedName.NamespaceName);
         }
 
-        private static void WriteArrayTypeAttribute(this XmlWriter writer, string typeName, string typeNamespace, int arraySize)
+        private static async Task WriteArrayTypeAttributeAsync(this XmlWriter writer, string typeName, string typeNamespace, int arraySize)
         {
             writer.WriteStartAttribute("arrayType", NamespaceConstants.SoapEnc);
-            writer.WriteQualifiedName(typeName, typeNamespace);
-            writer.WriteString($"[{arraySize}]");
+            await writer.WriteQualifiedNameAsync(typeName, typeNamespace).ConfigureAwait(false);
+            await writer.WriteStringAsync($"[{arraySize}]").ConfigureAwait(false);
             writer.WriteEndAttribute();
         }
 
         /// <summary>
         /// Serializes SOAP encoded array type attribute.
         /// </summary>
-        public static void WriteArrayTypeAttribute(this XmlWriter writer, XName qualifiedName, int arraySize)
+        public static Task WriteArrayTypeAttributeAsync(this XmlWriter writer, XName qualifiedName, int arraySize)
         {
-            writer.WriteArrayTypeAttribute(qualifiedName.LocalName, qualifiedName.NamespaceName, arraySize);
+            return writer.WriteArrayTypeAttributeAsync(qualifiedName.LocalName, qualifiedName.NamespaceName, arraySize);
         }
 
         /// <summary>
         /// Serializes xsi:nil element attribute.
         /// </summary>
-        public static void WriteNilAttribute(this XmlWriter writer)
+        public static Task WriteNilAttributeAsync(this XmlWriter writer)
         {
-            writer.WriteAttributeString("nil", NamespaceConstants.Xsi, "1");
+            return writer.WriteAttributeStringAsync(null, "nil", NamespaceConstants.Xsi, "1");
         }
 
-        private static void WriteCDataEscape(this XmlWriter writer, string value)
+        private static async Task WriteCDataEscapeAsync(this XmlWriter writer, string value)
         {
             if (!value.Contains("&") && !value.Contains("<") && !value.Contains(">"))
             {
-                writer.WriteValue(value);
+                await writer.WriteStringAsync(value).ConfigureAwait(false);
                 return;
             }
 
@@ -89,12 +90,12 @@ namespace XRoadLib.Extensions
                 var endIndex = value.IndexOf("]]>", startIndex, StringComparison.Ordinal);
                 if (endIndex < 0)
                 {
-                    writer.WriteCData(value.Substring(startIndex));
+                    await writer.WriteCDataAsync(value.Substring(startIndex)).ConfigureAwait(false);
                     break;
                 }
 
-                writer.WriteCData(value.Substring(startIndex, endIndex - startIndex));
-                writer.WriteRaw("]]");
+                await writer.WriteCDataAsync(value.Substring(startIndex, endIndex - startIndex)).ConfigureAwait(false);
+                await writer.WriteRawAsync("]]").ConfigureAwait(false);
 
                 startIndex = endIndex + 2;
             }
@@ -103,45 +104,45 @@ namespace XRoadLib.Extensions
         /// <summary>
         /// Serializes string value with required serialization mode.
         /// </summary>
-        public static void WriteStringWithMode(this XmlWriter writer, string value, StringSerializationMode mode)
+        public static Task WriteStringWithModeAsync(this XmlWriter writer, string value, StringSerializationMode mode)
         {
-            if (mode == StringSerializationMode.HtmlEncoded)
-                writer.WriteString(value);
-            else writer.WriteCDataEscape(value);
+            return mode == StringSerializationMode.HtmlEncoded
+                ? writer.WriteStringAsync(value)
+                : writer.WriteCDataEscapeAsync(value);
         }
 
-        public static void WriteStartElement(this XmlWriter writer, XName name)
+        public static Task WriteStartElementAsync(this XmlWriter writer, XName name)
         {
-            writer.WriteStartElement(name.LocalName, name.NamespaceName);
+            return writer.WriteStartElementAsync(null, name.LocalName, name.NamespaceName);
         }
 
         /// <summary>
         /// Serializes beginning of SOAP envelope into X-Road message.
         /// </summary>
-        public static void WriteSoapEnvelope(this XmlWriter writer, IMessageFormatter messageFormatter, ProtocolDefinition protocolDefinition)
+        public static async Task WriteSoapEnvelopeAsync(this XmlWriter writer, IMessageFormatter messageFormatter, ProtocolDefinition protocolDefinition)
         {
             var soapEnvPrefix = protocolDefinition != null ? protocolDefinition.GlobalNamespacePrefixes[messageFormatter.Namespace] : PrefixConstants.SoapEnv;
 
-            messageFormatter.WriteStartEnvelope(writer, soapEnvPrefix);
+            await messageFormatter.WriteStartEnvelopeAsync(writer, soapEnvPrefix).ConfigureAwait(false);
 
             if (protocolDefinition == null)
                 return;
 
             foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
-                writer.WriteAttributeString(PrefixConstants.Xmlns, kvp.Value, NamespaceConstants.Xmlns, kvp.Key.NamespaceName);
+                await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, kvp.Value, NamespaceConstants.Xmlns, kvp.Key.NamespaceName).ConfigureAwait(false);
 
             if (protocolDefinition.Style is RpcEncodedStyle)
-                writer.WriteAttributeString("encodingStyle", messageFormatter.Namespace, NamespaceConstants.SoapEnc);
+                await writer.WriteAttributeStringAsync(null, "encodingStyle", messageFormatter.Namespace, NamespaceConstants.SoapEnc).ConfigureAwait(false);
         }
 
-        public static void WriteMissingAttributes(this XmlWriter writer, ProtocolDefinition protocolDefinition)
+        public static async Task WriteMissingAttributesAsync(this XmlWriter writer, ProtocolDefinition protocolDefinition)
         {
             if (protocolDefinition == null)
                 return;
 
             foreach (var kvp in protocolDefinition.GlobalNamespacePrefixes)
                 if (writer.LookupPrefix(kvp.Key.NamespaceName) == null)
-                    writer.WriteAttributeString(PrefixConstants.Xmlns, kvp.Value, NamespaceConstants.Xmlns, kvp.Key.NamespaceName);
+                    await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, kvp.Value, NamespaceConstants.Xmlns, kvp.Key.NamespaceName).ConfigureAwait(false);
         }
     }
 }

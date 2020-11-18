@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
@@ -29,28 +30,28 @@ namespace XRoadLib.Serialization.Mapping
             }
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             var isEmptyElement = reader.IsEmptyElement;
 
-            var stringValue = isEmptyElement ? "" : reader.ReadElementContentAsString();
+            var stringValue = isEmptyElement ? "" : await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
             if (!_deserializationMapping.TryGetValue(stringValue, out var enumerationValue))
                 throw new UnexpectedValueException($"Unexpected value `{stringValue}` for enumeration type `{Definition.Name}`.", Definition, stringValue);
 
             var result = Enum.ToObject(Definition.Type, enumerationValue);
 
-            return isEmptyElement ? reader.MoveNextAndReturn(result) : result;
+            return isEmptyElement ? await reader.MoveNextAndReturnAsync(result).ConfigureAwait(false) : result;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+        public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            message.Style.WriteType(writer, Definition, content);
+            await message.Style.WriteTypeAsync(writer, Definition, content).ConfigureAwait(false);
 
             if (!_serializationMapping.TryGetValue((int)value, out var enumerationValue))
                 throw new UnexpectedValueException($"Cannot map value `{value}` to enumeration type `{Definition.Name}`.", Definition, value);
 
-            writer.WriteValue(enumerationValue);
+            await writer.WriteStringAsync(enumerationValue).ConfigureAwait(false);
         }
     }
 }

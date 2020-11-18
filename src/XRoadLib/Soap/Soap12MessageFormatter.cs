@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -28,52 +29,52 @@ namespace XRoadLib.Soap
         public string ContentType { get; } = ContentTypes.Soap12;
         public string Namespace { get; } = NamespaceConstants.Soap12Env;
 
-        public void MoveToEnvelope(XmlReader reader)
+        public async Task MoveToEnvelopeAsync(XmlReader reader)
         {
-            if (!TryMoveToEnvelope(reader))
+            if (!await TryMoveToEnvelopeAsync(reader).ConfigureAwait(false))
                 throw new InvalidQueryException($"Element `{EnvelopeName}` is missing from message content.");
         }
 
-        public void MoveToBody(XmlReader reader)
+        public async Task MoveToBodyAsync(XmlReader reader)
         {
-            MoveToEnvelope(reader);
+            await MoveToEnvelopeAsync(reader).ConfigureAwait(false);
 
-            if (!TryMoveToBody(reader))
+            if (!await TryMoveToBodyAsync(reader).ConfigureAwait(false))
                 throw new InvalidQueryException($"Element `{BodyName}` is missing from message content.");
         }
 
-        public void MoveToPayload(XmlReader reader, XName payloadName)
+        public async Task MoveToPayloadAsync(XmlReader reader, XName payloadName)
         {
-            MoveToBody(reader);
+            await MoveToBodyAsync(reader).ConfigureAwait(false);
 
-            if (!reader.MoveToElement(2, payloadName))
+            if (!await reader.MoveToElementAsync(2, payloadName).ConfigureAwait(false))
                 throw new InvalidQueryException($"Payload element `{payloadName}` is missing from message content.");
         }
 
-        public bool TryMoveToEnvelope(XmlReader reader)
+        public Task<bool> TryMoveToEnvelopeAsync(XmlReader reader)
         {
-            return reader.MoveToElement(0, EnvelopeName);
+            return reader.MoveToElementAsync(0, EnvelopeName);
         }
 
-        public bool TryMoveToHeader(XmlReader reader)
+        public async Task<bool> TryMoveToHeaderAsync(XmlReader reader)
         {
-            return reader.MoveToElement(1) && reader.IsCurrentElement(1, HeaderName);
+            return await reader.MoveToElementAsync(1).ConfigureAwait(false) && reader.IsCurrentElement(1, HeaderName);
         }
 
-        public bool TryMoveToBody(XmlReader reader)
+        public Task<bool> TryMoveToBodyAsync(XmlReader reader)
         {
-            return reader.MoveToElement(1, BodyName);
+            return reader.MoveToElementAsync(1, BodyName);
         }
 
-        public void WriteStartEnvelope(XmlWriter writer, string prefix = null)
+        public Task WriteStartEnvelopeAsync(XmlWriter writer, string prefix = null)
         {
             var prefixValue = string.IsNullOrEmpty(prefix) ? PrefixConstants.Soap12Env : prefix;
-            writer.WriteStartElement(prefixValue, EnvelopeName.LocalName, EnvelopeName.NamespaceName);
+            return writer.WriteStartElementAsync(prefixValue, EnvelopeName.LocalName, EnvelopeName.NamespaceName);
         }
 
-        public void WriteStartBody(XmlWriter writer)
+        public Task WriteStartBodyAsync(XmlWriter writer)
         {
-            writer.WriteStartElement(BodyName);
+            return writer.WriteStartElementAsync(BodyName);
         }
 
         public IFault CreateFault(Exception exception)
@@ -96,174 +97,169 @@ namespace XRoadLib.Soap
             };
         }
 
-        public void WriteSoapFault(XmlWriter writer, IFault fault)
+        public async Task WriteSoapFaultAsync(XmlWriter writer, IFault fault)
         {
             var soapFault = (ISoap12Fault)fault;
 
-            writer.WriteStartDocument();
+            await writer.WriteStartDocumentAsync().ConfigureAwait(false);
 
-            WriteStartEnvelope(writer);
-            writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.Soap12Env, NamespaceConstants.Xmlns, NamespaceConstants.Soap12Env);
+            await WriteStartEnvelopeAsync(writer).ConfigureAwait(false);
+            await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.Soap12Env, NamespaceConstants.Xmlns, NamespaceConstants.Soap12Env).ConfigureAwait(false);
 
-            WriteStartBody(writer);
-            writer.WriteStartElement("Fault", NamespaceConstants.Soap12Env);
+            await WriteStartBodyAsync(writer).ConfigureAwait(false);
+            await writer.WriteStartElementAsync(null, "Fault", NamespaceConstants.Soap12Env).ConfigureAwait(false);
 
-            WriteSoapFaultCode(writer, soapFault.Code);
-            WriteSoapFaultReason(writer, soapFault.Reason);
+            await WriteSoapFaultCodeAsync(writer, soapFault.Code).ConfigureAwait(false);
+            await WriteSoapFaultReasonAsync(writer, soapFault.Reason).ConfigureAwait(false);
 
             if (!string.IsNullOrWhiteSpace(soapFault.Node))
             {
-                writer.WriteStartElement(FaultNodeName);
-                writer.WriteString(soapFault.Node);
-                writer.WriteEndElement();
+                await writer.WriteStartElementAsync(FaultNodeName).ConfigureAwait(false);
+                await writer.WriteStringAsync(soapFault.Node).ConfigureAwait(false);
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
             if (!string.IsNullOrWhiteSpace(soapFault.Role))
             {
-                writer.WriteStartElement(FaultRoleName);
-                writer.WriteString(soapFault.Role);
-                writer.WriteEndElement();
+                await writer.WriteStartElementAsync(FaultRoleName).ConfigureAwait(false);
+                await writer.WriteStringAsync(soapFault.Role).ConfigureAwait(false);
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
             if (!string.IsNullOrWhiteSpace(soapFault.Detail))
             {
-                writer.WriteStartElement(FaultDetailName);
-                writer.WriteValue(soapFault.Detail);
-                writer.WriteEndElement();
+                await writer.WriteStartElementAsync(FaultDetailName).ConfigureAwait(false);
+                await writer.WriteStringAsync(soapFault.Detail).ConfigureAwait(false);
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
-            writer.WriteEndElement();
-            writer.WriteEndElement();
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-            writer.Flush();
+            await writer.FlushAsync().ConfigureAwait(false);
         }
 
-        private static void WriteSoapFaultCode(XmlWriter writer, Soap12FaultCode faultCode)
+        private static async Task WriteSoapFaultCodeAsync(XmlWriter writer, Soap12FaultCode faultCode)
         {
-            writer.WriteStartElement(FaultCodeName);
+            await writer.WriteStartElementAsync(FaultCodeName).ConfigureAwait(false);
 
-            writer.WriteStartElement(FaultCodeValueName);
-            WriteSoapFaultValueEnum(writer, faultCode.Value);
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync(FaultCodeValueName).ConfigureAwait(false);
+            await WriteSoapFaultValueEnumAsync(writer, faultCode.Value).ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-            WriteSoapFaultSubcode(writer, faultCode.Subcode);
+            await WriteSoapFaultSubcodeAsync(writer, faultCode.Subcode).ConfigureAwait(false);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
-        private static void WriteSoapFaultSubcode(XmlWriter writer, Soap12FaultSubcode subcode)
+        private static async Task WriteSoapFaultSubcodeAsync(XmlWriter writer, Soap12FaultSubcode subcode)
         {
             if (subcode == null)
                 return;
 
-            writer.WriteStartElement("Subcode", NamespaceConstants.Soap12Env);
+            await writer.WriteStartElementAsync(null, "Subcode", NamespaceConstants.Soap12Env).ConfigureAwait(false);
 
-            writer.WriteStartElement("Value", NamespaceConstants.Soap12Env);
-            writer.WriteString(subcode.Value);
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync(null, "Value", NamespaceConstants.Soap12Env).ConfigureAwait(false);
+            await writer.WriteStringAsync(subcode.Value).ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-            WriteSoapFaultSubcode(writer, subcode.Subcode);
+            await WriteSoapFaultSubcodeAsync(writer, subcode.Subcode).ConfigureAwait(false);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
-        private static void WriteSoapFaultValueEnum(XmlWriter writer, Soap12FaultCodeEnum value)
+        private static Task WriteSoapFaultValueEnumAsync(XmlWriter writer, Soap12FaultCodeEnum value)
         {
             switch (value)
             {
                 case Soap12FaultCodeEnum.Receiver:
-                    writer.WriteQualifiedName("Receiver", NamespaceConstants.Soap12Env);
-                    break;
+                    return writer.WriteQualifiedNameAsync("Receiver", NamespaceConstants.Soap12Env);
 
                 case Soap12FaultCodeEnum.Sender:
-                    writer.WriteQualifiedName("Sender", NamespaceConstants.Soap12Env);
-                    break;
+                    return writer.WriteQualifiedNameAsync("Sender", NamespaceConstants.Soap12Env);
 
                 case Soap12FaultCodeEnum.MustUnderstand:
-                    writer.WriteQualifiedName("MustUnderstand", NamespaceConstants.Soap12Env);
-                    break;
+                    return writer.WriteQualifiedNameAsync("MustUnderstand", NamespaceConstants.Soap12Env);
 
                 case Soap12FaultCodeEnum.VersionMismatch:
-                    writer.WriteQualifiedName("VersionMismatch", NamespaceConstants.Soap12Env);
-                    break;
+                    return writer.WriteQualifiedNameAsync("VersionMismatch", NamespaceConstants.Soap12Env);
 
                 case Soap12FaultCodeEnum.DataEncodingUnknown:
-                    writer.WriteQualifiedName("DataEncodingUnknown", NamespaceConstants.Soap12Env);
-                    break;
+                    return writer.WriteQualifiedNameAsync("DataEncodingUnknown", NamespaceConstants.Soap12Env);
 
                 default:
                     throw new ArgumentException($"Invalid SOAP 1.2 Fault Code enumeration value `{value}`.", nameof(value));
             }
         }
 
-        private static void WriteSoapFaultReason(XmlWriter writer, IList<Soap12FaultReasonText> faultReasons)
+        private static async Task WriteSoapFaultReasonAsync(XmlWriter writer, IList<Soap12FaultReasonText> faultReasons)
         {
-            writer.WriteStartElement(FaultReasonName);
+            await writer.WriteStartElementAsync(FaultReasonName).ConfigureAwait(false);
 
             foreach (var text in faultReasons)
             {
-                writer.WriteStartElement(FaultReasonTextName);
-                writer.WriteAttributeString("xml", "lang", NamespaceConstants.Xml, text.LanguageCode);
-                writer.WriteString(text.Text);
-                writer.WriteEndElement();
+                await writer.WriteStartElementAsync(FaultReasonTextName).ConfigureAwait(false);
+                await writer.WriteAttributeStringAsync("xml", "lang", NamespaceConstants.Xml, text.LanguageCode).ConfigureAwait(false);
+                await writer.WriteStringAsync(text.Text).ConfigureAwait(false);
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
-        public void WriteSoapHeader(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
+        public async Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
         {
             if (header == null)
                 return;
 
-            writer.WriteStartElement("Header", NamespaceConstants.Soap12Env);
+            await writer.WriteStartElementAsync(null, "Header", NamespaceConstants.Soap12Env).ConfigureAwait(false);
 
-            header.WriteTo(writer, style, definition);
+            await header.WriteToAsync(writer, style, definition).ConfigureAwait(false);
 
             foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
                 additionalHeader.WriteTo(writer);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
-        public void ThrowSoapFaultIfPresent(XmlReader reader)
+        public async Task ThrowSoapFaultIfPresentAsync(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.Soap12Env && reader.LocalName == "Fault")
-                throw new Soap12FaultException(DeserializeSoapFault(reader));
+                throw new Soap12FaultException(await DeserializeSoapFaultAsync(reader).ConfigureAwait(false));
         }
 
-        private static ISoap12Fault DeserializeSoapFault(XmlReader reader)
+        private static async Task<ISoap12Fault> DeserializeSoapFaultAsync(XmlReader reader)
         {
             const int depth = 3;
 
             var fault = new Soap12Fault();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, FaultCodeName))
+            if (reader.IsEmptyElement || !await reader.MoveToElementAsync(depth, FaultCodeName).ConfigureAwait(false))
                 throw new InvalidQueryException($"SOAP 1.2 Fault must have `{FaultCodeName}` element.");
-            fault.Code = DeserializeSoapFaultCode(reader);
+            fault.Code = await DeserializeSoapFaultCodeAsync(reader).ConfigureAwait(false);
 
-            if (!reader.MoveToElement(depth, FaultReasonName))
+            if (!await reader.MoveToElementAsync(depth, FaultReasonName).ConfigureAwait(false))
                 throw new InvalidQueryException($"SOAP 1.2 Fault must have `{FaultReasonName}` element.");
-            fault.Reason = DeserializeSoapFaultReason(reader);
+            fault.Reason = await DeserializeSoapFaultReasonAsync(reader).ConfigureAwait(false);
 
-            var success = reader.MoveToElement(depth);
+            var success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             if (success && reader.IsCurrentElement(depth, FaultNodeName))
             {
-                fault.Node = reader.ReadElementContentAsString();
-                success = reader.MoveToElement(depth);
+                fault.Node = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             }
 
             if (success && reader.IsCurrentElement(depth, FaultRoleName))
             {
-                fault.Role = reader.ReadInnerXml();
-                success = reader.MoveToElement(depth);
+                fault.Role = await reader.ReadInnerXmlAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             }
 
             if (success && reader.IsCurrentElement(depth, FaultDetailName))
             {
-                fault.Detail = reader.ReadInnerXml();
-                success = reader.MoveToElement(depth);
+                fault.Detail = await reader.ReadInnerXmlAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             }
 
             if (success)
@@ -272,21 +268,21 @@ namespace XRoadLib.Soap
             return fault;
         }
 
-        private static Soap12FaultCode DeserializeSoapFaultCode(XmlReader reader)
+        private static async Task<Soap12FaultCode> DeserializeSoapFaultCodeAsync(XmlReader reader)
         {
             const int depth = 4;
 
             var faultCode = new Soap12FaultCode();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, FaultCodeValueName))
+            if (reader.IsEmptyElement || !await reader.MoveToElementAsync(depth, FaultCodeValueName).ConfigureAwait(false))
                 throw new InvalidQueryException($"SOAP 1.2 Fault Code must have `{FaultCodeValueName}` element.");
             faultCode.Value = DeserializeFaultCodeValue(reader);
 
-            var success = reader.MoveToElement(depth);
+            var success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             if (success && reader.IsCurrentElement(depth, FaultCodeSubcodeName))
             {
-                faultCode.Subcode = DeserializeFaultCodeSubcode(reader, depth + 1);
-                success = reader.MoveToElement(depth);
+                faultCode.Subcode = await DeserializeFaultCodeSubcodeAsync(reader, depth + 1).ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             }
 
             if (success)
@@ -295,19 +291,19 @@ namespace XRoadLib.Soap
             return faultCode;
         }
 
-        private static Soap12FaultSubcode DeserializeFaultCodeSubcode(XmlReader reader, int depth)
+        private static async Task<Soap12FaultSubcode> DeserializeFaultCodeSubcodeAsync(XmlReader reader, int depth)
         {
             var faultSubcode = new Soap12FaultSubcode();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, FaultCodeValueName))
+            if (reader.IsEmptyElement || !await reader.MoveToElementAsync(depth, FaultCodeValueName).ConfigureAwait(false))
                 throw new InvalidQueryException($"SOAP 1.2 Fault Subcode must have `{FaultCodeValueName}` element.");
-            faultSubcode.Value = reader.ReadElementContentAsString();
+            faultSubcode.Value = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            var success = reader.MoveToElement(depth);
+            var success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             if (success && reader.IsCurrentElement(depth, FaultCodeSubcodeName))
             {
-                faultSubcode.Subcode = DeserializeFaultCodeSubcode(reader, depth + 1);
-                success = reader.MoveToElement(depth);
+                faultSubcode.Subcode = await DeserializeFaultCodeSubcodeAsync(reader, depth + 1).ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             }
 
             if (success)
@@ -341,13 +337,13 @@ namespace XRoadLib.Soap
             }
         }
 
-        private static IList<Soap12FaultReasonText> DeserializeSoapFaultReason(XmlReader reader)
+        private static async Task<IList<Soap12FaultReasonText>> DeserializeSoapFaultReasonAsync(XmlReader reader)
         {
             const int depth = 4;
 
             var faultReasons = new List<Soap12FaultReasonText>();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, FaultReasonTextName))
+            if (reader.IsEmptyElement || !await reader.MoveToElementAsync(depth, FaultReasonTextName).ConfigureAwait(false))
                 throw new InvalidQueryException($"SOAP 1.2 Fault Reason must have `{FaultReasonTextName}` element.");
 
             do
@@ -355,9 +351,9 @@ namespace XRoadLib.Soap
                 faultReasons.Add(new Soap12FaultReasonText
                 {
                     LanguageCode = reader.GetAttribute("lang", NamespaceConstants.Xml),
-                    Text = reader.ReadElementContentAsString()
+                    Text = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false)
                 });
-            } while (reader.MoveToElement(depth, FaultReasonTextName));
+            } while (await reader.MoveToElementAsync(depth, FaultReasonTextName).ConfigureAwait(false));
 
             if (reader.Depth > 3)
                 throw new InvalidQueryException($"Unexpected element `{reader.GetXName()}` in SOAP 1.2 Fault Reason element.");

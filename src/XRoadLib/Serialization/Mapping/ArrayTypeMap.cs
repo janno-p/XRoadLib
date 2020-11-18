@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -22,12 +23,12 @@ namespace XRoadLib.Serialization.Mapping
             _elementTypeMap = elementTypeMap;
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             var arrayContent = (ArrayContentDefiniton)content;
 
             if (reader.IsEmptyElement && !arrayContent.MergeContent)
-                return reader.MoveNextAndReturn(new T[0]);
+                return await reader.MoveNextAndReturnAsync(new T[0]).ConfigureAwait(false);
 
             var items = new List<T>();
 
@@ -36,13 +37,13 @@ namespace XRoadLib.Serialization.Mapping
             var itemName = arrayContent.Item.Content.Name;
 
             if (!arrayContent.MergeContent)
-                reader.Read();
+                await reader.ReadAsync().ConfigureAwait(false);
 
             while (parentDepth < reader.Depth)
             {
                 if (reader.NodeType != XmlNodeType.Element || reader.Depth != itemDepth)
                 {
-                    reader.Read();
+                    await reader.ReadAsync().ConfigureAwait(false);
                     continue;
                 }
 
@@ -61,13 +62,13 @@ namespace XRoadLib.Serialization.Mapping
                 if (reader.IsNilElement())
                 {
                     items.Add(default);
-                    reader.Read();
+                    await reader.ReadAsync().ConfigureAwait(false);
                     continue;
                 }
 
                 var typeMap = _serializer.GetTypeMapFromXsiType(reader, arrayContent.Item) ?? _elementTypeMap;
 
-                var value = typeMap.Deserialize(reader, templateNode, arrayContent.Item.Content, message);
+                var value = await typeMap.DeserializeAsync(reader, templateNode, arrayContent.Item.Content, message).ConfigureAwait(false);
 
                 items.Add((T)value);
             }
@@ -75,28 +76,28 @@ namespace XRoadLib.Serialization.Mapping
             return items.ToArray();
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+        public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
             var valueArray = (Array)value;
 
             if (!(content.Particle is RequestDefinition) && !content.MergeContent)
-                message.Style.WriteExplicitArrayType(writer, _elementTypeMap.Definition.Name, valueArray.Length);
+                await message.Style.WriteExplicitArrayTypeAsync(writer, _elementTypeMap.Definition.Name, valueArray.Length).ConfigureAwait(false);
 
             var arrayContent = (ArrayContentDefiniton)content;
             var itemName = arrayContent.Item.Content.Name;
 
             foreach (var valueItem in valueArray)
             {
-                writer.WriteStartElement(itemName);
+                await writer.WriteStartElementAsync(itemName).ConfigureAwait(false);
 
                 if (valueItem != null)
                 {
                     var typeMap = _serializer != null ? _serializer.GetTypeMap(valueItem.GetType()) : _elementTypeMap;
-                    typeMap.Serialize(writer, templateNode, valueItem, arrayContent.Item.Content, message);
+                    await typeMap.SerializeAsync(writer, templateNode, valueItem, arrayContent.Item.Content, message).ConfigureAwait(false);
                 }
-                else writer.WriteNilAttribute();
+                else await writer.WriteNilAttributeAsync().ConfigureAwait(false);
 
-                writer.WriteEndElement();
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
         }
     }

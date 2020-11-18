@@ -10,42 +10,42 @@ namespace XRoadLib.Serialization.Template
 {
     public class XRoadXmlTemplate : IXmlTemplate
     {
-        private readonly XElement requestNode;
-        private readonly XElement responseNode;
-        private readonly IList<XElement> parameterNodes;
-        private readonly IList<string> parameterNames;
-        private readonly Dictionary<string, Type> parameterTypes;
+        private readonly XElement _requestNode;
+        private readonly XElement _responseNode;
+        private readonly IList<XElement> _parameterNodes;
+        private readonly IList<string> _parameterNames;
+        private readonly Dictionary<string, Type> _parameterTypes;
 
-        public IDictionary<string, Type> ParameterTypes => parameterTypes;
+        public IDictionary<string, Type> ParameterTypes => _parameterTypes;
 
         public XRoadXmlTemplate(string templateXml, MethodInfo methodInfo)
         {
             if (!string.IsNullOrEmpty(templateXml))
             {
                 var document = XDocument.Parse(templateXml);
-                requestNode = document.Root?.Elements("request").SingleOrDefault();
-                responseNode = document.Root?.Elements("response").SingleOrDefault();
+                _requestNode = document.Root?.Elements("request").SingleOrDefault();
+                _responseNode = document.Root?.Elements("response").SingleOrDefault();
             }
 
-            parameterNodes = requestNode?.Elements().ToList() ?? new List<XElement>();
+            _parameterNodes = _requestNode?.Elements().ToList() ?? new List<XElement>();
 
             if (methodInfo == null)
                 return;
 
-            parameterNames = methodInfo.GetParameters().Select(parameter => parameter.Name).ToList();
-            parameterTypes = methodInfo.GetParameters().ToDictionary(param => param.Name, param => param.ParameterType);
+            _parameterNames = methodInfo.GetParameters().Select(parameter => parameter.Name).ToList();
+            _parameterTypes = methodInfo.GetParameters().ToDictionary(param => param.Name, param => param.ParameterType);
         }
 
         public XRoadXmlTemplate() : this(null, null)
         { }
 
-        public IXmlTemplateNode RequestNode => requestNode != null ? new XRoadRequestTemplateNode(requestNode.Name.LocalName, requestNode) : EmptyNode;
+        public IXmlTemplateNode RequestNode => _requestNode != null ? new XRoadRequestTemplateNode(_requestNode.Name.LocalName, _requestNode) : EmptyNode;
 
         public IXmlTemplateNode ResponseNode
         {
             get
             {
-                var elementNode = responseNode?.Elements().SingleOrDefault();
+                var elementNode = _responseNode?.Elements().SingleOrDefault();
 
                 return elementNode != null ? new XRoadRequestTemplateNode(elementNode.Name.LocalName, elementNode) : EmptyNode;
             }
@@ -53,34 +53,32 @@ namespace XRoadLib.Serialization.Template
 
         public IXmlTemplateNode GetParameterNode(string parameterName)
         {
-            if (requestNode == null)
+            if (_requestNode == null)
                 return EmptyNode;
 
-            var index = parameterNames.IndexOf(parameterName);
-            if (index < 0 || requestNode == null)
+            var index = _parameterNames.IndexOf(parameterName);
+            if (index < 0 || _requestNode == null)
                 return null;
 
-            var documentNode = parameterNodes[index];
+            var documentNode = _parameterNodes[index];
             if (documentNode == null)
                 throw new SchemaDefinitionException($"Service template does not define parameter named `{parameterName}`.");
 
             return new XRoadRequestTemplateNode(parameterName, documentNode);
         }
 
-        public IEnumerable<IXmlTemplateNode> ParameterNodes => parameterNames?.Select(GetParameterNode) ?? Enumerable.Empty<IXmlTemplateNode>();
+        public IEnumerable<IXmlTemplateNode> ParameterNodes => _parameterNames?.Select(GetParameterNode) ?? Enumerable.Empty<IXmlTemplateNode>();
 
         public static readonly IXmlTemplateNode EmptyNode = new XRoadRequestTemplateNode(string.Empty);
 
-        #region Nested type: XteeXmlValidatorNode
-
         private class XRoadRequestTemplateNode : IXmlTemplateNode
         {
-            private readonly XElement node;
+            private readonly XElement _node;
 
             public XRoadRequestTemplateNode(string name, XElement node = null)
             {
                 Name = name;
-                this.node = node;
+                _node = node;
             }
 
             private static bool IsInRange(XAttribute versionAttribute, uint version)
@@ -99,10 +97,10 @@ namespace XRoadLib.Serialization.Template
             {
                 get
                 {
-                    if (node == null)
+                    if (_node == null)
                         return this;
 
-                    var childNode = node.Elements(childNodeName).SingleOrDefault(n => IsInRange(n.Attribute("version"), version));
+                    var childNode = _node.Elements(childNodeName).SingleOrDefault(n => IsInRange(n.Attribute("version"), version));
                     if (childNode == null)
                         return null;
 
@@ -122,26 +120,24 @@ namespace XRoadLib.Serialization.Template
             {
                 get
                 {
-                    var requiredAttribute = node?.Attributes("required").SingleOrDefault();
+                    var requiredAttribute = _node?.Attributes("required").SingleOrDefault();
                     return requiredAttribute != null && requiredAttribute.Value == "true";
                 }
             }
 
-            public IEnumerable<string> ChildNames { get { return node?.Elements().Select(childNode => childNode.Name.LocalName) ?? Enumerable.Empty<string>(); } }
+            public IEnumerable<string> ChildNames { get { return _node?.Elements().Select(childNode => childNode.Name.LocalName) ?? Enumerable.Empty<string>(); } }
 
             public string Namespace => null;
 
             public int CountRequiredNodes(uint version)
             {
-                if (node == null)
+                if (_node == null)
                     return 0;
 
-                return node.Elements()
+                return _node.Elements()
                            .Where(n => IsInRange(n.Attribute("version"), version))
                            .Count(n => n.Attributes("required").Any(a => a.Value == "true"));
             }
         }
-
-        #endregion Nested type: XteeXmlValidatorNode
     }
 }

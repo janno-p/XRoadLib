@@ -37,14 +37,14 @@ namespace XRoadLib.Extensions.AspNetCore
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
                 throw new InvalidQueryException("Empty request content");
 
-            context.Request.LoadRequest(context.HttpContext, context.MessageFormatter, GetStorageOrTempPath().FullName, ServiceManager);
+            await context.Request.LoadRequestAsync(context.HttpContext, context.MessageFormatter, GetStorageOrTempPath().FullName, ServiceManager).ConfigureAwait(false);
             context.Response.Copy(context.Request);
 
             context.HttpContext.Response.ContentType = context.MessageFormatter.ContentType;
 
-            await OnRequestLoadedAsync(context);
-            await InvokeWebServiceAsync(context);
-            await SerializeXRoadResponseAsync(context);
+            await OnRequestLoadedAsync(context).ConfigureAwait(false);
+            await InvokeWebServiceAsync(context).ConfigureAwait(false);
+            await SerializeXRoadResponseAsync(context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -109,6 +109,9 @@ namespace XRoadLib.Extensions.AspNetCore
 
         protected virtual XName ResolveOperationName(WebServiceContext context)
         {
+            if (context.Request.RootElementName == null)
+                throw new UnknownOperationException("Could not resolve operation name from request.", context.Request.RootElementName);
+
             return context.Request.RootElementName;
         }
 
@@ -119,7 +122,7 @@ namespace XRoadLib.Extensions.AspNetCore
         {
             if (context.ServiceMap != null)
             {
-                context.Result = await InvokeMetaServiceAsync(context);
+                context.Result = await InvokeMetaServiceAsync(context).ConfigureAwait(false);
                 return;
             }
 
@@ -128,18 +131,18 @@ namespace XRoadLib.Extensions.AspNetCore
             context.ServiceMap = context.Request.GetSerializer().GetServiceMap(operationName);
             context.Response.BinaryMode = context.ServiceMap.OperationDefinition.OutputBinaryMode;
 
-            var serviceObject = await GetServiceObjectAsync(context);
-            await DeserializeMethodInputAsync(context);
+            var serviceObject = await GetServiceObjectAsync(context).ConfigureAwait(false);
+            await DeserializeMethodInputAsync(context).ConfigureAwait(false);
 
             try
             {
                 var parameters = context.ServiceMap.RequestDefinition.ParameterInfo != null ? new[] { context.Parameters } : new object[0];
-                context.Result = await InvokeRuntimeMethodAsync(context, serviceObject, parameters);
+                context.Result = await InvokeRuntimeMethodAsync(context, serviceObject, parameters).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
                 context.Exception = exception;
-                await OnInvocationErrorAsync(context);
+                await OnInvocationErrorAsync(context).ConfigureAwait(false);
 
                 if (context.Result == null)
                     throw;
@@ -155,16 +158,19 @@ namespace XRoadLib.Extensions.AspNetCore
         protected virtual async Task DeserializeMethodInputAsync(WebServiceContext context)
         {
             var args = new BeforeDeserializationEventArgs();
-            await OnBeforeDeserializationAsync(context, args);
+            await OnBeforeDeserializationAsync(context, args).ConfigureAwait(false);
+
+            args.XmlReaderSettings ??= new XmlReaderSettings();
+            args.XmlReaderSettings.Async = true;
 
             context.Request.ContentStream.Position = 0;
             var reader = XmlReader.Create(context.Request.ContentStream, args.XmlReaderSettings);
 
-            context.MessageFormatter.MoveToPayload(reader, context.Request.RootElementName);
+            await context.MessageFormatter.MoveToPayloadAsync(reader, context.Request.RootElementName).ConfigureAwait(false);
 
-            context.Parameters = context.ServiceMap.DeserializeRequest(reader, context.Request);
+            context.Parameters = await context.ServiceMap.DeserializeRequestAsync(reader, context.Request).ConfigureAwait(false);
 
-            await OnAfterDeserializationAsync(context);
+            await OnAfterDeserializationAsync(context).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -172,45 +178,44 @@ namespace XRoadLib.Extensions.AspNetCore
         /// </summary>
         protected virtual async Task SerializeXRoadResponseAsync(WebServiceContext context)
         {
-            await OnBeforeSerializationAsync(context);
+            await OnBeforeSerializationAsync(context).ConfigureAwait(false);
 
             context.Request.ContentStream.Position = 0;
-            using (var reader = XmlReader.Create(context.Request.ContentStream, new XmlReaderSettings { CloseInput = false }))
+            using (var reader = XmlReader.Create(context.Request.ContentStream, new XmlReaderSettings { Async = true, CloseInput = false }))
             using (var textWriter = new StreamWriter(context.Response.ContentStream, context.Response.ContentEncoding, 1024, true))
-            using (var writer = XmlWriter.Create(textWriter))
+            using (var writer = XmlWriter.Create(textWriter, new XmlWriterSettings { Async = true }))
             {
-                await writer.WriteStartDocumentAsync();
+                await writer.WriteStartDocumentAsync().ConfigureAwait(false);
 
-                if (context.MessageFormatter.TryMoveToEnvelope(reader))
+                if (await context.MessageFormatter.TryMoveToEnvelopeAsync(reader).ConfigureAwait(false))
                 {
-                    context.MessageFormatter.WriteStartEnvelope(writer, reader.Prefix);
-                    await writer.WriteAttributesAsync(reader, true);
-                    writer.WriteMissingAttributes(ServiceManager.ProtocolDefinition);
+                    await context.MessageFormatter.WriteStartEnvelopeAsync(writer, reader.Prefix).ConfigureAwait(false);
+                    await writer.WriteAttributesAsync(reader, true).ConfigureAwait(false);
+                    await writer.WriteMissingAttributesAsync(ServiceManager.ProtocolDefinition).ConfigureAwait(false);
                 }
-                else writer.WriteSoapEnvelope(context.MessageFormatter, ServiceManager.ProtocolDefinition);
+                else await writer.WriteSoapEnvelopeAsync(context.MessageFormatter, ServiceManager.ProtocolDefinition).ConfigureAwait(false);
 
-                if (context.MessageFormatter.TryMoveToHeader(reader))
-                    await writer.WriteNodeAsync(reader, true);
+                if (await context.MessageFormatter.TryMoveToHeaderAsync(reader).ConfigureAwait(false))
+                    await writer.WriteNodeAsync(reader, true).ConfigureAwait(false);
 
-                context.MessageFormatter.WriteStartBody(writer);
-                if (context.MessageFormatter.TryMoveToBody(reader))
-                    await writer.WriteAttributesAsync(reader, true);
+                await context.MessageFormatter.WriteStartBodyAsync(writer).ConfigureAwait(false);
+                if (await context.MessageFormatter.TryMoveToBodyAsync(reader).ConfigureAwait(false))
+                    await writer.WriteAttributesAsync(reader, true).ConfigureAwait(false);
 
-                await SerializeServiceResultAsync(context, reader, writer);
+                await SerializeServiceResultAsync(context, reader, writer).ConfigureAwait(false);
 
-                await writer.WriteEndDocumentAsync();
-                await writer.FlushAsync();
+                await writer.WriteEndDocumentAsync().ConfigureAwait(false);
+                await writer.FlushAsync().ConfigureAwait(false);
             }
 
-            context.Response.SaveTo(context.HttpContext, context.MessageFormatter);
+            await context.Response.SaveToAsync(context.HttpContext, context.MessageFormatter).ConfigureAwait(false);
 
-            await OnAfterSerializationAsync(context);
+            await OnAfterSerializationAsync(context).ConfigureAwait(false);
         }
 
         protected virtual Task SerializeServiceResultAsync(WebServiceContext context, XmlReader requestReader, XmlWriter responseWriter)
         {
-            context.ServiceMap.SerializeResponse(responseWriter, context.Result, context.Response, requestReader);
-            return Task.CompletedTask;
+            return context.ServiceMap.SerializeResponseAsync(responseWriter, context.Result, context.Response, requestReader);
         }
 
         private DirectoryInfo GetStorageOrTempPath()

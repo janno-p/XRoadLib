@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -8,20 +9,20 @@ namespace XRoadLib.Wsdl
         public string Namespace { get; set; }
         public SoapBindingUse Use { get; set; } = SoapBindingUse.Default;
 
-        internal override void Write(XmlWriter writer)
+        internal override async Task WriteAsync(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.Soap, "body", NamespaceConstants.Soap);
+            await writer.WriteStartElementAsync(PrefixConstants.Soap, "body", NamespaceConstants.Soap).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(Encoding))
-                writer.WriteAttributeString("encodingStyle", Encoding);
+                await writer.WriteAttributeStringAsync(null, "encodingStyle", null, Encoding).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(Namespace))
-                writer.WriteAttributeString("namespace", Namespace);
+                await writer.WriteAttributeStringAsync(null, "namespace", null, Namespace).ConfigureAwait(false);
 
             if (Use != SoapBindingUse.Default)
-                writer.WriteAttributeString("use", Use == SoapBindingUse.Encoded ? "encoded" : "literal");
+                await writer.WriteAttributeStringAsync(null, "use", null, Use == SoapBindingUse.Encoded ? "encoded" : "literal").ConfigureAwait(false);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }

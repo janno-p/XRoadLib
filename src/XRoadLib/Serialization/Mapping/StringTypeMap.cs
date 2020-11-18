@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
@@ -20,26 +21,24 @@ namespace XRoadLib.Serialization.Mapping
         /// <summary>
         /// String deserialization logic.
         /// </summary>
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return reader.MoveNextAndReturn("");
+                return await reader.MoveNextAndReturnAsync("").ConfigureAwait(false);
 
-            var value = reader.ReadElementContentAsString();
-            if (string.IsNullOrEmpty(value))
-                return "";
+            var value = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            return value;
+            return string.IsNullOrEmpty(value) ? "" : value;
         }
 
         /// <summary>
         /// String serialization logic.
         /// </summary>
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+        public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            message.Style.WriteType(writer, Definition, content);
+            await message.Style.WriteTypeAsync(writer, Definition, content).ConfigureAwait(false);
 
-            writer.WriteStringWithMode(value.ToString(), message.Style.StringSerializationMode);
+            await writer.WriteStringWithModeAsync(value.ToString(), message.Style.StringSerializationMode).ConfigureAwait(false);
         }
     }
 }

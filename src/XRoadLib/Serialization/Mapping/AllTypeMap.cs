@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -20,7 +21,7 @@ namespace XRoadLib.Serialization.Mapping
             _requiredPropertiesCount = new Lazy<int>(() => _deserializationPropertyMaps.Count(x => !x.Value.Definition.Content.IsOptional));
         }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             var dtoObject = new T();
             dtoObject.SetTemplateMembers(templateNode.ChildNames);
@@ -29,7 +30,7 @@ namespace XRoadLib.Serialization.Mapping
 
             if (ContentPropertyMap != null)
             {
-                ReadPropertyValue(reader, ContentPropertyMap, templateNode, message, validateRequired, dtoObject);
+                await ReadPropertyValueAsync(reader, ContentPropertyMap, templateNode, message, validateRequired, dtoObject).ConfigureAwait(false);
                 return dtoObject;
             }
 
@@ -38,20 +39,20 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.IsEmptyElement)
             {
                 ValidateRemainingProperties(existingPropertyNames, content);
-                return reader.MoveNextAndReturn(dtoObject);
+                return await reader.MoveNextAndReturnAsync(dtoObject).ConfigureAwait(false);
             }
 
             var parentDepth = reader.Depth;
             var itemDepth = parentDepth + 1;
             var requiredCount = 0;
 
-            reader.Read();
+            await reader.ReadAsync().ConfigureAwait(false);
 
             while (parentDepth < reader.Depth)
             {
                 if (reader.NodeType != XmlNodeType.Element || reader.Depth != itemDepth)
                 {
-                    reader.Read();
+                    await reader.ReadAsync().ConfigureAwait(false);
                     continue;
                 }
 
@@ -60,7 +61,7 @@ namespace XRoadLib.Serialization.Mapping
                 if (!propertyMap.Definition.Content.IsOptional)
                     existingPropertyNames.Add(reader.GetXName());
 
-                if (ReadPropertyValue(reader, propertyMap, templateNode, message, validateRequired, dtoObject) && validateRequired)
+                if (await ReadPropertyValueAsync(reader, propertyMap, templateNode, message, validateRequired, dtoObject).ConfigureAwait(false) && validateRequired)
                     requiredCount++;
             }
 
@@ -75,14 +76,14 @@ namespace XRoadLib.Serialization.Mapping
             return dtoObject;
         }
 
-        private bool ReadPropertyValue(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired, T dtoObject)
+        private async Task<bool> ReadPropertyValueAsync(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired, T dtoObject)
         {
             var templateName = propertyMap.Definition.TemplateName;
 
             var propertyNode = templateNode[templateName, message.Version];
             if (propertyNode == null)
             {
-                reader.ConsumeUnusedElement();
+                await reader.ConsumeUnusedElementAsync().ConfigureAwait(false);
                 return false;
             }
 
@@ -90,10 +91,10 @@ namespace XRoadLib.Serialization.Mapping
             if (validateRequired && isNull && propertyNode.IsRequired)
                 throw new ParameterRequiredException(Definition, propertyMap.Definition);
 
-            if ((isNull || propertyMap.Deserialize(reader, dtoObject, propertyNode, message)) && !string.IsNullOrWhiteSpace(templateName))
+            if ((isNull || await propertyMap.DeserializeAsync(reader, dtoObject, propertyNode, message).ConfigureAwait(false)) && !string.IsNullOrWhiteSpace(templateName))
                 dtoObject.OnMemberDeserialized(templateName);
 
-            reader.ConsumeNilElement(isNull);
+            await reader.ConsumeNilElementAsync(isNull).ConfigureAwait(false);
 
             return propertyNode.IsRequired;
         }

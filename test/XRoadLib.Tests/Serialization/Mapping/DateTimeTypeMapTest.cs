@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using XRoadLib.Serialization.Mapping;
 using Xunit;
 
@@ -7,12 +8,12 @@ namespace XRoadLib.Tests.Serialization.Mapping
     public class DateTimeTypeMapTest : TypeMapTestBase
     {
         private static readonly DateTimeTypeMap DateTimeTypeMap = new DateTimeTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<DateTime>("dateTime"));
-        private static readonly Func<string, object> DeserializeDateTimeValue = x => DeserializeValue(DateTimeTypeMap, x);
+        private static readonly Func<string, Task<object>> DeserializeDateTimeValueAsync = x => DeserializeValueAsync(DateTimeTypeMap, x);
 
         [Fact]
-        public void CanDeserializeDatePartOnly()
+        public async Task CanDeserializeDatePartOnly()
         {
-            var instance = DeserializeDateTimeValue("2013-08-27");
+            var instance = await DeserializeDateTimeValueAsync("2013-08-27");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;
@@ -27,16 +28,16 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void CannotDeserializeWrongDateTimeFormat()
+        public async Task CannotDeserializeWrongDateTimeFormat()
         {
-            var exception = Assert.Throws<FormatException>(() => DeserializeDateTimeValue("2013-08-27T12:34:61"));
+            var exception = await Assert.ThrowsAsync<FormatException>(() => DeserializeDateTimeValueAsync("2013-08-27T12:34:61"));
             Assert.Equal("The string '2013-08-27T12:34:61' is not a valid AllXsd value.", exception.Message);
         }
 
         [Fact]
-        public void CanDeserializeWithTime()
+        public async Task CanDeserializeWithTime()
         {
-            var instance = DeserializeDateTimeValue("2013-08-27T12:34:56");
+            var instance = await DeserializeDateTimeValueAsync("2013-08-27T12:34:56");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;
@@ -51,9 +52,9 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void DeserializationIgnoresTimeZoneValue()
+        public async Task DeserializationIgnoresTimeZoneValue()
         {
-            var instance = DeserializeDateTimeValue("2013-08-27T00:00:00+03:00");
+            var instance = await DeserializeDateTimeValueAsync("2013-08-27T00:00:00+03:00");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;
@@ -68,9 +69,9 @@ namespace XRoadLib.Tests.Serialization.Mapping
         }
 
         [Fact]
-        public void DeserializationIgnoresMillisecondValue()
+        public async Task DeserializationIgnoresMillisecondValue()
         {
-            var instance = DeserializeDateTimeValue("2013-08-27T12:34:56.1234+03:00");
+            var instance = await DeserializeDateTimeValueAsync("2013-08-27T12:34:56.1234+03:00");
             Assert.NotNull(instance);
 
             var dateTime = (DateTime)instance;

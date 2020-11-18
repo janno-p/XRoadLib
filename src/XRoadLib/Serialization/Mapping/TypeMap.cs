@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
@@ -13,8 +14,8 @@ namespace XRoadLib.Serialization.Mapping
             Definition = typeDefinition;
         }
 
-        public abstract object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message);
+        public abstract Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message);
 
-        public abstract void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message);
+        public abstract Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message);
     }
 }

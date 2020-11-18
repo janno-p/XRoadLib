@@ -33,7 +33,7 @@ namespace XRoadLib.Extensions.AspNetCore
 
                     httpContext.Response.ContentType = XRoadHelper.GetContentTypeHeader(context.MessageFormatter.ContentType);
 
-                    await handler.HandleRequestAsync(context);
+                    await handler.HandleRequestAsync(context).ConfigureAwait(false);
                 }
                 catch (Exception exception)
                 {
@@ -53,7 +53,7 @@ namespace XRoadLib.Extensions.AspNetCore
 
                     var fault = context.MessageFormatter.CreateFault(exception);
 
-                    await handler.HandleExceptionAsync(context, exception, fault);
+                    await handler.HandleExceptionAsync(context, exception, fault).ConfigureAwait(false);
                 }
             }
         }

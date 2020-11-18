@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -20,52 +21,52 @@ namespace XRoadLib.Soap
         public string ContentType { get; } = ContentTypes.Soap;
         public string Namespace { get; } = NamespaceConstants.SoapEnv;
 
-        public void MoveToEnvelope(XmlReader reader)
+        public async Task MoveToEnvelopeAsync(XmlReader reader)
         {
-            if (!TryMoveToEnvelope(reader))
+            if (!await TryMoveToEnvelopeAsync(reader).ConfigureAwait(false))
                 throw new InvalidQueryException($"Element `{EnvelopeName}` is missing from message content.");
         }
 
-        public void MoveToBody(XmlReader reader)
+        public async Task MoveToBodyAsync(XmlReader reader)
         {
-            MoveToEnvelope(reader);
+            await MoveToEnvelopeAsync(reader).ConfigureAwait(false);
 
-            if (!TryMoveToBody(reader))
+            if (!await TryMoveToBodyAsync(reader).ConfigureAwait(false))
                 throw new InvalidQueryException($"Element `{BodyName}` is missing from message content.");
         }
 
-        public void MoveToPayload(XmlReader reader, XName payloadName)
+        public async Task MoveToPayloadAsync(XmlReader reader, XName payloadName)
         {
-            MoveToBody(reader);
+            await MoveToBodyAsync(reader).ConfigureAwait(false);
 
-            if (!reader.MoveToElement(2, payloadName))
+            if (!await reader.MoveToElementAsync(2, payloadName).ConfigureAwait(false))
                 throw new InvalidQueryException($"Payload element `{payloadName}` is missing from message content.");
         }
 
-        public bool TryMoveToEnvelope(XmlReader reader)
+        public Task<bool> TryMoveToEnvelopeAsync(XmlReader reader)
         {
-            return reader.MoveToElement(0, EnvelopeName);
+            return reader.MoveToElementAsync(0, EnvelopeName);
         }
 
-        public bool TryMoveToHeader(XmlReader reader)
+        public async Task<bool> TryMoveToHeaderAsync(XmlReader reader)
         {
-            return reader.MoveToElement(1) && reader.IsCurrentElement(1, HeaderName);
+            return await reader.MoveToElementAsync(1).ConfigureAwait(false) && reader.IsCurrentElement(1, HeaderName);
         }
 
-        public bool TryMoveToBody(XmlReader reader)
+        public Task<bool> TryMoveToBodyAsync(XmlReader reader)
         {
-            return reader.MoveToElement(1, BodyName);
+            return reader.MoveToElementAsync(1, BodyName);
         }
 
-        public void WriteStartEnvelope(XmlWriter writer, string prefix = null)
+        public Task WriteStartEnvelopeAsync(XmlWriter writer, string prefix = null)
         {
             var prefixValue = string.IsNullOrEmpty(prefix) ? PrefixConstants.SoapEnv : prefix;
-            writer.WriteStartElement(prefixValue, EnvelopeName.LocalName, EnvelopeName.NamespaceName);
+            return writer.WriteStartElementAsync(prefixValue, EnvelopeName.LocalName, EnvelopeName.NamespaceName);
         }
 
-        public void WriteStartBody(XmlWriter writer)
+        public Task WriteStartBodyAsync(XmlWriter writer)
         {
-            writer.WriteStartElement(BodyName);
+            return writer.WriteStartElementAsync(BodyName);
         }
 
         public IFault CreateFault(Exception exception)
@@ -77,93 +78,93 @@ namespace XRoadLib.Soap
             };
         }
 
-        public void WriteSoapFault(XmlWriter writer, IFault fault)
+        public async Task WriteSoapFaultAsync(XmlWriter writer, IFault fault)
         {
             var soapFault = (ISoapFault)fault;
 
-            writer.WriteStartDocument();
+            await writer.WriteStartDocumentAsync().ConfigureAwait(false);
 
-            WriteStartEnvelope(writer);
-            writer.WriteAttributeString(PrefixConstants.Xmlns, PrefixConstants.SoapEnv, NamespaceConstants.Xmlns, NamespaceConstants.SoapEnv);
+            await WriteStartEnvelopeAsync(writer).ConfigureAwait(false);
+            await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.SoapEnv, NamespaceConstants.Xmlns, NamespaceConstants.SoapEnv).ConfigureAwait(false);
 
-            WriteStartBody(writer);
-            writer.WriteStartElement("Fault", NamespaceConstants.SoapEnv);
+            await WriteStartBodyAsync(writer).ConfigureAwait(false);
+            await writer.WriteStartElementAsync(null, "Fault", NamespaceConstants.SoapEnv).ConfigureAwait(false);
 
-            writer.WriteStartElement("faultcode");
-            writer.WriteString(soapFault.FaultCode);
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync("faultcode").ConfigureAwait(false);
+            await writer.WriteStringAsync(soapFault.FaultCode).ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-            writer.WriteStartElement("faultstring");
-            writer.WriteString(soapFault.FaultString);
-            writer.WriteEndElement();
+            await writer.WriteStartElementAsync("faultstring").ConfigureAwait(false);
+            await writer.WriteStringAsync(soapFault.FaultString).ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
 
             if (!string.IsNullOrWhiteSpace(soapFault.FaultActor))
             {
-                writer.WriteStartElement("faultactor");
-                writer.WriteString(soapFault.FaultActor);
-                writer.WriteEndElement();
+                await writer.WriteStartElementAsync("faultactor").ConfigureAwait(false);
+                await writer.WriteStringAsync(soapFault.FaultActor).ConfigureAwait(false);
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
             if (!string.IsNullOrWhiteSpace(soapFault.Details))
             {
-                writer.WriteStartElement("detail");
-                writer.WriteValue(soapFault.Details);
-                writer.WriteEndElement();
+                await writer.WriteStartElementAsync("detail").ConfigureAwait(false);
+                await writer.WriteStringAsync(soapFault.Details).ConfigureAwait(false);
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
 
-            writer.WriteEndElement();
-            writer.WriteEndElement();
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-            writer.Flush();
+            await writer.FlushAsync().ConfigureAwait(false);
         }
 
-        public void WriteSoapHeader(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
+        public async Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
         {
             if (header == null)
                 return;
 
-            writer.WriteStartElement("Header", NamespaceConstants.SoapEnv);
+            await writer.WriteStartElementAsync(null, "Header", NamespaceConstants.SoapEnv).ConfigureAwait(false);
 
-            header.WriteTo(writer, style, definition);
+            await header.WriteToAsync(writer, style, definition).ConfigureAwait(false);
 
             foreach (var additionalHeader in additionalHeaders ?? Enumerable.Empty<XElement>())
                 additionalHeader.WriteTo(writer);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
-        public void ThrowSoapFaultIfPresent(XmlReader reader)
+        public async Task ThrowSoapFaultIfPresentAsync(XmlReader reader)
         {
             if (reader.NamespaceURI == NamespaceConstants.SoapEnv && reader.LocalName == "Fault")
-                throw new SoapFaultException(DeserializeSoapFault(reader));
+                throw new SoapFaultException(await DeserializeSoapFaultAsync(reader).ConfigureAwait(false));
         }
 
-        private static ISoapFault DeserializeSoapFault(XmlReader reader)
+        private static async Task<ISoapFault> DeserializeSoapFaultAsync(XmlReader reader)
         {
             const int depth = 3;
 
             var fault = new SoapFault();
 
-            if (reader.IsEmptyElement || !reader.MoveToElement(depth, "faultcode"))
+            if (reader.IsEmptyElement || !await reader.MoveToElementAsync(depth, "faultcode").ConfigureAwait(false))
                 throw new InvalidQueryException("SOAP Fault must have `faultcode` element.");
-            fault.FaultCode = reader.ReadElementContentAsString();
+            fault.FaultCode = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            if (!reader.MoveToElement(depth, "faultstring"))
+            if (!await reader.MoveToElementAsync(depth, "faultstring").ConfigureAwait(false))
                 throw new InvalidQueryException("SOAP Fault must have `faultstring` element.");
-            fault.FaultString = reader.ReadElementContentAsString();
+            fault.FaultString = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
 
-            var success = reader.MoveToElement(depth);
+            var success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             if (success && reader.LocalName == "faultactor" && reader.NamespaceURI == "")
             {
-                fault.FaultActor = reader.ReadElementContentAsString();
-                success = reader.MoveToElement(depth);
+                fault.FaultActor = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             }
 
             if (success && reader.LocalName == "detail" && reader.NamespaceURI == "")
             {
-                fault.Details = reader.ReadInnerXml();
-                success = reader.MoveToElement(depth);
+                fault.Details = await reader.ReadInnerXmlAsync().ConfigureAwait(false);
+                success = await reader.MoveToElementAsync(depth).ConfigureAwait(false);
             }
 
             if (success)

@@ -60,9 +60,9 @@ namespace XRoadLib
         /// </summary>
         public ServiceDescriptionBuilder(SchemaDefinitionProvider schemaDefinitionProvider, Func<OperationDefinition, bool> operationFilter = null, uint? version = null)
         {
-            this._schemaDefinitionProvider = schemaDefinitionProvider ?? throw new ArgumentNullException(nameof(schemaDefinitionProvider));
-            this._operationFilter = operationFilter;
-            this._version = version;
+            _schemaDefinitionProvider = schemaDefinitionProvider ?? throw new ArgumentNullException(nameof(schemaDefinitionProvider));
+            _operationFilter = operationFilter;
+            _version = version;
 
             var protocolDefinition = schemaDefinitionProvider.ProtocolDefinition;
 

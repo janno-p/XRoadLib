@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
@@ -14,23 +15,35 @@ namespace XRoadLib.Wsdl
         public string TargetNamespace { get; set; }
         public Types Types { get; } = new Types();
 
-        protected override void WriteAttributes(XmlWriter writer)
+        protected override async Task WriteAttributesAsync(XmlWriter writer)
         {
-            base.WriteAttributes(writer);
+            await base.WriteAttributesAsync(writer).ConfigureAwait(false);
 
             if (!string.IsNullOrWhiteSpace(TargetNamespace))
-                writer.WriteAttributeString("targetNamespace", TargetNamespace);
+                await writer.WriteAttributeStringAsync(null, "targetNamespace", null, TargetNamespace).ConfigureAwait(false);
         }
 
-        protected override void WriteElements(XmlWriter writer)
+        protected override async Task WriteElementsAsync(XmlWriter writer)
         {
-            base.WriteElements(writer);
-            //Imports.ForEach(x => x.Write(writer));
-            Types?.Write(writer);
-            Messages.ForEach(x => x.Write(writer));
-            PortTypes.ForEach(x => x.Write(writer));
-            Bindings.ForEach(x => x.Write(writer));
-            Services.ForEach(x => x.Write(writer));
+            await base.WriteElementsAsync(writer).ConfigureAwait(false);
+
+            //foreach (var import in Imports)
+            //    await import.WriteAsync(writer).ConfigureAwait(false);
+
+            if (Types != null)
+                await Types.WriteAsync(writer).ConfigureAwait(false);
+
+            foreach (var message in Messages)
+                await message.WriteAsync(writer).ConfigureAwait(false);
+
+            foreach (var portType in PortTypes)
+                await portType.WriteAsync(writer).ConfigureAwait(false);
+
+            foreach (var binding in Bindings)
+                await binding.WriteAsync(writer).ConfigureAwait(false);
+
+            foreach (var service in Services)
+                await service.WriteAsync(writer).ConfigureAwait(false);
         }
     }
 }

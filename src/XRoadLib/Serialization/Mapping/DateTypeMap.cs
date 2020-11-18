@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -9,7 +10,7 @@ namespace XRoadLib.Serialization.Mapping
 {
     public class DateTypeMap : TypeMap
     {
-        private static readonly string[] dateFormats =
+        private static readonly string[] DateFormats =
         {
             "yyyy-MM-dd",
             "'+'yyyy-MM-dd",
@@ -24,27 +25,27 @@ namespace XRoadLib.Serialization.Mapping
 
         public DateTypeMap(TypeDefinition typeDefinition) : base(typeDefinition) { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return reader.MoveNextAndReturn(HandleEmptyElement(content, message));
+                return await reader.MoveNextAndReturnAsync(HandleEmptyElement(content, message)).ConfigureAwait(false);
 
-            var value = reader.ReadElementContentAsString();
+            var value = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
             if (string.IsNullOrEmpty(value))
                 return HandleEmptyElement(content, message);
 
-            var date = DateTime.ParseExact(value, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None);
+            var date = DateTime.ParseExact(value, DateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None);
             if (value[value.Length - 1] == 'Z')
                 date = date.ToLocalTime();
 
             return date;
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+        public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            message.Style.WriteType(writer, Definition, content);
+            await message.Style.WriteTypeAsync(writer, Definition, content).ConfigureAwait(false);
 
-            writer.WriteValue(XmlConvert.ToString((DateTime)value, "yyyy-MM-dd"));
+            await writer.WriteStringAsync(XmlConvert.ToString((DateTime)value, "yyyy-MM-dd")).ConfigureAwait(false);
         }
 
         private static DateTime? HandleEmptyElement(ContentDefinition content, XRoadMessage message)

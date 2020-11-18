@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -56,51 +57,51 @@ namespace XRoadLib.Serialization.Mapping
         }
 
         /// <inheritdoc />
-        public object DeserializeRequest(XmlReader reader, XRoadMessage message)
+        public async Task<object> DeserializeRequestAsync(XmlReader reader, XRoadMessage message)
         {
             var requestName = RequestDefinition.Content.Name;
 
-            if (!RequestDefinition.Content.MergeContent && !reader.MoveToElement(3, requestName))
+            if (!RequestDefinition.Content.MergeContent && !await reader.MoveToElementAsync(3, requestName).ConfigureAwait(false))
                 throw new InvalidQueryException($"Request wrapper element `{requestName}` was not found in incoming SOAP message.");
 
             return RequestDefinition.ParameterInfo != null
-                ? ProcessRequestValue(DeserializeValue(reader, _inputTypeMap, message.RequestNode, RequestDefinition, message))
+                ? ProcessRequestValue(await DeserializeValueAsync(reader, _inputTypeMap, message.RequestNode, RequestDefinition, message).ConfigureAwait(false))
                 : null;
         }
 
         /// <inheritdoc />
-        public object DeserializeResponse(XmlReader reader, XRoadMessage message)
+        public async Task<object> DeserializeResponseAsync(XmlReader reader, XRoadMessage message)
         {
             var requestName = ResponseDefinition.RequestContentName;
             var responseName = ResponseDefinition.Content.Name;
 
             if (OperationDefinition.CopyRequestPartToResponse)
             {
-                if (!reader.MoveToElement(3, requestName))
+                if (!await reader.MoveToElementAsync(3, requestName).ConfigureAwait(false))
                     throw new InvalidQueryException($"Expected payload element `{requestName}` was not found in SOAP message.");
-                reader.Read();
+                await reader.ReadAsync().ConfigureAwait(false);
             }
 
-            var hasResponseElement = reader.MoveToElement(3);
+            var hasResponseElement = await reader.MoveToElementAsync(3).ConfigureAwait(false);
 
             if (hasResponseElement && !ResponseDefinition.ContainsNonTechnicalFault && reader.GetXName() == ResponseDefinition.FaultName)
-                return reader.ReadXRoadFault(4);
+                return await reader.ReadXRoadFaultAsync(4).ConfigureAwait(false);
 
             if (!hasResponseElement || reader.GetXName() != responseName)
                 throw new InvalidQueryException($"Expected payload element `{responseName}` in SOAP message, but `{reader.GetXName()}` was found instead.");
 
             var hasWrapperElement = HasWrapperResultElement;
-            if (hasWrapperElement && !reader.MoveToElement(4, ResponseDefinition.ResultElementName))
+            if (hasWrapperElement && !await reader.MoveToElementAsync(4, ResponseDefinition.ResultElementName).ConfigureAwait(false))
                 throw new InvalidQueryException($"Expected result wrapper element `{ResponseDefinition.ResultElementName}` was not found in SOAP message.");
 
-            return ProcessResponseValue(DeserializeValue(reader, _outputTypeMap, message.ResponseNode, ResponseDefinition, message));
+            return ProcessResponseValue(await DeserializeValueAsync(reader, _outputTypeMap, message.ResponseNode, ResponseDefinition, message).ConfigureAwait(false));
         }
 
-        private object DeserializeValue(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, ParticleDefinition particleDefinition, XRoadMessage message)
+        private async Task<object> DeserializeValueAsync(XmlReader reader, ITypeMap typeMap, IXmlTemplateNode templateNode, ParticleDefinition particleDefinition, XRoadMessage message)
         {
             if (reader.IsNilElement())
             {
-                reader.ReadToEndElement();
+                await reader.ReadToEndElementAsync().ConfigureAwait(false);
                 return null;
             }
 
@@ -112,75 +113,76 @@ namespace XRoadLib.Serialization.Mapping
             if (!particleDefinition.Content.IgnoreExplicitType)
                 concreteTypeMap = (typeMap.Definition.IsInheritable ? _serializer.GetTypeMapFromXsiType(reader, particleDefinition) : null) ?? typeMap;
 
-            return concreteTypeMap.Deserialize(reader, templateNode, particleDefinition.Content, message);
+            return await concreteTypeMap.DeserializeAsync(reader, templateNode, particleDefinition.Content, message).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
-        public void SerializeRequest(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null)
+        public async Task SerializeRequestAsync(XmlWriter writer, object value, XRoadMessage message, string requestNamespace = null)
         {
             var requestWrapperElementName = RequestDefinition.WrapperElementName;
             var ns = string.IsNullOrEmpty(requestNamespace) ? requestWrapperElementName.NamespaceName : requestNamespace;
             var addPrefix = writer.LookupPrefix(ns) == null;
 
-            if (addPrefix) writer.WriteStartElement(PrefixConstants.Target, requestWrapperElementName.LocalName, ns);
-            else writer.WriteStartElement(requestWrapperElementName.LocalName, ns);
+            if (addPrefix) await writer.WriteStartElementAsync(PrefixConstants.Target, requestWrapperElementName.LocalName, ns).ConfigureAwait(false);
+            else await writer.WriteStartElementAsync(null, requestWrapperElementName.LocalName, ns).ConfigureAwait(false);
 
             if (!RequestDefinition.Content.MergeContent)
-                writer.WriteStartElement(RequestDefinition.Content.Name);
+                await writer.WriteStartElementAsync(RequestDefinition.Content.Name).ConfigureAwait(false);
 
             if (RequestDefinition.ParameterInfo != null)
-                SerializeValue(writer, PrepareRequestValue(value), _inputTypeMap, message.RequestNode, message, RequestDefinition.Content);
+                await SerializeValueAsync(writer, PrepareRequestValue(value), _inputTypeMap, message.RequestNode, message, RequestDefinition.Content).ConfigureAwait(false);
 
             if (!RequestDefinition.Content.MergeContent)
-                writer.WriteEndElement();
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
         /// <summary>
         /// Serializes X-Road message protocol responses according to operation definitions.
         /// </summary>
-        public void SerializeResponse(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization)
+        public async Task SerializeResponseAsync(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization)
         {
-            var containsRequest = requestReader.MoveToElement(2, RequestDefinition.WrapperElementName);
+            var containsRequest = await requestReader.MoveToElementAsync(2, RequestDefinition.WrapperElementName).ConfigureAwait(false);
 
-            writer.WriteStartElement(ResponseDefinition.WrapperElementName);
+            await writer.WriteStartElementAsync(ResponseDefinition.WrapperElementName).ConfigureAwait(false);
 
             if (containsRequest && OperationDefinition.CopyRequestPartToResponse)
-                CopyRequestToResponse(writer, requestReader);
+                await CopyRequestToResponseAsync(writer, requestReader).ConfigureAwait(false);
 
             var fault = value as IXRoadFault;
 
             if (!ResponseDefinition.ContainsNonTechnicalFault && fault != null)
             {
-                writer.WriteStartElement(ResponseDefinition.FaultName);
-                message.Style.SerializeFault(writer, fault);
-                writer.WriteEndElement();
+                await writer.WriteStartElementAsync(ResponseDefinition.FaultName).ConfigureAwait(false);
+                await message.Style.SerializeFaultAsync(writer, fault).ConfigureAwait(false);
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
             else if (_outputTypeMap != null)
             {
-                writer.WriteStartElement(ResponseDefinition.Content.Name);
+                await writer.WriteStartElementAsync(ResponseDefinition.Content.Name).ConfigureAwait(false);
 
                 if (fault != null)
-                    message.Style.SerializeFault(writer, fault);
+                    await message.Style.SerializeFaultAsync(writer, fault).ConfigureAwait(false);
                 else if (_outputTypeMap != null)
                 {
                     var addWrapperElement = HasWrapperResultElement;
                     if (addWrapperElement)
-                        writer.WriteStartElement(ResponseDefinition.ResultElementName);
+                        await writer.WriteStartElementAsync(ResponseDefinition.ResultElementName).ConfigureAwait(false);
 
-                    SerializeValue(writer, PrepareResponseValue(value), _outputTypeMap, message.ResponseNode, message, ResponseDefinition.Content);
+                    await SerializeValueAsync(writer, PrepareResponseValue(value), _outputTypeMap, message.ResponseNode, message, ResponseDefinition.Content).ConfigureAwait(false);
 
                     if (addWrapperElement)
-                        writer.WriteEndElement();
+                        await writer.WriteEndElementAsync().ConfigureAwait(false);
                 }
 
-                writer.WriteEndElement();
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
 
-                customSerialization?.OnContentComplete(writer);
+                if (customSerialization != null)
+                    await customSerialization.OnContentCompleteAsync(writer).ConfigureAwait(false);
             }
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
         protected virtual object PrepareRequestValue(object value) => value;
@@ -188,37 +190,37 @@ namespace XRoadLib.Serialization.Mapping
         protected virtual object ProcessRequestValue(object value) => value;
         protected virtual object ProcessResponseValue(object value) => value;
 
-        private void SerializeValue(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message, ContentDefinition content)
+        private async Task SerializeValueAsync(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message, ContentDefinition content)
         {
             if (value == null)
             {
-                writer.WriteNilAttribute();
+                await writer.WriteNilAttributeAsync().ConfigureAwait(false);
                 return;
             }
 
             var concreteTypeMap = typeMap.Definition.IsInheritable ? _serializer.GetTypeMap(value.GetType()) : typeMap;
 
-            concreteTypeMap.Serialize(writer, templateNode, value, content, message);
+            await concreteTypeMap.SerializeAsync(writer, templateNode, value, content, message).ConfigureAwait(false);
         }
 
-        private void CopyRequestToResponse(XmlWriter writer, XmlReader reader)
+        private async Task CopyRequestToResponseAsync(XmlWriter writer, XmlReader reader)
         {
-            writer.WriteAttributes(reader, true);
+            await writer.WriteAttributesAsync(reader, true).ConfigureAwait(false);
 
-            if (!reader.MoveToElement(3) || !reader.IsCurrentElement(3, RequestDefinition.Content.Name))
+            if (!await reader.MoveToElementAsync(3).ConfigureAwait(false) || !reader.IsCurrentElement(3, RequestDefinition.Content.Name))
                 return;
 
             if (RequestDefinition.Content.Name != ResponseDefinition.RequestContentName)
             {
-                writer.WriteStartElement(ResponseDefinition.RequestContentName);
-                writer.WriteAttributes(reader, true);
+                await writer.WriteStartElementAsync(ResponseDefinition.RequestContentName).ConfigureAwait(false);
+                await writer.WriteAttributesAsync(reader, true).ConfigureAwait(false);
 
-                while (reader.MoveToElement(4))
-                    writer.WriteNode(reader, true);
+                while (await reader.MoveToElementAsync(4).ConfigureAwait(false))
+                    await writer.WriteNodeAsync(reader, true).ConfigureAwait(false);
 
-                writer.WriteEndElement();
+                await writer.WriteEndElementAsync().ConfigureAwait(false);
             }
-            else writer.WriteNode(reader, true);
+            else await writer.WriteNodeAsync(reader, true).ConfigureAwait(false);
         }
     }
 }

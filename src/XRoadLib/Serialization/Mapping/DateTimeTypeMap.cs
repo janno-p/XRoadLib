@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
@@ -10,12 +11,12 @@ namespace XRoadLib.Serialization.Mapping
     {
         public DateTimeTypeMap(TypeDefinition typeDefinition) : base(typeDefinition) { }
 
-        public override object Deserialize(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             if (reader.IsEmptyElement)
-                return reader.MoveNextAndReturn(HandleEmptyElement(content, message));
+                return await reader.MoveNextAndReturnAsync(HandleEmptyElement(content, message)).ConfigureAwait(false);
 
-            var value = reader.ReadElementContentAsString();
+            var value = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
             if (string.IsNullOrEmpty(value))
                 return HandleEmptyElement(content, message);
 
@@ -24,11 +25,11 @@ namespace XRoadLib.Serialization.Mapping
             return dateTime.AddTicks(-(dateTime.Ticks % TimeSpan.TicksPerSecond));
         }
 
-        public override void Serialize(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+        public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
         {
-            message.Style.WriteType(writer, Definition, content);
+            await message.Style.WriteTypeAsync(writer, Definition, content).ConfigureAwait(false);
 
-            writer.WriteValue(value);
+            await writer.WriteStringAsync(XmlConvert.ToString((DateTime)value, XmlDateTimeSerializationMode.Unspecified)).ConfigureAwait(false);
         }
 
         private static DateTime? HandleEmptyElement(ContentDefinition content, XRoadMessage message)

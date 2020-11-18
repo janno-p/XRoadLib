@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace XRoadLib.Headers
@@ -68,7 +69,7 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Try to read current position in XML reader as X-Road header element.
         /// </summary>
-        void ReadHeaderValue(XmlReader reader);
+        Task ReadHeaderValueAsync(XmlReader reader);
 
         /// <summary>
         /// Check if all required SOAP headers are present and in correct format.

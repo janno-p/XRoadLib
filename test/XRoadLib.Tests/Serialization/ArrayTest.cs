@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -29,9 +30,9 @@ namespace XRoadLib.Tests.Serialization
         };
 
         [Fact]
-        public void CanSerializeMergedArrayContent()
+        public async Task CanSerializeMergedArrayContent()
         {
-            var doc = SerializeMessage(_request);
+            var doc = await SerializeMessageAsync(_request);
             Assert.Equal(XName.Get("MergeArrayContent", Globals.ServiceManager.ProducerNamespace), doc.Root?.Name);
 
             Assert.NotNull(doc.Root?.Elements());
@@ -77,9 +78,9 @@ namespace XRoadLib.Tests.Serialization
         }
 
         [Fact]
-        public void CanDeserializeMergedArrayContent()
+        public async Task CanDeserializeMergedArrayContent()
         {
-            var result = DeserializeMessage(SerializeMessage(_request));
+            var result = await DeserializeMessageAsync(await SerializeMessageAsync(_request));
             Assert.NotNull(result);
             Assert.IsType<MergeArrayContentRequest>(result);
 
@@ -99,17 +100,17 @@ namespace XRoadLib.Tests.Serialization
             Assert.Collection(req.Content[2].Strings, x => Assert.Equal("1", x), x => Assert.Equal("2", x), x => Assert.Equal("3", x));
         }
 
-        private XDocument SerializeMessage(object request)
+        private async Task<XDocument> SerializeMessageAsync(object request)
         {
             var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
 
             using var message = new XRoadMessage(ServiceManager, null);
             using var stream = new MemoryStream();
 
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false }))
+            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Async = true, CloseOutput = false }))
             {
-                serviceMap.SerializeRequest(writer, request, message);
-                writer.Flush();
+                await serviceMap.SerializeRequestAsync(writer, request, message);
+                await writer.FlushAsync();
             }
 
             stream.Position = 0;
@@ -117,16 +118,18 @@ namespace XRoadLib.Tests.Serialization
             return XDocument.Load(stream);
         }
 
-        private object DeserializeMessage(XDocument document)
+        private async Task<object> DeserializeMessageAsync(XDocument document)
         {
             var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
             var doc2 = new XDocument(new XElement("envelope", new XElement("body", document.Root)));
 
             using var message = new XRoadMessage(ServiceManager, null);
-            using var reader = doc2.CreateReader();
+            using var reader = doc2.CreateAsyncReader();
 
-            Enumerable.Range(0, 3).ToList().ForEach(i => reader.MoveToElement(i));
-            return serviceMap.DeserializeRequest(reader, message);
+            for (var i = 0; i < 3; i++)
+                await reader.MoveToElementAsync(i);
+
+            return await serviceMap.DeserializeRequestAsync(reader, message);
         }
     }
 }

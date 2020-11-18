@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 
@@ -11,25 +12,25 @@ namespace XRoadLib.Wsdl
         public string Part { get; set; }
         public SoapBindingUse Use { get; set; } = SoapBindingUse.Default;
 
-        internal override void Write(XmlWriter writer)
+        internal override async Task WriteAsync(XmlWriter writer)
         {
-            writer.WriteStartElement(PrefixConstants.Soap, "header", NamespaceConstants.Soap);
+            await writer.WriteStartElementAsync(PrefixConstants.Soap, "header", NamespaceConstants.Soap).ConfigureAwait(false);
 
-            writer.WriteQualifiedAttribute("message", Message);
+            await writer.WriteQualifiedAttributeAsync("message", Message).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(Encoding))
-                writer.WriteAttributeString("encodingStyle", Encoding);
+                await writer.WriteAttributeStringAsync(null, "encodingStyle", null, Encoding).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(Namespace))
-                writer.WriteAttributeString("namespace", Namespace);
+                await writer.WriteAttributeStringAsync(null, "namespace", null, Namespace).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(Part))
-                writer.WriteAttributeString("part", Part);
+                await writer.WriteAttributeStringAsync(null, "part", null, Part).ConfigureAwait(false);
 
             if (Use != SoapBindingUse.Default)
-                writer.WriteAttributeString("use", Use == SoapBindingUse.Encoded ? "encoded" : "literal");
+                await writer.WriteAttributeStringAsync(null, "use", null, Use == SoapBindingUse.Encoded ? "encoded" : "literal").ConfigureAwait(false);
 
-            writer.WriteEndElement();
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }
