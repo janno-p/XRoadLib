@@ -171,8 +171,7 @@ Target.create "CheckKeyFile" (fun _ ->
 )
 
 Target.create "Release" (fun _ ->
-    let user = Environment.environVarOrFail "github-user"
-    let pw = Environment.environVarOrFail "github-pw"
+    let token = Environment.environVarOrFail "GITHUB_TOKEN"
 
     let remote =
         Git.CommandHelper.getGitResult "" "remote -v"
@@ -188,7 +187,7 @@ Target.create "Release" (fun _ ->
     Git.Branches.pushTag "" remote release.NugetVersion
 
     // release on github
-    GitHub.createClient user pw
+    GitHub.createClientWithToken token
     |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
     // |> GitHub.uploadFile "PATH_TO_FILE"
     |> GitHub.publishDraft
