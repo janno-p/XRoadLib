@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using XRoadLib.Headers;
@@ -17,7 +16,7 @@ namespace XRoadLib.Tests.Serialization
         public static async Task<Tuple<ISoapHeader, IList<XElement>, IServiceManager>> ParseHeaderAsync(string xml, string ns)
         {
             using var stream = new MemoryStream();
-            using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
+            using var streamWriter = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await streamWriter.WriteLineAsync(@"<Envelope xmlns=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:id=""http://x-road.eu/xsd/identifiers"" xmlns:repr=""http://x-road.eu/xsd/representation.xsd"">");
             await streamWriter.WriteLineAsync($"<Header xmlns:xrd=\"{ns}\">");

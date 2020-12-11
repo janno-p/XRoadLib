@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
+using XRoadLib.Serialization;
 using XRoadLib.Wsdl;
 
 namespace XRoadLib.Extensions
@@ -15,6 +16,7 @@ namespace XRoadLib.Extensions
             var writer = XmlWriter.Create(stream, new XmlWriterSettings
             {
                 Async = true,
+                Encoding = XRoadEncoding.Utf8,
                 Indent = true,
                 IndentChars = "  ",
                 NewLineChars = "\r\n"

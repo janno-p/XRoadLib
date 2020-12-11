@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using XRoadLib.Serialization;
 using Xunit;
@@ -15,7 +14,7 @@ namespace XRoadLib.Tests.Serialization
             using var outputStream = new MemoryStream();
             using var writer = new XRoadMessageWriter(outputStream);
 
-            using (var contentStream = new MemoryStream(Encoding.UTF8.GetBytes("ABC")))
+            using (var contentStream = new MemoryStream(XRoadEncoding.Utf8.GetBytes("ABC")))
             using (var attachment = new XRoadAttachment(contentStream))
             {
                 await writer.WriteAttachmentAsBase64Async(attachment);
@@ -36,7 +35,7 @@ namespace XRoadLib.Tests.Serialization
             using var outputStream = new MemoryStream();
             using var writer = new XRoadMessageWriter(outputStream);
 
-            using (var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(text)))
+            using (var contentStream = new MemoryStream(XRoadEncoding.Utf8.GetBytes(text)))
             using (var attachment = new XRoadAttachment(contentStream))
             {
                 await writer.WriteAttachmentAsBase64Async(attachment);
@@ -58,7 +57,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("aSBvZmZpY2lhIGRlc2VydW50IG1vbGxpdCBhbmltIGlkIGVzdCBsYWJvcnVtLg==", lines[7]);
             Assert.Equal("", lines[8]);
 
-            var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(text));
+            var encoded = Convert.ToBase64String(XRoadEncoding.Utf8.GetBytes(text));
 
             Assert.NotEqual(encoded, encodedOutput);
             Assert.Equal(encoded, encodedOutput.Replace("\r\n", ""));
@@ -91,7 +90,7 @@ namespace XRoadLib.Tests.Serialization
             using var outputStream = new MemoryStream();
             using var writer = new XRoadMessageWriter(outputStream);
 
-            using (var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(text)))
+            using (var contentStream = new MemoryStream(XRoadEncoding.Utf8.GetBytes(text)))
             using (var attachment = new XRoadAttachment(contentStream))
             {
                 await writer.WriteAttachmentAsBase64Async(attachment);
@@ -110,7 +109,7 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("ZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4=", lines[4]);
             Assert.Equal("", lines[5]);
 
-            var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(text));
+            var encoded = Convert.ToBase64String(XRoadEncoding.Utf8.GetBytes(text));
 
             Assert.NotEqual(encoded, encodedOutput);
             Assert.Equal(encoded, encodedOutput.Replace("\r\n", ""));

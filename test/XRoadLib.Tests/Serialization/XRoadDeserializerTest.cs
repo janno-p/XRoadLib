@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -430,7 +429,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanDeserializeAnonymousType()
         {
             using var stream = new MemoryStream();
-            using var writer = new StreamWriter(stream, Encoding.UTF8);
+            using var writer = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await writer.WriteLineAsync(@"<?xml version=""1.0"" encoding=""utf-8""?>");
             await writer.WriteLineAsync($@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{NamespaceConstants.Xsi}"" xmlns:tns=""{Globals.ServiceManager.ProducerNamespace}"">");
@@ -467,7 +466,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task AnonymousTypeShouldNotHaveExplicitType()
         {
             using var stream = new MemoryStream();
-            using var writer = new StreamWriter(stream, Encoding.UTF8);
+            using var writer = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await writer.WriteLineAsync(@"<?xml version=""1.0"" encoding=""utf-8""?>");
             await writer.WriteLineAsync($@"<entity xsi:type=""tns:ContainerType"" xmlns:xsi=""{NamespaceConstants.Xsi}"" xmlns:tns=""{Globals.ServiceManager.ProducerNamespace}"">");
@@ -558,7 +557,7 @@ namespace XRoadLib.Tests.Serialization
             await writer.WriteLineAsync(@"<?xml version=""1.0"" encoding=""utf-8""?>");
             await writer.WriteLineAsync($"<soapenv:Envelope xmlns:soapenv=\"{NamespaceConstants.SoapEnv}\" soapenv:encodingStyle=\"{NamespaceConstants.SoapEnc}\">");
 
-            using (var xmlWriter = XmlWriter.Create(writer, new XmlWriterSettings { Async = true, ConformanceLevel = ConformanceLevel.Fragment }))
+            using (var xmlWriter = XmlWriter.Create(writer, new XmlWriterSettings { Async = true, ConformanceLevel = ConformanceLevel.Fragment, Encoding = XRoadEncoding.Utf8 }))
             {
                 await xmlWriter.WriteStartElementAsync("soapenv", "Header", NamespaceConstants.SoapEnv);
                 await new XRoadHeader

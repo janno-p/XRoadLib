@@ -1,3 +1,7 @@
+#### 1.4.1 - 11.12.2020
+
+* Review UTF8 encoding usages to prevent BOM in outgoing messages.
+
 #### 1.4.0 - 18.11.2020
 
 * Add error logging for unexpected errors during request processing.

@@ -69,7 +69,7 @@ namespace XRoadLib
             using var requestMessage = new XRoadMessage(this, header);
 
             IServiceMap operationServiceMap;
-            using (var writer = XmlWriter.Create(requestMessage.ContentStream, new XmlWriterSettings { Async = true }))
+            using (var writer = XmlWriter.Create(requestMessage.ContentStream, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))
             {
                 await writer.WriteStartDocumentAsync().ConfigureAwait(false);
 

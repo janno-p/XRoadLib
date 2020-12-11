@@ -107,7 +107,7 @@ namespace XRoadLib.Tests.Serialization
             using var message = new XRoadMessage(ServiceManager, null);
             using var stream = new MemoryStream();
 
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Async = true, CloseOutput = false }))
+            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Async = true, CloseOutput = false, Encoding = XRoadEncoding.Utf8 }))
             {
                 await serviceMap.SerializeRequestAsync(writer, request, message);
                 await writer.FlushAsync();

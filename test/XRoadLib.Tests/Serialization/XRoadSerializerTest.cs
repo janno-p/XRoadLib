@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
@@ -31,8 +30,8 @@ namespace XRoadLib.Tests.Serialization
 
             using (message)
             using (var stream = new MemoryStream())
-            using (var tw = new StreamWriter(stream, Encoding.UTF8))
-            using (var writer = XmlWriter.Create(tw, new XmlWriterSettings { Async = true }))
+            using (var tw = new StreamWriter(stream, XRoadEncoding.Utf8))
+            using (var writer = XmlWriter.Create(tw, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))
             {
                 if (addEnvelope)
                 {

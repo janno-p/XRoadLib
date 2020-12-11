@@ -59,7 +59,7 @@ namespace XRoadLib.Serialization
                 else await SerializeAttachmentAsync(attachment, boundaryMarker).ConfigureAwait(false);
             }
 
-            var endMarker = Encoding.UTF8.GetBytes($"{NewLine}--{boundaryMarker}--{NewLine}");
+            var endMarker = XRoadEncoding.Utf8.GetBytes($"{NewLine}--{boundaryMarker}--{NewLine}");
             await _streamCounter.WriteAsync(endMarker, 0, endMarker.Length).ConfigureAwait(false);
 
             await _streamCounter.FlushAsync().ConfigureAwait(false);
@@ -93,12 +93,12 @@ namespace XRoadLib.Serialization
                 .Append(NewLine)
                 .ToString();
 
-            var headerBytes = Encoding.UTF8.GetBytes(headers);
+            var headerBytes = XRoadEncoding.Utf8.GetBytes(headers);
             await _streamCounter.WriteAsync(headerBytes, 0, headerBytes.Length).ConfigureAwait(false);
 
             await WriteContentAsync(source).ConfigureAwait(false);
 
-            var newLineBytes = Encoding.UTF8.GetBytes(NewLine);
+            var newLineBytes = XRoadEncoding.Utf8.GetBytes(NewLine);
 
             await _streamCounter.WriteAsync(newLineBytes, 0, newLineBytes.Length).ConfigureAwait(false);
         }
@@ -120,7 +120,7 @@ namespace XRoadLib.Serialization
                 .Append(NewLine)
                 .ToString();
 
-            var headerBytes = Encoding.UTF8.GetBytes(headers);
+            var headerBytes = XRoadEncoding.Utf8.GetBytes(headers);
             await _streamCounter.WriteAsync(headerBytes, 0, headerBytes.Length).ConfigureAwait(false);
 
             await WriteAttachmentAsBase64Async(attachment).ConfigureAwait(false);
@@ -141,7 +141,7 @@ namespace XRoadLib.Serialization
                 .Append(NewLine)
                 .ToString();
 
-            var headerBytes = Encoding.UTF8.GetBytes(headers);
+            var headerBytes = XRoadEncoding.Utf8.GetBytes(headers);
             await _streamCounter.WriteAsync(headerBytes, 0, headerBytes.Length).ConfigureAwait(false);
             await _streamCounter.FlushAsync().ConfigureAwait(false);
 
@@ -166,14 +166,14 @@ namespace XRoadLib.Serialization
                 noContent = false;
 
                 var row = new StringBuilder(Convert.ToBase64String(buffer, 0, bytesRead)).Append(NewLine).ToString();
-                var rowBytes = Encoding.UTF8.GetBytes(row);
+                var rowBytes = XRoadEncoding.Utf8.GetBytes(row);
 
                 await _streamCounter.WriteAsync(rowBytes, 0, rowBytes.Length).ConfigureAwait(false);
             }
 
             if (noContent)
             {
-                var newLineBytes = Encoding.UTF8.GetBytes(NewLine);
+                var newLineBytes = XRoadEncoding.Utf8.GetBytes(NewLine);
                 await _streamCounter.WriteAsync(newLineBytes, 0, newLineBytes.Length).ConfigureAwait(false);
             }
         }

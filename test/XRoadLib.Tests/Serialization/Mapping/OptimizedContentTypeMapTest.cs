@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -18,7 +17,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         [Fact]
         public async Task CanDeserializeXopIncludeReference()
         {
-            using var attachment = new XRoadAttachment(Encoding.UTF8.GetBytes("Test"));
+            using var attachment = new XRoadAttachment(XRoadEncoding.Utf8.GetBytes("Test"));
             using var message = Globals.ServiceManager.CreateMessage();
 
             message.AllAttachments.Add(attachment);
@@ -45,7 +44,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
             var instance = await DeserializeOptimizedContentValueAsync("VsOkaWtl");
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
-            var sisu = Encoding.UTF8.GetString(stream.ToArray());
+            var sisu = XRoadEncoding.Utf8.GetString(stream.ToArray());
             Assert.Equal("Väike", sisu);
         }
 
@@ -55,7 +54,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
             var instance = await DeserializeOptimizedContentValueAsync("\r\n\t   VsOkaWtl\n");
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
-            var sisu = Encoding.UTF8.GetString(stream.ToArray());
+            var sisu = XRoadEncoding.Utf8.GetString(stream.ToArray());
             Assert.Equal("Väike", sisu);
         }
 
@@ -65,7 +64,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
             var instance = await DeserializeOptimizedContentValueAsync("<![CDATA[VsOkaWtl]]>");
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
-            var sisu = Encoding.UTF8.GetString(stream.ToArray());
+            var sisu = XRoadEncoding.Utf8.GetString(stream.ToArray());
             Assert.Equal("Väike", sisu);
         }
 
@@ -75,7 +74,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
             var instance = await DeserializeOptimizedContentValueAsync("");
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
-            var sisu = Encoding.UTF8.GetString(stream.ToArray());
+            var sisu = XRoadEncoding.Utf8.GetString(stream.ToArray());
             Assert.Equal("", sisu);
         }
 
@@ -91,7 +90,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
 
             Assert.NotNull(instance);
             var stream = Assert.IsAssignableFrom<MemoryStream>(instance);
-            var sisu = Encoding.UTF8.GetString(stream.ToArray());
+            var sisu = XRoadEncoding.Utf8.GetString(stream.ToArray());
             Assert.Equal("", sisu);
         }
 

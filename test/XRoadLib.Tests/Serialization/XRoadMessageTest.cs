@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XRoadLib.Serialization;
 using XRoadLib.Soap;
@@ -52,7 +51,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanReadContentWithoutAttachments()
         {
             using var stream = new MemoryStream();
-            using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
+            using var streamWriter = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await streamWriter.WriteAsync("<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:id=\"http://x-road.eu/xsd/identifiers\" xmlns:repr=\"http://x-road.eu/xsd/representation.xsd\">\r\n");
             await streamWriter.WriteAsync("  <Header xmlns:xrd=\"http://x-road.ee/xsd/x-road.xsd\">\r\n");
@@ -67,14 +66,14 @@ namespace XRoadLib.Tests.Serialization
             using var message = new XRoadMessage();
 
             await reader.ReadAsync(message, false);
-            Assert.Equal(254L, message.ContentLength);
+            Assert.Equal(251L, message.ContentLength);
         }
 
         [Fact]
         public async Task CanReadContentWithAttachments()
         {
             using var stream = new MemoryStream();
-            using var streamWriter = new StreamWriter(stream, Encoding.UTF8);
+            using var streamWriter = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await streamWriter.WriteAsync("\r\n");
             await streamWriter.WriteAsync("--5e7a8827-5850-45be-9a1e-8bbf6aff5da7\r\n");
@@ -112,7 +111,7 @@ namespace XRoadLib.Tests.Serialization
             using var message = new XRoadMessage();
 
             await reader.ReadAsync(message, false);
-            Assert.Equal(838L, message.ContentLength);
+            Assert.Equal(835L, message.ContentLength);
         }
 
         private static async Task<long> WriteContentAsync(string content = null, IEnumerable<XRoadAttachment> attachments = null)
@@ -124,7 +123,7 @@ namespace XRoadLib.Tests.Serialization
 
             if (content != null)
             {
-                var buffer = Encoding.UTF8.GetBytes(content);
+                var buffer = XRoadEncoding.Utf8.GetBytes(content);
                 contentStream.Write(buffer, 0, buffer.Length);
             }
 

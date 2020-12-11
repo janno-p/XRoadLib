@@ -183,7 +183,7 @@ namespace XRoadLib.Extensions.AspNetCore
             context.Request.ContentStream.Position = 0;
             using (var reader = XmlReader.Create(context.Request.ContentStream, new XmlReaderSettings { Async = true, CloseInput = false }))
             using (var textWriter = new StreamWriter(context.Response.ContentStream, context.Response.ContentEncoding, 1024, true))
-            using (var writer = XmlWriter.Create(textWriter, new XmlWriterSettings { Async = true }))
+            using (var writer = XmlWriter.Create(textWriter, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))
             {
                 await writer.WriteStartDocumentAsync().ConfigureAwait(false);
 
