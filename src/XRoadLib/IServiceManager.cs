@@ -43,7 +43,7 @@ namespace XRoadLib
         /// <summary>
         /// Header definition of the protocol.
         /// </summary>
-        HeaderDefinition HeaderDefinition { get; }
+        IHeaderDefinition HeaderDefinition { get; }
 
         /// <summary>
         /// Protocol specification.
@@ -51,17 +51,17 @@ namespace XRoadLib
         ProtocolDefinition ProtocolDefinition { get; }
 
         /// <summary>
+        /// Initializes new XRoadMessage instance, suitable for current manager definition.
+        /// </summary>
+        /// <returns>Created XRoadMessage instance</returns>
+        XRoadMessage CreateMessage();
+
+        /// <summary>
         /// Get serializer instance of schema definition runtime serialization.
         /// </summary>
         /// <param name="version">Global DTO version of wanted serialzier.</param>
         /// <returns>Runtime type serializer.</returns>
         ISerializer GetSerializer(uint? version = null);
-
-        /// <summary>
-        /// Initializes header instance based on current definition.
-        /// </summary>
-        /// <returns>Initialized header instance.</returns>
-        ISoapHeader CreateHeader();
 
         /// <summary>
         /// Generates service description based on current schema definition.

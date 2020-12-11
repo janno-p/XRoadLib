@@ -10,6 +10,6 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.
         /// </summary>
-        Task WriteToAsync(XmlWriter writer, Style style, HeaderDefinition headerDefinition);
+        Task WriteToAsync(XmlWriter writer, Style style, IHeaderDefinition headerDefinition);
     }
 }

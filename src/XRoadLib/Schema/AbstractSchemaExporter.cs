@@ -52,7 +52,8 @@ namespace XRoadLib.Schema
         public virtual void ExportServiceDescription(ServiceDescription serviceDescription) { }
 
         /// <inheritdoc />
-        public virtual void ExportHeaderDefinition(HeaderDefinition headerDefinition) { }
+        public virtual IHeaderDefinition ExportHeaderDefinition(IHeaderDefinition defaultHeaderDefinition) =>
+            defaultHeaderDefinition;
 
         /// <inheritdoc />
         public virtual void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)

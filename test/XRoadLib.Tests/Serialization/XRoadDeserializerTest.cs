@@ -565,7 +565,7 @@ namespace XRoadLib.Tests.Serialization
                     Client = new XRoadClientIdentifier(),
                     Id = Guid.NewGuid().ToString(),
                     ProtocolVersion = "4.0"
-                }.WriteToAsync(xmlWriter, new DocLiteralStyle(), new HeaderDefinition());
+                }.WriteToAsync(xmlWriter, new DocLiteralStyle(), new HeaderDefinition<XRoadHeader>("RequiredHeaders"));
                 await xmlWriter.WriteEndElementAsync();
             }
 

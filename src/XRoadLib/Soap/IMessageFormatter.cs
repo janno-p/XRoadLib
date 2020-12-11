@@ -26,7 +26,7 @@ namespace XRoadLib.Soap
         Task WriteStartBodyAsync(XmlWriter writer);
 
         Task WriteSoapFaultAsync(XmlWriter writer, IFault fault);
-        Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null);
+        Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, IHeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null);
 
         Task ThrowSoapFaultIfPresentAsync(XmlReader reader);
 

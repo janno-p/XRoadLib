@@ -213,23 +213,9 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Customize X-Road message header elements.
         /// </summary>
-        public HeaderDefinition GetXRoadHeaderDefinition()
+        public IHeaderDefinition GetXRoadHeaderDefinition()
         {
-            var headerDefinition = new HeaderDefinition { MessageName = "RequiredHeaders" };
-
-            headerDefinition.Use<XRoadHeader>()
-                            .WithRequiredHeader(x => x.Client)
-                            .WithRequiredHeader(x => x.Service)
-                            .WithRequiredHeader(x => x.UserId)
-                            .WithRequiredHeader(x => x.Id)
-                            .WithRequiredHeader(x => x.Issue)
-                            .WithRequiredHeader(x => x.ProtocolVersion)
-                            .WithHeaderNamespace(NamespaceConstants.XRoad)
-                            .WithHeaderNamespace(NamespaceConstants.XRoadRepr);
-
-            _schemaExporter.ExportHeaderDefinition(headerDefinition);
-
-            return headerDefinition;
+            return _schemaExporter.ExportHeaderDefinition(HeaderDefinition.Default);
         }
 
         /// <summary>

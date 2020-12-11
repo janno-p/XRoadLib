@@ -336,7 +336,7 @@ namespace XRoadLib.Serialization
             if (!await _messageFormatter.TryMoveToHeaderAsync(reader).ConfigureAwait(false))
                 return;
 
-            var header = serviceManager?.CreateHeader();
+            var header = serviceManager?.HeaderDefinition.CreateHeader();
             var xRoadHeader = header as IXRoadHeader;
 
             var unresolved = new List<XElement>();
@@ -346,7 +346,7 @@ namespace XRoadLib.Serialization
                 if (serviceManager == null)
                 {
                     serviceManager = _serviceManagers.SingleOrDefault(p => p.IsHeaderNamespace(reader.NamespaceURI));
-                    header = serviceManager?.CreateHeader();
+                    header = serviceManager?.HeaderDefinition.CreateHeader();
                     xRoadHeader = header as IXRoadHeader;
                 }
 

@@ -9,26 +9,24 @@ using XRoadLib.Headers;
 
 namespace XRoadLib.Schema
 {
-    /// <summary>
-    /// Allows to fluently configure headers mandatory elements.
-    /// </summary>
-    public interface IHeaderDefinitionBuilder<THeader> where THeader : IXRoadHeader
+    public static class HeaderDefinition
     {
-        /// <summary>
-        /// Specify mandatory element of the header object.
-        /// </summary>
-        IHeaderDefinitionBuilder<THeader> WithRequiredHeader<TValue>(Expression<Func<THeader, TValue>> expression);
-
-        /// <summary>
-        /// Define namespaces used to define SOAP header elements.
-        /// </summary>
-        IHeaderDefinitionBuilder<THeader> WithHeaderNamespace(string namespaceName);
+        public static IHeaderDefinition Default =>
+            new HeaderDefinition<XRoadHeader>(nameof(IHeaderDefinition.RequiredHeaders))
+                .AddRequiredHeader(x => x.Client)
+                .AddRequiredHeader(x => x.Service)
+                .AddRequiredHeader(x => x.UserId)
+                .AddRequiredHeader(x => x.Id)
+                .AddRequiredHeader(x => x.Issue)
+                .AddRequiredHeader(x => x.ProtocolVersion)
+                .AddHeaderNamespace(NamespaceConstants.XRoad)
+                .AddHeaderNamespace(NamespaceConstants.XRoadRepr);
     }
 
     /// <summary>
     /// Configuration options of X-Road header.
     /// </summary>
-    public class HeaderDefinition
+    public class HeaderDefinition<THeader> : IHeaderDefinition where THeader : ISoapHeader, new()
     {
         private readonly ISet<string> _headerNamespaces = new HashSet<string>();
 
@@ -40,63 +38,49 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Name of WSDL message used to define SOAP header elements.
         /// </summary>
-        public string MessageName { get; set; }
-
-        /// <summary>
-        /// Define custom header type for X-Road messages.
-        /// </summary>
-        public IHeaderDefinitionBuilder<THeader> Use<THeader>() where THeader : IXRoadHeader, new()
-        {
-            return new HeaderDefinitionBuilder<THeader>(this);
-        }
-
-        /// <summary>
-        /// Remove SOAP header definition from message.
-        /// </summary>
-        public void Remove()
-        {
-            RequiredHeaders.Clear();
-            _headerNamespaces.Clear();
-        }
+        public string MessageName { get; }
 
         /// <summary>
         /// Test if given namespace is defined as SOAP header element namespace.
         /// </summary>
-        public bool IsHeaderNamespace(string namespaceName)
+        public bool IsHeaderNamespace(string namespaceName) =>
+            _headerNamespaces.Contains(namespaceName);
+
+        public HeaderDefinition(string messageName) =>
+            MessageName = messageName;
+
+        /// <summary>
+        /// Creates new instance of definition specific SOAP header.
+        /// </summary>
+        /// <returns>Definition specific SOAP header</returns>
+        public ISoapHeader CreateHeader() =>
+            new THeader();
+
+        /// <summary>
+        /// Specify mandatory element of the header object.
+        /// </summary>
+        public HeaderDefinition<THeader> AddRequiredHeader<TValue>(Expression<Func<THeader, TValue>> expression)
         {
-            return _headerNamespaces.Contains(namespaceName);
+            if (!(expression.Body is MemberExpression memberExpression))
+                throw new SchemaDefinitionException($"Only MemberExpression is allowed to use for SOAP header definition, but was {expression.Body.GetType().Name} ({GetType().Name}).");
+
+            var attribute = memberExpression.Member.GetSingleAttribute<XmlElementAttribute>() ?? memberExpression.Member.DeclaringType.GetElementAttributeFromInterface(memberExpression.Member as PropertyInfo);
+            if (string.IsNullOrWhiteSpace(attribute?.ElementName))
+                throw new SchemaDefinitionException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.");
+
+            RequiredHeaders.Add(XName.Get(attribute.ElementName, attribute.Namespace));
+
+            return this;
         }
 
-        private class HeaderDefinitionBuilder<THeader> : IHeaderDefinitionBuilder<THeader> where THeader : IXRoadHeader
+        /// <summary>
+        /// Define namespaces used to define SOAP header elements.
+        /// </summary>
+        public HeaderDefinition<THeader> AddHeaderNamespace(string namespaceName)
         {
-            private readonly HeaderDefinition _headerDefinition;
+            _headerNamespaces.Add(namespaceName);
 
-            public HeaderDefinitionBuilder(HeaderDefinition headerDefinition)
-            {
-                _headerDefinition = headerDefinition;
-                headerDefinition.Remove();
-            }
-
-            public IHeaderDefinitionBuilder<THeader> WithRequiredHeader<TValue>(Expression<Func<THeader, TValue>> expression)
-            {
-                if (!(expression.Body is MemberExpression memberExpression))
-                    throw new SchemaDefinitionException($"Only MemberExpression is allowed to use for SOAP header definition, but was {expression.Body.GetType().Name} ({GetType().Name}).");
-
-                var attribute = memberExpression.Member.GetSingleAttribute<XmlElementAttribute>() ?? memberExpression.Member.DeclaringType.GetElementAttributeFromInterface(memberExpression.Member as PropertyInfo);
-                if (string.IsNullOrWhiteSpace(attribute?.ElementName))
-                    throw new SchemaDefinitionException($"Specified member `{memberExpression.Member.Name}` does not define any XML element.");
-
-                _headerDefinition.RequiredHeaders.Add(XName.Get(attribute.ElementName, attribute.Namespace));
-
-                return this;
-            }
-
-            public IHeaderDefinitionBuilder<THeader> WithHeaderNamespace(string namespaceName)
-            {
-                _headerDefinition._headerNamespaces.Add(namespaceName);
-
-                return this;
-            }
+            return this;
         }
 
         private class XNameComparer : IComparer<XName>

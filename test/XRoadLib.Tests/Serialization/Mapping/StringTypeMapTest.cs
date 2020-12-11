@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
@@ -64,7 +63,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         {
             var stream = new StringBuilder();
 
-            var protocol = new ServiceManager<XRoadHeader>("4.0", new DefaultSchemaExporter("urn:some-namespace", typeof(Contract.Class1).Assembly));
+            var protocol = new ServiceManager("4.0", new DefaultSchemaExporter("urn:some-namespace", typeof(Contract.Class1).Assembly));
 
             using (var textWriter = new StringWriter(stream))
             using (var writer = XmlWriter.Create(textWriter, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))

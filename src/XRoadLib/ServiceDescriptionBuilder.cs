@@ -48,7 +48,7 @@ namespace XRoadLib
 
         private readonly string _xRoadPrefix;
         private readonly string _xRoadNamespace;
-        private readonly HeaderDefinition _headerDefinition;
+        private readonly IHeaderDefinition _headerDefinition;
 
         private readonly XmlDocument _document = new XmlDocument();
 

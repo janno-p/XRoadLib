@@ -119,7 +119,7 @@ namespace XRoadLib.Soap
             await writer.FlushAsync().ConfigureAwait(false);
         }
 
-        public async Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
+        public async Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, IHeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null)
         {
             if (header == null)
                 return;

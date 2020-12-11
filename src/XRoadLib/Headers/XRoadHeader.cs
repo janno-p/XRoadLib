@@ -307,7 +307,7 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.
         /// </summary>
-        public virtual async Task WriteToAsync(XmlWriter writer, Style style, HeaderDefinition definition)
+        public virtual async Task WriteToAsync(XmlWriter writer, Style style, IHeaderDefinition definition)
         {
             if (writer.LookupPrefix(NamespaceConstants.XRoad) == null)
                 await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, PrefixConstants.XRoad, NamespaceConstants.Xmlns, NamespaceConstants.XRoad).ConfigureAwait(false);
