@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using XRoadLib.Events;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
@@ -37,7 +36,7 @@ namespace XRoadLib.Extensions.AspNetCore
             if (context.HttpContext.Request.Body.CanSeek && context.HttpContext.Request.Body.Length == 0)
                 throw new InvalidQueryException("Empty request content");
 
-            await context.Request.LoadRequestAsync(context.HttpContext, context.MessageFormatter, GetStorageOrTempPath().FullName, ServiceManager).ConfigureAwait(false);
+            await context.Request.LoadRequestAsync(context.HttpContext, context.MessageFormatter, GetStorageOrTempPath(), ServiceManager).ConfigureAwait(false);
             context.Response.Copy(context.Request);
 
             context.HttpContext.Response.ContentType = context.MessageFormatter.ContentType;
@@ -86,7 +85,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Customize XML reader settings before deserialization of the X-Road message.
         /// </summary>
-        protected virtual Task OnBeforeDeserializationAsync(WebServiceContext context, BeforeDeserializationEventArgs args) =>
+        protected virtual Task OnBeforeDeserializationAsync(WebServiceContext context, XmlReaderSettings xmlReaderSettings) =>
             Task.CompletedTask;
 
         /// <summary>
@@ -157,14 +156,11 @@ namespace XRoadLib.Extensions.AspNetCore
         /// </summary>
         protected virtual async Task DeserializeMethodInputAsync(WebServiceContext context)
         {
-            var args = new BeforeDeserializationEventArgs();
-            await OnBeforeDeserializationAsync(context, args).ConfigureAwait(false);
-
-            args.XmlReaderSettings ??= new XmlReaderSettings();
-            args.XmlReaderSettings.Async = true;
+            var xmlReaderSettings = new XmlReaderSettings { Async = true };
+            await OnBeforeDeserializationAsync(context, xmlReaderSettings).ConfigureAwait(false);
 
             context.Request.ContentStream.Position = 0;
-            var reader = XmlReader.Create(context.Request.ContentStream, args.XmlReaderSettings);
+            var reader = XmlReader.Create(context.Request.ContentStream, xmlReaderSettings);
 
             await context.MessageFormatter.MoveToPayloadAsync(reader, context.Request.RootElementName).ConfigureAwait(false);
 

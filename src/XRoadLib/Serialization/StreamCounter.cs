@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace XRoadLib.Serialization
 {
-    internal class StreamCounter : IDisposable
+    public class StreamCounter : IDisposable
     {
         private Stream _stream;
 

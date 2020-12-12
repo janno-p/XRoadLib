@@ -28,12 +28,12 @@ namespace XRoadLib.Serialization
 
         private readonly ICollection<IServiceManager> _serviceManagers;
         private readonly IMessageFormatter _messageFormatter;
-        private readonly string _storagePath;
+        private readonly DirectoryInfo _storagePath;
         private readonly string _contentTypeHeader;
 
         private DataReader _dataReader;
 
-        public XRoadMessageReader(DataReader dataReader, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public XRoadMessageReader(DataReader dataReader, IMessageFormatter messageFormatter, string contentTypeHeader, DirectoryInfo storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             _contentTypeHeader = contentTypeHeader;
             _dataReader = dataReader;
@@ -123,9 +123,9 @@ namespace XRoadLib.Serialization
                 var (partId, partTransferEncoding) = await ExtractMultipartHeaderAsync(target.ContentEncoding).ConfigureAwait(false);
 
                 var targetStream = target.ContentStream;
-                if (targetStream.Length > 0 || (!string.IsNullOrEmpty(multipartStartContentId) && !multipartStartContentId.Contains(partId)))
+                if (targetStream.Length > 0 || !string.IsNullOrEmpty(multipartStartContentId) && !multipartStartContentId.Contains(partId))
                 {
-                    var attachment = new XRoadAttachment(partId, Path.Combine(_storagePath, Path.GetRandomFileName()));
+                    var attachment = new XRoadAttachment(partId, Path.Combine(_storagePath.FullName, Path.GetRandomFileName()));
                     target.AllAttachments.Add(attachment);
                     targetStream = attachment.ContentStream;
                 }
@@ -260,20 +260,15 @@ namespace XRoadLib.Serialization
             if (string.IsNullOrEmpty(contentTransferEncoding))
                 return null;
 
-            switch (contentTransferEncoding.ToLower())
+            return contentTransferEncoding.ToLower() switch
             {
-                case "quoted-printable":
-                case "7bit":
-                case "8bit":
-                case "binary":
-                    return null;
-
-                case "base64":
-                    return DecodeFromBase64;
-
-                default:
-                    throw new UnsupportedContentTransferEncodingException(contentTransferEncoding);
-            }
+                "quoted-printable" => null,
+                "7bit" => null,
+                "8bit" => null,
+                "binary" => null,
+                "base64" => DecodeFromBase64,
+                _ => throw new UnsupportedContentTransferEncodingException(contentTransferEncoding),
+            };
         }
 
         private static byte[] DecodeFromBase64(byte[] buffer, Encoding encoding)
@@ -314,7 +309,7 @@ namespace XRoadLib.Serialization
                 posArr2 -= 1;
             }
 
-            return (posArr2 == -1);
+            return posArr2 == -1;
         }
 
         private async Task<IServiceManager> DetectServiceManagerAsync(XmlReader reader, XRoadMessage target)

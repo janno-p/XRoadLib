@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -94,7 +93,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Entire length of the X-Road message in serialized form.
         /// </summary>
-        public long ContentLength { get; internal set; }
+        public long ContentLength { get; set; }
 
         /// <summary>
         /// All attachments (including inline content) that are packaged together
@@ -157,7 +156,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public Task LoadRequestAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
+        public Task LoadRequestAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, DirectoryInfo storagePath, IServiceManager serviceManager)
         {
             ServiceManager = serviceManager;
             return LoadRequestAsync(stream, messageFormatter, contentTypeHeader, storagePath, Enumerable.Empty<IServiceManager>());
@@ -166,7 +165,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public async Task LoadRequestAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public async Task LoadRequestAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, DirectoryInfo storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             using var reader = new XRoadMessageReader(new DataReader(stream), messageFormatter, contentTypeHeader, storagePath, serviceManagers);
             await reader.ReadAsync(this).ConfigureAwait(false);
@@ -175,7 +174,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
-        public Task LoadResponseAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IServiceManager serviceManager)
+        public Task LoadResponseAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, DirectoryInfo storagePath, IServiceManager serviceManager)
         {
             return LoadResponseAsync(stream, messageFormatter, contentTypeHeader, storagePath, new [] { serviceManager });
         }
@@ -183,20 +182,10 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
-        public async Task LoadResponseAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public async Task LoadResponseAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, DirectoryInfo storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             using var reader = new XRoadMessageReader(new DataReader(stream), messageFormatter, contentTypeHeader, storagePath, serviceManagers);
             await reader.ReadAsync(this, true).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Serializes X-Road message into specified web request.
-        /// </summary>
-        public async Task SaveToAsync(WebRequest webRequest, IMessageFormatter messageFormatter)
-        {
-            using var outputStream = await webRequest.GetRequestStreamAsync().ConfigureAwait(false);
-            using var writer = new XRoadMessageWriter(outputStream);
-            await writer.WriteAsync(this, contentType => webRequest.ContentType = contentType, (k, v) => webRequest.Headers[k] = v, messageFormatter).ConfigureAwait(false);
         }
 
         /// <summary>

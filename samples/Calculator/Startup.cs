@@ -16,6 +16,7 @@ namespace Calculator
 
             services.AddSingleton<ICalculate, CalculateWebService>();
             services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
+            services.AddSingleton<IFileCalculation, FileCalculationService>();
             services.AddSingleton<CalculatorServiceManager>();
         }
 

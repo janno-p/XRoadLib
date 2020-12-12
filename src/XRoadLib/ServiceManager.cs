@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
-using XRoadLib.Events;
-using XRoadLib.Extensions;
-using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
-using XRoadLib.Serialization.Mapping;
-using XRoadLib.Soap;
 using XRoadLib.Styles;
 using XRoadLib.Wsdl;
 
@@ -63,56 +55,6 @@ namespace XRoadLib
             ProtocolDefinition = _schemaDefinitionProvider.ProtocolDefinition;
 
             SetContractAssembly();
-        }
-
-        /// <inheritdoc />
-        async Task<object> IServiceManager.ExecuteAsync(WebRequest webRequest, object body, ISoapHeader header, ServiceExecutionOptions options)
-        {
-            var messageFormatter = options?.MessageFormatter ?? new SoapMessageFormatter();
-
-            using var requestMessage = new XRoadMessage(this, header);
-
-            IServiceMap operationServiceMap;
-            using (var writer = XmlWriter.Create(requestMessage.ContentStream, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))
-            {
-                await writer.WriteStartDocumentAsync().ConfigureAwait(false);
-
-                await writer.WriteSoapEnvelopeAsync(messageFormatter, ProtocolDefinition).ConfigureAwait(false);
-                if (!string.IsNullOrEmpty(options?.RequestNamespace) && writer.LookupPrefix(options.RequestNamespace) == null)
-                    await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, "req", NamespaceConstants.Xmlns, options.RequestNamespace).ConfigureAwait(false);
-
-                await messageFormatter.WriteSoapHeaderAsync(writer, Style, header, HeaderDefinition).ConfigureAwait(false);
-                await messageFormatter.WriteStartBodyAsync(writer).ConfigureAwait(false);
-
-                var serviceCode = (header as IXRoadHeader)?.Service?.ServiceCode ?? string.Empty;
-
-                var operationName = XName.Get(options?.OperationName ?? serviceCode, ProducerNamespace);
-                operationServiceMap = options?.ServiceMap ?? GetSerializer(options?.Version ?? requestMessage.Version).GetServiceMap(operationName);
-                await operationServiceMap.SerializeRequestAsync(writer, body, requestMessage, options?.RequestNamespace).ConfigureAwait(false);
-
-                await writer.WriteEndElementAsync().ConfigureAwait(false);
-
-                await writer.WriteEndElementAsync().ConfigureAwait(false);
-                await writer.WriteEndDocumentAsync().ConfigureAwait(false);
-                await writer.FlushAsync().ConfigureAwait(false);
-            }
-
-            options?.BeforeRequest?.Invoke(this, new XRoadRequestEventArgs(requestMessage));
-
-            await requestMessage.SaveToAsync(webRequest, messageFormatter).ConfigureAwait(false);
-
-            using var response = await webRequest.GetResponseAsync().ConfigureAwait(false);
-            using var responseStream = response.GetResponseStream();
-            using var seekableStream = new MemoryStream();
-            using var responseMessage = new XRoadMessage();
-
-            if (responseStream != null)
-                await responseStream.CopyToAsync(seekableStream).ConfigureAwait(false);
-
-            options?.BeforeDeserialize?.Invoke(this, new XRoadResponseEventArgs(response, seekableStream));
-            await responseMessage.LoadResponseAsync(seekableStream, messageFormatter, response.Headers.GetContentTypeHeader(), Path.GetTempPath(), this).ConfigureAwait(false);
-
-            return await responseMessage.DeserializeMessageContentAsync(operationServiceMap, messageFormatter).ConfigureAwait(false);
         }
 
         /// <inheritdoc />

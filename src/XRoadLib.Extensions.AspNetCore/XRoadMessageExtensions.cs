@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using XRoadLib.Serialization;
@@ -12,7 +13,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public static Task LoadRequestAsync(this XRoadMessage message, HttpContext httpContext, IMessageFormatter messageFormatter, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+        public static Task LoadRequestAsync(this XRoadMessage message, HttpContext httpContext, IMessageFormatter messageFormatter, DirectoryInfo storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             return message.LoadRequestAsync(httpContext.Request.Body, messageFormatter, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);
         }
@@ -20,7 +21,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
-        public static Task LoadRequestAsync(this XRoadMessage message, HttpContext httpContext, IMessageFormatter messageFormatter, string storagePath, IServiceManager serviceManager)
+        public static Task LoadRequestAsync(this XRoadMessage message, HttpContext httpContext, IMessageFormatter messageFormatter, DirectoryInfo storagePath, IServiceManager serviceManager)
         {
             return message.LoadRequestAsync(httpContext.Request.Body, messageFormatter, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManager);
         }

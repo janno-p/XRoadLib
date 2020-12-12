@@ -16,7 +16,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanHandleBufferLimit()
         {
             using var stream = new MemoryStream(Enumerable.Repeat((byte)32, 10).ToArray());
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Globals.StoragePath, Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
 
@@ -41,7 +41,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanHandleLineMarker()
         {
             using var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 });
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Globals.StoragePath, Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
 
@@ -58,7 +58,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanHandleChunkBeginningWithMarker()
         {
             using var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 });
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Globals.StoragePath, Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
 
@@ -83,7 +83,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanHandleSplittingMarker()
         {
             using var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 });
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Globals.StoragePath, Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
 
@@ -100,7 +100,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanHandleMultipleMarkersInARow()
         {
             using var stream = new MemoryStream(new byte[] { 40, 13, 10, 13, 10, 13, 10, 13, 10, 40 });
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Globals.StoragePath, Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
 
@@ -129,7 +129,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanHandleRecurringMarkerBufferLimit()
         {
             using var stream = new MemoryStream(new byte[] { 40, 13, 13, 13, 13, 13, 13, 10, 33, 34, 40, 40 });
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Globals.StoragePath, Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
 

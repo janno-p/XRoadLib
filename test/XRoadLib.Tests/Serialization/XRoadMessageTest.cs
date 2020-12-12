@@ -41,7 +41,7 @@ namespace XRoadLib.Tests.Serialization
         public async Task CanReadEmptyContentWithoutAttachments()
         {
             using var stream = new MemoryStream();
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), _serviceManagers);
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Globals.StoragePath, _serviceManagers);
             using var message = new XRoadMessage();
             await reader.ReadAsync(message, false);
             Assert.Equal(0L, message.ContentLength);
@@ -62,7 +62,7 @@ namespace XRoadLib.Tests.Serialization
 
             stream.Position = 0L;
 
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), _serviceManagers);
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Globals.StoragePath, _serviceManagers);
             using var message = new XRoadMessage();
 
             await reader.ReadAsync(message, false);
@@ -107,7 +107,7 @@ namespace XRoadLib.Tests.Serialization
 
             stream.Position = 0L;
 
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, contentTypeHeader, Path.GetTempPath(), _serviceManagers);
+            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, contentTypeHeader, Globals.StoragePath, _serviceManagers);
             using var message = new XRoadMessage();
 
             await reader.ReadAsync(message, false);

@@ -1,3 +1,8 @@
+#### 2.0.0-alpha001 - Unreleased
+
+* Removed generic ServiceManager (HeaderDefinition provides header implementation from this point on).
+* Replace HttpWebRequest based client request with HttpClient based implementation.
+
 #### 1.4.1 - 13.12.2020
 
 * Review UTF8 encoding usages to prevent BOM in outgoing messages.

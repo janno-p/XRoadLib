@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Calculator\Calculator.csproj" />
+    <ProjectReference Include="..\..\src\XRoadLib.Extensions.Http\XRoadLib.Extensions.Http.csproj" />
   </ItemGroup>
 
   <ItemGroup>

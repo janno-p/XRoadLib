@@ -1,10 +1,15 @@
-﻿using System.Net.Http;
+﻿using System.IO;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Calculator.Contract;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using XRoadLib;
+using XRoadLib.Extensions.Http.Services;
+using XRoadLib.Headers;
 using XRoadLib.Serialization;
 using Xunit;
 using Xunit.Abstractions;
@@ -190,6 +195,70 @@ namespace Calculator.Tests
             var result = wrapper.Element(XName.Get("response"));
             Assert.NotNull(result);
             Assert.Equal("1183", result.Value);
+        }
+
+        [Fact]
+        public async Task CallServiceWithXRoadService()
+        {
+            using var client = _server.CreateClient();
+
+            var service = new XRoadService(client, new CalculatorServiceManager());
+
+            using var response = await service.ExecuteAsync(
+                new CalculationRequest
+                {
+                    Operation = Operation.Multiply,
+                    X = 13,
+                    Y = 91
+                },
+                new XRoadHeader
+                {
+                    Client = new XRoadClientIdentifier(),
+                    Service = new XRoadServiceIdentifier { ServiceCode = "Calculate" },
+                    ProtocolVersion = "4.0"
+                }
+            );
+
+            var value = Assert.IsType<int>(response.Result);
+            Assert.Equal(1183, value);
+        }
+
+        [Fact]
+        public async Task CallMultipartServiceWithXRoadService()
+        {
+            using var client = _server.CreateClient();
+
+            var service = new XRoadService(client, new CalculatorServiceManager());
+
+            await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(@"1 + 2
+3 / 4
+test
+5 * 6
+999 / 0
+123 - 123213
+"));
+
+            using var response = await service.ExecuteAsync(
+                new FileCalculationRequest { InputFile = stream },
+                new XRoadHeader
+                {
+                    Client = new XRoadClientIdentifier(),
+                    Service = new XRoadServiceIdentifier { ServiceCode = "FileCalculation" },
+                    ProtocolVersion = "4.0"
+                }
+            );
+
+            var responseStream = Assert.IsType<FileStream>(response.Result);
+
+            responseStream.Position = 0;
+            using var reader = new StreamReader(responseStream);
+
+            Assert.Equal("3", await reader.ReadLineAsync());
+            Assert.Equal("0", await reader.ReadLineAsync());
+            Assert.Equal("ERR", await reader.ReadLineAsync());
+            Assert.Equal("30", await reader.ReadLineAsync());
+            Assert.Equal("ERR", await reader.ReadLineAsync());
+            Assert.Equal("-123090", await reader.ReadLineAsync());
         }
 
         private static XElement GetBodyElement(XDocument document)
