@@ -249,7 +249,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceHandler.html",
-          "hash": "yQSwFdEtI+pPZ88n0uIWdg=="
+          "hash": "PIVA+Bu3Yi3UXms6Ug2k/A=="
         }
       },
       "is_incremental": true,
@@ -429,7 +429,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.ServiceDescriptionExtensions.html",
-          "hash": "6lKs9xZnKFs3KvqrEG57GA=="
+          "hash": "9dZ5r3vkKIoqPWaSxj7KXg=="
         }
       },
       "is_incremental": true,
@@ -2709,7 +2709,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/release-notes.html",
-          "hash": "HexvnzRRjWG7qt2jJOAZKA=="
+          "hash": "ey5CpRo1vb621ZGwoePRpQ=="
         }
       },
       "is_incremental": true,
