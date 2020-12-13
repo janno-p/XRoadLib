@@ -1,4 +1,4 @@
-#### 1.4.1 - 11.12.2020
+#### 1.4.1 - 13.12.2020
 
 * Review UTF8 encoding usages to prevent BOM in outgoing messages.
 
