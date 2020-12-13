@@ -25,7 +25,7 @@ namespace XRoadLib.Extensions.Http.Services
         }
 
         /// <inheritdoc />
-        public virtual async Task<XRoadResponse> ExecuteAsync(object body, ISoapHeader header, ServiceExecutionOptions options = null)
+        public virtual async Task<XRoadResponse<TResult>> ExecuteAsync<TResult>(IXRoadRequest<TResult> request, ISoapHeader header, ServiceExecutionOptions options = null)
         {
             var messageFormatter = options?.MessageFormatter ?? new SoapMessageFormatter();
 
@@ -47,7 +47,7 @@ namespace XRoadLib.Extensions.Http.Services
 
                 var operationName = XName.Get(options?.OperationName ?? serviceCode, ServiceManager.ProducerNamespace);
                 operationServiceMap = options?.ServiceMap ?? ServiceManager.GetSerializer(options?.Version ?? message.Version).GetServiceMap(operationName);
-                await operationServiceMap.SerializeRequestAsync(writer, body, message, options?.RequestNamespace).ConfigureAwait(false);
+                await operationServiceMap.SerializeRequestAsync(writer, request, message, options?.RequestNamespace).ConfigureAwait(false);
 
                 await writer.WriteEndElementAsync().ConfigureAwait(false);
 
@@ -84,7 +84,7 @@ namespace XRoadLib.Extensions.Http.Services
             var attachments = new List<XRoadAttachment>(responseMessage.AllAttachments);
             responseMessage.AllAttachments.Clear();
 
-            return new XRoadResponse(result, attachments);
+            return new XRoadResponse<TResult>((TResult)result, attachments);
         }
 
         protected virtual Task OnBeforeRequestAsync(XRoadMessage message) =>

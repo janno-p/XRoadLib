@@ -5,14 +5,14 @@ using XRoadLib.Serialization;
 
 namespace XRoadLib.Extensions.Http
 {
-    public class XRoadResponse : IDisposable
+    public class XRoadResponse<TResult> : IDisposable
     {
         private readonly IList<XRoadAttachment> _attachments;
 
-        public object Result { get; }
+        public TResult Result { get; }
         public IEnumerable<XRoadAttachment> Attachments => _attachments.ToList();
 
-        public XRoadResponse(object result, IList<XRoadAttachment> attachments)
+        public XRoadResponse(TResult result, IList<XRoadAttachment> attachments)
         {
             Result = result;
             _attachments = attachments ?? new List<XRoadAttachment>();

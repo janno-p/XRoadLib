@@ -219,8 +219,7 @@ namespace Calculator.Tests
                 }
             );
 
-            var value = Assert.IsType<int>(response.Result);
-            Assert.Equal(1183, value);
+            Assert.Equal(1183, response.Result);
         }
 
         [Fact]
@@ -248,10 +247,8 @@ test
                 }
             );
 
-            var responseStream = Assert.IsType<FileStream>(response.Result);
-
-            responseStream.Position = 0;
-            using var reader = new StreamReader(responseStream);
+            response.Result.Position = 0;
+            using var reader = new StreamReader(response.Result);
 
             Assert.Equal("3", await reader.ReadLineAsync());
             Assert.Equal("0", await reader.ReadLineAsync());
