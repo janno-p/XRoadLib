@@ -5,7 +5,6 @@ nuget Fake.Core.ReleaseNotes
 nuget Fake.Core.Target
 nuget Fake.Documentation.DocFx
 nuget Fake.DotNet.Cli
-nuget Fake.DotNet.Paket
 nuget Fake.Tools.Git
 nuget Octokit //"
 
@@ -22,7 +21,6 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Tools
-open System.IO
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -31,9 +29,6 @@ let gitHome = "https://github.com/" + gitOwner
 
 // The name of the project on GitHub
 let gitName = "XRoadLib"
-
-// The url for the raw files hosted
-let gitRaw = Environment.environVarOrDefault "gitRaw" ("https://raw.github.com/" + gitOwner)
 
 // Strong name key file for assembly signing
 let keyFile = "src" </> "XRoadLib.snk"
@@ -122,17 +117,7 @@ Target.create "NuGet" (fun _ ->
 Target.create "PublishNuget" (fun _ ->
     let apiKey = Environment.environVarOrFail "NUGET_KEY"
     !! (binDir </> "*.nupkg")
-    |> Seq.iter
-        (DotNet.nugetPush
-            (fun p ->
-                p.WithPushParams(
-                    { p.PushParams with
-                        ApiKey = Some(apiKey)
-                        Source = Some("https://api.nuget.org/v3/index.json")
-                    }
-                )
-            )
-        )
+    |> Seq.iter (DotNet.nugetPush (fun p -> p.WithPushParams({ p.PushParams with ApiKey = Some(apiKey) })))
 )
 
 // --------------------------------------------------------------------------------------
