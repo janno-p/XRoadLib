@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions.Http.Extensions;
 using XRoadLib.Headers;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Soap;
@@ -29,7 +30,7 @@ namespace XRoadLib.Extensions.Http.Services
         {
             var messageFormatter = options?.MessageFormatter ?? new SoapMessageFormatter();
 
-            using var message = new XRoadMessage(ServiceManager, header);
+            using var message = new XRoadMessage(ServiceManager, header) { BinaryMode = options?.BinaryMode ?? BinaryMode.Xml };
 
             IServiceMap operationServiceMap;
             using (var writer = XmlWriter.Create(message.ContentStream, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))

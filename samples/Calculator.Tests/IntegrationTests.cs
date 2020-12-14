@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -8,8 +9,10 @@ using Calculator.Contract;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using XRoadLib;
+using XRoadLib.Extensions.Http;
 using XRoadLib.Extensions.Http.Services;
 using XRoadLib.Headers;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using Xunit;
 using Xunit.Abstractions;
@@ -256,6 +259,43 @@ test
             Assert.Equal("30", await reader.ReadLineAsync());
             Assert.Equal("ERR", await reader.ReadLineAsync());
             Assert.Equal("-123090", await reader.ReadLineAsync());
+        }
+
+        [Fact]
+        public async Task ReturnsSameFileWithDifferentTransports()
+        {
+            using var client = _server.CreateClient();
+
+            var service = new XRoadService(client, new CalculatorServiceManager());
+
+            var rnd = new Random();
+            var bytes = new byte[20 * 1_024];
+            rnd.NextBytes(bytes);
+
+            await using var input = new MemoryStream(bytes);
+
+            using var response = await service.ExecuteAsync(
+                new FileTransferRequest
+                {
+                    Input = input
+                },
+                new XRoadHeader
+                {
+                    Client = new XRoadClientIdentifier(),
+                    Service = new XRoadServiceIdentifier { ServiceCode = "FileTransfer" },
+                    ProtocolVersion = "4.0"
+                },
+                new ServiceExecutionOptions { BinaryMode = BinaryMode.Attachment }
+            );
+
+            Assert.Equal(bytes.Length, response.Result.Length);
+
+            var responseBytes = new byte[response.Result.Length];
+
+            response.Result.Position = 0;
+            await response.Result.ReadAsync(responseBytes, 0, responseBytes.Length);
+
+            Assert.Equal(bytes, responseBytes);
         }
 
         private static XElement GetBodyElement(XDocument document)
