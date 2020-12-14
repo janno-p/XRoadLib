@@ -1,10 +1,11 @@
 ﻿using System.Xml.Serialization;
 using XRoadLib;
-using XRoadLib.Serialization;
+using XRoadLib.Attributes;
 
 namespace Calculator.Contract
 {
-    public class CalculationRequest : XRoadSerializable, IXRoadRequest<int>
+    [XRoadSerializable]
+    public class CalculationRequest : IXRoadRequest<int>
     {
         [XmlElement(Order = 1)]
         public int X { get; set; }

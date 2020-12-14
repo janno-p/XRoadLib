@@ -1,10 +1,12 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 using XRoadLib.Attributes;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class TestMergedArrayContent : XRoadSerializable
+    [XRoadSerializable]
+    public class TestMergedArrayContent : ITrackSpecifiedMembers
     {
         [XmlElement(Order = 1)]
         public string Value { get; set; }
@@ -16,5 +18,7 @@ namespace XRoadLib.Tests.Contract
 
         [XmlElement(Order = 3)]
         public string Value2 { get; set; }
+
+        IDictionary<string, bool> ITrackSpecifiedMembers.SpecifiedMembers { get; set; }
     }
 }

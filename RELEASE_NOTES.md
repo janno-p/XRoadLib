@@ -3,6 +3,8 @@
 * Removed generic ServiceManager (HeaderDefinition provides header implementation from this point on).
 * Replace HttpWebRequest based client request with HttpClient based implementation.
 * Add IXRoadRequest<TResponse>, IXRoadRequestHandler<TRequest, TResponse> type for improved typing support.
+* Remove XRoadSerializable base class requirement. Use XRoadSerializableAttribute to mark serializable types.
+  Use ITrackSpecifiedMembers interface when member deserialization info is needed.
 
 #### 1.4.1 - 13.12.2020
 

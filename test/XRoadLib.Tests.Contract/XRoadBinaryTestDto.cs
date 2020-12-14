@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using XRoadLib.Attributes;
-using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class XRoadBinaryTestDto : XRoadSerializable
+    [XRoadSerializable]
+    public class XRoadBinaryTestDto
     {
         [XRoadXmlElement(UseXop = false)]
         public Stream Sisu { get; set; }

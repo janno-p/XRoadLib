@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
-using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract.Mapping
 {
+    [XRoadSerializable]
     [XmlType(AnonymousType = true)]
-    public class WrapperType : XRoadSerializable
+    public class WrapperType
     {
         [XmlArrayItem("Integer")]
         [XRoadMergeContent]
@@ -17,7 +17,8 @@ namespace XRoadLib.Tests.Contract.Mapping
         public string[] Strings { get; set; }
     }
 
-    public class MergeArrayContentRequest : XRoadSerializable
+    [XRoadSerializable]
+    public class MergeArrayContentRequest
     {
         [XmlElement(Order = 1, DataType = "date")]
         public DateTime StartDate { get; set; }

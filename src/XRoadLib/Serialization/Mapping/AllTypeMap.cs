@@ -10,7 +10,7 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public class AllTypeMap<T> : CompositeTypeMap<T> where T : class, IXRoadSerializable, new()
+    public class AllTypeMap<T> : CompositeTypeMap<T> where T : class, new()
     {
         private readonly IDictionary<XName, IPropertyMap> _deserializationPropertyMaps = new Dictionary<XName, IPropertyMap>();
         private readonly Lazy<int> _requiredPropertiesCount;
@@ -24,14 +24,16 @@ namespace XRoadLib.Serialization.Mapping
         public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
         {
             var dtoObject = new T();
-            dtoObject.SetTemplateMembers(templateNode.ChildNames);
+
+            var specifiedMembers = templateNode.ChildNames.ToDictionary(x => x, _ => false);
+            void OnMemberSpecified(string memberName) => specifiedMembers[memberName] = true;
 
             var validateRequired = content.Particle is RequestDefinition;
 
             if (ContentPropertyMap != null)
             {
-                await ReadPropertyValueAsync(reader, ContentPropertyMap, templateNode, message, validateRequired, dtoObject).ConfigureAwait(false);
-                return dtoObject;
+                await ReadPropertyValueAsync(reader, ContentPropertyMap, templateNode, message, validateRequired, dtoObject, OnMemberSpecified).ConfigureAwait(false);
+                return dtoObject.SetSpecifiedMembers(specifiedMembers);
             }
 
             var existingPropertyNames = new HashSet<XName>();
@@ -39,7 +41,8 @@ namespace XRoadLib.Serialization.Mapping
             if (reader.IsEmptyElement)
             {
                 ValidateRemainingProperties(existingPropertyNames, content);
-                return await reader.MoveNextAndReturnAsync(dtoObject).ConfigureAwait(false);
+                await reader.MoveNextAndReturnAsync(dtoObject).ConfigureAwait(false);
+                return dtoObject.SetSpecifiedMembers(specifiedMembers);
             }
 
             var parentDepth = reader.Depth;
@@ -61,22 +64,22 @@ namespace XRoadLib.Serialization.Mapping
                 if (!propertyMap.Definition.Content.IsOptional)
                     existingPropertyNames.Add(reader.GetXName());
 
-                if (await ReadPropertyValueAsync(reader, propertyMap, templateNode, message, validateRequired, dtoObject).ConfigureAwait(false) && validateRequired)
+                if (await ReadPropertyValueAsync(reader, propertyMap, templateNode, message, validateRequired, dtoObject, OnMemberSpecified).ConfigureAwait(false) && validateRequired)
                     requiredCount++;
             }
 
             if (validateRequired && requiredCount < templateNode.CountRequiredNodes(message.Version))
             {
-                var properties = GetMissingRequiredProperties(dtoObject, templateNode, message).ToList();
+                var properties = GetMissingRequiredProperties(specifiedMembers, templateNode, message).ToList();
                 throw new ParameterRequiredException(Definition, properties);
             }
 
             ValidateRemainingProperties(existingPropertyNames, content);
 
-            return dtoObject;
+            return dtoObject.SetSpecifiedMembers(specifiedMembers);
         }
 
-        private async Task<bool> ReadPropertyValueAsync(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired, T dtoObject)
+        private async Task<bool> ReadPropertyValueAsync(XmlReader reader, IPropertyMap propertyMap, IXmlTemplateNode templateNode, XRoadMessage message, bool validateRequired, T dtoObject, Action<string> onMemberSpecified)
         {
             var templateName = propertyMap.Definition.TemplateName;
 
@@ -92,19 +95,19 @@ namespace XRoadLib.Serialization.Mapping
                 throw new ParameterRequiredException(Definition, propertyMap.Definition);
 
             if ((isNull || await propertyMap.DeserializeAsync(reader, dtoObject, propertyNode, message).ConfigureAwait(false)) && !string.IsNullOrWhiteSpace(templateName))
-                dtoObject.OnMemberDeserialized(templateName);
+                onMemberSpecified(templateName);
 
             await reader.ConsumeNilElementAsync(isNull).ConfigureAwait(false);
 
             return propertyNode.IsRequired;
         }
 
-        private IEnumerable<PropertyDefinition> GetMissingRequiredProperties(IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
+        private IEnumerable<PropertyDefinition> GetMissingRequiredProperties(IDictionary<string, bool> specifiedMembers, IXmlTemplateNode templateNode, XRoadMessage message)
         {
             return templateNode.ChildNames
                                .Select(n => templateNode[n, message.Version])
                                .Where(n => n.IsRequired)
-                               .Where(n => !dtoObject.IsSpecified(n.Name))
+                               .Where(n => !(specifiedMembers.TryGetValue(n.Name, out var value) && value))
                                .Select(n => _deserializationPropertyMaps[n.Name].Definition);
         }
 

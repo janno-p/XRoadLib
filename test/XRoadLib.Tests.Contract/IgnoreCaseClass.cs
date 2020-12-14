@@ -1,8 +1,9 @@
-﻿using XRoadLib.Serialization;
+﻿using XRoadLib.Attributes;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class IgnoreCaseClass : XRoadSerializable
+    [XRoadSerializable]
+    public class IgnoreCaseClass
     {
         public long[] Objektid { get; set; }
         // ReSharper disable once InconsistentNaming

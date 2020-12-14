@@ -1,10 +1,10 @@
 ﻿using System.Xml.Serialization;
 using XRoadLib.Attributes;
-using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class ParamType1 : XRoadSerializable
+    [XRoadSerializable]
+    public class ParamType1
     {
         [XmlElement(Order = 0)]
         public long Property1 { get; set; }

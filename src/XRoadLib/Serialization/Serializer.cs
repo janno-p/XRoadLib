@@ -127,7 +127,7 @@ namespace XRoadLib.Serialization
             if (runtimeType == null)
                 return null;
 
-            var normalizedType = Nullable.GetUnderlyingType(runtimeType) ?? runtimeType;
+            var normalizedType = runtimeType.NormalizeType();
 
             return _runtimeTypeMaps.TryGetValue(normalizedType, out var typeMap) || (partialTypeMaps != null && partialTypeMaps.TryGetValue(normalizedType, out typeMap))
                 ? typeMap
@@ -252,9 +252,10 @@ namespace XRoadLib.Serialization
 
             var typeDefinition = _contractAssembly.GetTypes()
                                                  .Where(type => type.IsXRoadSerializable())
-                                                 .Where(type => !Version.HasValue || type.GetTypeInfo().ExistsInVersion(Version.Value))
-                                                 .Select(type => _schemaDefinitionProvider.GetTypeDefinition(type))
-                                                 .SingleOrDefault(definition => definition.Name == qualifiedName);
+                    .Where(type => !Version.HasValue || type.GetTypeInfo().ExistsInVersion(Version.Value))
+                    .Select(type => _schemaDefinitionProvider.GetTypeDefinition(type))
+                    .SingleOrDefault(definition => definition.Name == qualifiedName);
+
             if (typeDefinition != null)
                 return typeDefinition;
 

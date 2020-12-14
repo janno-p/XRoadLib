@@ -39,7 +39,7 @@ namespace XRoadLib.Serialization.Mapping
                 _filters.Add(availableFilter);
         }
 
-        public async Task<bool> DeserializeAsync(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
+        public async Task<bool> DeserializeAsync(XmlReader reader, object dtoObject, IXmlTemplateNode templateNode, XRoadMessage message)
         {
             if (message.EnableFiltering && !_filters.Contains(message.FilterName))
             {

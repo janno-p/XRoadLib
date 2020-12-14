@@ -1,8 +1,9 @@
-﻿using XRoadLib.Serialization;
+﻿using XRoadLib.Attributes;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class ParamType2 : XRoadSerializable
+    [XRoadSerializable]
+    public class ParamType2
     {
         public long Value1 { get; set; }
     }

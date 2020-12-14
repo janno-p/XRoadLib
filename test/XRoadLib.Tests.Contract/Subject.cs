@@ -1,8 +1,9 @@
-﻿using XRoadLib.Serialization;
+﻿using XRoadLib.Attributes;
 
 namespace XRoadLib.Tests.Contract
 {
-    public abstract class Subject : XRoadSerializable
+    [XRoadSerializable]
+    public abstract class Subject
     {
         public string Name { get; set; }
     }

@@ -16,24 +16,11 @@ namespace XRoadLib.Extensions
 
     public static class TypeExtensions
     {
-        public static bool IsAnonymous(this Type type)
-        {
-            return (type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();
-        }
+        public static bool IsAnonymous(this Type type) =>
+            (type.GetCustomAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();
 
-        public static bool IsXRoadSerializable(this Type type)
-        {
-            var baseType = type.GetTypeInfo().BaseType;
-
-            while (baseType != null)
-            {
-                if (baseType == typeof(XRoadSerializable))
-                    return true;
-                baseType = baseType.GetTypeInfo().BaseType;
-            }
-
-            return false;
-        }
+        public static bool IsXRoadSerializable(this Type type) =>
+            type.IsDefined(typeof(XRoadSerializableAttribute), true);
 
         private static IEnumerable<PropertyDefinition> GetTypeProperties(this Type type, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition)
         {
@@ -57,7 +44,7 @@ namespace XRoadLib.Extensions
         {
             var properties = new List<PropertyDefinition>();
 
-            if (type.GetTypeInfo().BaseType != typeof(XRoadSerializable))
+            if (type.HasBaseType())
                 properties.AddRange(type.GetTypeInfo().BaseType.GetAllPropertiesSorted(comparer, version, createDefinition));
 
             properties.AddRange(type.GetPropertiesSorted(comparer, version, createDefinition));
@@ -249,9 +236,10 @@ namespace XRoadLib.Extensions
             return null;
         }
 
-        internal static Type NormalizeType(this Type type)
-        {
-            return Nullable.GetUnderlyingType(type) ?? type;
-        }
+        internal static Type NormalizeType(this Type type) =>
+            Nullable.GetUnderlyingType(type) ?? type;
+
+        internal static bool HasBaseType(this Type type) =>
+            type.BaseType != null && type.BaseType != typeof(object);
     }
 }

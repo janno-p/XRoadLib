@@ -11,7 +11,6 @@ using System.Xml.Serialization;
 using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
-using XRoadLib.Serialization;
 using XRoadLib.Wsdl;
 using MessageCollection = System.Collections.Generic.ICollection<XRoadLib.Wsdl.Message>;
 using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<XRoadLib.Wsdl.ServiceDescriptionFormatExtension>;
@@ -710,7 +709,7 @@ namespace XRoadLib
                 return null;
             }
 
-            if (typeDefinition.Type.GetTypeInfo().BaseType == typeof(XRoadSerializable))
+            if (!typeDefinition.Type.HasBaseType())
                 schemaType.Particle = contentParticle;
             else
             {

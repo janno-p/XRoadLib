@@ -8,7 +8,7 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
-    public abstract class CompositeTypeMap<T> : TypeMap, ICompositeTypeMap where T : class, IXRoadSerializable, new()
+    public abstract class CompositeTypeMap<T> : TypeMap, ICompositeTypeMap where T : class, new()
     {
         protected readonly ISerializer Serializer;
         protected readonly IList<IPropertyMap> PropertyMaps = new List<IPropertyMap>();

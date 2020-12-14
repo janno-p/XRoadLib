@@ -9,7 +9,7 @@ namespace XRoadLib.Serialization.Mapping
     {
         PropertyDefinition Definition { get; }
 
-        Task<bool> DeserializeAsync(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message);
+        Task<bool> DeserializeAsync(XmlReader reader, object dtoObject, IXmlTemplateNode templateNode, XRoadMessage message);
 
         Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message);
     }

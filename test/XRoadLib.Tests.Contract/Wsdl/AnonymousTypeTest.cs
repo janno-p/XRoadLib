@@ -1,17 +1,19 @@
 ﻿using System.Xml.Serialization;
-using XRoadLib.Serialization;
+using XRoadLib.Attributes;
 
 namespace XRoadLib.Tests.Contract.Wsdl
 {
+    [XRoadSerializable]
     [XmlType(AnonymousType = true)]
-    public class AnonymousType : XRoadSerializable
+    public class AnonymousType
     {
         public string Property1 { get; set; }
         public string Property2 { get; set; }
         public string Property3 { get; set; }
     }
 
-    public class ContainerType : XRoadSerializable
+    [XRoadSerializable]
+    public class ContainerType
     {
         public AnonymousType AnonymousProperty { get; set; }
         public string KnownProperty { get; set; }

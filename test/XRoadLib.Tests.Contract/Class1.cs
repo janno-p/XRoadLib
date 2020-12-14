@@ -1,7 +1,12 @@
-﻿using XRoadLib.Serialization;
+﻿using System.Collections.Generic;
+using XRoadLib.Attributes;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class Class1 : XRoadSerializable
-    { }
+    [XRoadSerializable]
+    public class Class1 : ITrackSpecifiedMembers
+    {
+        IDictionary<string, bool> ITrackSpecifiedMembers.SpecifiedMembers { get; set; }
+    }
 }

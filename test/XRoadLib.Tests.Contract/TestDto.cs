@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Xml.Serialization;
-using XRoadLib.Serialization;
+using XRoadLib.Attributes;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class TestDto : XRoadSerializable
+    [XRoadSerializable]
+    public class TestDto
     {
         [XmlElement(Order = 1)]
         public string Nimi { get; set; }

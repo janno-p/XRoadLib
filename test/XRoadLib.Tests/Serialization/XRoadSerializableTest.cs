@@ -1,4 +1,5 @@
-﻿using XRoadLib.Serialization;
+﻿using XRoadLib.Extensions;
+
 using XRoadLib.Tests.Contract;
 using Xunit;
 
@@ -19,14 +20,14 @@ namespace XRoadLib.Tests.Serialization
             Assert.False(instance.IsSpecified(NoMemberName));
             Assert.False(instance.IsAcceptedByTemplate(NoMemberName));
 
-            ((IXRoadSerializable)instance).OnMemberDeserialized(MemberName);
+            instance.AddSpecifiedMember(MemberName);
 
             Assert.True(instance.IsSpecified(MemberName));
             Assert.True(instance.IsAcceptedByTemplate(MemberName));
             Assert.False(instance.IsSpecified(NoMemberName));
             Assert.False(instance.IsAcceptedByTemplate(NoMemberName));
 
-            ((IXRoadSerializable)instance).SetTemplateMembers(new[] { MemberName });
+            instance.AddTemplateMember(MemberName);
 
             Assert.True(instance.IsSpecified(MemberName));
             Assert.True(instance.IsAcceptedByTemplate(MemberName));
@@ -42,12 +43,12 @@ namespace XRoadLib.Tests.Serialization
             Assert.False(instance.IsSpecified(MemberName));
             Assert.False(instance.IsAcceptedByTemplate(MemberName));
 
-            ((IXRoadSerializable)instance).SetTemplateMembers(new [] { MemberName });
+            instance.AddTemplateMember(MemberName);
 
             Assert.False(instance.IsSpecified(MemberName));
             Assert.True(instance.IsAcceptedByTemplate(MemberName));
 
-            ((IXRoadSerializable)instance).OnMemberDeserialized(MemberName);
+            instance.AddSpecifiedMember(MemberName);
 
             Assert.True(instance.IsSpecified(MemberName));
             Assert.True(instance.IsAcceptedByTemplate(MemberName));
@@ -61,7 +62,10 @@ namespace XRoadLib.Tests.Serialization
             Assert.False(instance.IsSpecified(MemberName));
             Assert.False(instance.IsAcceptedByTemplate(MemberName));
 
-            ((IXRoadSerializable)instance).SetTemplateMembers(new [] { MemberName, "muu", "kolmas", MemberName });
+            instance.AddTemplateMember(MemberName)
+                    .AddTemplateMember("muu")
+                    .AddTemplateMember("kolmas")
+                    .AddTemplateMember(MemberName);
 
             Assert.False(instance.IsSpecified(MemberName));
             Assert.True(instance.IsAcceptedByTemplate(MemberName));

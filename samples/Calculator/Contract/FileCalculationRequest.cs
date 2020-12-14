@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using XRoadLib;
-using XRoadLib.Serialization;
+using XRoadLib.Attributes;
 
 namespace Calculator.Contract
 {
-    public class FileCalculationRequest : XRoadSerializable, IXRoadRequest<Stream>
+    [XRoadSerializable]
+    public class FileCalculationRequest : IXRoadRequest<Stream>
     {
         public Stream InputFile { get; set; }
     }

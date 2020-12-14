@@ -1,9 +1,9 @@
 ﻿using XRoadLib.Attributes;
-using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class WsdlChangesTestDto : XRoadSerializable, IWsdlChangesTestDto
+    [XRoadSerializable]
+    public class WsdlChangesTestDto : IWsdlChangesTestDto
     {
         public long? StaticProperty { get; set; }
 

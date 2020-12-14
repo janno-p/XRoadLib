@@ -1,9 +1,11 @@
-﻿using XRoadLib.Attributes;
+﻿using System.Collections.Generic;
+using XRoadLib.Attributes;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
-    public class Service1Request : XRoadSerializable
+    [XRoadSerializable]
+    public class Service1Request : ITrackSpecifiedMembers
     {
         [XRoadXmlElement(Order = 1, IsOptional = true)]
         public ParamType1 Param1 { get; set; }
@@ -13,5 +15,7 @@ namespace XRoadLib.Tests.Contract
 
         [XRoadXmlElement(Order = 3, IsOptional = true)]
         public ParamType3 Param3 { get; set; }
+
+        IDictionary<string, bool> ITrackSpecifiedMembers.SpecifiedMembers { get; set; }
     }
 }
