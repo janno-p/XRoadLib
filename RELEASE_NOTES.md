@@ -1,4 +1,4 @@
-#### 2.0.0-alpha001 - Unreleased
+#### 2.0.0-alpha001 - 14.12.2020
 
 * Removed generic ServiceManager (HeaderDefinition provides header implementation from this point on).
 * Replace HttpWebRequest based client request with HttpClient based implementation.
