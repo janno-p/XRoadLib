@@ -6,7 +6,8 @@ using XRoadLib.Serialization;
 namespace XRoadLib.Tests.Contract
 {
     [XRoadSerializable]
-    public class TestMergedArrayContent : ITrackSpecifiedMembers
+    [XRoadOperation("Service3")]
+    public class TestMergedArrayContent : IXRoadRequest<int>, ITrackSpecifiedMembers
     {
         [XmlElement(Order = 1)]
         public string Value { get; set; }

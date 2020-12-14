@@ -17,11 +17,11 @@ namespace XRoadLib.Schema
         public DocumentationDefinition()
         { }
 
-        public DocumentationDefinition(ICustomAttributeProvider provider)
+        public DocumentationDefinition(ICustomAttributeProvider provider, DocumentationTarget target = DocumentationTarget.Default)
         {
-            Titles.AddRange(provider.GetXRoadTitles());
-            Notes.AddRange(provider.GetXRoadNotes());
-            TechNotes.AddRange(provider.GetXRoadTechNotes());
+            Titles.AddRange(provider.GetXRoadTitles(target));
+            Notes.AddRange(provider.GetXRoadNotes(target));
+            TechNotes.AddRange(provider.GetXRoadTechNotes(target));
         }
     }
 }

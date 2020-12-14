@@ -47,30 +47,6 @@ namespace XRoadLib.Extensions.AspNetCore
         }
 
         /// <summary>
-        /// Handle X-Road message protocol meta-service request.
-        /// </summary>
-        protected virtual Task<object> InvokeMetaServiceAsync(WebServiceContext context) =>
-            Task.FromResult<object>(null);
-
-        /// <summary>
-        /// Get main service object which implements the functionality of
-        /// the operation.
-        /// </summary>
-        protected virtual Task<object> GetServiceObjectAsync(WebServiceContext context)
-        {
-            var operationDefinition = context.ServiceMap.OperationDefinition;
-
-            var service = operationDefinition.MethodInfo.DeclaringType != null
-                ? ServiceProvider.GetRequiredService(operationDefinition.MethodInfo.DeclaringType)
-                : null;
-
-            if (service == null)
-                throw new SchemaDefinitionException($"Operation {operationDefinition.Name} is not implemented by contract.");
-
-            return Task.FromResult(service);
-        }
-
-        /// <summary>
         /// Intercept X-Road service request after request message is loaded.
         /// </summary>
         protected virtual Task OnRequestLoadedAsync(WebServiceContext context) =>
@@ -119,24 +95,16 @@ namespace XRoadLib.Extensions.AspNetCore
         /// </summary>
         protected virtual async Task InvokeWebServiceAsync(WebServiceContext context)
         {
-            if (context.ServiceMap != null)
-            {
-                context.Result = await InvokeMetaServiceAsync(context).ConfigureAwait(false);
-                return;
-            }
-
             var operationName = ResolveOperationName(context);
 
             context.ServiceMap = context.Request.GetSerializer().GetServiceMap(operationName);
             context.Response.BinaryMode = context.ServiceMap.OperationDefinition.OutputBinaryMode;
 
-            var serviceObject = await GetServiceObjectAsync(context).ConfigureAwait(false);
-            await DeserializeMethodInputAsync(context).ConfigureAwait(false);
+            await DeserializeParametersAsync(context).ConfigureAwait(false);
 
             try
             {
-                var parameters = context.ServiceMap.RequestDefinition.ParameterInfo != null ? new[] { context.Parameters } : new object[0];
-                context.Result = await InvokeRuntimeMethodAsync(context, serviceObject, parameters).ConfigureAwait(false);
+                context.Result = await InvokeRequestHandlerAsync(context).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -148,13 +116,17 @@ namespace XRoadLib.Extensions.AspNetCore
             }
         }
 
-        protected virtual Task<object> InvokeRuntimeMethodAsync(WebServiceContext context, object serviceObject, object[] parameters) =>
-            Task.FromResult(context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters));
+        protected virtual Task<object> InvokeRequestHandlerAsync(WebServiceContext context)
+        {
+            var handlerFactory = ServiceProvider.GetRequiredService<HandlerFactory>();
+
+            return handlerFactory.Factory(ServiceProvider)(context.Parameters);
+        }
 
         /// <summary>
         /// Deserializes X-Road request from SOAP message payload.
         /// </summary>
-        protected virtual async Task DeserializeMethodInputAsync(WebServiceContext context)
+        protected virtual async Task DeserializeParametersAsync(WebServiceContext context)
         {
             var xmlReaderSettings = new XmlReaderSettings { Async = true };
             await OnBeforeDeserializationAsync(context, xmlReaderSettings).ConfigureAwait(false);

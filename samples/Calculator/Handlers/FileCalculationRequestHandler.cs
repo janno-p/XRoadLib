@@ -1,13 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Calculator.Contract;
+using MediatR;
 
-namespace Calculator.WebService
+namespace Calculator.Handlers
 {
-    public class FileCalculationService : IFileCalculation
+    public class FileCalculationRequestHandler : IRequestHandler<FileCalculationRequest, Stream>
     {
-        public Stream Sum(FileCalculationRequest request)
+        public async Task<Stream> Handle(FileCalculationRequest request, CancellationToken cancellationToken)
         {
             if (request.InputFile == null)
                 throw new ArgumentNullException(nameof(request.InputFile));
@@ -22,18 +25,18 @@ namespace Calculator.WebService
 
             while (true)
             {
-                var line = reader.ReadLine();
+                var line = await reader.ReadLineAsync();
                 if (line == null)
                     break;
 
                 var items = line.Split(' ');
                 if (items.Length != 3 || !int.TryParse(items[0], out var num1) || !int.TryParse(items[2], out var num2) || !ops.Contains(items[1]))
                 {
-                    writer.WriteLine("ERR");
+                    await writer.WriteLineAsync("ERR");
                     continue;
                 }
 
-                writer.WriteLine(items[1] switch
+                await writer.WriteLineAsync(items[1] switch
                 {
                     "+" => (num1 + num2).ToString(),
                     "-" => (num1 - num2).ToString(),
@@ -43,7 +46,7 @@ namespace Calculator.WebService
                 });
             }
 
-            writer.Flush();
+            await writer.FlushAsync();
 
             return resultStream;
         }

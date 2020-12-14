@@ -22,6 +22,12 @@ namespace XRoadLib.Extensions
         public static bool IsXRoadSerializable(this Type type) =>
             type.IsDefined(typeof(XRoadSerializableAttribute), true);
 
+        public static bool IsXRoadRequest(this Type type) =>
+            type.GetInterfaces().SingleOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IXRoadRequest<>)) != null;
+
+        public static Type GetResponseType(this Type type) =>
+            type.GetInterfaces().SingleOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IXRoadRequest<>))?.GetGenericArguments().Single();
+
         private static IEnumerable<PropertyDefinition> GetTypeProperties(this Type type, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition) =>
             type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                 .Where(prop => !prop.Name.Contains(".") || prop.GetSingleAttribute<XRoadRemoveContractAttribute>() != null)
@@ -49,25 +55,25 @@ namespace XRoadLib.Extensions
             return properties;
         }
 
-        public static IEnumerable<XRoadTitleAttribute> GetXRoadTitles(this ICustomAttributeProvider customAttributeProvider)
+        public static IEnumerable<XRoadTitleAttribute> GetXRoadTitles(this ICustomAttributeProvider customAttributeProvider, DocumentationTarget target)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(XRoadTitleAttribute), false)
                                           .OfType<XRoadTitleAttribute>()
-                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
+                                          .Where(x => x.Target == target && !string.IsNullOrWhiteSpace(x.Value));
         }
 
-        public static IEnumerable<XRoadNotesAttribute> GetXRoadNotes(this ICustomAttributeProvider customAttributeProvider)
+        public static IEnumerable<XRoadNotesAttribute> GetXRoadNotes(this ICustomAttributeProvider customAttributeProvider, DocumentationTarget target)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(XRoadNotesAttribute), false)
                                           .OfType<XRoadNotesAttribute>()
-                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
+                                          .Where(x => x.Target == target && !string.IsNullOrWhiteSpace(x.Value));
         }
 
-        public static IEnumerable<XRoadTechNotesAttribute> GetXRoadTechNotes(this ICustomAttributeProvider customAttributeProvider)
+        public static IEnumerable<XRoadTechNotesAttribute> GetXRoadTechNotes(this ICustomAttributeProvider customAttributeProvider, DocumentationTarget target)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(XRoadTechNotesAttribute), false)
                                           .OfType<XRoadTechNotesAttribute>()
-                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
+                                          .Where(x => x.Target == target && !string.IsNullOrWhiteSpace(x.Value));
         }
 
         public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)
@@ -79,26 +85,22 @@ namespace XRoadLib.Extensions
                 );
         }
 
-        public static bool ExistsInVersion(this XRoadServiceAttribute attribute, uint version)
+        public static bool ExistsInVersion(this XRoadOperationAttribute attribute, uint version)
         {
             return IsVersionInRange(version, attribute.AddedInVersionValue, attribute.RemovedInVersionValue);
         }
 
-        public static IEnumerable<string> GetServicesInVersion(this MethodInfo methodInfo, uint version, bool includeHidden = false)
+        public static IEnumerable<string> GetOperationsInVersion(this Type requestType, uint version, bool includeHidden = false)
         {
-            return methodInfo.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
-                             .OfType<XRoadServiceAttribute>()
-                             .Where(x => includeHidden || !x.IsHidden)
-                             .Where(x => IsVersionInRange(version, x.AddedInVersionValue, x.RemovedInVersionValue))
-                             .Select(x => x.Name)
-                             .ToList();
+            return requestType.GetCustomAttributes<XRoadOperationAttribute>(false)
+                              .Where(x => includeHidden || !x.IsHidden)
+                              .Where(x => IsVersionInRange(version, x.AddedInVersionValue, x.RemovedInVersionValue))
+                              .Select(x => x.Name);
         }
 
-        public static IEnumerable<XRoadServiceAttribute> GetServices(this MethodInfo methodInfo)
+        public static IEnumerable<XRoadOperationAttribute> GetOperations(this Type requestType)
         {
-            return methodInfo.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
-                             .OfType<XRoadServiceAttribute>()
-                             .ToList();
+            return requestType.GetCustomAttributes<XRoadOperationAttribute>(false);
         }
 
         private static bool IsVersionInRange(uint version, uint? versionAdded, uint? versionRemoved)
@@ -170,30 +172,6 @@ namespace XRoadLib.Extensions
                               .Select(t => (IXRoadFilterMap)Activator.CreateInstance(t))
                               .Where(m => m.GroupName.Equals(groupName))
                               .Any(m => m.EnabledProperties.Contains(fieldName));
-        }
-
-        public static Tuple<MethodInfo, XRoadServiceAttribute> FindMethodDeclaration(this MethodInfo method, string operationName, IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts)
-        {
-            if (method.DeclaringType == null)
-                return null;
-
-            var methodContracts =
-                method
-                    .DeclaringType
-                    .GetInterfaces()
-                    .Select(iface => method.DeclaringType.GetTypeInfo().GetRuntimeInterfaceMap(iface))
-                    .Where(map => map.TargetMethods.Contains(method))
-                    .Select(map => map.InterfaceMethods[Array.IndexOf(map.TargetMethods, method)])
-                    .ToList();
-
-            if (methodContracts.Count > 1)
-                throw new SchemaDefinitionException($"Unable to detect unique service contract for operation `{operationName}` (method implements multiple service contracts).");
-
-            var methodContract = methodContracts.SingleOrDefault();
-            if (methodContract == null || !serviceContracts.TryGetValue(methodContract, out var serviceContract) || !serviceContract.TryGetValue(operationName, out var serviceAttribute))
-                throw new SchemaDefinitionException($"Operation `{operationName}` does not implement any known service contract.");
-
-            return Tuple.Create(methodContract, serviceAttribute);
         }
 
         public static string GetValueOrDefault(this string value, string defaultValue = null)

@@ -18,7 +18,8 @@ namespace XRoadLib.Tests.Contract.Mapping
     }
 
     [XRoadSerializable]
-    public class MergeArrayContentRequest
+    [XRoadOperation("MergeArrayContent")]
+    public class MergeArrayContentRequest : IXRoadRequest
     {
         [XmlElement(Order = 1, DataType = "date")]
         public DateTime StartDate { get; set; }
@@ -29,11 +30,5 @@ namespace XRoadLib.Tests.Contract.Mapping
         [XmlArray(Order = 3)]
         [XRoadMergeContent]
         public WrapperType[] Content { get; set; }
-    }
-
-    public interface IMergeArrayContentService
-    {
-        [XRoadService("MergeArrayContent")]
-        void Service(MergeArrayContentRequest request);
     }
 }

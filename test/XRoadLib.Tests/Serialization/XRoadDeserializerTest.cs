@@ -530,8 +530,8 @@ namespace XRoadLib.Tests.Serialization
         private static Task<object> DeserializeRequestAsync(string templateXml, string contentXml, IServiceMap serviceMap = null, string serviceName = "Service1")
         {
             serviceMap ??= ServiceMap;
-            var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(IService).GetMethod(serviceName));
-            return DeserializeRequestContentAsync(contentXml, Globals.ServiceManager, serviceName, async (msgr) =>
+            var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(Service1Request));
+            return DeserializeRequestContentAsync(contentXml, Globals.ServiceManager, serviceName, async msgr =>
             {
                 var message = Globals.ServiceManager.CreateMessage();
                 message.XmlTemplate = template;

@@ -7,7 +7,7 @@ namespace XRoadLib.Attributes
     /// <summary>
     /// Represents an attribute that specifies the derived types that the serializer can place in a serialized array.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
     public class XRoadXmlArrayItemAttribute : XmlArrayItemAttribute
     {
         /// <summary>

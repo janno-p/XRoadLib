@@ -18,7 +18,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Runtime parameter info of request object.
         /// </summary>
-        public ParameterInfo ParameterInfo { get; }
+        public Type RequestType { get; }
 
         /// <summary>
         /// Wrapper element name for incoming requests.
@@ -30,12 +30,8 @@ namespace XRoadLib.Schema
         /// </summary>
         public RequestDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
         {
-            var methodParameters = declaringOperationDefinition.MethodInfo.GetParameters();
-            if (methodParameters.Length > 1)
-                throw new SchemaDefinitionException($"Invalid X-Road operation contract `{declaringOperationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
-
             DeclaringOperationDefinition = declaringOperationDefinition;
-            ParameterInfo = methodParameters.SingleOrDefault();
+            RequestType = DeclaringOperationDefinition.RequestType;
             WrapperElementName = declaringOperationDefinition.Name;
 
             var targetNamespace = declaringOperationDefinition.Name.NamespaceName;
@@ -43,8 +39,8 @@ namespace XRoadLib.Schema
 
             Content = ContentDefinition.FromType(
                 this,
-                ParameterInfo,
-                ParameterInfo?.ParameterType,
+                RequestType,
+                RequestType,
                 "request",
                 targetNamespace,
                 defaultQualifiedElement
@@ -56,7 +52,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public override string ToString()
         {
-            return $"Input value of {ParameterInfo.Member.DeclaringType?.FullName ?? "<null>"}.{ParameterInfo.Member.Name}";
+            return $"Input value of operation {DeclaringOperationDefinition.Name} ({RequestType.FullName})";
         }
     }
 }

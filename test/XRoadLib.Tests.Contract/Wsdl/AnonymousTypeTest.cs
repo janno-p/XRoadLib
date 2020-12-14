@@ -13,7 +13,8 @@ namespace XRoadLib.Tests.Contract.Wsdl
     }
 
     [XRoadSerializable]
-    public class ContainerType
+    [XRoadOperation("Service2")]
+    public class ContainerType : IXRoadRequest<int>
     {
         public AnonymousType AnonymousProperty { get; set; }
         public string KnownProperty { get; set; }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -11,6 +10,7 @@ using System.Xml.Serialization;
 using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
+using XRoadLib.Serialization;
 using XRoadLib.Wsdl;
 using MessageCollection = System.Collections.Generic.ICollection<XRoadLib.Wsdl.Message>;
 using ServiceDescriptionFormatExtensionCollection = System.Collections.Generic.ICollection<XRoadLib.Wsdl.ServiceDescriptionFormatExtension>;
@@ -190,13 +190,12 @@ namespace XRoadLib
             return _schemaDefinitionProvider
                    .ProtocolDefinition
                    .ContractAssembly
-                   .GetServiceContracts()
-                   .SelectMany(x => x.Value
+                   .GetOperationContracts()
+                   .SelectMany(x => x.Operations
                                      .Where(op => !_version.HasValue || op.ExistsInVersion(_version.Value))
-                                     .Select(op => _schemaDefinitionProvider.GetOperationDefinition(x.Key, XName.Get(op.Name, targetNamespace), _version)))
+                                     .Select(op => _schemaDefinitionProvider.GetOperationDefinition(x.RequestType, XName.Get(op.Name, targetNamespace), _version)))
                    .Where(_operationFilter ?? (def => def.State == DefinitionState.Default))
-                   .OrderBy(def => def.Name.LocalName.ToLower())
-                   .ToList();
+                   .OrderBy(def => def.Name.LocalName.ToLower());
         }
 
         private IEnumerable<XmlSchema> BuildSchemas(string targetNamespace, MessageCollection messages)
@@ -236,7 +235,7 @@ namespace XRoadLib
 
                 Tuple<XmlSchemaElement, XmlSchemaElement> CreateRequestElement()
                 {
-                    if (requestDefinition.ParameterInfo != null)
+                    if (requestDefinition.RequestType != null)
                         return CreateContentElement(requestDefinition.Content, targetSchemaReferences);
 
                     var elements = CreateXmlSchemaElement(requestDefinition.Content.Name, targetSchemaReferences);
@@ -285,7 +284,7 @@ namespace XRoadLib
 
                     var faultSequence = CreateFaultSequence(targetSchemaReferences);
 
-                    if (operationDefinition.MethodInfo.ReturnType == typeof(void))
+                    if (responseDefinition.ResponseType == typeof(UnitResponse))
                     {
                         faultSequence.MinOccurs = 0;
                         outputParticle.Items.Add(faultSequence);
@@ -352,7 +351,7 @@ namespace XRoadLib
                 else
                 {
                     var requestTypeName = requestElements.Item1.SchemaTypeName;
-                    var responseTypeName = GetOutputMessageTypeName((resultElements ?? responseElements).Item1, operationDefinition.MethodInfo.ReturnType, schemaTypes);
+                    var responseTypeName = GetOutputMessageTypeName((resultElements ?? responseElements).Item1, responseDefinition.ResponseType, schemaTypes);
                     outputMessage.Parts.Add(new MessagePart { Name = responseDefinition.RequestContentName.LocalName, Type = requestTypeName });
                     outputMessage.Parts.Add(new MessagePart { Name = responseDefinition.Content.Name.LocalName, Type = responseTypeName });
                 }
@@ -598,7 +597,7 @@ namespace XRoadLib
 
         private XmlQualifiedName GetOutputMessageTypeName(XmlSchemaElement resultElement, Type resultType, IList<Tuple<string, XmlSchemaType>> schemaTypes)
         {
-            if (resultType == typeof(void))
+            if (resultType == typeof(UnitResponse))
                 return AddAdditionalTypeDefinition(resultType, "Void", resultElement, schemaTypes);
 
             if (!resultElement.SchemaTypeName.IsEmpty)

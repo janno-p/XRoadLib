@@ -8,7 +8,7 @@ namespace XRoadLib.Attributes
     /// Indicates that a public field or property represents an XML element when the serializer serializes or
     /// deserializes the object that contains it.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
     public class XRoadXmlElementAttribute : XmlElementAttribute
     {
         /// <summary>

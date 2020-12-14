@@ -7,7 +7,7 @@ namespace XRoadLib.Attributes
     /// <summary>
     /// Specifies that the serializer must serialize a particular class member as an array of XML elements.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class XRoadXmlArrayAttribute : XmlArrayAttribute
     {
         /// <summary>

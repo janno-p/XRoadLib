@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Xml.Linq;
+using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
 {
@@ -17,7 +17,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Runtime return parameter of the method which implements the operation.
         /// </summary>
-        public ParameterInfo ParameterInfo { get; }
+        public Type ResponseType { get; }
 
         /// <summary>
         /// Wrapper element name for outgoing responses.
@@ -56,10 +56,8 @@ namespace XRoadLib.Schema
         /// </summary>
         public ResponseDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
         {
-            var parameterInfo = declaringOperationDefinition.MethodInfo.ReturnParameter;
-
             DeclaringOperationDefinition = declaringOperationDefinition;
-            ParameterInfo = parameterInfo;
+            ResponseType = declaringOperationDefinition.RequestType.GetResponseType();
             WrapperElementName = XName.Get($"{declaringOperationDefinition.Name.LocalName}Response", declaringOperationDefinition.Name.NamespaceName);
 
             var targetNamespace = declaringOperationDefinition.Name.NamespaceName;
@@ -67,8 +65,8 @@ namespace XRoadLib.Schema
 
             Content = ContentDefinition.FromType(
                 this,
-                parameterInfo,
-                parameterInfo?.ParameterType,
+                ResponseType,
+                ResponseType,
                 "response",
                 targetNamespace,
                 defaultQualifiedElement
@@ -86,7 +84,7 @@ namespace XRoadLib.Schema
         /// </summary>
         public override string ToString()
         {
-            return $"Return value of {ParameterInfo.Member.DeclaringType?.FullName ?? "<null>"}.{ParameterInfo.Member.Name}";
+            return $"Return value of operation {DeclaringOperationDefinition.Name} ({ResponseType.FullName})";
         }
     }
 }

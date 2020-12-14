@@ -7,8 +7,8 @@ namespace XRoadLib.Attributes
     /// <summary>
     /// Defines operation method.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class XRoadServiceAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class XRoadOperationAttribute : Attribute
     {
         internal uint? AddedInVersionValue;
         internal uint? RemovedInVersionValue;
@@ -68,7 +68,7 @@ namespace XRoadLib.Attributes
         /// <summary>
         /// Initializes new operation definition.
         /// </summary>
-        public XRoadServiceAttribute(string name)
+        public XRoadOperationAttribute(string name)
         {
             Name = name;
         }

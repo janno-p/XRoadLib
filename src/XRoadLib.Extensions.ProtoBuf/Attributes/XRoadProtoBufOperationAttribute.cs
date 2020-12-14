@@ -11,7 +11,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
 {
     /// <inheritdoc />
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class XRoadProtoBufServiceAttribute : XRoadServiceAttribute
+    public class XRoadProtoBufOperationAttribute : XRoadOperationAttribute
     {
         private const string XroadProtobufSchema = "https://e-rik.github.io/schemas/xroad-protobuf.xsd";
 
@@ -24,7 +24,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
         public override ISchemaExporter SchemaExporter => _schemaExporter.Value;
 
         /// <inheritdoc />
-        public XRoadProtoBufServiceAttribute(string name, Type reflectionType)
+        public XRoadProtoBufOperationAttribute(string name, Type reflectionType)
             : base(name)
         {
             _schemaExporter = new Lazy<ISchemaExporter>(() => new ProtoBufSchemaExporter(reflectionType));

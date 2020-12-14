@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Xml.Linq;
+using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Mapping;
 
@@ -13,9 +13,9 @@ namespace XRoadLib.Schema
     public class OperationDefinition : Definition
     {
         /// <summary>
-        /// Runtime interface method which represents current operation.
+        /// Runtime type implementing IXRoadRequest&lt;&gt;, which represents current operation.
         /// </summary>
-        public MethodInfo MethodInfo { get; }
+        public Type RequestType { get; }
 
         /// <summary>
         /// X-Road service version of the operation.
@@ -70,11 +70,11 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes new definition object using default settings.
         /// </summary>
-        public OperationDefinition(XName qualifiedName, uint? version, MethodInfo methodInfo)
+        public OperationDefinition(XName qualifiedName, uint? version, Type requestType)
         {
-            MethodInfo = methodInfo;
+            RequestType = requestType;
 
-            var attribute = methodInfo.GetServices().SingleOrDefault(x => x.Name == qualifiedName.LocalName);
+            var attribute = requestType.GetOperations().SingleOrDefault(x => x.Name == qualifiedName.LocalName);
 
             Name = qualifiedName;
             IsAbstract = (attribute?.IsAbstract).GetValueOrDefault();
@@ -85,7 +85,7 @@ namespace XRoadLib.Schema
             CopyRequestPartToResponse = true;
             InputMessageName = qualifiedName.LocalName;
             OutputMessageName = $"{qualifiedName.LocalName}Response";
-            Documentation = new DocumentationDefinition(methodInfo);
+            Documentation = new DocumentationDefinition(requestType, DocumentationTarget.Operation);
             ServiceMapType = attribute?.ServiceMapType ?? typeof(ServiceMap);
             ExtensionSchemaExporter = attribute?.SchemaExporter;
             SoapAction = attribute?.SoapAction ?? string.Empty;

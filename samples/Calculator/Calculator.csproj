@@ -9,4 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\XRoadLib.Extensions.AspNetCore\XRoadLib.Extensions.AspNetCore.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+  </ItemGroup>
 </Project>

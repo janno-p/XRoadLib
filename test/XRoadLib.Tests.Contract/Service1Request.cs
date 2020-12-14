@@ -5,7 +5,8 @@ using XRoadLib.Serialization;
 namespace XRoadLib.Tests.Contract
 {
     [XRoadSerializable]
-    public class Service1Request : ITrackSpecifiedMembers
+    [XRoadOperation("Service1")]
+    public class Service1Request : IXRoadRequest<int>, ITrackSpecifiedMembers
     {
         [XRoadXmlElement(Order = 1, IsOptional = true)]
         public ParamType1 Param1 { get; set; }

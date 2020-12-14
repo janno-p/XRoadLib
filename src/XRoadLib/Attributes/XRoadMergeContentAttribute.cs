@@ -2,7 +2,7 @@
 
 namespace XRoadLib.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class)]
     public class XRoadMergeContentAttribute : Attribute
     { }
 }

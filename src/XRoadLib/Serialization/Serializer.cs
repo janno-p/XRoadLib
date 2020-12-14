@@ -107,13 +107,12 @@ namespace XRoadLib.Serialization
         private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
         {
             return typeAssembly?.GetTypes()
-                                .Where(t => t.IsInterface)
-                                .SelectMany(t => t.GetMethods())
-                                .Where(x => x.GetServices()
-                                             .Any(m => m.Name == qualifiedName.LocalName
-                                                       && (!Version.HasValue || m.ExistsInVersion(Version.Value))))
-                                .Select(mi => _schemaDefinitionProvider.GetOperationDefinition(mi, qualifiedName, Version))
-                                .SingleOrDefault(d => d.State != DefinitionState.Ignored);
+                               .Where(t => t.IsXRoadRequest())
+                               .Where(x => x.GetOperations()
+                                            .Any(m => m.Name == qualifiedName.LocalName
+                                                      && (!Version.HasValue || m.ExistsInVersion(Version.Value))))
+                               .Select(t => _schemaDefinitionProvider.GetOperationDefinition(t, qualifiedName, Version))
+                               .SingleOrDefault(d => d.State != DefinitionState.Ignored);
         }
 
         public ITypeMap GetTypeMapFromXsiType(XmlReader reader, ParticleDefinition particleDefinition)

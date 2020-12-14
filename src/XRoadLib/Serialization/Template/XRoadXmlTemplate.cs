@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using XRoadLib.Schema;
@@ -18,7 +17,7 @@ namespace XRoadLib.Serialization.Template
 
         public IDictionary<string, Type> ParameterTypes => _parameterTypes;
 
-        public XRoadXmlTemplate(string templateXml, MethodInfo methodInfo)
+        public XRoadXmlTemplate(string templateXml, Type requestType)
         {
             if (!string.IsNullOrEmpty(templateXml))
             {
@@ -29,11 +28,11 @@ namespace XRoadLib.Serialization.Template
 
             _parameterNodes = _requestNode?.Elements().ToList() ?? new List<XElement>();
 
-            if (methodInfo == null)
+            if (requestType == null)
                 return;
 
-            _parameterNames = methodInfo.GetParameters().Select(parameter => parameter.Name).ToList();
-            _parameterTypes = methodInfo.GetParameters().ToDictionary(param => param.Name, param => param.ParameterType);
+            _parameterNames = new List<string> { "request" };
+            _parameterTypes = new Dictionary<string, Type> { { "request", requestType } };
         }
 
         public XRoadXmlTemplate() : this(null, null)

@@ -14,13 +14,6 @@ namespace XRoadLib.Tests.Serialization
 {
     public class XRoadSerializerTest
     {
-        private class X<T>
-        {
-            // ReSharper disable once UnusedMember.Local, UnusedParameter.Local
-            public void Method(T t)
-            { }
-        }
-
         private static async Task SerializeWithContextAsync<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, Action<XRoadMessage, string> f)
         {
             var message = Globals.ServiceManager.CreateMessage();
@@ -43,13 +36,12 @@ namespace XRoadLib.Tests.Serialization
 
                 await writer.WriteStartElementAsync(elementName);
 
-                var propType = typeof(X<>).MakeGenericType(typeof(T));
-                var methodInfo = propType.GetMethod("Method");
+                var requestType = typeof(T);
 
-                var operationDefinition = new OperationDefinition("Method", null, methodInfo);
+                var operationDefinition = new OperationDefinition("Method", null, requestType);
                 var requestDefinition = new RequestDefinition(operationDefinition, _ => false);
 
-                var typeMap = Globals.ServiceManager.GetSerializer(dtoVersion).GetTypeMap(typeof(T));
+                var typeMap = Globals.ServiceManager.GetSerializer(dtoVersion).GetTypeMap(requestType);
                 await typeMap.SerializeAsync(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition.Content, message);
 
                 await writer.WriteEndElementAsync();

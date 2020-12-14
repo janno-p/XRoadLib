@@ -1,5 +1,4 @@
-﻿using Calculator.Contract;
-using Calculator.WebService;
+﻿using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,11 +11,10 @@ namespace Calculator
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddXRoadLib();
+            services.AddMediatR(typeof(Startup));
 
-            services.AddSingleton<ICalculate, CalculateWebService>();
-            services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
-            services.AddSingleton<IFileCalculation, FileCalculationService>();
+            services.AddXRoadLib(sp => request => sp.GetRequiredService<IMediator>().Send(request, default));
+
             services.AddSingleton<CalculatorServiceManager>();
         }
 

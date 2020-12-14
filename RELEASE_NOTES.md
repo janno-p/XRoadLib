@@ -5,6 +5,7 @@
 * Add IXRoadRequest<TResponse>, IXRoadRequestHandler<TRequest, TResponse> type for improved typing support.
 * Remove XRoadSerializable base class requirement. Use XRoadSerializableAttribute to mark serializable types.
   Use ITrackSpecifiedMembers interface when member deserialization info is needed.
+* Operation definitions extracted from request type attributes and IXRoadRequest definition.
 
 #### 1.4.1 - 13.12.2020
 

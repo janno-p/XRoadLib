@@ -64,7 +64,7 @@ namespace XRoadLib.Serialization.Mapping
             if (!RequestDefinition.Content.MergeContent && !await reader.MoveToElementAsync(3, requestName).ConfigureAwait(false))
                 throw new InvalidQueryException($"Request wrapper element `{requestName}` was not found in incoming SOAP message.");
 
-            return RequestDefinition.ParameterInfo != null
+            return RequestDefinition.RequestType != null
                 ? ProcessRequestValue(await DeserializeValueAsync(reader, _inputTypeMap, message.RequestNode, RequestDefinition, message).ConfigureAwait(false))
                 : null;
         }
@@ -129,7 +129,7 @@ namespace XRoadLib.Serialization.Mapping
             if (!RequestDefinition.Content.MergeContent)
                 await writer.WriteStartElementAsync(RequestDefinition.Content.Name).ConfigureAwait(false);
 
-            if (RequestDefinition.ParameterInfo != null)
+            if (RequestDefinition.RequestType != null)
                 await SerializeValueAsync(writer, PrepareRequestValue(value), _inputTypeMap, message.RequestNode, message, RequestDefinition.Content).ConfigureAwait(false);
 
             if (!RequestDefinition.Content.MergeContent)

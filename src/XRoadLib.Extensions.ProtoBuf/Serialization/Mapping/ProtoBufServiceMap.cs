@@ -25,8 +25,8 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
         public ProtoBufServiceMap(ISerializer serializer, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
             : base(serializer, operationDefinition, requestDefinition, responseDefinition, inputTypeMap, outputTypeMap)
         {
-            var requestType = RequestDefinition.ParameterInfo?.ParameterType;
-            var responseType = ResponseDefinition.ParameterInfo?.ParameterType;
+            var requestType = RequestDefinition.RequestType;
+            var responseType = ResponseDefinition.ResponseType;
 
             _readRequestMethod = BuildReadValueMethod(requestType);
             _readResponseMethod = BuildReadValueMethod(responseType);
