@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace XRoadLib.Schema
 {
@@ -26,11 +25,11 @@ namespace XRoadLib.Schema
 
         public bool IsInheritable => !IsAnonymous && !IsSimpleType;
 
-        public bool IsCompositeType => !Type.GetTypeInfo().IsEnum && !Type.GetTypeInfo().IsAbstract;
+        public bool IsCompositeType => !Type.IsEnum && !Type.IsAbstract;
 
         public TypeDefinition(Type type, string targetNamespace)
         {
-            Documentation = new DocumentationDefinition(type.GetTypeInfo());
+            Documentation = new DocumentationDefinition(type);
             TargetNamespace = targetNamespace;
             Type = type;
         }

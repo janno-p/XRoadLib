@@ -1,9 +1,8 @@
-﻿using System.Xml.Serialization;
-using XRoadLib.Attributes;
+﻿using XRoadLib.Attributes;
 
 namespace Calculator.Contract
 {
-    [XmlType]
+    [XRoadSerializable]
     [XRoadTitle("en", "Operation type")]
     [XRoadNotes("en", "Defines operations to perform on given arguments")]
     public enum Operation

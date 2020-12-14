@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XRoadLib.Extensions;
-using XRoadLib.Headers;
 using XRoadLib.Styles;
 using XRoadLib.Wsdl;
 
@@ -91,8 +90,7 @@ namespace XRoadLib.Schema
                 return collectionDefinition;
             }
 
-            var typeInfo = type.GetTypeInfo();
-            var typeAttribute = typeInfo.GetCustomAttribute<XmlTypeAttribute>();
+            var typeAttribute = type.GetCustomAttribute<XmlTypeAttribute>();
             var isAnonymous = typeAttribute != null && typeAttribute.AnonymousType;
 
             var normalizedType = type.NormalizeType();
@@ -108,7 +106,7 @@ namespace XRoadLib.Schema
                 IsAnonymous = isAnonymous,
                 Name = qualifiedName,
                 State = DefinitionState.Default,
-                CanHoldNullValues = typeInfo.IsClass || normalizedType != type
+                CanHoldNullValues = type.IsClass || normalizedType != type
             };
 
             _schemaExporter.ExportTypeDefinition(typeDefinition);

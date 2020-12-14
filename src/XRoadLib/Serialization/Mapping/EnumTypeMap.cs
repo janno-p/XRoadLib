@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
@@ -21,7 +20,7 @@ namespace XRoadLib.Serialization.Mapping
         {
             foreach (var name in Enum.GetNames(typeDefinition.Type))
             {
-                var memberInfo = typeDefinition.Type.GetTypeInfo().GetMember(name).Single();
+                var memberInfo = typeDefinition.Type.GetMember(name).Single();
                 var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
                 var value = (attribute?.Name).GetValueOrDefault(name);
                 var enumValue = (int)Enum.Parse(typeDefinition.Type, name);

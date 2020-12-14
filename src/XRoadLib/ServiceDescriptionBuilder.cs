@@ -160,8 +160,8 @@ namespace XRoadLib
                     .ProtocolDefinition
                     .ContractAssembly
                     .GetTypes()
-                    .Where(type => type.IsXRoadSerializable() || (type.GetTypeInfo().IsEnum && type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>() != null))
-                    .Where(type => !_version.HasValue || type.GetTypeInfo().ExistsInVersion(_version.Value))
+                    .Where(type => type.IsXRoadSerializable())
+                    .Where(type => !_version.HasValue || type.ExistsInVersion(_version.Value))
                     .Select(type => _schemaDefinitionProvider.GetTypeDefinition(type))
                     .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default)
                     .ToList();
@@ -174,7 +174,7 @@ namespace XRoadLib
                 _schemaTypeDefinitions.Add(typeDefinition.Name, typeDefinition);
                 _runtimeTypeDefinitions.Add(typeDefinition.Type, typeDefinition);
 
-                var baseType = typeDefinition.Type.GetTypeInfo().BaseType;
+                var baseType = typeDefinition.Type.BaseType;
                 if (baseType == null || !baseType.IsXRoadSerializable())
                     continue;
 
@@ -386,14 +386,14 @@ namespace XRoadLib
 
                     var namespaceSchemaReferences = GetSchemaReferences(typeDefinition.Name.NamespaceName);
 
-                    if (typeDefinition.Type.GetTypeInfo().IsEnum)
+                    if (typeDefinition.Type.IsEnum)
                     {
                         schemaType = new XmlSchemaSimpleType();
                         AddEnumTypeContent(typeDefinition.Type.Namespace, typeDefinition.Type, (XmlSchemaSimpleType)schemaType);
                     }
                     else
                     {
-                        schemaType = new XmlSchemaComplexType { IsAbstract = typeDefinition.Type.GetTypeInfo().IsAbstract };
+                        schemaType = new XmlSchemaComplexType { IsAbstract = typeDefinition.Type.IsAbstract };
 
                         if (AddComplexTypeContent((XmlSchemaComplexType)schemaType, typeDefinition, namespaceSchemaReferences) != null)
                             throw new NotImplementedException();
@@ -715,7 +715,7 @@ namespace XRoadLib
             {
                 var extension = new XmlSchemaComplexContentExtension
                 {
-                    BaseTypeName = GetSchemaTypeName(typeDefinition.Type.GetTypeInfo().BaseType, schemaReferences.SchemaNamespace),
+                    BaseTypeName = GetSchemaTypeName(typeDefinition.Type.BaseType, schemaReferences.SchemaNamespace),
                     Particle = contentParticle
                 };
 
@@ -796,7 +796,7 @@ namespace XRoadLib
 
         private void SetSchemaElementType(XmlSchemaElement schemaElement, ContentDefinition contentDefinition, SchemaReferences schemaReferences)
         {
-            if (typeof(Stream).GetTypeInfo().IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
+            if (typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
                 AddBinaryAttribute(schemaReferences.SchemaNamespace, schemaElement);
 
             var typeDefinition = GetContentTypeDefinition(contentDefinition);
@@ -817,7 +817,7 @@ namespace XRoadLib
             XmlSchemaType schemaType;
             XmlQualifiedName schemaTypeName = null;
 
-            if (contentDefinition.RuntimeType.GetTypeInfo().IsEnum)
+            if (contentDefinition.RuntimeType.IsEnum)
             {
                 schemaType = new XmlSchemaSimpleType();
                 AddEnumTypeContent(schemaReferences.SchemaNamespace, contentDefinition.RuntimeType, (XmlSchemaSimpleType)schemaType);
@@ -841,7 +841,7 @@ namespace XRoadLib
 
             foreach (var name in Enum.GetNames(type))
             {
-                var memberInfo = type.GetTypeInfo().GetMember(name).Single();
+                var memberInfo = type.GetMember(name).Single();
                 var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
                 var value = (attribute?.Name).GetValueOrDefault(name);
                 restriction.Facets.Add(new XmlSchemaEnumerationFacet

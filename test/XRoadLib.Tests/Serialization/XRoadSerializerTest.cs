@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
@@ -45,7 +44,7 @@ namespace XRoadLib.Tests.Serialization
                 await writer.WriteStartElementAsync(elementName);
 
                 var propType = typeof(X<>).MakeGenericType(typeof(T));
-                var methodInfo = propType.GetTypeInfo().GetMethod("Method");
+                var methodInfo = propType.GetMethod("Method");
 
                 var operationDefinition = new OperationDefinition("Method", null, methodInfo);
                 var requestDefinition = new RequestDefinition(operationDefinition, _ => false);

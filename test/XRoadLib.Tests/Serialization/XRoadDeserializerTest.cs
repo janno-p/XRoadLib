@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -531,7 +530,7 @@ namespace XRoadLib.Tests.Serialization
         private static Task<object> DeserializeRequestAsync(string templateXml, string contentXml, IServiceMap serviceMap = null, string serviceName = "Service1")
         {
             serviceMap ??= ServiceMap;
-            var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod(serviceName));
+            var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(IService).GetMethod(serviceName));
             return DeserializeRequestContentAsync(contentXml, Globals.ServiceManager, serviceName, async (msgr) =>
             {
                 var message = Globals.ServiceManager.CreateMessage();

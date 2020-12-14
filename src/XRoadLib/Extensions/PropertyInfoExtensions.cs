@@ -25,7 +25,7 @@ namespace XRoadLib.Extensions
 
             if (converterType != null)
             {
-                var convertBackMethod = converterType.GetTypeInfo().GetMethod("ConvertBack", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                var convertBackMethod = converterType.GetMethod("ConvertBack", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
                 if (convertBackMethod == null)
                     throw new InvalidOperationException();
 
@@ -34,7 +34,7 @@ namespace XRoadLib.Extensions
             else
                 generator.Emit(OpCodes.Callvirt, propertyInfo.GetGetMethod(true));
 
-            if (propertyType.GetTypeInfo().IsValueType)
+            if (propertyType.IsValueType)
                 generator.Emit(OpCodes.Box, propertyType);
 
             generator.Emit(OpCodes.Ret);
@@ -59,12 +59,12 @@ namespace XRoadLib.Extensions
             generator.Emit(OpCodes.Ldarg_0);
             generator.Emit(OpCodes.Ldarg_1);
 
-            if (propertyType.GetTypeInfo().IsValueType)
+            if (propertyType.IsValueType)
                 generator.Emit(OpCodes.Unbox_Any, propertyType);
 
             if (converterType != null)
             {
-                var convertMethod = converterType.GetTypeInfo().GetMethod("Convert", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                var convertMethod = converterType.GetMethod("Convert", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
                 if (convertMethod == null)
                     throw new InvalidOperationException();
 

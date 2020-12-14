@@ -46,7 +46,7 @@ namespace XRoadLib.Schema
 
             IsNullable = (arrayAttribute?.IsNullable).GetValueOrDefault();
             Order = (arrayAttribute?.Order).GetValueOrDefault(-1);
-            UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
+            UseXop = typeof(Stream).IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
             TypeName = (arrayItemAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.Xsd));
             IsOptional = xroadArrayAttribute?.IsOptional == true;
             State = DefinitionState.Default;

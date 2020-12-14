@@ -107,8 +107,8 @@ namespace XRoadLib.Serialization
         private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
         {
             return typeAssembly?.GetTypes()
-                                .Where(t => t.GetTypeInfo().IsInterface)
-                                .SelectMany(t => t.GetTypeInfo().GetMethods())
+                                .Where(t => t.IsInterface)
+                                .SelectMany(t => t.GetMethods())
                                 .Where(x => x.GetServices()
                                              .Any(m => m.Name == qualifiedName.LocalName
                                                        && (!Version.HasValue || m.ExistsInVersion(Version.Value))))
@@ -147,7 +147,7 @@ namespace XRoadLib.Serialization
 
         private ITypeMap AddTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
-            if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.GetTypeInfo().ExistsInVersion(Version.Value))
+            if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.ExistsInVersion(Version.Value))
                 throw new SchemaDefinitionException($"The runtime type `{runtimeType.Name}` is not defined for DTO version `{Version.Value}`.");
 
             var typeDefinition = _schemaDefinitionProvider.GetTypeDefinition(runtimeType);
@@ -163,7 +163,7 @@ namespace XRoadLib.Serialization
             if (typeDefinition is CollectionDefinition collectionDefinition)
             {
                 var elementType = typeDefinition.Type.GetElementType();
-                if (!ReferenceEquals(elementType.GetTypeInfo().Assembly, _contractAssembly))
+                if (!ReferenceEquals(elementType?.Assembly, _contractAssembly))
                     return null;
 
                 var itemTypeMap = GetTypeMap(elementType, partialTypeMaps);
@@ -174,15 +174,15 @@ namespace XRoadLib.Serialization
                 return _runtimeTypeMaps.GetOrAdd(runtimeType, typeMap);
             }
 
-            if (!ReferenceEquals(typeDefinition.Type.GetTypeInfo().Assembly, _contractAssembly))
+            if (!ReferenceEquals(typeDefinition.Type.Assembly, _contractAssembly))
                 return null;
 
-            if (typeDefinition.IsCompositeType && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
+            if (typeDefinition.IsCompositeType && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
                 throw new SchemaDefinitionException($"The runtime type '{typeDefinition.Type.Name}' does not have default constructor.");
 
-            if (typeDefinition.Type.GetTypeInfo().IsEnum)
+            if (typeDefinition.Type.IsEnum)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(EnumTypeMap), typeDefinition);
-            else if (typeDefinition.Type.GetTypeInfo().IsAbstract)
+            else if (typeDefinition.Type.IsAbstract)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap), typeDefinition);
             else if (typeDefinition.HasStrictContentOrder)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
@@ -209,16 +209,16 @@ namespace XRoadLib.Serialization
             if (qualifiedName.NamespaceName != typeDefinition.Name.NamespaceName)
                 throw new UnknownTypeException(particleDefinition, typeDefinition, qualifiedName);
 
-            if (typeDefinition.IsCompositeType && typeDefinition.Type.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null)
+            if (typeDefinition.IsCompositeType && typeDefinition.Type.GetConstructor(Type.EmptyTypes) == null)
                 throw new SchemaDefinitionException($"The runtime type '{typeDefinition.Name}' does not define default constructor.");
 
             ITypeMap typeMap;
 
             if (typeDefinition.TypeMapType != null)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeDefinition.TypeMapType, this, typeDefinition);
-            else if (typeDefinition.Type.GetTypeInfo().IsEnum)
+            else if (typeDefinition.Type.IsEnum)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(EnumTypeMap), typeDefinition);
-            else if (typeDefinition.Type.GetTypeInfo().IsAbstract)
+            else if (typeDefinition.Type.IsAbstract)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AbstractTypeMap), typeDefinition);
             else if (typeDefinition.HasStrictContentOrder)
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(SequenceTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
@@ -250,9 +250,11 @@ namespace XRoadLib.Serialization
                 return type != null && type.IsXRoadSerializable() ? _schemaDefinitionProvider.GetTypeDefinition(type) : null;
             }
 
-            var typeDefinition = _contractAssembly.GetTypes()
-                                                 .Where(type => type.IsXRoadSerializable())
-                    .Where(type => !Version.HasValue || type.GetTypeInfo().ExistsInVersion(Version.Value))
+            var typeDefinition =
+                _contractAssembly
+                    .GetTypes()
+                    .Where(type => type.IsXRoadSerializable())
+                    .Where(type => !Version.HasValue || type.ExistsInVersion(Version.Value))
                     .Select(type => _schemaDefinitionProvider.GetTypeDefinition(type))
                     .SingleOrDefault(definition => definition.Name == qualifiedName);
 
@@ -281,7 +283,7 @@ namespace XRoadLib.Serialization
                 case "System.TimeSpan": return XName.Get("duration", NamespaceConstants.Xsd);
             }
 
-            if (ReferenceEquals(type.GetTypeInfo().Assembly, _contractAssembly))
+            if (ReferenceEquals(type.Assembly, _contractAssembly))
                 return XName.Get(type.Name, _producerNamespace);
 
             throw new SchemaDefinitionException($"XML namespace of runtime type `{type.FullName}` is undefined.");

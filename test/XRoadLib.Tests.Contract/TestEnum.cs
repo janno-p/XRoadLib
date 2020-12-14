@@ -3,6 +3,7 @@ using XRoadLib.Attributes;
 
 namespace XRoadLib.Tests.Contract
 {
+    [XRoadSerializable]
     public enum TestEnum
     {
         [XmlEnum("Value 1")]
