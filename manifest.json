@@ -5,11 +5,23 @@
   "files": [
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.DocumentationTarget.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.DocumentationTarget.html",
+          "hash": "y3gLyGjEVni/J6/c5fGYyg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/XRoadLib.Attributes.XRoadAddContractAttribute.yml",
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadAddContractAttribute.html",
-          "hash": "cR/gAVJHxwzQjurf9hyCpg=="
+          "hash": "xNzxzancVyYh02mbCvCe7A=="
         }
       },
       "is_incremental": true,
@@ -21,7 +33,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadMergeContentAttribute.html",
-          "hash": "JCAUeF5i+HMGZXJTyfcIdQ=="
+          "hash": "89LYaPcOEQLSiJV9KalSLQ=="
         }
       },
       "is_incremental": true,
@@ -33,7 +45,19 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadNotesAttribute.html",
-          "hash": "qG/VHtXNk1z9dpJdgJIPfA=="
+          "hash": "w+JAhzS0cfgLGrq4reFGkg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadOperationAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Attributes.XRoadOperationAttribute.html",
+          "hash": "kyPjh7FyJ5OfQETKuIZ8qw=="
         }
       },
       "is_incremental": true,
@@ -45,7 +69,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadRemoveContractAttribute.html",
-          "hash": "ESJL9svELKQ262KqkBbzaQ=="
+          "hash": "UicB+ldYONb2N03x7yivpA=="
         }
       },
       "is_incremental": true,
@@ -53,11 +77,11 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Attributes.XRoadServiceAttribute.yml",
+      "source_relative_path": "api/XRoadLib.Attributes.XRoadSerializableAttribute.yml",
       "output": {
         ".html": {
-          "relative_path": "api/XRoadLib.Attributes.XRoadServiceAttribute.html",
-          "hash": "QTwRLYDiNBS8HApzqa3KJA=="
+          "relative_path": "api/XRoadLib.Attributes.XRoadSerializableAttribute.html",
+          "hash": "bPxvaYAXje+0eWls6EpxdA=="
         }
       },
       "is_incremental": true,
@@ -69,7 +93,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadTechNotesAttribute.html",
-          "hash": "B2OdYuYyZmJQnWl05LGJeQ=="
+          "hash": "zxZMMbH5piiN6/kdZUOoeA=="
         }
       },
       "is_incremental": true,
@@ -81,7 +105,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadTitleAttribute.html",
-          "hash": "w0rKJ+tehO46dCH02GSVfg=="
+          "hash": "jH1q5/87XkzpsKvcQNc8fQ=="
         }
       },
       "is_incremental": true,
@@ -93,7 +117,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadXmlArrayAttribute.html",
-          "hash": "HEqrQxPXKqiB9QJ3ynTpug=="
+          "hash": "JZHRP1X0JrdAX4j5XIGGJg=="
         }
       },
       "is_incremental": true,
@@ -105,7 +129,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadXmlArrayItemAttribute.html",
-          "hash": "Ad1WCdnxS2ydHeG34v70Uw=="
+          "hash": "haolJnVyfEIw535Drmsqiw=="
         }
       },
       "is_incremental": true,
@@ -117,7 +141,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.XRoadXmlElementAttribute.html",
-          "hash": "7Jmd1yZMs0b/oGqwouK7SA=="
+          "hash": "V87qoPkBq4esyAlw5tYGfg=="
         }
       },
       "is_incremental": true,
@@ -129,55 +153,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Attributes.html",
-          "hash": "+E30yEw0nRpRCouGfUyGnw=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Events.BeforeDeserializationEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.Events.BeforeDeserializationEventArgs.html",
-          "hash": "fd5Fwh8jlI6zzf/dJ+rUBQ=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Events.XRoadRequestEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.Events.XRoadRequestEventArgs.html",
-          "hash": "HuTZ94yUR7Qcbp43i0+Q8Q=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Events.XRoadResponseEventArgs.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.Events.XRoadResponseEventArgs.html",
-          "hash": "RMcTPzGfvnr5WRvoBcq+pg=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Events.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.Events.html",
-          "hash": "+y26hjtn+AQ2UBl0eOWoRg=="
+          "hash": "QVP6Bg/qe1QgD+FgYrxklQ=="
         }
       },
       "is_incremental": true,
@@ -261,7 +237,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.WebServiceRequestHandler.html",
-          "hash": "t+xlkBycK9vgNAKrGScdaA=="
+          "hash": "qVIqdAk4yZyMYhOmQ2Mn4g=="
         }
       },
       "is_incremental": true,
@@ -309,7 +285,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadLibServiceCollectionExtensions.html",
-          "hash": "Iu1loPCotMsUTmEHBhQgwg=="
+          "hash": "eFzreTcc6JzLmFEy40/cnw=="
         }
       },
       "is_incremental": true,
@@ -321,7 +297,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AspNetCore.XRoadMessageExtensions.html",
-          "hash": "jPVFuHeKz1EqQIBipQSJyQ=="
+          "hash": "niLYmN+MrMmczHSeLh0u0A=="
         }
       },
       "is_incremental": true,
@@ -357,7 +333,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.AssemblyExtensions.html",
-          "hash": "FG8/A6DFYVzIbOP4hl75Ow=="
+          "hash": "HjSUp8ftIT32i7O6uGb+vw=="
         }
       },
       "is_incremental": true,
@@ -377,11 +353,131 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.XRoadProtoBufServiceAttribute.yml",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.Base64EncodedContent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.XRoadProtoBufServiceAttribute.html",
-          "hash": "0oHuhELXeqoaNWAZWoWamQ=="
+          "relative_path": "api/XRoadLib.Extensions.Http.Base64EncodedContent.html",
+          "hash": "PRFHUFptED9M+f2F2OUXkg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.Extensions.HttpClientExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.Extensions.HttpClientExtensions.html",
+          "hash": "NgO6Jji9IQ9ffhEKTMX55A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.Extensions.XRoadMessageExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.Extensions.XRoadMessageExtensions.html",
+          "hash": "ZFzj4KGvVoRLPV0iJZzAAQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.Extensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.Extensions.html",
+          "hash": "9CmWKb3UFvZ86Y/wu51eSw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.ServiceExecutionOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.ServiceExecutionOptions.html",
+          "hash": "ymiE316kIqUc7Mri2xsZgg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.Services.IXRoadService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.Services.IXRoadService.html",
+          "hash": "ByQV1xGUZzZHwzMPL/T7iw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.Services.XRoadService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.Services.XRoadService.html",
+          "hash": "xqJZvo0v24n1b717ZL+12A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.Services.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.Services.html",
+          "hash": "sC80Y6RCmswMPkeW6he2Aw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.XRoadResponse-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.XRoadResponse-1.html",
+          "hash": "pGTHHMeUmnnSwIbT2oIB/A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.Http.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.Http.html",
+          "hash": "5tmR4UusQzlo7xDx5DPo+Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.XRoadProtoBufOperationAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.XRoadProtoBufOperationAttribute.html",
+          "hash": "p8BmQ2Hl9wSG/YujnQa60A=="
         }
       },
       "is_incremental": true,
@@ -393,7 +489,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.ProtoBuf.Attributes.html",
-          "hash": "eTyCXUf2UWTWYGTnvbT4Mw=="
+          "hash": "9D2o+hV7Fymgo1wCOxEp9Q=="
         }
       },
       "is_incremental": true,
@@ -461,11 +557,23 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Extensions.TrackSpecifiedMembersExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Extensions.TrackSpecifiedMembersExtensions.html",
+          "hash": "DJmWDTR+USUoOIkv/V/2Zg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/XRoadLib.Extensions.TypeExtensions.yml",
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.TypeExtensions.html",
-          "hash": "bibJeUMeF8CzPkhyDlWwsw=="
+          "hash": "mzUdz1RFzZgpb07q258J5A=="
         }
       },
       "is_incremental": true,
@@ -478,18 +586,6 @@
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.XRoadMessageExtensions.html",
           "hash": "/8qSAPqRKYQvvLc+Wr7EdQ=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Extensions.XRoadRequestExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.Extensions.XRoadRequestExtensions.html",
-          "hash": "jV/2HEzQOATl/HMYjS9c9g=="
         }
       },
       "is_incremental": true,
@@ -525,7 +621,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Extensions.html",
-          "hash": "F7W1RqJuE9gS4A2qlDCM+Q=="
+          "hash": "IBQfQEG0iJvoArPmvVuAHg=="
         }
       },
       "is_incremental": true,
@@ -537,7 +633,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Headers.ISoapHeader.html",
-          "hash": "IzP8f1gXzQbIqosgSiONpA=="
+          "hash": "9+G0BXYEYGbDQrf/o1gliA=="
         }
       },
       "is_incremental": true,
@@ -549,7 +645,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Headers.IXRoadHeader.html",
-          "hash": "rpG9eZvtnOoYW0rA1i9U+A=="
+          "hash": "+1cK+d/zwbPGVZ5UmJB75g=="
         }
       },
       "is_incremental": true,
@@ -597,7 +693,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Headers.XRoadHeader.html",
-          "hash": "DiRlk19DtlUDBRf4ZlOvbw=="
+          "hash": "NWRYPxE3UucMZllfaSctWw=="
         }
       },
       "is_incremental": true,
@@ -669,7 +765,31 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.IServiceManager.html",
-          "hash": "eUQYck9Qe2/iWdu6e5Ywxw=="
+          "hash": "4sbSJw0BSd6/2kxXiqPSBw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.IXRoadRequest-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.IXRoadRequest-1.html",
+          "hash": "p9BgZKVO0nrFEZ66LqhF9Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.IXRoadRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.IXRoadRequest.html",
+          "hash": "low0LQ77sJwb/OkJXZwCdw=="
         }
       },
       "is_incremental": true,
@@ -705,7 +825,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.AbstractSchemaExporter.html",
-          "hash": "yhdYqdDSmPtLHXHGywPtjQ=="
+          "hash": "cNTKVNsUR0R2mZrbH1O99w=="
         }
       },
       "is_incremental": true,
@@ -789,7 +909,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.DefaultSchemaExporter.html",
-          "hash": "+LCDq9pKCcQuPk0KGlLpqw=="
+          "hash": "voWKiryYIAGMm+n3id+QNg=="
         }
       },
       "is_incremental": true,
@@ -825,7 +945,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.DocumentationDefinition.html",
-          "hash": "nj25HFRWWfDhTT1y05BN5Q=="
+          "hash": "VmXhy3WDLWnC0rKr3we0Nw=="
         }
       },
       "is_incremental": true,
@@ -857,11 +977,11 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Schema.HeaderDefinition.yml",
+      "source_relative_path": "api/XRoadLib.Schema.HeaderDefinition-1.yml",
       "output": {
         ".html": {
-          "relative_path": "api/XRoadLib.Schema.HeaderDefinition.html",
-          "hash": "mGh+6Q1S/cMwsgbpLSccZQ=="
+          "relative_path": "api/XRoadLib.Schema.HeaderDefinition-1.html",
+          "hash": "oQ43AJ74A6/03qn5EiBiOQ=="
         }
       },
       "is_incremental": true,
@@ -869,11 +989,23 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Schema.IHeaderDefinitionBuilder-1.yml",
+      "source_relative_path": "api/XRoadLib.Schema.HeaderDefinition.yml",
       "output": {
         ".html": {
-          "relative_path": "api/XRoadLib.Schema.IHeaderDefinitionBuilder-1.html",
-          "hash": "LTt0pb2PmR4H3hivAEAh8w=="
+          "relative_path": "api/XRoadLib.Schema.HeaderDefinition.html",
+          "hash": "P1gZUJmNd3EKeDp8iUztMA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Schema.IHeaderDefinition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Schema.IHeaderDefinition.html",
+          "hash": "QAAAreiYCkGm3kGYSHpq4A=="
         }
       },
       "is_incremental": true,
@@ -885,7 +1017,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.ISchemaExporter.html",
-          "hash": "xOzjZfyC6y4opkDWP1gp5Q=="
+          "hash": "EkbsoozMSD8rVUzssk+uMg=="
         }
       },
       "is_incremental": true,
@@ -897,7 +1029,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.OperationDefinition.html",
-          "hash": "SfhNsJCEoMGQv5jIYoK31A=="
+          "hash": "nJPdbxPUSqDArt79hcxeNg=="
         }
       },
       "is_incremental": true,
@@ -969,7 +1101,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.RequestDefinition.html",
-          "hash": "ihDluwApQDat6Q+yyzfOJQ=="
+          "hash": "GgPP+HsYNJfFr7R1rRbZlA=="
         }
       },
       "is_incremental": true,
@@ -981,7 +1113,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.ResponseDefinition.html",
-          "hash": "zrSuplpwO+BhjlpbZQjKNQ=="
+          "hash": "AuSrlVOuAsG4rmXKbbFQIw=="
         }
       },
       "is_incremental": true,
@@ -1005,7 +1137,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.SchemaDefinitionProvider.html",
-          "hash": "2TuvHhtOZ/TSnRV9aiy3qw=="
+          "hash": "6z6vQ4nOzi+yIjinOePRdw=="
         }
       },
       "is_incremental": true,
@@ -1029,7 +1161,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.TypeDefinition.html",
-          "hash": "YnYQGpNYcHMw39G1jKxDKQ=="
+          "hash": "4gixLwckZk0UUgO48SRPDA=="
         }
       },
       "is_incremental": true,
@@ -1125,7 +1257,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Schema.html",
-          "hash": "6uMM2fAZ0L/hkUXaAl2HdA=="
+          "hash": "CM+Hrs2v86FnQJwckvJbhw=="
         }
       },
       "is_incremental": true,
@@ -1217,6 +1349,18 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.ITrackSpecifiedMembers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.ITrackSpecifiedMembers.html",
+          "hash": "xVMIDGZcM0TZi+vU41Dl5A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/XRoadLib.Serialization.IXRoadFault.yml",
       "output": {
         ".html": {
@@ -1234,18 +1378,6 @@
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.IXRoadFilterMap.html",
           "hash": "UxM13a1Oij365ER44tfnxw=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Serialization.IXRoadSerializable.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.Serialization.IXRoadSerializable.html",
-          "hash": "5QGfG4QhzPVP4IIrIarKjA=="
         }
       },
       "is_incremental": true,
@@ -1281,7 +1413,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Mapping.AllTypeMap-1.html",
-          "hash": "wezJ6tyNgIWkoeZ+eLvLAw=="
+          "hash": "gMTB2S6p7qsYBVPvCH9H2Q=="
         }
       },
       "is_incremental": true,
@@ -1329,7 +1461,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Mapping.CompositeTypeMap-1.html",
-          "hash": "o7FQJjdJQedqBaNUyJgspA=="
+          "hash": "M0VhiSlUEqV+8Pbc9NZ3jQ=="
         }
       },
       "is_incremental": true,
@@ -1401,7 +1533,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Mapping.EnumTypeMap.html",
-          "hash": "C9nH36Vu0QUgOK2CVcfCKA=="
+          "hash": "+foipBHfb2oB/tmX6zpmpw=="
         }
       },
       "is_incremental": true,
@@ -1461,7 +1593,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Mapping.IPropertyMap.html",
-          "hash": "kACMxcXYTlbzIumHYYMQaA=="
+          "hash": "NjcpdQ9h/vtjuX4B6F3kIA=="
         }
       },
       "is_incremental": true,
@@ -1557,7 +1689,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Mapping.PropertyMap.html",
-          "hash": "VLoAOp4QQ/zUR8/RMY2+NA=="
+          "hash": "hq+Bv9VO6DAV2CrHwnrrbg=="
         }
       },
       "is_incremental": true,
@@ -1569,7 +1701,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Mapping.SequenceTypeMap-1.html",
-          "hash": "o4XlytxxX4AoTbokpkMPvg=="
+          "hash": "7jy87kkQL7nFIjWJ3sLeIA=="
         }
       },
       "is_incremental": true,
@@ -1653,7 +1785,19 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Serializer.html",
-          "hash": "c9cmDRR6jHbvGYVLna65yg=="
+          "hash": "B78k0b7vKKtSg9w93hfAJA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.StreamCounter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.StreamCounter.html",
+          "hash": "ErpaCAfzkwVuxqWc6+VGjA=="
         }
       },
       "is_incremental": true,
@@ -1713,7 +1857,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Template.XRoadXmlTemplate.html",
-          "hash": "+LeHx+598I61BYh3rjurRw=="
+          "hash": "rCcbthDdyzoyLSwxm6p3HA=="
         }
       },
       "is_incremental": true,
@@ -1726,6 +1870,18 @@
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.Template.html",
           "hash": "v5CVcYoEP4M1gWFniWqryA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/XRoadLib.Serialization.UnitResponse.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/XRoadLib.Serialization.UnitResponse.html",
+          "hash": "aGk3M8Kub91in3wTH3K+WA=="
         }
       },
       "is_incremental": true,
@@ -1785,7 +1941,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.XRoadMessage.html",
-          "hash": "r9+t+sgcXFrdqNB93V/+7w=="
+          "hash": "rMnKoIWzmsA3O6jSmQCVFQ=="
         }
       },
       "is_incremental": true,
@@ -1805,23 +1961,11 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.Serialization.XRoadSerializable.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.Serialization.XRoadSerializable.html",
-          "hash": "8g8l29ITj7YalQIGSrl+fQ=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/XRoadLib.Serialization.yml",
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Serialization.html",
-          "hash": "PZLDqJAk40LDNNrnKsf7Ig=="
+          "hash": "HG7HShDotPiDMYWQ75Il8Q=="
         }
       },
       "is_incremental": true,
@@ -1833,31 +1977,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.ServiceDescriptionBuilder.html",
-          "hash": "AOIZjiT4svmahzvj+a8fGQ=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.ServiceExecutionOptions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.ServiceExecutionOptions.html",
-          "hash": "G8iwSQiYgHG1yEbMoiFlfw=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.ServiceManager-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.ServiceManager-1.html",
-          "hash": "8ZgsKIK7D2+EUiBjIoX3kQ=="
+          "hash": "uaAGQjB0WP5LudwkmVynWw=="
         }
       },
       "is_incremental": true,
@@ -1869,7 +1989,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.ServiceManager.html",
-          "hash": "ABELa0+26xhoT+EEFFhz+A=="
+          "hash": "1mMyTWMDIe8mcWrqMp0hdQ=="
         }
       },
       "is_incremental": true,
@@ -1929,7 +2049,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Soap.IMessageFormatter.html",
-          "hash": "ZOQySJH9kcvclBu0nMClrw=="
+          "hash": "viG6NTUSXhNQoUFv14ZuJw=="
         }
       },
       "is_incremental": true,
@@ -2049,7 +2169,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Soap.Soap12MessageFormatter.html",
-          "hash": "PMUNElqgnSIiMFQSLmQ7Hg=="
+          "hash": "PQxeyjZeByy8QJm4S9v06g=="
         }
       },
       "is_incremental": true,
@@ -2085,7 +2205,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.Soap.SoapMessageFormatter.html",
-          "hash": "QQfg2qAQCrVNCM/bWAbLSA=="
+          "hash": "wQnJ8EgGQ7dVIEj46YuNHw=="
         }
       },
       "is_incremental": true,
@@ -2633,18 +2753,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/XRoadLib.XRoadWebRequest.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/XRoadLib.XRoadWebRequest.html",
-          "hash": "AEDvmxZPf3LcUR/R/8r7oQ=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/XRoadLib.XmlTypeConstants.yml",
       "output": {
         ".html": {
@@ -2661,7 +2769,7 @@
       "output": {
         ".html": {
           "relative_path": "api/XRoadLib.html",
-          "hash": "F54AMmJAcJ68gftlKmE2uw=="
+          "hash": "T0yo63MSSUrinYFAJOYhHw=="
         }
       },
       "is_incremental": true,
@@ -2685,7 +2793,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "A6axORrDCInpJiit7rvA+g=="
+          "hash": "woyWCmm4zwfzHTgTjErT8Q=="
         }
       },
       "is_incremental": false,
@@ -2709,7 +2817,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/release-notes.html",
-          "hash": "ey5CpRo1vb621ZGwoePRpQ=="
+          "hash": "LBCJU2pRegUN10GV3aLsUg=="
         }
       },
       "is_incremental": true,
@@ -2818,8 +2926,8 @@
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build",
-          "total_file_count": 222,
-          "skipped_file_count": 222
+          "total_file_count": 231,
+          "skipped_file_count": 231
         },
         "TocDocumentProcessor": {
           "can_incremental": false,

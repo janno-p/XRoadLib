@@ -68,6 +68,15 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
 
+<h4 id="200-alpha001---14122020">2.0.0-alpha001 - 14.12.2020</h4>
+<ul>
+<li>Removed generic ServiceManager (HeaderDefinition provides header implementation from this point on).</li>
+<li>Replace HttpWebRequest based client request with HttpClient based implementation.</li>
+<li>Add IXRoadRequest<tresponse>, IXRoadRequestHandler&lt;TRequest, TResponse&gt; type for improved typing support.</tresponse></li>
+<li>Remove XRoadSerializable base class requirement. Use XRoadSerializableAttribute to mark serializable types.
+Use ITrackSpecifiedMembers interface when member deserialization info is needed.</li>
+<li>Operation definitions extracted from request type attributes and IXRoadRequest definition.</li>
+</ul>
 <h4 id="141---13122020">1.4.1 - 13.12.2020</h4>
 <ul>
 <li>Review UTF8 encoding usages to prevent BOM in outgoing messages.</li>
