@@ -20,10 +20,10 @@ namespace XRoadLib.Serialization
         private readonly ICollection<string> _availableFilters;
         private readonly string _producerNamespace;
 
-        private readonly ConcurrentDictionary<Type, ITypeMap> _customTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
-        private readonly ConcurrentDictionary<XName, IServiceMap> _serviceMaps = new ConcurrentDictionary<XName, IServiceMap>();
-        private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> _xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
-        private readonly ConcurrentDictionary<Type, ITypeMap> _runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
+        private readonly ConcurrentDictionary<Type, ITypeMap> _customTypeMaps = new();
+        private readonly ConcurrentDictionary<XName, IServiceMap> _serviceMaps = new();
+        private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> _xmlTypeMaps = new();
+        private readonly ConcurrentDictionary<Type, ITypeMap> _runtimeTypeMaps = new();
 
         public uint? Version { get; }
 

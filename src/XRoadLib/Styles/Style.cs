@@ -18,7 +18,7 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Use this instance to create XmlNodes.
         /// </summary>
-        protected readonly XmlDocument Document = new XmlDocument();
+        protected readonly XmlDocument Document = new();
 
         /// <summary>
         /// Writes explicit type attribute if style requires it.

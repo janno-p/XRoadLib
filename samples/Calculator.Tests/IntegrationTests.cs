@@ -311,8 +311,8 @@ test
 
         private class Fault
         {
-            public string Code { get; private set; }
-            public string Value { get; private set; }
+            public string Code { get; private init; }
+            public string Value { get; private init; }
 
             public static Fault FromXml(XDocument document)
             {

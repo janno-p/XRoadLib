@@ -32,7 +32,7 @@ namespace XRoadLib
 
         /// <inheritdoc />
         public XRoadMessage CreateMessage() =>
-            new XRoadMessage(this, HeaderDefinition.CreateHeader());
+            new(this, HeaderDefinition.CreateHeader());
 
         /// <summary>
         /// Initializes new X-Road service manager instance.

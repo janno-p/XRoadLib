@@ -8,7 +8,7 @@ namespace XRoadLib.Tests.Serialization
 {
     public class DataReaderTest
     {
-        private readonly Random _random = new Random();
+        private readonly Random _random = new();
 
         [Fact]
         public async Task CanHandleEmptyStream()

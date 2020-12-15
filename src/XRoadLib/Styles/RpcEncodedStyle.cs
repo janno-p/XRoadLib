@@ -52,7 +52,7 @@ namespace XRoadLib.Styles
 
         public override SoapBinding CreateSoapBinding()
         {
-            return new SoapBinding
+            return new()
             {
                 Style = SoapBindingStyle.Rpc,
                 Transport = NamespaceConstants.Http
@@ -63,12 +63,12 @@ namespace XRoadLib.Styles
 
         public override SoapBodyBinding CreateSoapBodyBinding(string targetNamespace)
         {
-            return new SoapBodyBinding { Use = SoapBindingUse.Encoded, Namespace = targetNamespace, Encoding = NamespaceConstants.SoapEnc };
+            return new() { Use = SoapBindingUse.Encoded, Namespace = targetNamespace, Encoding = NamespaceConstants.SoapEnc };
         }
 
         public override SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace)
         {
-            return new SoapHeaderBinding
+            return new()
             {
                 Message = new XmlQualifiedName(messageName, targetNamespace),
                 Part = headerName.LocalName,
@@ -80,7 +80,7 @@ namespace XRoadLib.Styles
 
         public override SoapOperationBinding CreateSoapOperationBinding(string soapAction)
         {
-            return new SoapOperationBinding { SoapAction = soapAction, Style = SoapBindingStyle.Rpc };
+            return new() { SoapAction = soapAction, Style = SoapBindingStyle.Rpc };
         }
     }
 }

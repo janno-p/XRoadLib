@@ -8,9 +8,9 @@ namespace XRoadLib.Schema
 {
     public class DocumentationDefinition
     {
-        public List<XRoadTitleAttribute> Titles { get; } = new List<XRoadTitleAttribute>();
-        public List<XRoadNotesAttribute> Notes { get; } = new List<XRoadNotesAttribute>();
-        public List<XRoadTechNotesAttribute> TechNotes { get; } = new List<XRoadTechNotesAttribute>();
+        public List<XRoadTitleAttribute> Titles { get; } = new();
+        public List<XRoadNotesAttribute> Notes { get; } = new();
+        public List<XRoadTechNotesAttribute> TechNotes { get; } = new();
 
         public bool IsEmpty => !Titles.Any() && !Notes.Any() && !TechNotes.Any();
 

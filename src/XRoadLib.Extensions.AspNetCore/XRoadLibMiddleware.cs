@@ -19,42 +19,41 @@ namespace XRoadLib.Extensions.AspNetCore
             if (handler is WebServiceRequestHandler requestHandler)
                 requestHandler.StoragePath = options.StoragePath;
 
-            using (var context = new WebServiceContext(httpContext))
+            using var context = new WebServiceContext(httpContext);
+
+            if (accessor is WebServiceContextAccessor webServiceContextAccessor)
+                webServiceContextAccessor.WebServiceContext = context;
+
+            try
             {
-                if (accessor is WebServiceContextAccessor webServiceContextAccessor)
-                    webServiceContextAccessor.WebServiceContext = context;
-                
-                try
+                context.MessageFormatter = XRoadHelper.GetMessageFormatter(context.HttpContext.Request.ContentType);
+
+                if (httpContext.Request.Body.CanSeek)
+                    httpContext.Request.Body.Position = 0;
+
+                httpContext.Response.ContentType = XRoadHelper.GetContentTypeHeader(context.MessageFormatter.ContentType);
+
+                await handler.HandleRequestAsync(context).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "Unexpected error while processing X-Road request");
+
+                if (context.MessageFormatter == null)
                 {
-                    context.MessageFormatter = XRoadHelper.GetMessageFormatter(context.HttpContext.Request.ContentType);
-
-                    if (httpContext.Request.Body.CanSeek)
-                        httpContext.Request.Body.Position = 0;
-
+                    context.MessageFormatter = new SoapMessageFormatter();
                     httpContext.Response.ContentType = XRoadHelper.GetContentTypeHeader(context.MessageFormatter.ContentType);
-
-                    await handler.HandleRequestAsync(context).ConfigureAwait(false);
                 }
-                catch (Exception exception)
+
+                if (httpContext.Response.Body.CanSeek)
                 {
-                    logger.LogError(exception, "Unexpected error while processing X-Road request");
-
-                    if (context.MessageFormatter == null)
-                    {
-                        context.MessageFormatter = new SoapMessageFormatter();
-                        httpContext.Response.ContentType = XRoadHelper.GetContentTypeHeader(context.MessageFormatter.ContentType);
-                    }
-
-                    if (httpContext.Response.Body.CanSeek)
-                    {
-                        httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-                        httpContext.Response.Body.SetLength(0);
-                    }
-
-                    var fault = context.MessageFormatter.CreateFault(exception);
-
-                    await handler.HandleExceptionAsync(context, exception, fault).ConfigureAwait(false);
+                    httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+                    httpContext.Response.Body.SetLength(0);
                 }
+
+                var fault = context.MessageFormatter.CreateFault(exception);
+
+                await handler.HandleExceptionAsync(context, exception, fault).ConfigureAwait(false);
             }
         }
     }

@@ -17,7 +17,7 @@ namespace XRoadLib.Tests.Serialization
 
         private readonly ISerializer _serializer = ServiceManager.GetSerializer(1u);
 
-        private readonly MergeArrayContentRequest _request = new MergeArrayContentRequest
+        private readonly MergeArrayContentRequest _request = new()
         {
             StartDate = new DateTime(2016, 2, 10),
             EndDate = new DateTime(2016, 2, 11),

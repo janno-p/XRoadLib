@@ -22,8 +22,9 @@ namespace XRoadLib.Extensions.AspNetCore
         {
             return builder.MapGet(template, async context =>
             {
-                using (var handler = context.RequestServices.GetRequiredService<THandler>())
-                    await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
+                using var handler = context.RequestServices.GetRequiredService<THandler>();
+
+                await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
             });
         }
 
@@ -42,33 +43,38 @@ namespace XRoadLib.Extensions.AspNetCore
         {
             return builder.MapPost(template, async context =>
             {
-                using (var handler = context.RequestServices.GetRequiredService<THandler>())
-                    await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
+                using var handler = context.RequestServices.GetRequiredService<THandler>();
+
+                await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
             });
         }
 
         public static async Task ExecuteWsdlRequest<T>(this HttpContext context) where T : IServiceManager
         {
-            using (var handler = new WebServiceDescriptionHandler(context.RequestServices.GetRequiredService<T>()))
-                await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
+            using var handler = new WebServiceDescriptionHandler(context.RequestServices.GetRequiredService<T>());
+
+            await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
         }
 
         public static async Task ExecuteWebServiceRequest<T>(this HttpContext context) where T : IServiceManager
         {
-            using (var handler = new WebServiceRequestHandler(context.RequestServices, context.RequestServices.GetRequiredService<T>()))
-                await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
+            using var handler = new WebServiceRequestHandler(context.RequestServices, context.RequestServices.GetRequiredService<T>());
+
+            await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
         }
 
         private static async Task ExecuteWsdlRequestDelegate(HttpContext context, IServiceManager serviceManager)
         {
-            using (var handler = new WebServiceDescriptionHandler(serviceManager))
-                await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
+            using var handler = new WebServiceDescriptionHandler(serviceManager);
+
+            await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
         }
 
         private static async Task ExecuteWebServiceRequestDelegate(HttpContext context, IServiceManager serviceManager)
         {
-            using (var handler = new WebServiceRequestHandler(context.RequestServices, serviceManager))
-                await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
+            using var handler = new WebServiceRequestHandler(context.RequestServices, serviceManager);
+
+            await XRoadLibMiddleware.Invoke(context, handler).ConfigureAwait(false);
         }
     }
 }

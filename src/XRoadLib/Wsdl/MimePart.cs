@@ -6,7 +6,7 @@ namespace XRoadLib.Wsdl
 {
     public class MimePart : ServiceDescriptionFormatExtension
     {
-        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new List<ServiceDescriptionFormatExtension>();
+        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new();
 
         internal override async Task WriteAsync(XmlWriter writer)
         {

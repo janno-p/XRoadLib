@@ -11,7 +11,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Producer namespace of exported X-Road schema.
         /// </summary>
-        protected readonly string producerNamespace;
+        protected readonly string ProducerNamespace;
 
         /// <inheritdoc />
         public abstract string XRoadPrefix { get; }
@@ -24,7 +24,7 @@ namespace XRoadLib.Schema
         /// </summary>
         protected AbstractSchemaExporter(string producerNamespace)
         {
-            this.producerNamespace = producerNamespace;
+            this.ProducerNamespace = producerNamespace;
         }
 
         /// <inheritdoc />
@@ -58,7 +58,7 @@ namespace XRoadLib.Schema
         /// <inheritdoc />
         public virtual void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)
         {
-            protocolDefinition.ProducerNamespace = producerNamespace;
+            protocolDefinition.ProducerNamespace = ProducerNamespace;
         }
 
         /// <inheritdoc />

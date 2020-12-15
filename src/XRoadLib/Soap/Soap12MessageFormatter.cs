@@ -88,7 +88,7 @@ namespace XRoadLib.Soap
                 },
                 Reason = new List<Soap12FaultReasonText>
                 {
-                    new Soap12FaultReasonText
+                    new()
                     {
                         LanguageCode = "en",
                         Text = exception?.Message ?? "Unexpected error occurred."

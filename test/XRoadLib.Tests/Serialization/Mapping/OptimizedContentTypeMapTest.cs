@@ -11,7 +11,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
 {
     public class OptimizedContentTypeMapTest : TypeMapTestBase
     {
-        private static readonly OptimizedContentTypeMap OptimizedContentTypeMap = new OptimizedContentTypeMap(new ContentTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<Stream>("base64")));
+        private static readonly OptimizedContentTypeMap OptimizedContentTypeMap = new(new ContentTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<Stream>("base64")));
         private static readonly Func<string, Task<object>> DeserializeOptimizedContentValueAsync = x => DeserializeValueAsync(OptimizedContentTypeMap, x);
 
         [Fact]

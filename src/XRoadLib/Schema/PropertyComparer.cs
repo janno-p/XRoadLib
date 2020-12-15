@@ -5,7 +5,7 @@ namespace XRoadLib.Schema
 {
     public class PropertyComparer : IComparer<PropertyDefinition>
     {
-        public static PropertyComparer Instance { get; } = new PropertyComparer();
+        public static PropertyComparer Instance { get; } = new();
 
         private PropertyComparer()
         { }

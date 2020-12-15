@@ -8,7 +8,7 @@ namespace XRoadLib.Wsdl
     {
         protected override string ElementName { get; } = "operation";
 
-        public List<OperationMessage> Messages { get; } = new List<OperationMessage>();
+        public List<OperationMessage> Messages { get; } = new();
 
         protected override async Task WriteElementsAsync(XmlWriter writer)
         {

@@ -10,9 +10,9 @@ namespace XRoadLib.Wsdl
         protected abstract string ElementName { get; }
 
         public XmlElement DocumentationElement { get; set; }
-        public List<XmlAttribute> ExtensibleAttributes { get; } = new List<XmlAttribute>();
-        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new List<ServiceDescriptionFormatExtension>();
-        public Dictionary<string, string> Namespaces { get; } = new Dictionary<string, string>();
+        public List<XmlAttribute> ExtensibleAttributes { get; } = new();
+        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new();
+        public Dictionary<string, string> Namespaces { get; } = new();
 
         public string Documentation
         {

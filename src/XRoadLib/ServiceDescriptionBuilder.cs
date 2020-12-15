@@ -49,7 +49,7 @@ namespace XRoadLib
         private readonly string _xRoadNamespace;
         private readonly IHeaderDefinition _headerDefinition;
 
-        private readonly XmlDocument _document = new XmlDocument();
+        private readonly XmlDocument _document = new();
 
         /// <summary>
         /// Initialize builder with contract details.

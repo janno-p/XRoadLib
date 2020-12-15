@@ -9,7 +9,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
 {
     public abstract class TypeMapTestBase
     {
-        protected static readonly SchemaDefinitionProvider SchemaDefinitionProvider = new SchemaDefinitionProvider(new DefaultSchemaExporter("urn:some-namespace", typeof(Contract.Class1).Assembly));
+        protected static readonly SchemaDefinitionProvider SchemaDefinitionProvider = new(new DefaultSchemaExporter("urn:some-namespace", typeof(Contract.Class1).Assembly));
 
         protected static Task<object> DeserializeValueAsync(ITypeMap typeMap, object value)
         {

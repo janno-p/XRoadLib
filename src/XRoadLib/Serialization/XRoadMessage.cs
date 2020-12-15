@@ -20,7 +20,7 @@ namespace XRoadLib.Serialization
     {
         public IServiceManager ServiceManager { get; internal set; }
 
-        private readonly List<XRoadAttachment> _attachments = new List<XRoadAttachment>();
+        private readonly List<XRoadAttachment> _attachments = new();
 
         /// <summary>
         /// When enabled, serialization/deserialization process applies filter specified in
