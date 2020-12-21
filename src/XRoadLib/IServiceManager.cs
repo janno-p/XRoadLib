@@ -4,7 +4,6 @@ using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Styles;
-using XRoadLib.Wsdl;
 
 namespace XRoadLib
 {
@@ -64,9 +63,10 @@ namespace XRoadLib
         /// <summary>
         /// Generates service description based on current schema definition.
         /// </summary>
+        /// <param name="writer" />
         /// <param name="operationFilter">Allows to filter out unwanted operations which should not appear in service description.</param>
         /// <param name="version">Global DTO version of wanted service description.</param>
         /// <returns>Service description instance of current schema definition.</returns>
-        ServiceDescription CreateServiceDescription(Func<OperationDefinition, bool> operationFilter = null, uint? version = null);
+        Task WriteServiceDefinitionAsync(XmlWriter writer, Func<OperationDefinition, bool> operationFilter = null, uint? version = null);
     }
 }

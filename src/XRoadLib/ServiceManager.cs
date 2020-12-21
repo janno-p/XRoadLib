@@ -6,7 +6,6 @@ using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Styles;
-using XRoadLib.Wsdl;
 
 namespace XRoadLib
 {
@@ -58,7 +57,7 @@ namespace XRoadLib
         }
 
         /// <inheritdoc />
-        public virtual ServiceDescription CreateServiceDescription(Func<OperationDefinition, bool> operationFilter = null, uint? version = null)
+        public virtual async Task WriteServiceDefinitionAsync(XmlWriter writer, Func<OperationDefinition, bool> operationFilter = null, uint? version = null)
         {
             if (!version.HasValue && ProtocolDefinition.SupportedVersions.Any())
                 throw new SchemaDefinitionException("Version value is required to generate service description.");
@@ -68,7 +67,11 @@ namespace XRoadLib
 
             var producerDefinition = new ServiceDescriptionBuilder(_schemaDefinitionProvider, operationFilter, version);
 
-            return producerDefinition.GetServiceDescription();
+            await writer.WriteStartDocumentAsync().ConfigureAwait(false);
+            await producerDefinition.GetServiceDescription().WriteAsync(writer).ConfigureAwait(false);
+            await writer.WriteEndDocumentAsync().ConfigureAwait(false);
+
+            await writer.FlushAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc />

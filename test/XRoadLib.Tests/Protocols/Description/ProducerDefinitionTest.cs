@@ -2,8 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
-using XRoadLib.Extensions;
+using XRoadLib.Serialization;
 using Xunit;
 
 namespace XRoadLib.Tests.Protocols.Description
@@ -88,7 +89,8 @@ namespace XRoadLib.Tests.Protocols.Description
         private static async Task<XDocument> GetDocumentAsync(IServiceManager serviceManager, uint version)
         {
             using var stream = new MemoryStream();
-            await serviceManager.CreateServiceDescription(version: version).WriteAsync(stream);
+            using var writer = XmlWriter.Create(stream, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 });
+            await serviceManager.WriteServiceDefinitionAsync(writer, version: version);
             stream.Position = 0;
             return XDocument.Load(stream);
         }
