@@ -6,13 +6,14 @@ using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Tests.Contract;
 using Xunit;
 
 namespace XRoadLib.Tests.Serialization.Mapping
 {
     public class StringTypeMapTest : TypeMapTestBase
     {
-        private static readonly ITypeMap TypeMap = new StringTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<string>("string"));
+        private static readonly ITypeMap TypeMap = new StringTypeMap(SchemaProvider.GetSimpleTypeDefinition<string>("string"));
 
         private readonly Func<string, Task<object>> _deserializeValueAsync = x => DeserializeValueAsync(TypeMap, x);
         private readonly Func<object, Task<string>> _serializeValueAsync = x => SerializeValueAsync(TypeMap, x);
@@ -63,7 +64,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
         {
             var stream = new StringBuilder();
 
-            var protocol = new ServiceManager("4.0", new DefaultSchemaExporter("urn:some-namespace", typeof(Contract.Class1).Assembly));
+            var protocol = new ServiceManager("4.0", new DefaultSchemaProvider("urn:some-namespace", typeof(Class1).Assembly));
 
             using (var textWriter = new StringWriter(stream))
             using (var writer = XmlWriter.Create(textWriter, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))

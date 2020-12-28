@@ -12,7 +12,7 @@ namespace XRoadLib
     public class ServiceManager : IServiceManager
     {
         private readonly IDictionary<uint, ISerializer> _serializers = new Dictionary<uint, ISerializer>();
-        private readonly SchemaDefinitionProvider _schemaDefinitionProvider;
+        private readonly ISchemaProvider _schemaProvider;
 
         /// <inheritdoc />
         public string Name { get; }
@@ -36,22 +36,19 @@ namespace XRoadLib
         /// <summary>
         /// Initializes new X-Road service manager instance.
         /// <param name="name">Identifies service manager instance.</param>
-        /// <param name="schemaExporter">Schema customization provider.</param>
+        /// <param name="schemaProvider">Schema customization provider.</param>
         /// </summary>
-        public ServiceManager(string name, ISchemaExporter schemaExporter)
+        public ServiceManager(string name, ISchemaProvider schemaProvider)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException(nameof(name));
 
-            if (schemaExporter == null)
-                throw new ArgumentNullException(nameof(schemaExporter));
+            _schemaProvider = schemaProvider ?? throw new ArgumentNullException(nameof(schemaProvider));
 
             Name = name;
 
-            _schemaDefinitionProvider = new SchemaDefinitionProvider(schemaExporter);
-
-            HeaderDefinition = _schemaDefinitionProvider.GetXRoadHeaderDefinition();
-            ProtocolDefinition = _schemaDefinitionProvider.ProtocolDefinition;
+            HeaderDefinition = _schemaProvider.GetXRoadHeaderDefinition();
+            ProtocolDefinition = _schemaProvider.GetProtocolDefinition();
 
             SetContractAssembly();
         }
@@ -65,7 +62,7 @@ namespace XRoadLib
             if (version.HasValue && !ProtocolDefinition.SupportedVersions.Contains(version.Value))
                 throw new SchemaDefinitionException($"Version {version.Value} is not supported.");
 
-            var producerDefinition = new ServiceDescriptionBuilder(_schemaDefinitionProvider, operationFilter, version);
+            var producerDefinition = new ServiceDescriptionBuilder(_schemaProvider, operationFilter, version);
 
             await writer.WriteStartDocumentAsync().ConfigureAwait(false);
             await producerDefinition.GetServiceDescription().WriteAsync(writer).ConfigureAwait(false);
@@ -114,12 +111,12 @@ namespace XRoadLib
 
             if (!ProtocolDefinition.SupportedVersions.Any())
             {
-                _serializers.Add(0, new Serializer(_schemaDefinitionProvider));
+                _serializers.Add(0, new Serializer(_schemaProvider));
                 return;
             }
 
             foreach (var dtoVersion in ProtocolDefinition.SupportedVersions)
-                _serializers.Add(dtoVersion, new Serializer(_schemaDefinitionProvider, dtoVersion));
+                _serializers.Add(dtoVersion, new Serializer(_schemaProvider, dtoVersion));
         }
     }
 }

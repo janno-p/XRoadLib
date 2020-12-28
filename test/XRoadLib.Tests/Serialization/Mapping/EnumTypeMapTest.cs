@@ -9,7 +9,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
 {
     public class EnumTypeMapTest : TypeMapTestBase
     {
-        private static readonly ITypeMap TypeMap = new EnumTypeMap(SchemaDefinitionProvider.GetTypeDefinition(typeof(Gender)));
+        private static readonly ITypeMap TypeMap = new EnumTypeMap(SchemaProvider.GetTypeDefinition(typeof(Gender)));
 
         private readonly Func<string, Task<object>> _deserializeValueAsync = x => DeserializeValueAsync(TypeMap, x);
 

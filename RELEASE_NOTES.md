@@ -1,3 +1,8 @@
+#### 2.0.0-alpha002 - Unreleased
+
+* Operation definitions get their own corresponding runtime base type: `XRoadOperation`.
+* Combine functionality of `SchemaDefinitionProvider` and `ISchemaExporter`.
+
 #### 2.0.0-alpha001 - 14.12.2020
 
 * Removed generic ServiceManager (HeaderDefinition provides header implementation from this point on).

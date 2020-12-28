@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Tests.Contract;
 
 namespace XRoadLib.Tests.Serialization.Mapping
 {
     public abstract class TypeMapTestBase
     {
-        protected static readonly SchemaDefinitionProvider SchemaDefinitionProvider = new(new DefaultSchemaExporter("urn:some-namespace", typeof(Contract.Class1).Assembly));
+        protected static readonly ISchemaProvider SchemaProvider = new DefaultSchemaProvider("urn:some-namespace", typeof(Class1).Assembly);
 
         protected static Task<object> DeserializeValueAsync(ITypeMap typeMap, object value)
         {

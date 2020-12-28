@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
@@ -40,7 +41,7 @@ namespace XRoadLib.Tests.Serialization
 
                 var operationType = operation.GetType();
 
-                var operationDefinition = new OperationDefinition("Method", null, operationType);
+                var operationDefinition = new OperationDefinition("Method", null, operationType, null);
                 var requestDefinition = new RequestDefinition(operationDefinition, _ => false);
 
                 var typeMap = Globals.ServiceManager.GetSerializer(dtoVersion).GetTypeMap(operationType.GetXRoadOperationRequestType());

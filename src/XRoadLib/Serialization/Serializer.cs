@@ -16,7 +16,7 @@ namespace XRoadLib.Serialization
     public sealed class Serializer : ISerializer
     {
         private readonly Assembly _contractAssembly;
-        private readonly SchemaDefinitionProvider _schemaDefinitionProvider;
+        private readonly ISchemaProvider _schemaProvider;
         private readonly ICollection<string> _availableFilters;
         private readonly string _producerNamespace;
 
@@ -27,13 +27,15 @@ namespace XRoadLib.Serialization
 
         public uint? Version { get; }
 
-        public Serializer(SchemaDefinitionProvider schemaDefinitionProvider, uint? version = null)
+        public Serializer(ISchemaProvider schemaProvider, uint? version = null)
         {
-            _schemaDefinitionProvider = schemaDefinitionProvider;
+            _schemaProvider = schemaProvider;
 
-            _availableFilters = schemaDefinitionProvider.ProtocolDefinition.EnabledFilters;
-            _contractAssembly = schemaDefinitionProvider.ProtocolDefinition.ContractAssembly;
-            _producerNamespace = schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace;
+            var protocolDefinition = schemaProvider.GetProtocolDefinition();
+
+            _availableFilters = protocolDefinition.EnabledFilters;
+            _contractAssembly = protocolDefinition.ContractAssembly;
+            _producerNamespace = protocolDefinition.ProducerNamespace;
 
             Version = version;
 
@@ -80,11 +82,11 @@ namespace XRoadLib.Serialization
 
         private IServiceMap AddServiceMap(XName qualifiedName)
         {
-            var operationDefinition = GetOperationDefinition(_contractAssembly, qualifiedName);
+            var operationDefinition = GetOperationDefinition(qualifiedName);
             if (operationDefinition == null || qualifiedName.NamespaceName != operationDefinition.Name.NamespaceName)
                 throw new UnknownOperationException(qualifiedName);
 
-            var requestDefinition = _schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
+            var requestDefinition = _schemaProvider.GetRequestDefinition(operationDefinition);
             var inputTypeMap = GetParticleDefinitionTypeMap(requestDefinition, null);
 
             var outputTuple = GetReturnValueTypeMap(operationDefinition);
@@ -104,14 +106,14 @@ namespace XRoadLib.Serialization
             return _serviceMaps.GetOrAdd(qualifiedName, serviceMap);
         }
 
-        private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
+        private OperationDefinition GetOperationDefinition(XName qualifiedName)
         {
-            return typeAssembly?.GetTypes()
+            return _contractAssembly?.GetTypes()
                                .Where(t => t.IsXRoadOperation())
                                .Where(x => x.GetOperations()
                                             .Any(m => m.GetNameOrDefault(x) == qualifiedName.LocalName
                                                       && (!Version.HasValue || m.ExistsInVersion(Version.Value))))
-                               .Select(t => _schemaDefinitionProvider.GetOperationDefinition(t, qualifiedName, Version))
+                               .Select(t => _schemaProvider.GetOperationDefinition(t, qualifiedName, Version))
                                .SingleOrDefault(d => d.State != DefinitionState.Ignored);
         }
 
@@ -149,7 +151,7 @@ namespace XRoadLib.Serialization
             if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.ExistsInVersion(Version.Value))
                 throw new SchemaDefinitionException($"The runtime type `{runtimeType.Name}` is not defined for DTO version `{Version.Value}`.");
 
-            var typeDefinition = _schemaDefinitionProvider.GetTypeDefinition(runtimeType);
+            var typeDefinition = _schemaProvider.GetTypeDefinition(runtimeType);
 
             ITypeMap typeMap;
 
@@ -224,7 +226,7 @@ namespace XRoadLib.Serialization
             else
                 typeMap = (ITypeMap)Activator.CreateInstance(typeof(AllTypeMap<>).MakeGenericType(typeDefinition.Type), this, typeDefinition);
 
-            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.Type), this, _schemaDefinitionProvider.GetCollectionDefinition(typeDefinition), typeMap);
+            var arrayTypeMap = (ITypeMap)Activator.CreateInstance(typeof(ArrayTypeMap<>).MakeGenericType(typeDefinition.Type), this, _schemaProvider.GetCollectionDefinition(typeDefinition), typeMap);
             var typeMapTuple = Tuple.Create(typeMap, arrayTypeMap);
 
             if (!(typeMap is ICompositeTypeMap compositeTypeMap))
@@ -246,7 +248,7 @@ namespace XRoadLib.Serialization
             if (!qualifiedName.NamespaceName.StartsWith("http://"))
             {
                 var type = _contractAssembly.GetType($"{qualifiedName.Namespace}.{qualifiedName.LocalName}");
-                return type != null && type.IsXRoadSerializable() ? _schemaDefinitionProvider.GetTypeDefinition(type) : null;
+                return type != null && type.IsXRoadSerializable() ? _schemaProvider.GetTypeDefinition(type) : null;
             }
 
             var typeDefinition =
@@ -254,7 +256,7 @@ namespace XRoadLib.Serialization
                     .GetTypes()
                     .Where(type => type.IsXRoadSerializable())
                     .Where(type => !Version.HasValue || type.ExistsInVersion(Version.Value))
-                    .Select(type => _schemaDefinitionProvider.GetTypeDefinition(type))
+                    .Select(type => _schemaProvider.GetTypeDefinition(type))
                     .SingleOrDefault(definition => definition.Name == qualifiedName);
 
             if (typeDefinition != null)
@@ -282,22 +284,23 @@ namespace XRoadLib.Serialization
                 case "System.TimeSpan": return XName.Get("duration", NamespaceConstants.Xsd);
             }
 
-            if (ReferenceEquals(type.Assembly, _contractAssembly))
-                return XName.Get(type.Name, _producerNamespace);
+            var typeMap = GetTypeMap(type);
+            if (typeMap != null)
+                return typeMap.Definition.Name;
 
             throw new SchemaDefinitionException($"XML namespace of runtime type `{type.FullName}` is undefined.");
         }
 
         private void AddSystemType<T>(string typeName, Func<TypeDefinition, ITypeMap> createTypeMap)
         {
-            var typeDefinition = _schemaDefinitionProvider.GetSimpleTypeDefinition<T>(typeName);
+            var typeDefinition = _schemaProvider.GetSimpleTypeDefinition<T>(typeName);
 
             var typeMap = GetCustomTypeMap(typeDefinition.TypeMapType) ?? createTypeMap(typeDefinition);
 
             if (typeDefinition.Type != null)
                 _runtimeTypeMaps.TryAdd(typeDefinition.Type, typeMap);
 
-            var collectionDefinition = _schemaDefinitionProvider.GetCollectionDefinition(typeDefinition);
+            var collectionDefinition = _schemaProvider.GetCollectionDefinition(typeDefinition);
             var arrayTypeMap = GetCustomTypeMap(collectionDefinition.TypeMapType) ?? new ArrayTypeMap<T>(this, collectionDefinition, typeMap);
 
             if (collectionDefinition.Type != null)
@@ -310,7 +313,7 @@ namespace XRoadLib.Serialization
         private IEnumerable<Tuple<PropertyDefinition, ITypeMap>> GetRuntimeProperties(TypeDefinition typeDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
         {
             return typeDefinition.Type
-                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, Version, p => _schemaDefinitionProvider.GetPropertyDefinition(p, typeDefinition))
+                                 .GetAllPropertiesSorted(typeDefinition.ContentComparer, Version, p => _schemaProvider.GetPropertyDefinition(p, typeDefinition))
                                  .Where(d => d.Content.State != DefinitionState.Ignored)
                                  .Select(p =>
                                  {
@@ -342,7 +345,7 @@ namespace XRoadLib.Serialization
 
         private Tuple<ResponseDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
         {
-            var returnDefinition = _schemaDefinitionProvider.GetResponseDefinition(operationDefinition, xRoadFaultPresentation);
+            var returnDefinition = _schemaProvider.GetResponseDefinition(operationDefinition, xRoadFaultPresentation);
             if (returnDefinition.Content.State == DefinitionState.Ignored)
                 return null;
 

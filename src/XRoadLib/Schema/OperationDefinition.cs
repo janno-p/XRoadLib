@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Xml.Linq;
-using XRoadLib.Extensions;
+using XRoadLib.Attributes;
 using XRoadLib.Serialization.Mapping;
 
 namespace XRoadLib.Schema
@@ -59,7 +58,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Customized export options defined by extension.
         /// </summary>
-        public ISchemaExporter ExtensionSchemaExporter { get; }
+        public ISchemaProvider ExtensionSchemaProvider { get; set; }
 
         /// <summary>
         /// Customized SOAPAction header value for this operation.
@@ -69,12 +68,9 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes new definition object using default settings.
         /// </summary>
-        public OperationDefinition(XName qualifiedName, uint? version, Type operationType)
+        public OperationDefinition(XName qualifiedName, uint? version, Type operationType, XRoadOperationAttribute attribute)
         {
             OperationType = operationType;
-
-            var attribute = operationType.GetOperations().SingleOrDefault(x => qualifiedName.LocalName == x.GetNameOrDefault(operationType));
-
             Name = qualifiedName;
             IsAbstract = (attribute?.IsAbstract).GetValueOrDefault();
             InputBinaryMode = (attribute?.InputBinaryMode).GetValueOrDefault(BinaryMode.Xml);
@@ -86,7 +82,6 @@ namespace XRoadLib.Schema
             OutputMessageName = $"{qualifiedName.LocalName}Response";
             Documentation = new DocumentationDefinition(operationType);
             ServiceMapType = attribute?.ServiceMapType ?? typeof(ServiceMap);
-            ExtensionSchemaExporter = attribute?.SchemaExporter;
             SoapAction = attribute?.SoapAction ?? string.Empty;
         }
     }

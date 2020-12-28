@@ -46,7 +46,7 @@ namespace XRoadLib.Attributes
         /// <summary>
         /// Provides extension specific customizations for the schema.
         /// </summary>
-        public virtual ISchemaExporter SchemaExporter { get; } = null;
+        public virtual ISchemaProvider SchemaProvider { get; } = null;
 
         /// <summary>
         /// Attachment serialization mode for service input. Available options are `Xml` (binary is serialized inside XML document

@@ -15,22 +15,22 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
     {
         private const string XroadProtobufSchema = "https://e-rik.github.io/schemas/xroad-protobuf.xsd";
 
-        private readonly Lazy<ISchemaExporter> _schemaExporter;
+        private readonly Lazy<ISchemaProvider> _schemaProvider;
 
         /// <inheritdoc />
         public override Type ServiceMapType { get; } = typeof(ProtoBufServiceMap);
 
         /// <inheritdoc />
-        public override ISchemaExporter SchemaExporter => _schemaExporter.Value;
+        public override ISchemaProvider SchemaProvider => _schemaProvider.Value;
 
         /// <inheritdoc />
         public XRoadProtoBufOperationAttribute(string name, Type reflectionType)
             : base(name)
         {
-            _schemaExporter = new Lazy<ISchemaExporter>(() => new ProtoBufSchemaExporter(reflectionType));
+            _schemaProvider = new Lazy<ISchemaProvider>(() => new ProtoBufSchemaExporter(reflectionType));
         }
 
-        private class ProtoBufSchemaExporter : AbstractSchemaExporter
+        private class ProtoBufSchemaExporter : DefaultSchemaProvider
         {
             private readonly Type _reflectionType;
 
@@ -38,31 +38,43 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
             public override string XRoadNamespace => string.Empty;
 
             public ProtoBufSchemaExporter(Type reflectionType)
-                : base(string.Empty)
+                : base(string.Empty, null)
             {
                 _reflectionType = reflectionType;
             }
 
-            public override void ExportOperationDefinition(OperationDefinition operationDefinition)
+            public override OperationDefinition GetOperationDefinition(Type operationType, XName qualifiedName, uint? version)
             {
+                var operationDefinition = base.GetOperationDefinition(operationType, qualifiedName, version);
+
                 operationDefinition.CopyRequestPartToResponse = false;
+
+                return operationDefinition;
             }
 
-            public override void ExportRequestDefinition(RequestDefinition requestDefinition)
+            public override RequestDefinition GetRequestDefinition(OperationDefinition operationDefinition)
             {
+                var requestDefinition = base.GetRequestDefinition(operationDefinition);
+                
                 requestDefinition.Content.RuntimeType = typeof(Stream);
                 requestDefinition.Content.UseXop = true;
                 requestDefinition.Content.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XroadProtobufSchema), GetPrototypeName()) };
+
+                return requestDefinition;
             }
 
-            public override void ExportResponseDefinition(ResponseDefinition responseDefinition)
+            public override ResponseDefinition GetResponseDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation)
             {
+                var responseDefinition = base.GetResponseDefinition(operationDefinition, xRoadFaultPresentation);
+                
                 responseDefinition.Content.RuntimeType = typeof(Stream);
                 responseDefinition.Content.UseXop = true;
                 responseDefinition.Content.CustomAttributes = new[] { Tuple.Create(XName.Get("schema", XroadProtobufSchema), GetPrototypeName()) };
+
+                return responseDefinition;
             }
 
-            public override string ExportSchemaLocation(string namespaceName)
+            public override string GetSchemaLocation(string namespaceName)
             {
                 return namespaceName.Equals(XroadProtobufSchema) ? XroadProtobufSchema : null;
             }
