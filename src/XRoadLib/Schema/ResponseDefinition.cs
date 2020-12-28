@@ -57,7 +57,7 @@ namespace XRoadLib.Schema
         public ResponseDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
         {
             DeclaringOperationDefinition = declaringOperationDefinition;
-            ResponseType = declaringOperationDefinition.RequestType.GetResponseType();
+            ResponseType = declaringOperationDefinition.OperationType.GetXRoadOperationResponseType();
             WrapperElementName = XName.Get($"{declaringOperationDefinition.Name.LocalName}Response", declaringOperationDefinition.Name.NamespaceName);
 
             var targetNamespace = declaringOperationDefinition.Name.NamespaceName;

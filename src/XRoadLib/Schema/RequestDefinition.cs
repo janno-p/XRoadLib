@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Linq;
+using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
 {
@@ -29,7 +30,7 @@ namespace XRoadLib.Schema
         public RequestDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
         {
             DeclaringOperationDefinition = declaringOperationDefinition;
-            RequestType = DeclaringOperationDefinition.RequestType;
+            RequestType = DeclaringOperationDefinition.OperationType.GetXRoadOperationRequestType();
             WrapperElementName = declaringOperationDefinition.Name;
 
             var targetNamespace = declaringOperationDefinition.Name.NamespaceName;

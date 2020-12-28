@@ -64,6 +64,8 @@ namespace XRoadLib.Attributes
         /// SOAPAction header value for this service.
         /// </summary>
         public virtual string SoapAction { get; set; }
+        
+        public XRoadOperationAttribute() { }
 
         /// <summary>
         /// Initializes new operation definition.

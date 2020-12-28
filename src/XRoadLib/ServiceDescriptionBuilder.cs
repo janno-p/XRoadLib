@@ -193,7 +193,7 @@ namespace XRoadLib
                    .GetOperationContracts()
                    .SelectMany(x => x.Operations
                                      .Where(op => !_version.HasValue || op.ExistsInVersion(_version.Value))
-                                     .Select(op => _schemaDefinitionProvider.GetOperationDefinition(x.RequestType, XName.Get(op.Name, targetNamespace), _version)))
+                                     .Select(op => _schemaDefinitionProvider.GetOperationDefinition(x.OperationType, XName.Get(op.GetNameOrDefault(x.OperationType), targetNamespace), _version)))
                    .Where(_operationFilter ?? (def => def.State == DefinitionState.Default))
                    .OrderBy(def => def.Name.LocalName.ToLower());
         }

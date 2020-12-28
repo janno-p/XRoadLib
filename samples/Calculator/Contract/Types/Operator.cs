@@ -1,11 +1,11 @@
 ﻿using XRoadLib.Attributes;
 
-namespace Calculator.Contract
+namespace Calculator.Contract.Types
 {
     [XRoadSerializable]
-    [XRoadTitle("en", "Operation type")]
+    [XRoadTitle("en", "Operator type")]
     [XRoadNotes("en", "Defines operations to perform on given arguments")]
-    public enum Operation
+    public enum Operator
     {
         [XRoadTitle("en", "Add")]
         Add,

@@ -1,4 +1,6 @@
 ﻿using XRoadLib.Attributes;
+using XRoadLib.Headers;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
@@ -9,4 +11,7 @@ namespace XRoadLib.Tests.Contract
         // ReSharper disable once InconsistentNaming
         public long ObjektID { get; set; }
     }
+    
+    [XRoadOperation]
+    public class Service4 : XRoadOperation<IgnoreCaseClass, UnitResponse, XRoadHeader> { }
 }

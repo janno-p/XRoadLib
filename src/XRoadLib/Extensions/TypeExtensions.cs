@@ -22,11 +22,30 @@ namespace XRoadLib.Extensions
         public static bool IsXRoadSerializable(this Type type) =>
             type.IsDefined(typeof(XRoadSerializableAttribute), true);
 
-        public static bool IsXRoadRequest(this Type type) =>
-            type.GetInterfaces().SingleOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IXRoadRequest<>)) != null;
+        public static bool IsXRoadOperation(this Type type) =>
+            type.GetXRoadOperationBaseType() != null;
 
-        public static Type GetResponseType(this Type type) =>
-            type.GetInterfaces().SingleOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IXRoadRequest<>))?.GetGenericArguments().Single();
+        public static Type GetXRoadOperationBaseType(this Type type)
+        {
+            var genericType = typeof(XRoadOperation<,,>);
+
+            var currentType = type;
+            while (currentType != null)
+            {
+                if (currentType.IsGenericType && currentType.GetGenericTypeDefinition() == genericType)
+                    return currentType;
+
+                currentType = currentType.BaseType;
+            }
+
+            return null;
+        }
+
+        public static Type GetXRoadOperationRequestType(this Type type) =>
+            type.GetXRoadOperationBaseType()?.GetGenericArguments()[0];
+        
+        public static Type GetXRoadOperationResponseType(this Type type) =>
+            type.GetXRoadOperationBaseType()?.GetGenericArguments()[1];
 
         private static IEnumerable<PropertyDefinition> GetTypeProperties(this Type type, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition) =>
             type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
@@ -55,25 +74,25 @@ namespace XRoadLib.Extensions
             return properties;
         }
 
-        public static IEnumerable<XRoadTitleAttribute> GetXRoadTitles(this ICustomAttributeProvider customAttributeProvider, DocumentationTarget target)
+        public static IEnumerable<XRoadTitleAttribute> GetXRoadTitles(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(XRoadTitleAttribute), false)
                                           .OfType<XRoadTitleAttribute>()
-                                          .Where(x => x.Target == target && !string.IsNullOrWhiteSpace(x.Value));
+                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
         }
 
-        public static IEnumerable<XRoadNotesAttribute> GetXRoadNotes(this ICustomAttributeProvider customAttributeProvider, DocumentationTarget target)
+        public static IEnumerable<XRoadNotesAttribute> GetXRoadNotes(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(XRoadNotesAttribute), false)
                                           .OfType<XRoadNotesAttribute>()
-                                          .Where(x => x.Target == target && !string.IsNullOrWhiteSpace(x.Value));
+                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
         }
 
-        public static IEnumerable<XRoadTechNotesAttribute> GetXRoadTechNotes(this ICustomAttributeProvider customAttributeProvider, DocumentationTarget target)
+        public static IEnumerable<XRoadTechNotesAttribute> GetXRoadTechNotes(this ICustomAttributeProvider customAttributeProvider)
         {
             return customAttributeProvider.GetCustomAttributes(typeof(XRoadTechNotesAttribute), false)
                                           .OfType<XRoadTechNotesAttribute>()
-                                          .Where(x => x.Target == target && !string.IsNullOrWhiteSpace(x.Value));
+                                          .Where(x => !string.IsNullOrWhiteSpace(x.Value));
         }
 
         public static bool ExistsInVersion(this ICustomAttributeProvider provider, uint version)
@@ -216,5 +235,8 @@ namespace XRoadLib.Extensions
 
         internal static bool HasBaseType(this Type type) =>
             type.BaseType != null && type.BaseType != typeof(object);
+
+        internal static string GetNameOrDefault(this XRoadOperationAttribute attribute, Type operationType) =>
+            string.IsNullOrEmpty(attribute.Name) ? operationType.Name : attribute.Name;
     }
 }

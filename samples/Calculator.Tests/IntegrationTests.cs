@@ -5,7 +5,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Calculator.Contract;
+using Calculator.Contract.Operations;
+using Calculator.Contract.Types;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using XRoadLib;
@@ -173,7 +174,7 @@ namespace Calculator.Tests
                             new XElement(XName.Get("request"),
                                 new XElement("X", 13),
                                 new XElement("Y", 91),
-                                new XElement("Operation", "Multiply")
+                                new XElement("Operator", "Multiply")
                             )
                         )
                     )
@@ -207,20 +208,23 @@ namespace Calculator.Tests
 
             var service = new XRoadService(client, new CalculatorServiceManager());
 
-            using var response = await service.ExecuteAsync(
-                new CalculationRequest
+            var operation = new Calculate
+            {
+                Request = new CalculationRequest
                 {
-                    Operation = Operation.Multiply,
+                    Operator = Operator.Multiply,
                     X = 13,
                     Y = 91
                 },
-                new XRoadHeader
+                Header = new XRoadHeader
                 {
                     Client = new XRoadClientIdentifier(),
-                    Service = new XRoadServiceIdentifier { ServiceCode = "Calculate" },
+                    Service = new XRoadServiceIdentifier { ServiceCode = nameof(Calculate) },
                     ProtocolVersion = "4.0"
                 }
-            );
+            };
+
+            using var response = await service.RunOperationAsync(operation);
 
             Assert.Equal(1183, response.Result);
         }
@@ -240,15 +244,21 @@ test
 123 - 123213
 "));
 
-            using var response = await service.ExecuteAsync(
-                new FileCalculationRequest { InputFile = stream },
-                new XRoadHeader
+            var operation = new FileCalculation
+            {
+                Request = new FileCalculationRequest
+                {
+                    InputFile = stream
+                },
+                Header = new XRoadHeader
                 {
                     Client = new XRoadClientIdentifier(),
-                    Service = new XRoadServiceIdentifier { ServiceCode = "FileCalculation" },
+                    Service = new XRoadServiceIdentifier { ServiceCode = nameof(FileCalculation) },
                     ProtocolVersion = "4.0"
                 }
-            );
+            };
+
+            using var response = await service.RunOperationAsync(operation);
 
             response.Result.Position = 0;
             using var reader = new StreamReader(response.Result);
@@ -274,17 +284,22 @@ test
 
             await using var input = new MemoryStream(bytes);
 
-            using var response = await service.ExecuteAsync(
-                new FileTransferRequest
+            var operation = new FileTransfer
+            {
+                Request = new FileTransferRequest
                 {
                     Input = input
                 },
-                new XRoadHeader
+                Header = new XRoadHeader
                 {
                     Client = new XRoadClientIdentifier(),
                     Service = new XRoadServiceIdentifier { ServiceCode = "FileTransfer" },
                     ProtocolVersion = "4.0"
-                },
+                }
+            };
+
+            using var response = await service.RunOperationAsync(
+                operation,
                 new ServiceExecutionOptions { BinaryMode = BinaryMode.Attachment }
             );
 

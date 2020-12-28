@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
+using XRoadLib.Headers;
+using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract.Mapping
 {
@@ -18,8 +20,7 @@ namespace XRoadLib.Tests.Contract.Mapping
     }
 
     [XRoadSerializable]
-    [XRoadOperation("MergeArrayContent")]
-    public class MergeArrayContentRequest : IXRoadRequest
+    public class MergeArrayContentRequest
     {
         [XmlElement(Order = 1, DataType = "date")]
         public DateTime StartDate { get; set; }
@@ -31,4 +32,8 @@ namespace XRoadLib.Tests.Contract.Mapping
         [XRoadMergeContent]
         public WrapperType[] Content { get; set; }
     }
+    
+    [XRoadOperation]
+    public class MergeArrayContent : XRoadOperation<MergeArrayContentRequest, UnitResponse, XRoadHeader>
+    { }
 }

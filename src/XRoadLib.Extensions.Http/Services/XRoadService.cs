@@ -26,9 +26,12 @@ namespace XRoadLib.Extensions.Http.Services
         }
 
         /// <inheritdoc />
-        public virtual async Task<XRoadResponse<TResult>> ExecuteAsync<TResult>(IXRoadRequest<TResult> request, ISoapHeader header, ServiceExecutionOptions options = null)
+        public virtual async Task<XRoadResponse<TResult>> RunOperationAsync<TRequest, TResult, THeader>(XRoadOperation<TRequest, TResult, THeader> operation, ServiceExecutionOptions options = null)
+            where THeader : ISoapHeader
         {
             var messageFormatter = options?.MessageFormatter ?? new SoapMessageFormatter();
+
+            var header = operation.Header;
 
             using var message = new XRoadMessage(ServiceManager, header) { BinaryMode = options?.BinaryMode ?? BinaryMode.Xml };
 
@@ -48,7 +51,7 @@ namespace XRoadLib.Extensions.Http.Services
 
                 var operationName = XName.Get(options?.OperationName ?? serviceCode, ServiceManager.ProducerNamespace);
                 operationServiceMap = options?.ServiceMap ?? ServiceManager.GetSerializer(options?.Version ?? message.Version).GetServiceMap(operationName);
-                await operationServiceMap.SerializeRequestAsync(writer, request, message, options?.RequestNamespace).ConfigureAwait(false);
+                await operationServiceMap.SerializeRequestAsync(writer, operation.Request, message, options?.RequestNamespace).ConfigureAwait(false);
 
                 await writer.WriteEndElementAsync().ConfigureAwait(false);
 

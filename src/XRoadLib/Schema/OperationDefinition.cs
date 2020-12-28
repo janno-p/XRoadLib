@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
-using XRoadLib.Attributes;
 using XRoadLib.Extensions;
 using XRoadLib.Serialization.Mapping;
 
@@ -13,9 +12,9 @@ namespace XRoadLib.Schema
     public class OperationDefinition : Definition
     {
         /// <summary>
-        /// Runtime type implementing IXRoadRequest&lt;&gt;, which represents current operation.
+        /// Runtime type implementing XRoadOperation, which represents current operation.
         /// </summary>
-        public Type RequestType { get; }
+        public Type OperationType { get; }
 
         /// <summary>
         /// X-Road service version of the operation.
@@ -70,11 +69,11 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes new definition object using default settings.
         /// </summary>
-        public OperationDefinition(XName qualifiedName, uint? version, Type requestType)
+        public OperationDefinition(XName qualifiedName, uint? version, Type operationType)
         {
-            RequestType = requestType;
+            OperationType = operationType;
 
-            var attribute = requestType.GetOperations().SingleOrDefault(x => x.Name == qualifiedName.LocalName);
+            var attribute = operationType.GetOperations().SingleOrDefault(x => qualifiedName.LocalName == x.GetNameOrDefault(operationType));
 
             Name = qualifiedName;
             IsAbstract = (attribute?.IsAbstract).GetValueOrDefault();
@@ -85,7 +84,7 @@ namespace XRoadLib.Schema
             CopyRequestPartToResponse = true;
             InputMessageName = qualifiedName.LocalName;
             OutputMessageName = $"{qualifiedName.LocalName}Response";
-            Documentation = new DocumentationDefinition(requestType, DocumentationTarget.Operation);
+            Documentation = new DocumentationDefinition(operationType);
             ServiceMapType = attribute?.ServiceMapType ?? typeof(ServiceMap);
             ExtensionSchemaExporter = attribute?.SchemaExporter;
             SoapAction = attribute?.SoapAction ?? string.Empty;

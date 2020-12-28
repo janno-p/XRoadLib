@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using XRoadLib.Attributes;
+using XRoadLib.Headers;
 
 namespace XRoadLib.Tests.Contract.Wsdl
 {
@@ -13,10 +14,13 @@ namespace XRoadLib.Tests.Contract.Wsdl
     }
 
     [XRoadSerializable]
-    [XRoadOperation("Service2")]
-    public class ContainerType : IXRoadRequest<int>
+    public class ContainerType
     {
         public AnonymousType AnonymousProperty { get; set; }
         public string KnownProperty { get; set; }
     }
+
+    [XRoadOperation]
+    public class Service2 : XRoadOperation<ContainerType, int, XRoadHeader>
+    { }
 }

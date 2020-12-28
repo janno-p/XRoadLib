@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
@@ -120,7 +121,19 @@ namespace XRoadLib.Extensions.AspNetCore
         {
             var handlerFactory = ServiceProvider.GetRequiredService<HandlerFactory>();
 
-            return handlerFactory.Factory(ServiceProvider)(context.Parameters);
+            var operation = Activator.CreateInstance(context.ServiceMap.OperationDefinition.OperationType);
+
+            var setRequest = context.ServiceMap.OperationDefinition.OperationType.GetProperty("Request")?.GetSetMethod();
+            setRequest?.Invoke(operation, new[] { context.Parameters });
+
+            var setHeader = context.ServiceMap.OperationDefinition.OperationType.GetProperty("Header")?.GetSetMethod();
+            setHeader?.Invoke(operation, new object[] { context.Request.Header });
+            
+            var getAttachments = context.ServiceMap.OperationDefinition.OperationType.GetProperty("Attachments")?.GetGetMethod();
+            if (getAttachments != null)
+                ((List<XRoadAttachment>)getAttachments.Invoke(operation, new object[0])).AddRange(context.Request.AllAttachments);
+
+            return handlerFactory.Factory(ServiceProvider)(operation);
         }
 
         /// <summary>

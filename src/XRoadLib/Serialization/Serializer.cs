@@ -107,9 +107,9 @@ namespace XRoadLib.Serialization
         private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
         {
             return typeAssembly?.GetTypes()
-                               .Where(t => t.IsXRoadRequest())
+                               .Where(t => t.IsXRoadOperation())
                                .Where(x => x.GetOperations()
-                                            .Any(m => m.Name == qualifiedName.LocalName
+                                            .Any(m => m.GetNameOrDefault(x) == qualifiedName.LocalName
                                                       && (!Version.HasValue || m.ExistsInVersion(Version.Value))))
                                .Select(t => _schemaDefinitionProvider.GetOperationDefinition(t, qualifiedName, Version))
                                .SingleOrDefault(d => d.State != DefinitionState.Ignored);

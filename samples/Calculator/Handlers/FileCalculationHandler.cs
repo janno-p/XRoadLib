@@ -3,15 +3,17 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Calculator.Contract;
+using Calculator.Contract.Operations;
 using MediatR;
 
 namespace Calculator.Handlers
 {
-    public class FileCalculationRequestHandler : IRequestHandler<FileCalculationRequest, Stream>
+    public class FileCalculationHandler : IRequestHandler<FileCalculation, Stream>
     {
-        public async Task<Stream> Handle(FileCalculationRequest request, CancellationToken cancellationToken)
+        public async Task<Stream> Handle(FileCalculation operation, CancellationToken cancellationToken)
         {
+            var request = operation.Request;
+
             if (request.InputFile == null)
                 throw new ArgumentNullException(nameof(request.InputFile));
 

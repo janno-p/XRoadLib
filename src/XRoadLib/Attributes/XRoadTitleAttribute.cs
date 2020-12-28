@@ -11,8 +11,6 @@ namespace XRoadLib.Attributes
         public string LanguageCode { get; }
         public string Value { get; }
 
-        public DocumentationTarget Target { get; set; } = DocumentationTarget.Default;
-
         public XRoadTitleAttribute(string value)
         {
             Value = value;

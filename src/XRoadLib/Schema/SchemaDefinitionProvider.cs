@@ -158,9 +158,9 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Initializes default opeartion definition and applies customizations (if any).
         /// </summary>
-        public OperationDefinition GetOperationDefinition(Type requestType, XName qualifiedName, uint? version)
+        public OperationDefinition GetOperationDefinition(Type operationType, XName qualifiedName, uint? version)
         {
-            var operationDefinition = new OperationDefinition(qualifiedName, version, requestType);
+            var operationDefinition = new OperationDefinition(qualifiedName, version, operationType);
 
             operationDefinition.ExtensionSchemaExporter?.ExportOperationDefinition(operationDefinition);
             _schemaExporter.ExportOperationDefinition(operationDefinition);

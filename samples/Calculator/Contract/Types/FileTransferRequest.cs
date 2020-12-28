@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using XRoadLib.Attributes;
 
-namespace Calculator.Contract
+namespace Calculator.Contract.Types
 {
-    [XRoadOperation("FileTransfer")]
-    public class FileTransferRequest : ICalculatorRequest<Stream>
+    [XRoadSerializable]
+    public class FileTransferRequest
     {
         [XRoadXmlElement(UseXop = false)]
         public Stream Input { get; set; }
