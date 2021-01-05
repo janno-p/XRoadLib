@@ -1,3 +1,7 @@
+#### 1.4.2 - 05.01.2021
+
+* Remove usage of Synchronous API in serialization of qualified attribute values.
+
 #### 1.4.1 - 13.12.2020
 
 * Review UTF8 encoding usages to prevent BOM in outgoing messages.
