@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class AllTypeMap&lt;T&gt;
    ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -90,13 +90,13 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="XRoadLib.Serialization.Mapping.CompositeTypeMap-1.html#XRoadLib_Serialization_Mapping_CompositeTypeMap_1_Serializer">CompositeTypeMap&lt;T&gt;.Serializer</a>
-    </div>
-    <div>
       <a class="xref" href="XRoadLib.Serialization.Mapping.CompositeTypeMap-1.html#XRoadLib_Serialization_Mapping_CompositeTypeMap_1_PropertyMaps">CompositeTypeMap&lt;T&gt;.PropertyMaps</a>
     </div>
     <div>
       <a class="xref" href="XRoadLib.Serialization.Mapping.CompositeTypeMap-1.html#XRoadLib_Serialization_Mapping_CompositeTypeMap_1_ContentPropertyMap">CompositeTypeMap&lt;T&gt;.ContentPropertyMap</a>
+    </div>
+    <div>
+      <a class="xref" href="XRoadLib.Serialization.Mapping.CompositeTypeMap-1.html#XRoadLib_Serialization_Mapping_CompositeTypeMap_1_Serializer">CompositeTypeMap&lt;T&gt;.Serializer</a>
     </div>
     <div>
       <a class="xref" href="XRoadLib.Serialization.Mapping.CompositeTypeMap-1.html#XRoadLib_Serialization_Mapping_CompositeTypeMap_1_SerializeAsync_System_Xml_XmlWriter_XRoadLib_Serialization_Template_IXmlTemplateNode_System_Object_XRoadLib_Schema_ContentDefinition_XRoadLib_Serialization_XRoadMessage_">CompositeTypeMap&lt;T&gt;.SerializeAsync(XmlWriter, IXmlTemplateNode, Object, ContentDefinition, XRoadMessage)</a>
@@ -133,7 +133,7 @@
   <h6><strong>Assembly</strong>: XRoadLib.dll</h6>
   <h5 id="XRoadLib_Serialization_Mapping_AllTypeMap_1_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AllTypeMap&lt;T&gt; : CompositeTypeMap&lt;T&gt;, ICompositeTypeMap, ITypeMap where T : class, new()</code></pre>
+    <pre><code class="lang-csharp hljs">public class AllTypeMap&lt;T&gt; : CompositeTypeMap&lt;T&gt;, ICompositeTypeMap, ITypeMap where T : class, IXRoadSerializable, new()</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -196,7 +196,7 @@
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Serialization_Mapping_AllTypeMap_1_AddPropertyMap_XRoadLib_Serialization_Mapping_IPropertyMap_.md&amp;value=---%0Auid%3A%20XRoadLib.Serialization.Mapping.AllTypeMap%601.AddPropertyMap(XRoadLib.Serialization.Mapping.IPropertyMap)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Serialization/Mapping/AllTypeMap.cs/#L123">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Serialization/Mapping/AllTypeMap.cs/#L120">View Source</a>
   </span>
   <a id="XRoadLib_Serialization_Mapping_AllTypeMap_1_AddPropertyMap_" data-uid="XRoadLib.Serialization.Mapping.AllTypeMap`1.AddPropertyMap*"></a>
   <h4 id="XRoadLib_Serialization_Mapping_AllTypeMap_1_AddPropertyMap_XRoadLib_Serialization_Mapping_IPropertyMap_" data-uid="XRoadLib.Serialization.Mapping.AllTypeMap`1.AddPropertyMap(XRoadLib.Serialization.Mapping.IPropertyMap)">AddPropertyMap(IPropertyMap)</h4>

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class DefaultSchemaExporter
    ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -91,7 +91,7 @@ default settings.</p>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="XRoadLib.Schema.AbstractSchemaExporter.html#XRoadLib_Schema_AbstractSchemaExporter_producerNamespace">AbstractSchemaExporter.producerNamespace</a>
+      <a class="xref" href="XRoadLib.Schema.AbstractSchemaExporter.html#XRoadLib_Schema_AbstractSchemaExporter_ProducerNamespace">AbstractSchemaExporter.ProducerNamespace</a>
     </div>
     <div>
       <a class="xref" href="XRoadLib.Schema.AbstractSchemaExporter.html#XRoadLib_Schema_AbstractSchemaExporter_ExportOperationDefinition_XRoadLib_Schema_OperationDefinition_">AbstractSchemaExporter.ExportOperationDefinition(OperationDefinition)</a>
@@ -118,7 +118,7 @@ default settings.</p>
       <a class="xref" href="XRoadLib.Schema.AbstractSchemaExporter.html#XRoadLib_Schema_AbstractSchemaExporter_ExportServiceDescription_XRoadLib_Wsdl_ServiceDescription_">AbstractSchemaExporter.ExportServiceDescription(ServiceDescription)</a>
     </div>
     <div>
-      <a class="xref" href="XRoadLib.Schema.AbstractSchemaExporter.html#XRoadLib_Schema_AbstractSchemaExporter_ExportHeaderDefinition_XRoadLib_Schema_IHeaderDefinition_">AbstractSchemaExporter.ExportHeaderDefinition(IHeaderDefinition)</a>
+      <a class="xref" href="XRoadLib.Schema.AbstractSchemaExporter.html#XRoadLib_Schema_AbstractSchemaExporter_ExportHeaderDefinition_XRoadLib_Schema_HeaderDefinition_">AbstractSchemaExporter.ExportHeaderDefinition(HeaderDefinition)</a>
     </div>
     <div>
       <a class="xref" href="XRoadLib.Schema.AbstractSchemaExporter.html#XRoadLib_Schema_AbstractSchemaExporter_IsQualifiedElementDefault_System_String_">AbstractSchemaExporter.IsQualifiedElementDefault(String)</a>
@@ -162,9 +162,7 @@ default settings.</p>
   </span>
   <a id="XRoadLib_Schema_DefaultSchemaExporter__ctor_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.#ctor*"></a>
   <h4 id="XRoadLib_Schema_DefaultSchemaExporter__ctor_System_String_System_Reflection_Assembly_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.#ctor(System.String,System.Reflection.Assembly)">DefaultSchemaExporter(String, Assembly)</h4>
-  <div class="markdown level1 summary"><p>Initializes new schema exporter instance and configure minimal set
-of configuration options.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -192,6 +190,97 @@ of configuration options.</p>
       </tr>
     </tbody>
   </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_DefaultSchemaExporter__ctor_System_String_System_Reflection_Assembly_System_Collections_Generic_IEnumerable_System_UInt32__.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.DefaultSchemaExporter.%23ctor(System.String%2CSystem.Reflection.Assembly%2CSystem.Collections.Generic.IEnumerable%7BSystem.UInt32%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L43">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_DefaultSchemaExporter__ctor_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.#ctor*"></a>
+  <h4 id="XRoadLib_Schema_DefaultSchemaExporter__ctor_System_String_System_Reflection_Assembly_System_Collections_Generic_IEnumerable_System_UInt32__" data-uid="XRoadLib.Schema.DefaultSchemaExporter.#ctor(System.String,System.Reflection.Assembly,System.Collections.Generic.IEnumerable{System.UInt32})">DefaultSchemaExporter(String, Assembly, IEnumerable&lt;UInt32&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DefaultSchemaExporter(string producerNamespace, Assembly contractAssembly, IEnumerable&lt;uint&gt; supportedVersions)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">producerNamespace</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Reflection.Assembly</span></td>
+        <td><span class="parametername">contractAssembly</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.UInt32</span>&gt;</td>
+        <td><span class="parametername">supportedVersions</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_DefaultSchemaExporter__ctor_System_String_System_Reflection_Assembly_System_Collections_Generic_IEnumerable_System_UInt32__System_Collections_Generic_IEnumerable_System_String__.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.DefaultSchemaExporter.%23ctor(System.String%2CSystem.Reflection.Assembly%2CSystem.Collections.Generic.IEnumerable%7BSystem.UInt32%7D%2CSystem.Collections.Generic.IEnumerable%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L51">View Source</a>
+  </span>
+  <a id="XRoadLib_Schema_DefaultSchemaExporter__ctor_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.#ctor*"></a>
+  <h4 id="XRoadLib_Schema_DefaultSchemaExporter__ctor_System_String_System_Reflection_Assembly_System_Collections_Generic_IEnumerable_System_UInt32__System_Collections_Generic_IEnumerable_System_String__" data-uid="XRoadLib.Schema.DefaultSchemaExporter.#ctor(System.String,System.Reflection.Assembly,System.Collections.Generic.IEnumerable{System.UInt32},System.Collections.Generic.IEnumerable{System.String})">DefaultSchemaExporter(String, Assembly, IEnumerable&lt;UInt32&gt;, IEnumerable&lt;String&gt;)</h4>
+  <div class="markdown level1 summary"><p>Initializes new schema exporter instance and configure minimal set
+of configuration options.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DefaultSchemaExporter(string producerNamespace, Assembly contractAssembly, IEnumerable&lt;uint&gt; supportedVersions, IEnumerable&lt;string&gt; enabledFilters)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">producerNamespace</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Reflection.Assembly</span></td>
+        <td><span class="parametername">contractAssembly</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.UInt32</span>&gt;</td>
+        <td><span class="parametername">supportedVersions</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">enabledFilters</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   <span class="small pull-right mobile-hide">
@@ -199,7 +288,7 @@ of configuration options.</p>
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_DefaultSchemaExporter_EnabledFilters.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.DefaultSchemaExporter.EnabledFilters%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L33">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L36">View Source</a>
   </span>
   <a id="XRoadLib_Schema_DefaultSchemaExporter_EnabledFilters_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.EnabledFilters*"></a>
   <h4 id="XRoadLib_Schema_DefaultSchemaExporter_EnabledFilters" data-uid="XRoadLib.Schema.DefaultSchemaExporter.EnabledFilters">EnabledFilters</h4>
@@ -208,7 +297,7 @@ of configuration options.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ISet&lt;string&gt; EnabledFilters { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;string&gt; EnabledFilters { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -220,7 +309,7 @@ of configuration options.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.ISet</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -230,7 +319,7 @@ of configuration options.</p>
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_DefaultSchemaExporter_SupportedVersions.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.DefaultSchemaExporter.SupportedVersions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L28">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L30">View Source</a>
   </span>
   <a id="XRoadLib_Schema_DefaultSchemaExporter_SupportedVersions_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.SupportedVersions*"></a>
   <h4 id="XRoadLib_Schema_DefaultSchemaExporter_SupportedVersions" data-uid="XRoadLib.Schema.DefaultSchemaExporter.SupportedVersions">SupportedVersions</h4>
@@ -239,7 +328,7 @@ of configuration options.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ISet&lt;uint&gt; SupportedVersions { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;uint&gt; SupportedVersions { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -251,7 +340,7 @@ of configuration options.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.ISet</span>&lt;<span class="xref">System.UInt32</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.UInt32</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -261,7 +350,7 @@ of configuration options.</p>
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_DefaultSchemaExporter_XRoadNamespace.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.DefaultSchemaExporter.XRoadNamespace%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L23">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L25">View Source</a>
   </span>
   <a id="XRoadLib_Schema_DefaultSchemaExporter_XRoadNamespace_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.XRoadNamespace*"></a>
   <h4 id="XRoadLib_Schema_DefaultSchemaExporter_XRoadNamespace" data-uid="XRoadLib.Schema.DefaultSchemaExporter.XRoadNamespace">XRoadNamespace</h4>
@@ -294,7 +383,7 @@ of configuration options.</p>
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_DefaultSchemaExporter_XRoadPrefix.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.DefaultSchemaExporter.XRoadPrefix%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L18">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L20">View Source</a>
   </span>
   <a id="XRoadLib_Schema_DefaultSchemaExporter_XRoadPrefix_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.XRoadPrefix*"></a>
   <h4 id="XRoadLib_Schema_DefaultSchemaExporter_XRoadPrefix" data-uid="XRoadLib.Schema.DefaultSchemaExporter.XRoadPrefix">XRoadPrefix</h4>
@@ -329,7 +418,7 @@ of configuration options.</p>
     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_DefaultSchemaExporter_ExportProtocolDefinition_XRoadLib_Schema_ProtocolDefinition_.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.DefaultSchemaExporter.ExportProtocolDefinition(XRoadLib.Schema.ProtocolDefinition)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L48">View Source</a>
+    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L64">View Source</a>
   </span>
   <a id="XRoadLib_Schema_DefaultSchemaExporter_ExportProtocolDefinition_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.ExportProtocolDefinition*"></a>
   <h4 id="XRoadLib_Schema_DefaultSchemaExporter_ExportProtocolDefinition_XRoadLib_Schema_ProtocolDefinition_" data-uid="XRoadLib.Schema.DefaultSchemaExporter.ExportProtocolDefinition(XRoadLib.Schema.ProtocolDefinition)">ExportProtocolDefinition(ProtocolDefinition)</h4>
@@ -374,7 +463,7 @@ of configuration options.</p>
                     <a href="https://github.com/janno-p/XRoadLib/new/master/apiSpec/new?filename=XRoadLib_Schema_DefaultSchemaExporter.md&amp;value=---%0Auid%3A%20XRoadLib.Schema.DefaultSchemaExporter%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L11" class="contribution-link">View Source</a>
+                    <a href="https://github.com/janno-p/XRoadLib/blob/master/src/XRoadLib/Schema/DefaultSchemaExporter.cs/#L13" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>
