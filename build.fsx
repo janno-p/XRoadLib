@@ -102,16 +102,15 @@ Target.create "RunTests" (fun _ ->
 
 Target.create "NuGet" (fun _ ->
     productProjects
-    |> Seq.iter (fun proj ->
-        DotNet.pack
+    |> Seq.iter
+        (DotNet.pack
             (fun p ->
                 { p with
                     Common = { p.Common with CustomParams = Some(sprintf "/p:Version=%s" release.NugetVersion) }
                     OutputPath = Some(binDir)
                     Configuration = DotNet.BuildConfiguration.Release
                     VersionSuffix = release.SemVer.PreRelease |> Option.map (fun v -> v.Origin) })
-            proj
-    )
+        )
 )
 
 Target.create "PublishNuget" (fun _ ->

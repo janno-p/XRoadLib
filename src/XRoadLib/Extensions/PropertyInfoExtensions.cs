@@ -11,7 +11,7 @@ namespace XRoadLib.Extensions
         {
             var type = propertyInfo.DeclaringType;
             if (type == null)
-                return o => null;
+                return _ => null;
 
             var converterAttribute = propertyInfo.GetSingleAttribute<XRoadRemoveContractAttribute>();
             var converterType = converterAttribute?.Converter;
@@ -46,7 +46,7 @@ namespace XRoadLib.Extensions
         {
             var type = propertyInfo.DeclaringType;
             if (type == null)
-                return (o, v) => { };
+                return (_, _) => { };
 
             var converterAttribute = propertyInfo.GetSingleAttribute<XRoadRemoveContractAttribute>();
             var converterType = converterAttribute?.Converter;

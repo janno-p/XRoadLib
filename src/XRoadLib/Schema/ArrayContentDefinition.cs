@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
@@ -7,14 +8,16 @@ using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
 {
-    public class ArrayContentDefiniton : ContentDefinition
+    public sealed class ArrayContentDefiniton : ContentDefinition
     {
         public override bool IsOptional
         {
-            get => base.IsOptional || (MergeContent && Item.MinOccurs == 0u);
+            get => base.IsOptional || MergeContent && Item.MinOccurs == 0u;
             set => base.IsOptional = value;
         }
 
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public ArrayItemDefinition Item { get; set; }
 
         public override XName SerializedName => MergeContent ? Item.Content.Name : Name;

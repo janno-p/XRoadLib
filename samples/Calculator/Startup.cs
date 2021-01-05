@@ -1,4 +1,5 @@
-﻿using Calculator.Contract;
+﻿using System.Diagnostics.CodeAnalysis;
+using Calculator.Contract;
 using Calculator.WebService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ namespace Calculator
 {
     public class Startup
     {
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMemberAsStatic")]
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddXRoadLib();
@@ -19,6 +21,7 @@ namespace Calculator
             services.AddSingleton<CalculatorServiceManager>();
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMemberAsStatic")]
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

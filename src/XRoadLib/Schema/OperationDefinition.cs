@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
@@ -20,21 +21,29 @@ namespace XRoadLib.Schema
         /// <summary>
         /// X-Road service version of the operation.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public uint Version { get; set; }
 
         /// <summary>
         /// Should this operation define binding part in service description?
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public bool IsAbstract { get; set; }
 
         /// <summary>
         /// Override input message name.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public string InputMessageName { get; set; }
 
         /// <summary>
         /// Binary content serialization format for input messages.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public BinaryMode InputBinaryMode { get; set; }
 
         /// <summary>
@@ -45,16 +54,22 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Override output message name.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public string OutputMessageName { get; set; }
 
         /// <summary>
         /// Binary content serialization format for output messages.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public BinaryMode OutputBinaryMode { get; set; }
 
         /// <summary>
         /// Serialization functionality of current operation.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public Type ServiceMapType { get; set; }
 
         /// <summary>
@@ -65,6 +80,8 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Customized SOAPAction header value for this operation.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public string SoapAction { get; set; }
 
         /// <summary>

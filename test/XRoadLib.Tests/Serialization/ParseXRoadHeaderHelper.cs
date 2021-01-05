@@ -15,7 +15,14 @@ namespace XRoadLib.Tests.Serialization
 
         public static async Task<Tuple<ISoapHeader, IList<XElement>, IServiceManager>> ParseHeaderAsync(string xml, string ns)
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
+
+#if NET5_0
+            await
+#endif
             using var streamWriter = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await streamWriter.WriteLineAsync(@"<Envelope xmlns=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:id=""http://x-road.eu/xsd/identifiers"" xmlns:repr=""http://x-road.eu/xsd/representation.xsd"">");

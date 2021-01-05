@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -8,7 +9,8 @@ namespace XRoadLib.Wsdl
     {
         protected override string ElementName { get; } = "operation";
 
-        public List<OperationMessage> Messages { get; } = new List<OperationMessage>();
+        [SuppressMessage("ReSharper", "ReturnTypeCanBeEnumerable.Global")]
+        public List<OperationMessage> Messages { get; } = new();
 
         protected override async Task WriteElementsAsync(XmlWriter writer)
         {

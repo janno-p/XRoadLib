@@ -15,7 +15,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleBufferLimit()
         {
+#if NET5_0
+            await 
+#endif
             using var stream = new MemoryStream(Enumerable.Repeat((byte)32, 10).ToArray());
+
             using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
@@ -40,7 +44,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleLineMarker()
         {
+#if NET5_0
+            await 
+#endif
             using var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 });
+
             using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
@@ -57,7 +65,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleChunkBeginningWithMarker()
         {
+#if NET5_0
+            await 
+#endif
             using var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 });
+
             using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
@@ -82,7 +94,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleSplittingMarker()
         {
+#if NET5_0
+            await 
+#endif
             using var stream = new MemoryStream(new byte[] { 32, 32, 32, 32, 13, 10, 32, 32, 32, 32 });
+
             using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
@@ -99,7 +115,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleMultipleMarkersInARow()
         {
+#if NET5_0
+            await 
+#endif
             using var stream = new MemoryStream(new byte[] { 40, 13, 10, 13, 10, 13, 10, 13, 10, 40 });
+
             using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;
@@ -128,7 +148,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleRecurringMarkerBufferLimit()
         {
+#if NET5_0
+            await 
+#endif
             using var stream = new MemoryStream(new byte[] { 40, 13, 13, 13, 13, 13, 13, 10, 33, 34, 40, 40 });
+
             using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), Enumerable.Empty<IServiceManager>());
 
             stream.Position = 0;

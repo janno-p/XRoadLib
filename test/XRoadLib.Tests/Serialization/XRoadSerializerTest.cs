@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -13,12 +14,13 @@ using Xunit;
 
 namespace XRoadLib.Tests.Serialization
 {
+    [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
     public class XRoadSerializerTest
     {
         private class X<T>
         {
             // ReSharper disable once UnusedMember.Local, UnusedParameter.Local
-            public void Method(T t)
+            public static void Method(T t)
             { }
         }
 
@@ -29,8 +31,19 @@ namespace XRoadLib.Tests.Serialization
             message.BinaryMode = BinaryMode.Attachment;
 
             using (message)
+#if NET5_0
+            await
+#endif
             using (var stream = new MemoryStream())
+
+#if NET5_0
+            await
+#endif
             using (var tw = new StreamWriter(stream, XRoadEncoding.Utf8))
+    
+#if NET5_0
+            await
+#endif
             using (var writer = XmlWriter.Create(tw, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))
             {
                 if (addEnvelope)
@@ -45,9 +58,9 @@ namespace XRoadLib.Tests.Serialization
                 await writer.WriteStartElementAsync(elementName);
 
                 var propType = typeof(X<>).MakeGenericType(typeof(T));
-                var methodInfo = propType.GetTypeInfo().GetMethod("Method");
+                var methodInfo = propType.GetTypeInfo().GetMethod(nameof(X<object>.Method));
 
-                var operationDefinition = new OperationDefinition("Method", null, methodInfo);
+                var operationDefinition = new OperationDefinition(nameof(X<object>.Method), null, methodInfo);
                 var requestDefinition = new RequestDefinition(operationDefinition, _ => false);
 
                 var typeMap = Globals.ServiceManager.GetSerializer(dtoVersion).GetTypeMap(typeof(T));
@@ -85,14 +98,14 @@ namespace XRoadLib.Tests.Serialization
                 Objektid = new [] { 1L, 2, 3 }
             };
 
-            var expected = "<keha>" +
-                           "<Objektid>" +
-                           "<item>1</item>" +
-                           "<item>2</item>" +
-                           "<item>3</item>" +
-                           "</Objektid>" +
-                           "<ObjektID>3</ObjektID>" +
-                           "</keha>";
+            const string expected = "<keha>" +
+                                    "<Objektid>" +
+                                    "<item>1</item>" +
+                                    "<item>2</item>" +
+                                    "<item>3</item>" +
+                                    "</Objektid>" +
+                                    "<ObjektID>3</ObjektID>" +
+                                    "</keha>";
 
             await SerializeWithContextAsync("keha", cls, 1u, true, (msg, xml) =>
             {
@@ -106,11 +119,11 @@ namespace XRoadLib.Tests.Serialization
         {
             var value = new[] { 5, 4, 3 };
 
-            var expected = "<keha>"
-                         + "<item>5</item>"
-                         + "<item>4</item>"
-                         + "<item>3</item>"
-                         + "</keha>";
+            const string expected = "<keha>"
+                                    + "<item>5</item>"
+                                    + "<item>4</item>"
+                                    + "<item>3</item>"
+                                    + "</keha>";
 
             await SerializeWithContextAsync("keha", value, 1u, true, (msg, xml) =>
             {
@@ -124,12 +137,12 @@ namespace XRoadLib.Tests.Serialization
         {
             var value = new[] { 5, 4, 3 };
 
-            var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                         + "<keha>"
-                         + "<item>5</item>"
-                         + "<item>4</item>"
-                         + "<item>3</item>"
-                         + "</keha>";
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<item>5</item>"
+                                    + "<item>4</item>"
+                                    + "<item>3</item>"
+                                    + "</keha>";
 
             await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
@@ -223,12 +236,12 @@ namespace XRoadLib.Tests.Serialization
         {
             var value = new[] { 5L, 4L, 3L };
 
-            var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                         + "<keha>"
-                         + "<item>5</item>"
-                         + "<item>4</item>"
-                         + "<item>3</item>"
-                         + "</keha>";
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<item>5</item>"
+                                    + "<item>4</item>"
+                                    + "<item>3</item>"
+                                    + "</keha>";
 
             await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
@@ -267,12 +280,12 @@ namespace XRoadLib.Tests.Serialization
                 Loodud = new DateTime(2000, 12, 12, 12, 12, 12)
             };
 
-            var expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-                         + "<keha>"
-                         + "<Nimi>Mauno</Nimi>"
-                         + "<Kood>1235</Kood>"
-                         + "<Loodud>2000-12-12T12:12:12</Loodud>"
-                         + "</keha>";
+            const string expected = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                                    + "<keha>"
+                                    + "<Nimi>Mauno</Nimi>"
+                                    + "<Kood>1235</Kood>"
+                                    + "<Loodud>2000-12-12T12:12:12</Loodud>"
+                                    + "</keha>";
 
             await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
             {
@@ -284,6 +297,9 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanSerializeBinaryValue()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
 
             var value = new XRoadBinaryTestDto { Sisu = stream };
@@ -303,6 +319,9 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanSerializeHexBinaryValue()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
 
             var value = new XRoadHexTestDto { Sisu = stream };

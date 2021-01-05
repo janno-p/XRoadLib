@@ -10,25 +10,13 @@ namespace Calculator.WebService
             return GetOperation(request.Operation)(request.X, request.Y);
         }
 
-        private Func<int, int, int> GetOperation(Operation operation)
+        private static Func<int, int, int> GetOperation(Operation operation) => operation switch
         {
-            switch (operation)
-            {
-                case Operation.Add:
-                    return (x, y) => x + y;
-
-                case Operation.Subtract:
-                    return (x, y) => x - y;
-
-                case Operation.Multiply:
-                    return (x, y) => x * y;
-
-                case Operation.Divide:
-                    return (x, y) => x / y;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(operation), operation, null);
-            }
-        }
+            Operation.Add => (x, y) => x + y,
+            Operation.Subtract => (x, y) => x - y,
+            Operation.Multiply => (x, y) => x * y,
+            Operation.Divide => (x, y) => x / y,
+            _ => throw new ArgumentOutOfRangeException(nameof(operation), operation, null)
+        };
     }
 }

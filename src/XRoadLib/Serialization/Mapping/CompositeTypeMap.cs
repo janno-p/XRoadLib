@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
@@ -8,12 +9,15 @@ using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Serialization.Mapping
 {
+    [SuppressMessage("ReSharper", "UnusedTypeParameter")]
     public abstract class CompositeTypeMap<T> : TypeMap, ICompositeTypeMap where T : class, IXRoadSerializable, new()
     {
-        protected readonly ISerializer Serializer;
         protected readonly IList<IPropertyMap> PropertyMaps = new List<IPropertyMap>();
 
         protected IPropertyMap ContentPropertyMap;
+
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
+        protected virtual ISerializer Serializer { get; }
 
         protected CompositeTypeMap(ISerializer serializer, TypeDefinition typeDefinition)
             : base(typeDefinition)

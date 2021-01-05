@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace XRoadLib.Serialization.Template
 {
@@ -10,6 +11,7 @@ namespace XRoadLib.Serialization.Template
 
         string Name { get; }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         string Namespace { get; }
 
         IEnumerable<string> ChildNames { get; }

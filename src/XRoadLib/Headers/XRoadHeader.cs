@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -11,6 +12,7 @@ namespace XRoadLib.Headers
     /// <summary>
     /// Implements default X-Road message protocol version 4.0 SOAP header.
     /// </summary>
+    [SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
     public class XRoadHeader : IXRoadHeader
     {
         /// <summary>
@@ -21,16 +23,19 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Service identity.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
         public virtual XRoadServiceIdentifier Service { get; set; }
 
         /// <summary>
         /// User identity code.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
         public virtual string UserId { get; set; }
 
         /// <summary>
         /// Received application, issue or document.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
         public virtual string Issue { get; set; }
 
         /// <summary>
@@ -46,16 +51,19 @@ namespace XRoadLib.Headers
         /// <summary>
         /// Central service identity.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
         public virtual XRoadCentralServiceIdentifier CentralService { get; set; }
 
         /// <summary>
         /// Represented party details.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
         public virtual XRoadRepresentedParty RepresentedParty { get; set; }
 
         /// <summary>
         /// Request hash of the X-Road message.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
         public virtual XRoadRequestHash RequestHash { get; set; }
 
         /// <summary>
@@ -78,48 +86,49 @@ namespace XRoadLib.Headers
         /// </summary>
         public virtual async Task ReadHeaderValueAsync(XmlReader reader)
         {
-            if (reader.NamespaceURI == NamespaceConstants.XRoadRepr && reader.LocalName == "representedParty")
+            switch (reader.NamespaceURI)
             {
-                RepresentedParty = await ReadRepresentedPartyAsync(reader).ConfigureAwait(false);
-                return;
-            }
+                case NamespaceConstants.XRoadRepr when reader.LocalName == "representedParty":
+                    RepresentedParty = await ReadRepresentedPartyAsync(reader).ConfigureAwait(false);
+                    return;
 
-            if (reader.NamespaceURI == NamespaceConstants.XRoad)
-            {
-                switch (reader.LocalName)
-                {
-                    case "client":
-                        Client = await ReadClientAsync(reader).ConfigureAwait(false);
-                        return;
+                case NamespaceConstants.XRoad:
+                    switch (reader.LocalName)
+                    {
+                        case "client":
+                            Client = await ReadClientAsync(reader).ConfigureAwait(false);
+                            return;
 
-                    case "service":
-                        Service = await ReadServiceAsync(reader).ConfigureAwait(false);
-                        return;
+                        case "service":
+                            Service = await ReadServiceAsync(reader).ConfigureAwait(false);
+                            return;
 
-                    case "centralService":
-                        CentralService = await ReadCentralServiceAsync(reader).ConfigureAwait(false);
-                        return;
+                        case "centralService":
+                            CentralService = await ReadCentralServiceAsync(reader).ConfigureAwait(false);
+                            return;
 
-                    case "id":
-                        Id = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
-                        return;
+                        case "id":
+                            Id = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                            return;
 
-                    case "userId":
-                        UserId = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
-                        return;
+                        case "userId":
+                            UserId = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                            return;
 
-                    case "issue":
-                        Issue = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
-                        return;
+                        case "issue":
+                            Issue = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                            return;
 
-                    case "protocolVersion":
-                        ProtocolVersion = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
-                        return;
+                        case "protocolVersion":
+                            ProtocolVersion = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                            return;
 
-                    case "requestHash":
-                        RequestHash = await ReadRequestHashAsync(reader).ConfigureAwait(false);
-                        return;
-                }
+                        case "requestHash":
+                            RequestHash = await ReadRequestHashAsync(reader).ConfigureAwait(false);
+                            return;
+                    }
+
+                    break;
             }
 
             throw new InvalidQueryException($"Unexpected X-Road header element `{reader.GetXName()}`.");
@@ -146,12 +155,12 @@ namespace XRoadLib.Headers
             if (!success)
                 throw new InvalidQueryException($"Element `{qualifiedName}` must have child element `{XName.Get("partyCode", NamespaceConstants.XRoadRepr)}`.");
 
-            if (reader.LocalName == "partyCode" && reader.NamespaceURI == NamespaceConstants.XRoadRepr)
-            {
-                representedParty.Code = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
-                if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false))
-                    return representedParty;
-            }
+            if (reader.LocalName != "partyCode" || reader.NamespaceURI != NamespaceConstants.XRoadRepr)
+                throw new InvalidQueryException($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
+
+            representedParty.Code = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+            if (!await reader.MoveToElementAsync(depth + 1).ConfigureAwait(false))
+                return representedParty;
 
             throw new InvalidQueryException($"Unexpected element `{reader.GetXName()}` in element `{qualifiedName}`.");
         }
@@ -287,22 +296,14 @@ namespace XRoadLib.Headers
             return new XRoadRequestHash(value, algorithm);
         }
 
-        private static XRoadObjectType GetObjectType(string value)
+        private static XRoadObjectType GetObjectType(string value) => value.Trim() switch
         {
-            switch (value.Trim())
-            {
-                case "MEMBER":
-                    return XRoadObjectType.Member;
-                case "SUBSYSTEM":
-                    return XRoadObjectType.Subsystem;
-                case "SERVICE":
-                    return XRoadObjectType.Service;
-                case "CENTRALSERVICE":
-                    return XRoadObjectType.CentralService;
-                default:
-                    throw new InvalidQueryException($"Invalid `{XName.Get("objectType", NamespaceConstants.XRoadId)}` attribute value `{value}`.");
-            }
-        }
+            "MEMBER" => XRoadObjectType.Member,
+            "SUBSYSTEM" => XRoadObjectType.Subsystem,
+            "SERVICE" => XRoadObjectType.Service,
+            "CENTRALSERVICE" => XRoadObjectType.CentralService,
+            _ => throw new InvalidQueryException($"Invalid `{XName.Get("objectType", NamespaceConstants.XRoadId)}` attribute value `{value}`.")
+        };
 
         /// <summary>
         /// Serializes X-Road message SOAP headers to XML.

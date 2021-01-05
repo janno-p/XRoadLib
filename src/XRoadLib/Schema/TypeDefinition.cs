@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace XRoadLib.Schema
@@ -10,14 +11,17 @@ namespace XRoadLib.Schema
 
         public string TargetNamespace { get; }
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public bool CanHoldNullValues { get; set; }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public bool IsAbstract { get; set; }
 
         public bool IsAnonymous { get; set; }
 
         public bool IsSimpleType { get; set; }
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public Type TypeMapType { get; set; }
 
         public bool HasStrictContentOrder { get; set; }

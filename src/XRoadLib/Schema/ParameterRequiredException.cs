@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using XRoadLib.Soap;
 
@@ -6,9 +7,15 @@ namespace XRoadLib.Schema
 {
     public class ParameterRequiredException : ContractViolationException
     {
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public TypeDefinition TypeDefinition { get; }
+
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public IList<PropertyDefinition> MissingParameters { get; }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public ParameterRequiredException(string message, TypeDefinition typeDefinition, IList<PropertyDefinition> missingParameters)
             : base(ClientFaultCode.ParameterRequired, message)
         {

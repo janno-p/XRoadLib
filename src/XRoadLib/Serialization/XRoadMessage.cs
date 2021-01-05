@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,7 +22,7 @@ namespace XRoadLib.Serialization
     {
         public IServiceManager ServiceManager { get; internal set; }
 
-        private readonly List<XRoadAttachment> _attachments = new List<XRoadAttachment>();
+        private readonly List<XRoadAttachment> _attachments = new();
 
         /// <summary>
         /// When enabled, serialization/deserialization process applies filter specified in
@@ -183,6 +184,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Loads X-Road message contents from response message.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public async Task LoadResponseAsync(Stream stream, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             using var reader = new XRoadMessageReader(new DataReader(stream), messageFormatter, contentTypeHeader, storagePath, serviceManagers);
@@ -244,6 +246,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Enable filtering for X-Road message, using the filter specified by name.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public void EnableFilter(string filterName)
         {
             EnableFiltering = true;

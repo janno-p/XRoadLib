@@ -9,7 +9,7 @@ namespace XRoadLib.Wsdl
     {
         protected override string ElementName { get; } = "binding";
 
-        public List<OperationBinding> Operations { get; } = new List<OperationBinding>();
+        public List<OperationBinding> Operations { get; } = new();
         public XmlQualifiedName Type { get; set; }
 
         protected override async Task WriteAttributesAsync(XmlWriter writer)

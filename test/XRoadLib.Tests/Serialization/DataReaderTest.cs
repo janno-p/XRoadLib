@@ -8,12 +8,16 @@ namespace XRoadLib.Tests.Serialization
 {
     public class DataReaderTest
     {
-        private readonly Random _random = new Random();
+        private readonly Random _random = new();
 
         [Fact]
         public async Task CanHandleEmptyStream()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
+
             using var dr = new DataReader(stream);
 
             Assert.Equal(0, dr.Position);
@@ -37,7 +41,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleShortStream()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream(new byte[] { 20 });
+
             using var dr = new DataReader(stream);
 
             Assert.Equal(0, dr.Position);
@@ -68,7 +76,11 @@ namespace XRoadLib.Tests.Serialization
 
             _random.NextBytes(buffer);
 
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream(buffer);
+
             using var dr = new DataReader(stream);
 
             var expectedPosition = 0;

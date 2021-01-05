@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
 
@@ -8,12 +9,18 @@ namespace XRoadLib.Schema
     {
         public ParticleDefinition Array { get; }
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public bool AcceptsAnyName { get; set; }
 
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public uint MinOccurs { get; set; }
 
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public uint? MaxOccurs { get; set; }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public Type ItemTypeMapType { get; set; }
 
         public ArrayItemDefinition(ParticleDefinition array, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)

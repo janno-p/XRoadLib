@@ -13,7 +13,7 @@ namespace XRoadLib.Tests.Serialization.Mapping
 {
     public class StringTypeMapTest : TypeMapTestBase
     {
-        private static readonly ITypeMap TypeMap = new StringTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<string>("string"));
+        private static readonly ITypeMap TypeMap = new StringTypeMap(SchemaDefinitionProvider.GetSimpleTypeDefinition<string>(XmlTypeConstants.String.LocalName));
 
         private readonly Func<string, Task<object>> _deserializeValueAsync = x => DeserializeValueAsync(TypeMap, x);
         private readonly Func<object, Task<string>> _serializeValueAsync = x => SerializeValueAsync(TypeMap, x);
@@ -66,8 +66,16 @@ namespace XRoadLib.Tests.Serialization.Mapping
 
             var protocol = new ServiceManager<XRoadHeader>("4.0", new DefaultSchemaExporter("urn:some-namespace", typeof(Contract.Class1).Assembly));
 
+#if NET5_0
+            await
+#endif
             using (var textWriter = new StringWriter(stream))
+
+#if NET5_0
+            await
+#endif
             using (var writer = XmlWriter.Create(textWriter, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 }))
+
             using (var message = protocol.CreateMessage())
             {
                 await writer.WriteStartDocumentAsync();

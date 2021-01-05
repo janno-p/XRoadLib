@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -5,7 +6,10 @@ namespace XRoadLib.Wsdl
 {
     public class XRoadOperationVersionBinding : ServiceDescriptionFormatExtension
     {
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public string Prefix { get; }
+
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public string Namespace { get; }
 
         public string Version { get; set; }

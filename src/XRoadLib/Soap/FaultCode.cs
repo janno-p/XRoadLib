@@ -1,4 +1,6 @@
-﻿namespace XRoadLib.Soap
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace XRoadLib.Soap
 {
     public abstract class FaultCode
     {
@@ -6,8 +8,8 @@
         {
             Server,
             Client,
-            VersionMismatch,
-            MustUnderstand,
+            [SuppressMessage("ReSharper", "UnusedMember.Global")] VersionMismatch,
+            [SuppressMessage("ReSharper", "UnusedMember.Global")] MustUnderstand
         }
 
         public string Value { get; }

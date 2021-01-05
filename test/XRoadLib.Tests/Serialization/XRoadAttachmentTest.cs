@@ -11,10 +11,18 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanWriteBase64()
         {
+#if NET5_0
+            await
+#endif
             using var outputStream = new MemoryStream();
+
             using var writer = new XRoadMessageWriter(outputStream);
 
+#if NET5_0
+            await
+#endif
             using (var contentStream = new MemoryStream(XRoadEncoding.Utf8.GetBytes("ABC")))
+
             using (var attachment = new XRoadAttachment(contentStream))
             {
                 await writer.WriteAttachmentAsBase64Async(attachment);
@@ -32,10 +40,18 @@ namespace XRoadLib.Tests.Serialization
         {
             const string text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
+#if NET5_0
+            await
+#endif
             using var outputStream = new MemoryStream();
+
             using var writer = new XRoadMessageWriter(outputStream);
 
+#if NET5_0
+            await
+#endif
             using (var contentStream = new MemoryStream(XRoadEncoding.Utf8.GetBytes(text)))
+
             using (var attachment = new XRoadAttachment(contentStream))
             {
                 await writer.WriteAttachmentAsBase64Async(attachment);
@@ -66,10 +82,18 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanWriteEmptyBase64()
         {
+#if NET5_0
+            await
+#endif
             using var outputStream = new MemoryStream();
+
             using var writer = new XRoadMessageWriter(outputStream);
 
+#if NET5_0
+            await
+#endif
             using (var contentStream = new MemoryStream())
+
             using (var attachment = new XRoadAttachment(contentStream))
             {
                 await writer.WriteAttachmentAsBase64Async(attachment);
@@ -87,10 +111,18 @@ namespace XRoadLib.Tests.Serialization
         {
             const string text = @"Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure.";
 
+#if NET5_0
+            await
+#endif
             using var outputStream = new MemoryStream();
+
             using var writer = new XRoadMessageWriter(outputStream);
 
+#if NET5_0
+            await
+#endif
             using (var contentStream = new MemoryStream(XRoadEncoding.Utf8.GetBytes(text)))
+
             using (var attachment = new XRoadAttachment(contentStream))
             {
                 await writer.WriteAttachmentAsBase64Async(attachment);

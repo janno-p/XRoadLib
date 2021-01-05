@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Events
@@ -11,6 +12,8 @@ namespace XRoadLib.Events
         /// <summary>
         /// X-Road message object that is about to be serialized to WebRequest.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public XRoadMessage Message { get; }
 
         /// <summary>

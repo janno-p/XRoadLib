@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -22,6 +23,8 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Wrapper element name for outgoing responses.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public XName WrapperElementName { get; set; }
 
         /// <summary>
@@ -32,22 +35,29 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Fault element name for response element.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public XName FaultName { get; set; }
 
         /// <summary>
         /// Should technical fault fields be returned inside response element.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public bool ContainsNonTechnicalFault { get; set; }
 
         /// <summary>
         /// Request element name in response message.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public XName RequestContentName { get; set; }
 
         /// <summary>
         /// Element name that is used to wrap operation successful return value.
         /// Used when operation result can be either return value or fault object.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public XName ResultElementName { get; set; }
 
         /// <summary>

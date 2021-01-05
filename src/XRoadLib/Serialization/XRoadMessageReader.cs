@@ -123,7 +123,7 @@ namespace XRoadLib.Serialization
                 var (partId, partTransferEncoding) = await ExtractMultipartHeaderAsync(target.ContentEncoding).ConfigureAwait(false);
 
                 var targetStream = target.ContentStream;
-                if (targetStream.Length > 0 || (!string.IsNullOrEmpty(multipartStartContentId) && !multipartStartContentId.Contains(partId)))
+                if (targetStream.Length > 0 || !string.IsNullOrEmpty(multipartStartContentId) && !multipartStartContentId.Contains(partId))
                 {
                     var attachment = new XRoadAttachment(partId, Path.Combine(_storagePath, Path.GetRandomFileName()));
                     target.AllAttachments.Add(attachment);
@@ -136,7 +136,7 @@ namespace XRoadLib.Serialization
             target.ContentLength = _dataReader.Position;
         }
 
-        private async Task<byte[]> ReadNextPartAsync(Stream targetStream, Func<byte[], Encoding, byte[]> decoder, Encoding useEncoding, byte[] boundaryMarker)
+        private async Task<byte[]> ReadNextPartAsync(Stream targetStream, Func<byte[], Encoding, byte[]> decoder, Encoding useEncoding, IList<byte> boundaryMarker)
         {
             var addNewLine = false;
 
@@ -314,7 +314,7 @@ namespace XRoadLib.Serialization
                 posArr2 -= 1;
             }
 
-            return (posArr2 == -1);
+            return posArr2 == -1;
         }
 
         private async Task<IServiceManager> DetectServiceManagerAsync(XmlReader reader, XRoadMessage target)

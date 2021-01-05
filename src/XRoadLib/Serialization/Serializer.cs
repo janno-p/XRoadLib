@@ -20,10 +20,10 @@ namespace XRoadLib.Serialization
         private readonly ICollection<string> _availableFilters;
         private readonly string _producerNamespace;
 
-        private readonly ConcurrentDictionary<Type, ITypeMap> _customTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
-        private readonly ConcurrentDictionary<XName, IServiceMap> _serviceMaps = new ConcurrentDictionary<XName, IServiceMap>();
-        private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> _xmlTypeMaps = new ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>>();
-        private readonly ConcurrentDictionary<Type, ITypeMap> _runtimeTypeMaps = new ConcurrentDictionary<Type, ITypeMap>();
+        private readonly ConcurrentDictionary<Type, ITypeMap> _customTypeMaps = new();
+        private readonly ConcurrentDictionary<XName, IServiceMap> _serviceMaps = new();
+        private readonly ConcurrentDictionary<XName, Tuple<ITypeMap, ITypeMap>> _xmlTypeMaps = new();
+        private readonly ConcurrentDictionary<Type, ITypeMap> _runtimeTypeMaps = new();
 
         public uint? Version { get; }
 
@@ -42,7 +42,7 @@ namespace XRoadLib.Serialization
 
             AddSystemType<TimeSpan>("duration", x => new TimeSpanTypeMap(x));
 
-            AddSystemType<bool>("boolean", x => new BooleanTypeMap(x));
+            AddSystemType<bool>(XmlTypeConstants.Boolean.LocalName, x => new BooleanTypeMap(x));
 
             AddSystemType<float>("float", x => new SingleTypeMap(x));
             AddSystemType<double>("double", x => new DoubleTypeMap(x));
@@ -53,12 +53,12 @@ namespace XRoadLib.Serialization
             AddSystemType<short>("short", x => new Int16TypeMap(x));
             AddSystemType<BigInteger>("integer", x => new IntegerTypeMap(x));
 
-            AddSystemType<string>("string", x => new StringTypeMap(x));
+            AddSystemType<string>(XmlTypeConstants.String.LocalName, x => new StringTypeMap(x));
             AddSystemType<string>("anyURI", x => new StringTypeMap(x));
 
             AddSystemType<Stream>("base64Binary", x => new ContentTypeMap(x));
             AddSystemType<Stream>("hexBinary", x => new ContentTypeMap(x));
-            AddSystemType<Stream>("base64", x => new ContentTypeMap(x));
+            AddSystemType<Stream>(XmlTypeConstants.Base64.LocalName, x => new ContentTypeMap(x));
 
             AddSystemType<object>("", x => new AnyContentTypeMap(x, this));
         }
@@ -87,9 +87,7 @@ namespace XRoadLib.Serialization
             var requestDefinition = _schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
             var inputTypeMap = GetParticleDefinitionTypeMap(requestDefinition, null);
 
-            var outputTuple = GetReturnValueTypeMap(operationDefinition);
-            var responseDefinition = outputTuple.Item1;
-            var outputTypeMap = outputTuple.Item2;
+            var (responseDefinition, outputTypeMap) = GetReturnValueTypeMap(operationDefinition);
 
             var serviceMap = (IServiceMap)Activator.CreateInstance(
                 operationDefinition.ServiceMapType,
@@ -129,7 +127,7 @@ namespace XRoadLib.Serialization
 
             var normalizedType = Nullable.GetUnderlyingType(runtimeType) ?? runtimeType;
 
-            return _runtimeTypeMaps.TryGetValue(normalizedType, out var typeMap) || (partialTypeMaps != null && partialTypeMaps.TryGetValue(normalizedType, out typeMap))
+            return _runtimeTypeMaps.TryGetValue(normalizedType, out var typeMap) || partialTypeMaps != null && partialTypeMaps.TryGetValue(normalizedType, out typeMap)
                 ? typeMap
                 : AddTypeMap(normalizedType, partialTypeMaps);
         }
@@ -261,22 +259,25 @@ namespace XRoadLib.Serialization
             throw new UnknownTypeException(particleDefinition, null, qualifiedName);
         }
 
+        private XName GetNullableXmlTypeName(Type type) =>
+            GetXmlTypeName(Nullable.GetUnderlyingType(type));
+
         public XName GetXmlTypeName(Type type)
         {
             if (type.IsNullable())
-                return GetXmlTypeName(Nullable.GetUnderlyingType(type));
+                return GetNullableXmlTypeName(type);
 
             switch (type.FullName)
             {
                 case "System.Byte": return XName.Get("byte", NamespaceConstants.Xsd);
                 case "System.DateTime": return XName.Get("dateTime", NamespaceConstants.Xsd);
-                case "System.Boolean": return XName.Get("boolean", NamespaceConstants.Xsd);
+                case "System.Boolean": return XmlTypeConstants.Boolean;
                 case "System.Single": return XName.Get("float", NamespaceConstants.Xsd);
                 case "System.Double": return XName.Get("double", NamespaceConstants.Xsd);
                 case "System.Decimal": return XName.Get("decimal", NamespaceConstants.Xsd);
                 case "System.Int64": return XName.Get("long", NamespaceConstants.Xsd);
                 case "System.Int32": return XName.Get("int", NamespaceConstants.Xsd);
-                case "System.String": return XName.Get("string", NamespaceConstants.Xsd);
+                case "System.String": return XmlTypeConstants.String;
                 case "System.TimeSpan": return XName.Get("duration", NamespaceConstants.Xsd);
             }
 

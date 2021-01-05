@@ -87,6 +87,9 @@ namespace XRoadLib.Tests.Protocols.Description
 
         private static async Task<XDocument> GetDocumentAsync(IServiceManager serviceManager, uint version)
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
             await serviceManager.CreateServiceDescription(version: version).WriteAsync(stream);
             stream.Position = 0;

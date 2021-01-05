@@ -17,7 +17,7 @@ namespace XRoadLib.Tests.Serialization
 
         private readonly ISerializer _serializer = ServiceManager.GetSerializer(1u);
 
-        private readonly MergeArrayContentRequest _request = new MergeArrayContentRequest
+        private readonly MergeArrayContentRequest _request = new()
         {
             StartDate = new DateTime(2016, 2, 10),
             EndDate = new DateTime(2016, 2, 11),
@@ -105,8 +105,15 @@ namespace XRoadLib.Tests.Serialization
             var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
 
             using var message = new XRoadMessage(ServiceManager, null);
+
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
 
+#if NET5_0
+            await
+#endif
             using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Async = true, CloseOutput = false, Encoding = XRoadEncoding.Utf8 }))
             {
                 await serviceMap.SerializeRequestAsync(writer, request, message);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using XRoadLib.Serialization;
@@ -12,6 +13,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Loads X-Road message contents from request message.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static Task LoadRequestAsync(this XRoadMessage message, HttpContext httpContext, IMessageFormatter messageFormatter, string storagePath, IEnumerable<IServiceManager> serviceManagers)
         {
             return message.LoadRequestAsync(httpContext.Request.Body, messageFormatter, httpContext.Request.Headers.GetContentTypeHeader(), storagePath, serviceManagers);

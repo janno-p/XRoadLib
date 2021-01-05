@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace XRoadLib.Extensions
 {
@@ -13,5 +15,8 @@ namespace XRoadLib.Extensions
         {
             return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
+
+        internal static XmlQualifiedName ToXmlQualifiedName(this XName name) =>
+            new(name.LocalName, name.NamespaceName);
     }
 }

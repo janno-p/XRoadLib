@@ -1,11 +1,18 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 
 namespace XRoadLib.Wsdl
 {
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
     public class Soap12Binding : ServiceDescriptionFormatExtension
     {
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public SoapBindingStyle Style { get; set; } = SoapBindingStyle.Default;
+        
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public string Transport { get; set; } = string.Empty;
 
         internal override async Task WriteAsync(XmlWriter writer)

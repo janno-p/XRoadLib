@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -6,7 +7,8 @@ namespace XRoadLib.Wsdl
 {
     public class MimeMultipartRelatedBinding : ServiceDescriptionFormatExtension
     {
-        public List<MimePart> Parts { get; } = new List<MimePart>();
+        [SuppressMessage("ReSharper", "ReturnTypeCanBeEnumerable.Global")]
+        public List<MimePart> Parts { get; } = new();
 
         internal override async Task WriteAsync(XmlWriter writer)
         {

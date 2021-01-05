@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -50,7 +51,7 @@ namespace XRoadLib
         private readonly string _xRoadNamespace;
         private readonly HeaderDefinition _headerDefinition;
 
-        private readonly XmlDocument _document = new XmlDocument();
+        private readonly XmlDocument _document = new();
 
         /// <summary>
         /// Initialize builder with contract details.
@@ -138,7 +139,7 @@ namespace XRoadLib
 
             AddSystemType<TimeSpan>("duration");
 
-            AddSystemType<bool>("boolean");
+            AddSystemType<bool>(XmlTypeConstants.Boolean.LocalName);
 
             AddSystemType<float>("float");
             AddSystemType<double>("double");
@@ -149,19 +150,19 @@ namespace XRoadLib
             AddSystemType<short>("short");
             AddSystemType<BigInteger>("integer");
 
-            AddSystemType<string>("string");
+            AddSystemType<string>(XmlTypeConstants.String.LocalName);
             AddSystemType<string>("anyURI");
 
             AddSystemType<Stream>("base64Binary");
             AddSystemType<Stream>("hexBinary");
-            AddSystemType<Stream>("base64");
+            AddSystemType<Stream>(XmlTypeConstants.Base64.LocalName);
 
             var typeDefinitions =
                 _schemaDefinitionProvider
                     .ProtocolDefinition
                     .ContractAssembly
                     .GetTypes()
-                    .Where(type => type.IsXRoadSerializable() || (type.GetTypeInfo().IsEnum && type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>() != null))
+                    .Where(type => type.IsXRoadSerializable() || type.GetTypeInfo().IsEnum && type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>() != null)
                     .Where(type => !_version.HasValue || type.GetTypeInfo().ExistsInVersion(_version.Value))
                     .Select(type => _schemaDefinitionProvider.GetTypeDefinition(type))
                     .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default)
@@ -224,9 +225,8 @@ namespace XRoadLib
 
             void ResolveType(XmlQualifiedName qualifiedName, XmlSchemaType type)
             {
-                foreach (var sr in schemaReferences)
-                    if (sr.Value.Types.ContainsKey(qualifiedName))
-                        sr.Value.Types[qualifiedName] = type;
+                foreach (var sr in schemaReferences.Where(sr => sr.Value.Types.ContainsKey(qualifiedName)))
+                    sr.Value.Types[qualifiedName] = type;
             }
 
             var targetSchemaReferences = GetSchemaReferences(targetNamespace);
@@ -261,10 +261,10 @@ namespace XRoadLib
                     }
                     else
                     {
-                        var e = CreateXmlSchemaElement(requestWrapperElementName, targetSchemaReferences);
-                        e.Item1.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElements.Item2 } } };
+                        var (schemaElement, _) = CreateXmlSchemaElement(requestWrapperElementName, targetSchemaReferences);
+                        schemaElement.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { requestElements.Item2 } } };
                         var ns = requestWrapperElementName.NamespaceName != "" ? requestWrapperElementName.NamespaceName : targetNamespace;
-                        schemaElements.Add(Tuple.Create(ns, e.Item1));
+                        schemaElements.Add(Tuple.Create(ns, schemaElement));
                     }
                 }
 
@@ -321,11 +321,11 @@ namespace XRoadLib
                         responseRequestElements = SetXmlSchemaElementName(responseRequestElements, responseDefinition.RequestContentName, targetSchemaReferences);
                     }
 
-                    var e = CreateXmlSchemaElement(responseDefinition.WrapperElementName, targetSchemaReferences);
-                    e.Item1.SchemaType = CreateOperationResponseSchemaType(responseDefinition, responseRequestElements.Item2, responseElements, faultDefinition, targetSchemaReferences);
+                    var (xmlSchemaElement, _) = CreateXmlSchemaElement(responseDefinition.WrapperElementName, targetSchemaReferences);
+                    xmlSchemaElement.SchemaType = CreateOperationResponseSchemaType(responseDefinition, responseRequestElements.Item2, responseElements, faultDefinition, targetSchemaReferences);
 
                     var ns = responseDefinition.WrapperElementName.NamespaceName != "" ? responseDefinition.WrapperElementName.NamespaceName : targetNamespace;
-                    schemaElements.Add(Tuple.Create(ns, e.Item1));
+                    schemaElements.Add(Tuple.Create(ns, xmlSchemaElement));
                 }
 
                 if (operationDefinition.IsAbstract)
@@ -464,6 +464,7 @@ namespace XRoadLib
             return new XmlSchema { Namespaces = namespaces };
         }
 
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         private XmlSchemaComplexType CreateOperationResponseSchemaType(ResponseDefinition responseDefinition, XmlSchemaElement requestElement, Tuple<XmlSchemaElement, XmlSchemaElement> responseElements, FaultDefinition faultDefinition, SchemaReferences schemaReferences)
         {
             if (responseDefinition.ContainsNonTechnicalFault)
@@ -503,10 +504,10 @@ namespace XRoadLib
 
                 case XRoadFaultPresentation.Explicit:
                     responseElements.Item2.MinOccurs = 0;
-                    var explicitFaultElements = CreateFaultElement(responseDefinition, faultDefinition, schemaReferences);
-                    explicitFaultElements.Item2.MinOccurs = 0;
+                    var (_, faultElement) = CreateFaultElement(responseDefinition, faultDefinition, schemaReferences);
+                    faultElement.MinOccurs = 0;
                     complexTypeSequence.Items.Add(responseElements.Item2);
-                    complexTypeSequence.Items.Add(explicitFaultElements.Item2);
+                    complexTypeSequence.Items.Add(faultElement);
                     break;
 
                 case XRoadFaultPresentation.Implicit:
@@ -520,6 +521,7 @@ namespace XRoadLib
             return new XmlSchemaComplexType { Particle = complexTypeSequence };
         }
 
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         private Tuple<XmlSchemaElement, XmlSchemaElement> CreateFaultElement(ResponseDefinition responseDefinition, FaultDefinition faultDefinition, SchemaReferences schemaReferences)
         {
             var elements = CreateXmlSchemaElement(responseDefinition.FaultName, schemaReferences);
@@ -532,15 +534,15 @@ namespace XRoadLib
         private XmlSchemaSequence CreateFaultSequence(SchemaReferences schemaReferences)
         {
             var faultCodeElement = CreateXmlSchemaElement(XName.Get("faultCode"), schemaReferences).Item1;
-            faultCodeElement.SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.Xsd);
+            faultCodeElement.SchemaTypeName = XmlTypeConstants.String.ToXmlQualifiedName();
 
             var faultStringElement = CreateXmlSchemaElement(XName.Get("faultString"), schemaReferences).Item1;
-            faultStringElement.SchemaTypeName = new XmlQualifiedName("string", NamespaceConstants.Xsd);
+            faultStringElement.SchemaTypeName = XmlTypeConstants.String.ToXmlQualifiedName();
 
             return new XmlSchemaSequence { Items = { faultCodeElement, faultStringElement } };
         }
 
-        private XmlSchema BuildSchemaForNamespace(string schemaNamespace, IList<Tuple<string, XmlSchemaType>> schemaTypes, IList<Tuple<string, XmlSchemaElement>> schemaElements)
+        private XmlSchema BuildSchemaForNamespace(string schemaNamespace, IEnumerable<Tuple<string, XmlSchemaType>> schemaTypes, IEnumerable<Tuple<string, XmlSchemaElement>> schemaElements)
         {
             var namespaceTypes = schemaTypes.Where(x => x.Item1 == schemaNamespace).Select(x => x.Item2).ToList();
             var namespaceElements = schemaElements.Where(x => x.Item1 == schemaNamespace).Select(x => x.Item2).ToList();
@@ -570,7 +572,7 @@ namespace XRoadLib
             return schema;
         }
 
-        private XmlQualifiedName AddAdditionalTypeDefinition(Type type, string typeName, XmlSchemaElement schemaElement, IList<Tuple<string, XmlSchemaType>> schemaTypes)
+        private XmlQualifiedName AddAdditionalTypeDefinition(Type type, string typeName, XmlSchemaElement schemaElement, ICollection<Tuple<string, XmlSchemaType>> schemaTypes)
         {
             if (_additionalTypeDefinitions.TryGetValue(type, out var qualifiedName))
                 return qualifiedName;
@@ -597,7 +599,7 @@ namespace XRoadLib
             return qualifiedName;
         }
 
-        private XmlQualifiedName GetOutputMessageTypeName(XmlSchemaElement resultElement, Type resultType, IList<Tuple<string, XmlSchemaType>> schemaTypes)
+        private XmlQualifiedName GetOutputMessageTypeName(XmlSchemaElement resultElement, Type resultType, ICollection<Tuple<string, XmlSchemaType>> schemaTypes)
         {
             if (resultType == typeof(void))
                 return AddAdditionalTypeDefinition(resultType, "Void", resultElement, schemaTypes);
@@ -610,6 +612,7 @@ namespace XRoadLib
                 : null;
         }
 
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         private void AddPortTypeOperation(OperationDefinition operationDefinition, Message inputMessage, Message outputMessage, string targetNamespace)
         {
             _portType.Operations.Add(new Operation
@@ -624,6 +627,7 @@ namespace XRoadLib
             });
         }
 
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         private void AddOperationMessageBindingContent(BinaryMode binaryMode, MessageBinding messageBinding)
         {
             if (binaryMode != BinaryMode.Attachment)
@@ -688,22 +692,22 @@ namespace XRoadLib
                 if (propertyContent.MergeContent && propertyDefinitions.Count > 1 && propertyContent is SingularContentDefinition)
                     throw new SchemaDefinitionException($"Property {propertyDefinition} of type {typeDefinition} cannot be merged, because there are more than 1 properties present.");
 
-                var contentElements = CreateContentElement(propertyContent, schemaReferences);
+                var (contentElement, referenceElement) = CreateContentElement(propertyContent, schemaReferences);
 
                 if (!propertyContent.MergeContent || propertyContent is ArrayContentDefiniton)
                 {
-                    contentParticle.Items.Add(contentElements.Item2);
+                    contentParticle.Items.Add(referenceElement);
                     continue;
                 }
 
-                if (!contentElements.Item1.SchemaTypeName.IsEmpty)
-                    return contentElements.Item1.SchemaTypeName;
+                if (!contentElement.SchemaTypeName.IsEmpty)
+                    return contentElement.SchemaTypeName;
 
-                var particle = ((XmlSchemaComplexType)contentElements.Item1.SchemaType)?.Particle;
+                var particle = ((XmlSchemaComplexType)contentElement.SchemaType)?.Particle;
                 if (particle != null)
                     schemaType.Particle = particle;
 
-                var content = ((XmlSchemaComplexType)contentElements.Item1.SchemaType)?.ContentModel;
+                var content = ((XmlSchemaComplexType)contentElement.SchemaType)?.ContentModel;
                 if (content != null)
                     schemaType.ContentModel = content;
 
@@ -743,7 +747,7 @@ namespace XRoadLib
             return new XmlQualifiedName(typeDefinition.Name.LocalName, typeDefinition.Name.NamespaceName);
         }
 
-        private IList<XRoadTitleAttribute> GetTitlesOrDefault(DocumentationDefinition documentationDefinition, string defaultTitle)
+        private IEnumerable<XRoadTitleAttribute> GetTitlesOrDefault(DocumentationDefinition documentationDefinition, string defaultTitle)
         {
             if (documentationDefinition.Titles.Any())
                 return documentationDefinition.Titles;
@@ -789,10 +793,9 @@ namespace XRoadLib
             if (contentDefinition.TypeName != null)
                 return _schemaTypeDefinitions[contentDefinition.TypeName];
 
-            if (_runtimeTypeDefinitions.ContainsKey(contentDefinition.RuntimeType))
-                return _runtimeTypeDefinitions[contentDefinition.RuntimeType];
-
-            return _schemaDefinitionProvider.GetTypeDefinition(contentDefinition.RuntimeType);
+            return _runtimeTypeDefinitions.ContainsKey(contentDefinition.RuntimeType)
+                ? _runtimeTypeDefinitions[contentDefinition.RuntimeType]
+                : _schemaDefinitionProvider.GetTypeDefinition(contentDefinition.RuntimeType);
         }
 
         private void SetSchemaElementType(XmlSchemaElement schemaElement, ContentDefinition contentDefinition, SchemaReferences schemaReferences)
@@ -838,7 +841,7 @@ namespace XRoadLib
 
         private void AddEnumTypeContent(string schemaNamespace, Type type, XmlSchemaSimpleType schemaType)
         {
-            var restriction = new XmlSchemaSimpleTypeRestriction { BaseTypeName = new XmlQualifiedName("string", NamespaceConstants.Xsd) };
+            var restriction = new XmlSchemaSimpleTypeRestriction { BaseTypeName = XmlTypeConstants.String.ToXmlQualifiedName() };
 
             foreach (var name in Enum.GetNames(type))
             {
@@ -904,21 +907,21 @@ namespace XRoadLib
                 return schemaElements;
             }
 
-            var itemElements = CreateXmlSchemaElement(arrayContentDefinition.Item.Content.Name, schemaReferences);
+            var (xmlSchemaElement, referenceElement) = CreateXmlSchemaElement(arrayContentDefinition.Item.Content.Name, schemaReferences);
 
             if (arrayContentDefinition.Item.MinOccurs != 1)
-                itemElements.Item2.MinOccurs = arrayContentDefinition.Item.MinOccurs;
+                referenceElement.MinOccurs = arrayContentDefinition.Item.MinOccurs;
                 
             if (!arrayContentDefinition.Item.MaxOccurs.HasValue)
-                itemElements.Item2.MaxOccursString = "unbounded";
+                referenceElement.MaxOccursString = "unbounded";
             else if (arrayContentDefinition.Item.MaxOccurs.Value != 1u)
-                itemElements.Item2.MaxOccurs = arrayContentDefinition.Item.MaxOccurs.Value;
+                referenceElement.MaxOccurs = arrayContentDefinition.Item.MaxOccurs.Value;
 
-            itemElements.Item1.IsNillable = arrayContentDefinition.Item.Content.IsNullable;
+            xmlSchemaElement.IsNillable = arrayContentDefinition.Item.Content.IsNullable;
 
-            SetSchemaElementType(itemElements.Item1, arrayContentDefinition.Item.Content, schemaReferences);
+            SetSchemaElementType(xmlSchemaElement, arrayContentDefinition.Item.Content, schemaReferences);
 
-            _schemaDefinitionProvider.ProtocolDefinition.Style.AddItemElementToArrayElement(schemaElements.Item1, itemElements.Item2, ns => _addRequiredImport(schemaReferences.SchemaNamespace, ns, null));
+            _schemaDefinitionProvider.ProtocolDefinition.Style.AddItemElementToArrayElement(schemaElements.Item1, referenceElement, ns => _addRequiredImport(schemaReferences.SchemaNamespace, ns, null));
 
             return schemaElements;
         }
@@ -959,8 +962,8 @@ namespace XRoadLib
 
         private void AddServiceDescriptionNamespaces(DocumentableItem serviceDescription)
         {
-            foreach (var tuple in _getGlobalNamespaces())
-                serviceDescription.Namespaces.Add(tuple.Item1, tuple.Item2);
+            foreach (var (prefix, ns) in _getGlobalNamespaces())
+                serviceDescription.Namespaces.Add(prefix, ns);
             serviceDescription.Namespaces.Add(PrefixConstants.Target, _schemaDefinitionProvider.ProtocolDefinition.ProducerNamespace);
         }
 
@@ -1047,9 +1050,9 @@ namespace XRoadLib
 
             var attributes = new List<XmlAttribute>(target.UnhandledAttributes);
 
-            foreach (var attribute in definition.CustomAttributes ?? Enumerable.Empty<Tuple<XName, string>>())
+            foreach (var (attributeName, attributeValue) in definition.CustomAttributes ?? Enumerable.Empty<Tuple<XName, string>>())
             {
-                var attr = CreateAttribute(attribute.Item1, attribute.Item2, addSchemaImport);
+                var attr = CreateAttribute(attributeName, attributeValue, addSchemaImport);
                 attributes.Add(attr);
             }
 
@@ -1074,8 +1077,8 @@ namespace XRoadLib
 
             var elementForm =
                 _schemaDefinitionProvider.IsQualifiedElementDefault(ns)
-                    ? (elementNamespace == "" ? (XmlSchemaForm?)XmlSchemaForm.Unqualified : null)
-                    : (elementNamespace == ns ? (XmlSchemaForm?)XmlSchemaForm.Qualified : null);
+                    ? elementNamespace == "" ? (XmlSchemaForm?)XmlSchemaForm.Unqualified : null
+                    : elementNamespace == ns ? (XmlSchemaForm?)XmlSchemaForm.Qualified : null;
 
             if (elementForm.HasValue)
                 element.Form = elementForm.Value;
@@ -1085,8 +1088,7 @@ namespace XRoadLib
 
         private Tuple<XmlSchemaElement, XmlSchemaElement> SetXmlSchemaElementName(Tuple<XmlSchemaElement, XmlSchemaElement> elements, XName name, SchemaReferences schemaReferences)
         {
-            var element = elements.Item1;
-            var referenceElement = elements.Item2;
+            var (element, referenceElement) = elements;
 
             var ns = schemaReferences.SchemaNamespace;
             if (name.NamespaceName != schemaReferences.SchemaNamespace && name.NamespaceName != "")
@@ -1100,8 +1102,8 @@ namespace XRoadLib
 
             var elementForm =
                 _schemaDefinitionProvider.IsQualifiedElementDefault(ns)
-                    ? (name.NamespaceName == "" ? (XmlSchemaForm?)XmlSchemaForm.Unqualified : null)
-                    : (name.NamespaceName == ns ? (XmlSchemaForm?)XmlSchemaForm.Qualified : null);
+                    ? name.NamespaceName == "" ? (XmlSchemaForm?)XmlSchemaForm.Unqualified : null
+                    : name.NamespaceName == ns ? (XmlSchemaForm?)XmlSchemaForm.Qualified : null;
 
             if (elementForm.HasValue)
                 element.Form = elementForm.Value;

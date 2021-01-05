@@ -88,7 +88,7 @@ namespace XRoadLib.Soap
                 },
                 Reason = new List<Soap12FaultReasonText>
                 {
-                    new Soap12FaultReasonText
+                    new()
                     {
                         LanguageCode = "en",
                         Text = exception?.Message ?? "Unexpected error occurred."
@@ -169,31 +169,17 @@ namespace XRoadLib.Soap
             await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
 
-        private static Task WriteSoapFaultValueEnumAsync(XmlWriter writer, Soap12FaultCodeEnum value)
+        private static Task WriteSoapFaultValueEnumAsync(XmlWriter writer, Soap12FaultCodeEnum value) => value switch
         {
-            switch (value)
-            {
-                case Soap12FaultCodeEnum.Receiver:
-                    return writer.WriteQualifiedNameAsync("Receiver", NamespaceConstants.Soap12Env);
+            Soap12FaultCodeEnum.Receiver => writer.WriteQualifiedNameAsync("Receiver", NamespaceConstants.Soap12Env),
+            Soap12FaultCodeEnum.Sender => writer.WriteQualifiedNameAsync("Sender", NamespaceConstants.Soap12Env),
+            Soap12FaultCodeEnum.MustUnderstand => writer.WriteQualifiedNameAsync("MustUnderstand", NamespaceConstants.Soap12Env),
+            Soap12FaultCodeEnum.VersionMismatch => writer.WriteQualifiedNameAsync("VersionMismatch", NamespaceConstants.Soap12Env),
+            Soap12FaultCodeEnum.DataEncodingUnknown => writer.WriteQualifiedNameAsync("DataEncodingUnknown", NamespaceConstants.Soap12Env),
+            Soap12FaultCodeEnum.None or _ => throw new ArgumentException($"Invalid SOAP 1.2 Fault Code enumeration value `{value}`.", nameof(value))
+        };
 
-                case Soap12FaultCodeEnum.Sender:
-                    return writer.WriteQualifiedNameAsync("Sender", NamespaceConstants.Soap12Env);
-
-                case Soap12FaultCodeEnum.MustUnderstand:
-                    return writer.WriteQualifiedNameAsync("MustUnderstand", NamespaceConstants.Soap12Env);
-
-                case Soap12FaultCodeEnum.VersionMismatch:
-                    return writer.WriteQualifiedNameAsync("VersionMismatch", NamespaceConstants.Soap12Env);
-
-                case Soap12FaultCodeEnum.DataEncodingUnknown:
-                    return writer.WriteQualifiedNameAsync("DataEncodingUnknown", NamespaceConstants.Soap12Env);
-
-                default:
-                    throw new ArgumentException($"Invalid SOAP 1.2 Fault Code enumeration value `{value}`.", nameof(value));
-            }
-        }
-
-        private static async Task WriteSoapFaultReasonAsync(XmlWriter writer, IList<Soap12FaultReasonText> faultReasons)
+        private static async Task WriteSoapFaultReasonAsync(XmlWriter writer, IEnumerable<Soap12FaultReasonText> faultReasons)
         {
             await writer.WriteStartElementAsync(FaultReasonName).ConfigureAwait(false);
 
@@ -320,21 +306,15 @@ namespace XRoadLib.Soap
             if (!enumName.NamespaceName.Equals(NamespaceConstants.Soap12Env))
                 return Soap12FaultCodeEnum.None;
 
-            switch (enumName.LocalName)
+            return enumName.LocalName switch
             {
-                case "DataEncodingUnknown":
-                    return Soap12FaultCodeEnum.DataEncodingUnknown;
-                case "MustUnderstand":
-                    return Soap12FaultCodeEnum.MustUnderstand;
-                case "Receiver":
-                    return Soap12FaultCodeEnum.Receiver;
-                case "Sender":
-                    return Soap12FaultCodeEnum.Sender;
-                case "VersionMismatch":
-                    return Soap12FaultCodeEnum.VersionMismatch;
-                default:
-                    return Soap12FaultCodeEnum.None;
-            }
+                "DataEncodingUnknown" => Soap12FaultCodeEnum.DataEncodingUnknown,
+                "MustUnderstand" => Soap12FaultCodeEnum.MustUnderstand,
+                "Receiver" => Soap12FaultCodeEnum.Receiver,
+                "Sender" => Soap12FaultCodeEnum.Sender,
+                "VersionMismatch" => Soap12FaultCodeEnum.VersionMismatch,
+                _ => Soap12FaultCodeEnum.None
+            };
         }
 
         private static async Task<IList<Soap12FaultReasonText>> DeserializeSoapFaultReasonAsync(XmlReader reader)

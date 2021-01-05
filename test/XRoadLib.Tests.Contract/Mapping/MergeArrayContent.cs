@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using XRoadLib.Attributes;
 using XRoadLib.Serialization;
@@ -30,6 +31,8 @@ namespace XRoadLib.Tests.Contract.Mapping
         public WrapperType[] Content { get; set; }
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")] 
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
     public interface IMergeArrayContentService
     {
         [XRoadService("MergeArrayContent")]

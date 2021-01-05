@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
@@ -10,10 +11,14 @@ namespace XRoadLib.Wsdl
         protected abstract string ElementName { get; }
 
         public XmlElement DocumentationElement { get; set; }
-        public List<XmlAttribute> ExtensibleAttributes { get; } = new List<XmlAttribute>();
-        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new List<ServiceDescriptionFormatExtension>();
-        public Dictionary<string, string> Namespaces { get; } = new Dictionary<string, string>();
+        
+        [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public List<XmlAttribute> ExtensibleAttributes { get; } = new();
+        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new();
+        public Dictionary<string, string> Namespaces { get; } = new();
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public string Documentation
         {
             get => DocumentationElement != null ? DocumentationElement.InnerText : "";
@@ -59,6 +64,7 @@ namespace XRoadLib.Wsdl
             DocumentationElement?.WriteTo(writer);
         }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         protected Task WriteStartElementAsync(XmlWriter writer, string name)
         {
             var prefix =

@@ -1,15 +1,31 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
 
 namespace XRoadLib.Wsdl
 {
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
     public class Soap12HeaderBinding : ServiceDescriptionFormatExtension
     {
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public string Encoding { get; set; }
+        
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public XmlQualifiedName Message { get; set; }
+        
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public string Namespace { get; set; }
+        
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public string Part { get; set; }
+        
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public SoapBindingUse Use { get; set; } = SoapBindingUse.Default;
 
         internal override async Task WriteAsync(XmlWriter writer)

@@ -1,4 +1,5 @@
-﻿using XRoadLib.Wsdl;
+﻿using System.Diagnostics.CodeAnalysis;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Schema
 {
@@ -11,7 +12,8 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Producer namespace of exported X-Road schema.
         /// </summary>
-        protected readonly string producerNamespace;
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
+        protected virtual string ProducerNamespace { get; }
 
         /// <inheritdoc />
         public abstract string XRoadPrefix { get; }
@@ -24,7 +26,7 @@ namespace XRoadLib.Schema
         /// </summary>
         protected AbstractSchemaExporter(string producerNamespace)
         {
-            this.producerNamespace = producerNamespace;
+            ProducerNamespace = producerNamespace;
         }
 
         /// <inheritdoc />
@@ -57,7 +59,7 @@ namespace XRoadLib.Schema
         /// <inheritdoc />
         public virtual void ExportProtocolDefinition(ProtocolDefinition protocolDefinition)
         {
-            protocolDefinition.ProducerNamespace = producerNamespace;
+            protocolDefinition.ProducerNamespace = ProducerNamespace;
         }
 
         /// <inheritdoc />

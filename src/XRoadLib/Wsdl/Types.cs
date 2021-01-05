@@ -10,7 +10,7 @@ namespace XRoadLib.Wsdl
     {
         protected override string ElementName { get; } = "types";
 
-        public List<XmlSchema> Schemas { get; } = new List<XmlSchema>();
+        public List<XmlSchema> Schemas { get; } = new();
 
         protected override async Task WriteElementsAsync(XmlWriter writer)
         {

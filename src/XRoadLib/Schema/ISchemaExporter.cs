@@ -1,4 +1,5 @@
-﻿using XRoadLib.Wsdl;
+﻿using System.Diagnostics.CodeAnalysis;
+using XRoadLib.Wsdl;
 
 namespace XRoadLib.Schema
 {
@@ -26,11 +27,13 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Configuration hook for overriding default property settings.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         void ExportPropertyDefinition(PropertyDefinition propertyDefinition);
 
         /// <summary>
         /// Configuration hook for overriding default type settings.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         void ExportTypeDefinition(TypeDefinition typeDefinition);
 
         /// <summary>
@@ -46,6 +49,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Configuration hook for overriding default non-technical fault settings.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         void ExportFaultDefinition(FaultDefinition faultDefinition);
 
         /// <summary>
@@ -57,11 +61,13 @@ namespace XRoadLib.Schema
         /// Allows each message protocol implementation to customize service description document
         /// before publishing.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         void ExportServiceDescription(ServiceDescription serviceDescription);
 
         /// <summary>
         /// Customize X-Road message header elements.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         void ExportHeaderDefinition(HeaderDefinition headerDefinition);
 
         /// <summary>

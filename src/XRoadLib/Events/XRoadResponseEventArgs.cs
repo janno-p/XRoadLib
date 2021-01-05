@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 
@@ -12,11 +13,15 @@ namespace XRoadLib.Events
         /// <summary>
         /// WebResponse object which is returned from invoking the X-Road request.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public WebResponse WebResponse { get; }
 
         /// <summary>
         /// Content of the response message.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public Stream Stream { get; }
 
         /// <summary>

@@ -14,7 +14,7 @@ namespace XRoadLib.Extensions
     /// </summary>
     public static class XmlWriterExtensions
     {
-        private static readonly XmlQualifiedName QnXsiType = new XmlQualifiedName("type", NamespaceConstants.Xsi);
+        private static readonly XmlQualifiedName QnXsiType = new("type", NamespaceConstants.Xsi);
 
         /// <summary>
         /// Serializes attribute with qualified name content.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -32,6 +33,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Does the attachment have any content.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public bool HasContent => ContentStream.Length > 0;
 
         private XRoadAttachment()

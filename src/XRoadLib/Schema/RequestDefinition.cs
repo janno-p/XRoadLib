@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
@@ -13,6 +14,8 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Operation which uses this request part in its input.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public OperationDefinition DeclaringOperationDefinition { get; }
 
         /// <summary>
@@ -23,6 +26,8 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Wrapper element name for incoming requests.
         /// </summary>
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public XName WrapperElementName { get; set; }
 
         /// <summary>

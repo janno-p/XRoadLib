@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace XRoadLib.Serialization
@@ -7,6 +8,7 @@ namespace XRoadLib.Serialization
     {
         private readonly IDictionary<string, bool> _initializedMembers = new Dictionary<string, bool>();
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public IDictionary<string, bool> GetInitializedMembers()
         {
             return _initializedMembers;

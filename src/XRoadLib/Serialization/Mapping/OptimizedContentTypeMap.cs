@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -12,6 +13,7 @@ namespace XRoadLib.Serialization.Mapping
     {
         public TypeDefinition Definition { get; }
 
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         public OptimizedContentTypeMap(ContentTypeMap contentTypeMap)
         {
             Definition = contentTypeMap.Definition;
@@ -54,17 +56,17 @@ namespace XRoadLib.Serialization.Mapping
             return tempAttachment.ContentStream;
         }
 
-        private static async Task<object> DeserializeBase64ContentAsync(XmlReader reader, XRoadMessage message)
+        private static async Task<object> DeserializeBase64ContentAsync(XmlReader reader, IAttachmentManager attachmentManager)
         {
             if (reader.IsEmptyElement)
-                return await reader.MoveNextAndReturnAsync(GetEmptyAttachmentStream(message)).ConfigureAwait(false);
+                return await reader.MoveNextAndReturnAsync(GetEmptyAttachmentStream(attachmentManager)).ConfigureAwait(false);
 
             const int bufferSize = 1000;
 
             int bytesRead;
             var buffer = new byte[bufferSize];
 
-            var contentStream = GetEmptyAttachmentStream(message);
+            var contentStream = GetEmptyAttachmentStream(attachmentManager);
 
             while ((bytesRead = await reader.ReadContentAsBase64Async(buffer, 0, bufferSize).ConfigureAwait(false)) > 0)
                 await contentStream.WriteAsync(buffer, 0, bytesRead).ConfigureAwait(false);

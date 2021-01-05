@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,6 +17,7 @@ namespace XRoadLib.Extensions
 
     public static class TypeExtensions
     {
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static bool IsAnonymous(this Type type)
         {
             return (type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();
@@ -100,6 +102,7 @@ namespace XRoadLib.Extensions
             return IsVersionInRange(version, attribute.AddedInVersionValue, attribute.RemovedInVersionValue);
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static IEnumerable<string> GetServicesInVersion(this MethodInfo methodInfo, uint version, bool includeHidden = false)
         {
             return methodInfo.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
@@ -124,12 +127,12 @@ namespace XRoadLib.Extensions
 
         internal static XName GetSystemTypeName(this Type type)
         {
-            if (type == typeof(bool)) return XName.Get("boolean", NamespaceConstants.Xsd);
+            if (type == typeof(bool)) return XmlTypeConstants.Boolean;
             if (type == typeof(DateTime)) return XName.Get("dateTime", NamespaceConstants.Xsd);
             if (type == typeof(decimal)) return XName.Get("decimal", NamespaceConstants.Xsd);
             if (type == typeof(int)) return XName.Get("int", NamespaceConstants.Xsd);
             if (type == typeof(long)) return XName.Get("long", NamespaceConstants.Xsd);
-            if (type == typeof(string)) return XName.Get("string", NamespaceConstants.Xsd);
+            if (type == typeof(string)) return XmlTypeConstants.String;
             if (type == typeof(TimeSpan)) return XName.Get("duration", NamespaceConstants.Xsd);
             return typeof(Stream).GetTypeInfo().IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.Xsd) : null;
         }
@@ -189,6 +192,7 @@ namespace XRoadLib.Extensions
                               .Any(m => m.EnabledProperties.Contains(fieldName));
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static Tuple<MethodInfo, XRoadServiceAttribute> FindMethodDeclaration(this MethodInfo method, string operationName, IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts)
         {
             if (method.DeclaringType == null)

@@ -123,54 +123,23 @@
         /// <summary>
         /// Get preferred global XML namespace prefix of the namespace.
         /// </summary>
-        public static string GetPreferredPrefix(string namespaceName)
+        public static string GetPreferredPrefix(string namespaceName) => namespaceName switch
         {
-            switch (namespaceName)
-            {
-                case Mime:
-                    return PrefixConstants.Mime;
-
-                case Soap:
-                    return PrefixConstants.Soap;
-
-                case Soap12:
-                    return PrefixConstants.Soap12;
-
-                case SoapEnc:
-                    return PrefixConstants.SoapEnc;
-
-                case SoapEnv:
-                    return PrefixConstants.SoapEnv;
-
-                case Soap12Env:
-                    return PrefixConstants.Soap12Env;
-
-                case Wsdl:
-                    return PrefixConstants.Wsdl;
-
-                case Xmime:
-                    return PrefixConstants.Xmime;
-
-                case Xop:
-                    return PrefixConstants.Xop;
-
-                case XRoad:
-                    return PrefixConstants.XRoad;
-
-                case XRoadId:
-                    return PrefixConstants.Id;
-
-                case XRoadRepr:
-                    return PrefixConstants.Repr;
-
-                case Xsd:
-                    return PrefixConstants.Xsd;
-
-                case Xsi:
-                    return PrefixConstants.Xsi;
-            }
-
-            return null;
-        }
+            Mime => PrefixConstants.Mime,
+            Soap => PrefixConstants.Soap,
+            Soap12 => PrefixConstants.Soap12,
+            SoapEnc => PrefixConstants.SoapEnc,
+            SoapEnv => PrefixConstants.SoapEnv,
+            Soap12Env => PrefixConstants.Soap12Env,
+            Wsdl => PrefixConstants.Wsdl,
+            Xmime => PrefixConstants.Xmime,
+            Xop => PrefixConstants.Xop,
+            XRoad => PrefixConstants.XRoad,
+            XRoadId => PrefixConstants.Id,
+            XRoadRepr => PrefixConstants.Repr,
+            Xsd => PrefixConstants.Xsd,
+            Xsi => PrefixConstants.Xsi,
+            _ => null
+        };
     }
 }

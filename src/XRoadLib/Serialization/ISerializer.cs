@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Schema;
@@ -15,6 +16,7 @@ namespace XRoadLib.Serialization
         /// <summary>
         /// Common DTO version of serialized types.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
         uint? Version { get; }
 
         /// <summary>
@@ -46,6 +48,7 @@ namespace XRoadLib.Serialization
         /// <param name="particleDefinition">Request array serialization info.</param>
         /// <param name="qualifiedName">Qualified name of serializable type.</param>
         /// <returns>Type serialization details.</returns>
+        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
         ITypeMap GetTypeMap(ParticleDefinition particleDefinition, XName qualifiedName);
 
         /// <summary>
@@ -62,6 +65,7 @@ namespace XRoadLib.Serialization
         /// </summary>
         /// <param name="type">Runtime type.</param>
         /// <returns>XML type name.</returns>
+        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
         XName GetXmlTypeName(Type type);
     }
 }

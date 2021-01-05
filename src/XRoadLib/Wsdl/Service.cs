@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -8,7 +9,8 @@ namespace XRoadLib.Wsdl
     {
         protected override string ElementName { get; } = "service";
 
-        public List<Port> Ports { get; } = new List<Port>();
+        [SuppressMessage("ReSharper", "ReturnTypeCanBeEnumerable.Global")]
+        public List<Port> Ports { get; } = new();
 
         protected override async Task WriteElementsAsync(XmlWriter writer)
         {

@@ -1,9 +1,11 @@
-﻿namespace XRoadLib.Tests.Contract
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace XRoadLib.Tests.Contract
 {
     public enum Gender
     {
-        Unknown,
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] Unknown,
         Female,
-        Male
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] Male
     }
 }

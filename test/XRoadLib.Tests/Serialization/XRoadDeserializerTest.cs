@@ -23,8 +23,8 @@ namespace XRoadLib.Tests.Serialization
         private const uint DtoVersion = 3;
 
         private static readonly ISerializer Serializer = Globals.ServiceManager.GetSerializer(DtoVersion);
-        private static readonly IServiceMap ServiceMap = Serializer.GetServiceMap("Service1");
-        private static readonly IServiceMap Service3Map = Serializer.GetServiceMap("Service3");
+        private static readonly IServiceMap ServiceMap = Serializer.GetServiceMap(nameof(IService.Service1));
+        private static readonly IServiceMap Service3Map = Serializer.GetServiceMap(nameof(IService3.Service3));
 
         private static readonly IMessageFormatter MessageFormatter = new SoapMessageFormatter();
 
@@ -428,7 +428,14 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanDeserializeAnonymousType()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
+
+#if NET5_0
+            await
+#endif
             using var writer = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await writer.WriteLineAsync(@"<?xml version=""1.0"" encoding=""utf-8""?>");
@@ -465,7 +472,14 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task AnonymousTypeShouldNotHaveExplicitType()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
+
+#if NET5_0
+            await
+#endif
             using var writer = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await writer.WriteLineAsync(@"<?xml version=""1.0"" encoding=""utf-8""?>");
@@ -501,15 +515,15 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanDeserializedMergedArrayWithEmptyContent()
         {
-            var contentXml = "<request xmlns:tns=\"http://test-producer.x-road.ee/producer/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                             + "  <Value />"
-                             + "  <Code />"
-                             + "  <Code />"
-                             + "  <Code />"
-                             + "  <Value2>Joy</Value2>"
-                             + "</request>";
+            const string contentXml = "<request xmlns:tns=\"http://test-producer.x-road.ee/producer/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                                      + "  <Value />"
+                                      + "  <Code />"
+                                      + "  <Code />"
+                                      + "  <Code />"
+                                      + "  <Value2>Joy</Value2>"
+                                      + "</request>";
 
-            var inputObject = await DeserializeRequestAsync(null, contentXml, Service3Map, "Service3");
+            var inputObject = await DeserializeRequestAsync(null, contentXml, Service3Map, nameof(IService3.Service3));
             Assert.IsType<TestMergedArrayContent>(inputObject);
 
             var request = (TestMergedArrayContent)inputObject;
@@ -528,11 +542,11 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("Joy", request.Value2);
         }
 
-        private static Task<object> DeserializeRequestAsync(string templateXml, string contentXml, IServiceMap serviceMap = null, string serviceName = "Service1")
+        private static Task<object> DeserializeRequestAsync(string templateXml, string contentXml, IServiceMap serviceMap = null, string serviceName = nameof(IService.Service1))
         {
             serviceMap ??= ServiceMap;
             var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod(serviceName));
-            return DeserializeRequestContentAsync(contentXml, Globals.ServiceManager, serviceName, async (msgr) =>
+            return DeserializeRequestContentAsync(contentXml, Globals.ServiceManager, serviceName, async msgr =>
             {
                 var message = Globals.ServiceManager.CreateMessage();
                 message.XmlTemplate = template;
@@ -551,12 +565,22 @@ namespace XRoadLib.Tests.Serialization
 
         private static async Task<object> DeserializeRequestContentAsync(string contentXml, IServiceManager protocol, string serviceName, Func<XRoadMessageReader, Task<object>> deserializeMessage)
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
+
+#if NET5_0
+            await
+#endif
             using var writer = new StreamWriter(stream);
 
             await writer.WriteLineAsync(@"<?xml version=""1.0"" encoding=""utf-8""?>");
             await writer.WriteLineAsync($"<soapenv:Envelope xmlns:soapenv=\"{NamespaceConstants.SoapEnv}\" soapenv:encodingStyle=\"{NamespaceConstants.SoapEnc}\">");
 
+#if NET5_0
+            await
+#endif
             using (var xmlWriter = XmlWriter.Create(writer, new XmlWriterSettings { Async = true, ConformanceLevel = ConformanceLevel.Fragment, Encoding = XRoadEncoding.Utf8 }))
             {
                 await xmlWriter.WriteStartElementAsync("soapenv", "Header", NamespaceConstants.SoapEnv);

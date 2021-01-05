@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using XRoadLib.Serialization;
 
@@ -15,6 +16,7 @@ namespace XRoadLib.Attributes
         /// </summary>
         public bool IsOptional { get; set; }
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public EmptyTagHandlingMode? EmptyTagHandlingMode { get; set; }
 
         /// <summary>
@@ -28,6 +30,7 @@ namespace XRoadLib.Attributes
         /// in the XML document instance.
         /// </summary>
         /// <param name="elementName">The XML element name of the serialized member.</param>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XRoadXmlArrayAttribute(string elementName)
             : base(elementName)
         { }

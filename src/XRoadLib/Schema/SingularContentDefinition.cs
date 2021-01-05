@@ -8,7 +8,7 @@ using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
 {
-    public class SingularContentDefinition : ContentDefinition
+    public sealed class SingularContentDefinition : ContentDefinition
     {
         public SingularContentDefinition(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
             : base(particle)

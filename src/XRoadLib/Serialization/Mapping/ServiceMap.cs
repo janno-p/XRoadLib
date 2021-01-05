@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
@@ -39,6 +40,7 @@ namespace XRoadLib.Serialization.Mapping
         /// <param name="inputTypeMap">Default TypeMap of the operation request root element.</param>
         /// <param name="outputTypeMap"> Default TypeMap of the operation response root element.</param>
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
         public ServiceMap(ISerializer serializer, OperationDefinition operationDefinition, RequestDefinition requestDefinition, ResponseDefinition responseDefinition, ITypeMap inputTypeMap, ITypeMap outputTypeMap)
         {
             _serializer = serializer;

@@ -105,7 +105,7 @@ namespace XRoadLib.Tests.Protocols.Headers
         [Fact]
         public void InitializeWithoutProducerInFullName()
         {
-            var withoutProducer = "serviceName.v1";
+            const string withoutProducer = "serviceName.v1";
             var xsn = XRoadServiceIdentifier.FromString(withoutProducer);
             Assert.Null(xsn.SubsystemCode);
             Assert.Equal("serviceName", xsn.ServiceCode);
@@ -117,7 +117,7 @@ namespace XRoadLib.Tests.Protocols.Headers
         [Fact]
         public void InitializeWithoutProducerAndVersionInFullName()
         {
-            var withoutProducerAndVersion = "serviceName";
+            const string withoutProducerAndVersion = "serviceName";
             var xsn = XRoadServiceIdentifier.FromString(withoutProducerAndVersion);
             Assert.Null(xsn.SubsystemCode);
             Assert.Equal("serviceName", xsn.ServiceCode);
@@ -129,7 +129,7 @@ namespace XRoadLib.Tests.Protocols.Headers
         [Fact]
         public void InitializeWithoutVersionInFullName()
         {
-            var withoutVersion = "producer.listMethods";
+            const string withoutVersion = "producer.listMethods";
             var xsn = XRoadServiceIdentifier.FromString(withoutVersion);
             Assert.Null(xsn.SubsystemCode);
             Assert.Equal("listMethods", xsn.ServiceCode);
@@ -141,7 +141,7 @@ namespace XRoadLib.Tests.Protocols.Headers
         [Fact]
         public void InitializeWithoutServiceNameInFullName()
         {
-            var withoutServiceName = "producer..v2";
+            const string withoutServiceName = "producer..v2";
             var xsn = XRoadServiceIdentifier.FromString(withoutServiceName);
             Assert.Null(xsn.SubsystemCode);
             Assert.Equal("", xsn.ServiceCode);

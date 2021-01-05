@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
@@ -36,6 +37,7 @@ namespace XRoadLib.Serialization.Template
             _parameterTypes = methodInfo.GetParameters().ToDictionary(param => param.Name, param => param.ParameterType);
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XRoadXmlTemplate() : this(null, null)
         { }
 
@@ -51,6 +53,7 @@ namespace XRoadLib.Serialization.Template
             }
         }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public IXmlTemplateNode GetParameterNode(string parameterName)
         {
             if (_requestNode == null)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -18,7 +19,7 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Use this instance to create XmlNodes.
         /// </summary>
-        protected readonly XmlDocument Document = new XmlDocument();
+        protected readonly XmlDocument Document = new();
 
         /// <summary>
         /// Writes explicit type attribute if style requires it.
@@ -35,6 +36,7 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Writes element type attribute according to style preferences.
         /// </summary>
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
         public virtual async Task WriteTypeAsync(XmlWriter writer, TypeDefinition typeDefinition, ContentDefinition contentDefinition)
         {
             if (typeDefinition.IsAnonymous)
@@ -59,7 +61,7 @@ namespace XRoadLib.Styles
 
             await WriteExplicitTypeAsync(writer, typeName).ConfigureAwait(false);
 
-            if (typeName.LocalName == "string" && typeName.NamespaceName == NamespaceConstants.Xsd)
+            if (typeName.LocalName == XmlTypeConstants.String.LocalName && typeName.NamespaceName == NamespaceConstants.Xsd)
                 await writer.WriteStringWithModeAsync((string)value ?? "", StringSerializationMode).ConfigureAwait(false);
             else writer.WriteValue(value);
 
@@ -84,6 +86,7 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Add expected content type attribute for binary content.
         /// </summary>
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
         public virtual XmlAttribute CreateExpectedContentType(string contentType)
         {
             var attribute = Document.CreateAttribute(PrefixConstants.Xmime, "expectedContentTypes", NamespaceConstants.Xmime);
@@ -104,22 +107,25 @@ namespace XRoadLib.Styles
         /// <summary>
         /// Should message definitions use type or element references.
         /// </summary>
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
         public virtual bool UseElementInMessagePart => true;
 
         /// <summary>
         /// Preferred string serialization mode.
         /// </summary>
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
         public virtual StringSerializationMode StringSerializationMode => StringSerializationMode.HtmlEncoded;
         
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
         public virtual async Task SerializeFaultAsync(XmlWriter writer, IXRoadFault fault)
         {
             await writer.WriteStartElementAsync("faultCode").ConfigureAwait(false);
-            await WriteExplicitTypeAsync(writer, XName.Get("string", NamespaceConstants.Xsd)).ConfigureAwait(false);
+            await WriteExplicitTypeAsync(writer, XmlTypeConstants.String).ConfigureAwait(false);
             await writer.WriteStringAsync(fault.FaultCode).ConfigureAwait(false);
             await writer.WriteEndElementAsync().ConfigureAwait(false);
 
             await writer.WriteStartElementAsync("faultString").ConfigureAwait(false);
-            await WriteExplicitTypeAsync(writer, XName.Get("string", NamespaceConstants.Xsd)).ConfigureAwait(false);
+            await WriteExplicitTypeAsync(writer, XmlTypeConstants.String).ConfigureAwait(false);
             await writer.WriteStringAsync(fault.FaultString).ConfigureAwait(false);
             await writer.WriteEndElementAsync().ConfigureAwait(false);
         }

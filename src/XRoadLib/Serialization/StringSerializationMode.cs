@@ -1,4 +1,6 @@
-﻿namespace XRoadLib.Serialization
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace XRoadLib.Serialization
 {
     /// <summary>
     /// Specifies how string values with special characters should be handled.
@@ -13,6 +15,6 @@
         /// <summary>
         /// Wrap strings containing special characters inside CDATA.
         /// </summary>
-        WrappedInCData
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] WrappedInCData
     }
 }

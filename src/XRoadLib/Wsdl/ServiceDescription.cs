@@ -8,12 +8,12 @@ namespace XRoadLib.Wsdl
     {
         protected override string ElementName { get; } = "definitions";
 
-        public List<Binding> Bindings { get; } = new List<Binding>();
-        public List<Message> Messages { get; } = new List<Message>();
-        public List<PortType> PortTypes { get; } = new List<PortType>();
-        public List<Service> Services { get; } = new List<Service>();
+        public List<Binding> Bindings { get; } = new();
+        public List<Message> Messages { get; } = new();
+        public List<PortType> PortTypes { get; } = new();
+        public List<Service> Services { get; } = new();
         public string TargetNamespace { get; set; }
-        public Types Types { get; } = new Types();
+        public Types Types { get; } = new();
 
         protected override async Task WriteAttributesAsync(XmlWriter writer)
         {

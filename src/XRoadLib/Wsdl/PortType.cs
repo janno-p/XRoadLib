@@ -8,7 +8,7 @@ namespace XRoadLib.Wsdl
     {
         protected override string ElementName { get; } = "portType";
 
-        public List<Operation> Operations { get; } = new List<Operation>();
+        public List<Operation> Operations { get; } = new();
 
         protected override async Task WriteElementsAsync(XmlWriter writer)
         {

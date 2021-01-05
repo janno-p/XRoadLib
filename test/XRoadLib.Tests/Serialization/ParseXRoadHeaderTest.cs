@@ -102,10 +102,10 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CollectsClientMandatoryValues()
         {
-            var tuple = await ParseHeaderAsync(MinimalValidHeader(""));
-            var header = tuple.Item1 as IXRoadHeader;
+            var (soapHeader, _, serviceManager) = await ParseHeaderAsync(MinimalValidHeader(""));
+            var header = soapHeader as IXRoadHeader;
             Assert.NotNull(header);
-            Assert.Same(Globals.ServiceManager, tuple.Item3);
+            Assert.Same(Globals.ServiceManager, serviceManager);
             Assert.NotNull(header.Client);
             Assert.Equal("EE", header.Client.XRoadInstance);
             Assert.Equal("GOV", header.Client.MemberClass);
@@ -122,28 +122,28 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CollectsUnqualifiedSoapHeaderElementsButCannotDetectProtocolVersion()
         {
-            var tuple = await ParseHeaderAsync(@"<x><test>bla</test></x><y /><z />");
-            Assert.Null(tuple.Item1);
-            Assert.Null(tuple.Item3);
-            Assert.Equal(3, tuple.Item2.Count);
+            var (soapHeader, xElements, serviceManager) = await ParseHeaderAsync(@"<x><test>bla</test></x><y /><z />");
+            Assert.Null(soapHeader);
+            Assert.Null(serviceManager);
+            Assert.Equal(3, xElements.Count);
 
-            var elX = tuple.Item2.SingleOrDefault(x => x.Name.LocalName == "x");
+            var elX = xElements.SingleOrDefault(x => x.Name.LocalName == "x");
             Assert.NotNull(elX);
 
             var elXTest = elX.Element(XName.Get("test", NamespaceConstants.SoapEnv));
             Assert.NotNull(elXTest);
             Assert.Equal("bla", elXTest.Value);
-            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "y");
-            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "z");
+            Assert.Contains(xElements, x => x.Name.LocalName == "y");
+            Assert.Contains(xElements, x => x.Name.LocalName == "z");
         }
 
         [Fact]
         public async Task CollectsUnqualifiedSoapHeadersThatAreMixedWithXRoadElements()
         {
-            var tuple = await ParseHeaderAsync(@"<x /><xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><y /><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion><z />");
-            var header = tuple.Item1 as IXRoadHeader;
+            var (soapHeader, elements, serviceManager) = await ParseHeaderAsync(@"<x /><xrd:client id:objectType=""MEMBER""><id:xRoadInstance>EE</id:xRoadInstance><id:memberClass>GOV</id:memberClass><id:memberCode>12345</id:memberCode></xrd:client><y /><xrd:id>ABCDE</xrd:id><xrd:protocolVersion>4.0</xrd:protocolVersion><z />");
+            var header = soapHeader as IXRoadHeader;
             Assert.NotNull(header);
-            Assert.Same(Globals.ServiceManager, tuple.Item3);
+            Assert.Same(Globals.ServiceManager, serviceManager);
             Assert.NotNull(header.Client);
             Assert.Equal("EE", header.Client.XRoadInstance);
             Assert.Equal("GOV", header.Client.MemberClass);
@@ -155,10 +155,10 @@ namespace XRoadLib.Tests.Serialization
             Assert.Equal("4.0", header.ProtocolVersion);
             Assert.Null(header.Service);
             Assert.Null(header.UserId);
-            Assert.Equal(3, tuple.Item2.Count);
-            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "x");
-            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "y");
-            Assert.Contains(tuple.Item2, x => x.Name.LocalName == "z");
+            Assert.Equal(3, elements.Count);
+            Assert.Contains(elements, x => x.Name.LocalName == "x");
+            Assert.Contains(elements, x => x.Name.LocalName == "y");
+            Assert.Contains(elements, x => x.Name.LocalName == "z");
         }
 
         [Fact]
@@ -295,11 +295,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task ValidCentralServiceElement()
         {
-            var tuple = await ParseHeaderAsync(MinimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance>FI</id:xRoadInstance><id:serviceCode>fun</id:serviceCode></xrd:centralService>"));
-            Assert.NotNull(tuple.Item1);
-            Assert.IsType<XRoadHeader>(tuple.Item1);
+            var (soapHeader, _, _) = await ParseHeaderAsync(MinimalValidHeader(@"<xrd:centralService id:objectType=""CENTRALSERVICE""><id:xRoadInstance>FI</id:xRoadInstance><id:serviceCode>fun</id:serviceCode></xrd:centralService>"));
+            Assert.NotNull(soapHeader);
+            Assert.IsType<XRoadHeader>(soapHeader);
 
-            var xhr4 = (IXRoadHeader)tuple.Item1;
+            var xhr4 = (IXRoadHeader)soapHeader;
             Assert.NotNull(xhr4.CentralService);
             Assert.Equal(XRoadObjectType.CentralService, xhr4.CentralService.ObjectType);
             Assert.Equal("FI", xhr4.CentralService.XRoadInstance);
@@ -330,11 +330,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleMissingOptionalElementForRepresentedPartyElement()
         {
-            var tuple = await ParseHeaderAsync(MinimalValidHeader(@"<repr:representedParty><repr:partyCode /></repr:representedParty>"));
-            Assert.NotNull(tuple.Item1);
-            Assert.IsType<XRoadHeader>(tuple.Item1);
+            var (soapHeader, _, _) = await ParseHeaderAsync(MinimalValidHeader(@"<repr:representedParty><repr:partyCode /></repr:representedParty>"));
+            Assert.NotNull(soapHeader);
+            Assert.IsType<XRoadHeader>(soapHeader);
 
-            var xhr4 = (IXRoadHeader)tuple.Item1;
+            var xhr4 = (IXRoadHeader)soapHeader;
             Assert.NotNull(xhr4.RepresentedParty);
             Assert.Null(xhr4.RepresentedParty.Class);
             Assert.Equal("", xhr4.RepresentedParty.Code);
@@ -343,11 +343,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanHandleOptionalElementValueForRepresentedPartyElement()
         {
-            var tuple = await ParseHeaderAsync(MinimalValidHeader(@"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>"));
-            Assert.NotNull(tuple.Item1);
-            Assert.IsType<XRoadHeader>(tuple.Item1);
+            var (soapHeader, _, _) = await ParseHeaderAsync(MinimalValidHeader(@"<repr:representedParty><repr:partyClass>CLS</repr:partyClass><repr:partyCode>COD</repr:partyCode></repr:representedParty>"));
+            Assert.NotNull(soapHeader);
+            Assert.IsType<XRoadHeader>(soapHeader);
 
-            var xhr4 = (IXRoadHeader)tuple.Item1;
+            var xhr4 = (IXRoadHeader)soapHeader;
             Assert.NotNull(xhr4.RepresentedParty);
             Assert.Equal("CLS", xhr4.RepresentedParty.Class);
             Assert.Equal("COD", xhr4.RepresentedParty.Code);

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
@@ -11,6 +12,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes
 {
     /// <inheritdoc />
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
     public class XRoadProtoBufServiceAttribute : XRoadServiceAttribute
     {
         private const string XroadProtobufSchema = "https://e-rik.github.io/schemas/xroad-protobuf.xsd";

@@ -40,7 +40,11 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanReadEmptyContentWithoutAttachments()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
+
             using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), _serviceManagers);
             using var message = new XRoadMessage();
             await reader.ReadAsync(message, false);
@@ -50,7 +54,14 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanReadContentWithoutAttachments()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
+
+#if NET5_0
+            await
+#endif
             using var streamWriter = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await streamWriter.WriteAsync("<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:id=\"http://x-road.eu/xsd/identifiers\" xmlns:repr=\"http://x-road.eu/xsd/representation.xsd\">\r\n");
@@ -72,7 +83,14 @@ namespace XRoadLib.Tests.Serialization
         [Fact]
         public async Task CanReadContentWithAttachments()
         {
+#if NET5_0
+            await
+#endif
             using var stream = new MemoryStream();
+
+#if NET5_0
+            await
+#endif
             using var streamWriter = new StreamWriter(stream, XRoadEncoding.Utf8);
 
             await streamWriter.WriteAsync("\r\n");
@@ -118,7 +136,14 @@ namespace XRoadLib.Tests.Serialization
         {
             var messageFormatter = new SoapMessageFormatter();
 
+#if NET5_0
+            await
+#endif
             using var outputStream = new MemoryStream();
+
+#if NET5_0
+            await
+#endif
             using var contentStream = new MemoryStream();
 
             if (content != null)
@@ -130,7 +155,7 @@ namespace XRoadLib.Tests.Serialization
             using var message = new XRoadMessage(contentStream);
 
             (attachments ?? Enumerable.Empty<XRoadAttachment>()).ToList().ForEach(message.AllAttachments.Add);
-            await message.SaveToAsync(outputStream, x => {}, (k, v) => {}, messageFormatter);
+            await message.SaveToAsync(outputStream, _ => {}, (_, _) => {}, messageFormatter);
 
             return message.ContentLength;
         }

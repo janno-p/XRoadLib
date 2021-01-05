@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Xml;
 using XRoadLib.Extensions;
@@ -16,6 +17,7 @@ namespace XRoadLib.Serialization.Mapping
 
         private readonly ITypeMap _elementTypeMap;
 
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         public ArrayTypeMap(ISerializer serializer, CollectionDefinition collectionDefinition, ITypeMap elementTypeMap)
             : base(collectionDefinition)
         {

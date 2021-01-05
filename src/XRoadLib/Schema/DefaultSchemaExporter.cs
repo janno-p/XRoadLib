@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 
 namespace XRoadLib.Schema
@@ -25,21 +27,35 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Defines list of supported DTO versions (for DTO based versioning).
         /// </summary>
-        public ISet<uint> SupportedVersions { get; } = new HashSet<uint>();
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public IEnumerable<uint> SupportedVersions { get; }
 
         /// <summary>
         /// Define list of content filters of X-Road message elements.
         /// </summary>
-        public ISet<string> EnabledFilters { get; } = new HashSet<string>();
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public IEnumerable<string> EnabledFilters { get; }
 
+        public DefaultSchemaExporter(string producerNamespace, Assembly contractAssembly)
+            : this(producerNamespace, contractAssembly, Enumerable.Empty<uint>(), Enumerable.Empty<string>())
+        { }
+        
+        public DefaultSchemaExporter(string producerNamespace, Assembly contractAssembly, IEnumerable<uint> supportedVersions)
+            : this(producerNamespace, contractAssembly, supportedVersions, Enumerable.Empty<string>())
+        { }
+        
         /// <summary>
         /// Initializes new schema exporter instance and configure minimal set
         /// of configuration options.
         /// </summary>
-        public DefaultSchemaExporter(string producerNamespace, Assembly contractAssembly)
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public DefaultSchemaExporter(string producerNamespace, Assembly contractAssembly, IEnumerable<uint> supportedVersions, IEnumerable<string> enabledFilters)
             : base(producerNamespace)
         {
             _contractAssembly = contractAssembly;
+
+            EnabledFilters = new HashSet<string>(enabledFilters);
+            SupportedVersions = new HashSet<uint>(supportedVersions);
         }
 
         /// <summary>

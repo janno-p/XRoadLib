@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace XRoadLib.Attributes
 {
@@ -11,6 +12,7 @@ namespace XRoadLib.Attributes
         public string LanguageCode { get; }
         public string Value { get; }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XRoadNotesAttribute(string value)
         {
             Value = value;

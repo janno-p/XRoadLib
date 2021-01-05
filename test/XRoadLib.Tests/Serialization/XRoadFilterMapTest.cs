@@ -1,4 +1,5 @@
-﻿using XRoadLib.Schema;
+﻿using System.Diagnostics.CodeAnalysis;
+using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using Xunit;
 
@@ -6,10 +7,16 @@ namespace XRoadLib.Tests.Serialization
 {
     public class XRoadFilterMapTest
     {
+        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
         private class CustomClass
         {
+            [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
             public string Member1 { get; set; } = "";
+
+            [SuppressMessage("ReSharper", "UnusedMember.Local")]
             public int Member2 { get; set; }
+
+            [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
             public CustomClass Member3 { get; set; }
         }
 

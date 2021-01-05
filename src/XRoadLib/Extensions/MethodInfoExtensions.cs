@@ -1,10 +1,13 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using XRoadLib.Schema;
 
 namespace XRoadLib.Extensions
 {
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
     internal static class MethodInfoExtensions
     {
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         internal static string GetOperationNameFromMethodInfo(this MethodInfo methodInfo)
         {
             if (methodInfo.DeclaringType == null)

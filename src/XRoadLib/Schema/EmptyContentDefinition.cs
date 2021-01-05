@@ -2,7 +2,7 @@
 {
     public class EmptyContentDefinition : ContentDefinition
     {
-        public EmptyContentDefinition(ParticleDefinition particle, string runtimeName)
+        public EmptyContentDefinition(ParticleDefinition particle)
             : base(particle)
         {}
     }

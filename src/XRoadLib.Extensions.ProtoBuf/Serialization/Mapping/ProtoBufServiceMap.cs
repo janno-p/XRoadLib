@@ -63,7 +63,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
         private static ReadValueMethod BuildReadValueMethod(Type definitionType)
         {
             if (definitionType == null)
-                return o => null;
+                return _ => null;
 
             var parserProperty = definitionType.GetProperty("Parser", BindingFlags.Public | BindingFlags.Static);
             if (parserProperty == null)
@@ -88,7 +88,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Serialization.Mapping
         private static WriteValueMethod BuildWriteValueMethod(Type definitionType)
         {
             if (definitionType == null)
-                return (o, v) => { };
+                return (_, _) => { };
 
             var method = typeof(MessageExtensions).GetMethod(nameof(MessageExtensions.WriteTo), BindingFlags.Public | BindingFlags.Static);
             if (method == null)

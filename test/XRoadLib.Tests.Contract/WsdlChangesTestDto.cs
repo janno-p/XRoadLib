@@ -1,8 +1,10 @@
-﻿using XRoadLib.Attributes;
+﻿using System.Diagnostics.CodeAnalysis;
+using XRoadLib.Attributes;
 using XRoadLib.Serialization;
 
 namespace XRoadLib.Tests.Contract
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class WsdlChangesTestDto : XRoadSerializable, IWsdlChangesTestDto
     {
         public long? StaticProperty { get; set; }
@@ -32,11 +34,13 @@ namespace XRoadLib.Tests.Contract
         public long[] MultipleProperty { get; set; }
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public interface IWsdlChangesTestDto
     {
         string ChangedTypeProperty { get; set; }
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class WsdlChangesTestDtoRenamedFromPropertyToRenamedToProperty
     {
         public static void Convert(WsdlChangesTestDto entity, long? value)
@@ -50,6 +54,7 @@ namespace XRoadLib.Tests.Contract
         }
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class WsdlChangesTestDtoChangedTypePropertyStringToLong
     {
         public static void Convert(WsdlChangesTestDto entity, string value)
@@ -63,6 +68,7 @@ namespace XRoadLib.Tests.Contract
         }
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class WsdlChangesTestDtoSinglePropertyToMultipleProperty
     {
         public static void Convert(WsdlChangesTestDto entity, long? value)

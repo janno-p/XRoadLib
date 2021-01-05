@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -43,6 +44,7 @@ namespace XRoadLib
         /// <param name="name">Identifies service manager instance.</param>
         /// <param name="schemaExporter">Schema customization provider.</param>
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
         public ServiceManager(string name, ISchemaExporter schemaExporter)
         {
             if (string.IsNullOrEmpty(name))
@@ -200,6 +202,8 @@ namespace XRoadLib
         /// <param name="options">Additional options to configure service call execution.</param>
         /// <typeparam name="TResult">Expected result type of the operation.</typeparam>
         /// <returns>Deserialized value of X-Road response message Soap body.</returns>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
         public virtual async Task<TResult> ExecuteAsync<TResult>(WebRequest webRequest, object body, THeader header, ServiceExecutionOptions options = null) =>
             (TResult)await ((IServiceManager)this).ExecuteAsync(webRequest, body, header, options).ConfigureAwait(false);
 
@@ -208,7 +212,7 @@ namespace XRoadLib
         /// </summary>
         public XRoadMessage CreateMessage(THeader header = null)
         {
-            return new XRoadMessage(this, header ?? new THeader());
+            return new(this, header ?? new THeader());
         }
 
         protected override ISoapHeader CreateHeader() =>

@@ -18,10 +18,10 @@ namespace XRoadLib.Serialization.Mapping
                 return await reader.MoveNextAndReturnAsync(HandleEmptyElement(content, message)).ConfigureAwait(false);
 
             var value = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
-            if (string.IsNullOrEmpty(value))
-                return HandleEmptyElement(content, message);
 
-            return XmlConvert.ToInt32(value);
+            return string.IsNullOrEmpty(value)
+                ? HandleEmptyElement(content, message)
+                : XmlConvert.ToInt32(value);
         }
 
         public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)

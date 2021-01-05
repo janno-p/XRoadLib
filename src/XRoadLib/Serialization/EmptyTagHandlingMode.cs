@@ -1,4 +1,6 @@
-﻿namespace XRoadLib.Serialization
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace XRoadLib.Serialization
 {
     /// <summary>
     /// Specifies empty tag handling behavior for xml deserialization.
@@ -8,7 +10,7 @@
         /// <summary>
         /// Follows Xml Schema specification and produces errors when empty tag is invalid value.
         /// </summary>
-        Strict,
+        [SuppressMessage("ReSharper", "UnusedMember.Global")] Strict,
 
         /// <summary>
         /// Empty tag produces default value of the property type.

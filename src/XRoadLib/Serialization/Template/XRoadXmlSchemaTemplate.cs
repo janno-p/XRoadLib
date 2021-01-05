@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 
 namespace XRoadLib.Serialization.Template
 {
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
     public class XRoadXmlSchemaTemplate : IXmlTemplate
     {
         private readonly XmlSchema _schema;
@@ -32,7 +34,7 @@ namespace XRoadLib.Serialization.Template
 
         private class XRoadXmlSchemaTemplateNode : IXmlTemplateNode
         {
-            private static readonly XmlQualifiedName ArrayTypeName = new XmlQualifiedName("Array", NamespaceConstants.SoapEnc);
+            private static readonly XmlQualifiedName ArrayTypeName = new("Array", NamespaceConstants.SoapEnc);
 
             private readonly XmlSchema _schema;
             private readonly XmlSchemaElement _nodeElement;

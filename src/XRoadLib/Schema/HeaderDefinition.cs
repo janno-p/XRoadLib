@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml.Linq;
@@ -53,6 +54,7 @@ namespace XRoadLib.Schema
         /// <summary>
         /// Remove SOAP header definition from message.
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public void Remove()
         {
             RequiredHeaders.Clear();

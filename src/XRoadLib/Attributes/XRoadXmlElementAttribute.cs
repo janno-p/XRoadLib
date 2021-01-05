@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using XRoadLib.Serialization;
 
@@ -24,6 +25,7 @@ namespace XRoadLib.Attributes
         /// </summary>
         public bool UseXop { get; set; } = true;
 
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public EmptyTagHandlingMode? EmptyTagHandlingMode { get; set; }
 
         /// <summary>
@@ -36,6 +38,7 @@ namespace XRoadLib.Attributes
         /// Initializes a new instance of the XRoadXmlElementAttribute class and specifies the name of the XML element.
         /// <param name="elementName">The XML element name of the serialized member.</param>
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XRoadXmlElementAttribute(string elementName)
             : base(elementName)
         { }
@@ -46,6 +49,7 @@ namespace XRoadLib.Attributes
         /// </summary>
         /// <param name="elementName">The XML element name of the serialized member.</param>
         /// <param name="type">The Type of an object derived from the member's type.</param>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XRoadXmlElementAttribute(string elementName, Type type)
             : base(elementName, type)
         { }
@@ -55,6 +59,7 @@ namespace XRoadLib.Attributes
         /// the XmlElementAttribute is applied.
         /// </summary>
         /// <param name="type">The Type of an object derived from the member's type.</param>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XRoadXmlElementAttribute(Type type)
             : base(type)
         { }

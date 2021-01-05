@@ -1,12 +1,21 @@
-﻿using System.Xml.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
 using XRoadLib.Soap;
 
 namespace XRoadLib.Schema
 {
     public class UnexpectedElementException : ContractViolationException
     {
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public TypeDefinition TypeDefinition { get; }
+
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public ParticleDefinition ParticleDefinition { get; }
+
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public XName ElementName { get; }
 
         public UnexpectedElementException(string message, TypeDefinition typeDefinition, ParticleDefinition particleDefinition, XName elementName)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using XRoadLib.Extensions;
 
@@ -9,6 +10,9 @@ namespace XRoadLib.Schema
         public TypeDefinition DeclaringTypeDefinition { get; }
         public PropertyInfo PropertyInfo { get; }
         public string RuntimeName { get; }
+
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public string TemplateName { get; set; }
 
         public PropertyDefinition(PropertyInfo propertyInfo, TypeDefinition declaringTypeDefinition, Func<string, bool> isQualifiedElementDefault)

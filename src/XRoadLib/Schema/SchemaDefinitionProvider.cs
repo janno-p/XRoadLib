@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -12,6 +13,7 @@ namespace XRoadLib.Schema
     /// <summary>
     /// Extracts serialization/definition details from runtime types and methods.
     /// </summary>
+    [SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
     public class SchemaDefinitionProvider
     {
         private readonly ISchemaExporter _schemaExporter;

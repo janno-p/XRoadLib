@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using XRoadLib.Serialization;
 
@@ -7,6 +8,7 @@ namespace XRoadLib
     /// <summary>
     /// Helper methods to initialize X-Road web requests.
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedType.Global")]
     public static class XRoadWebRequest
     {
         /// <summary>
@@ -14,6 +16,7 @@ namespace XRoadLib
         /// </summary>
         /// <param name="requestUri">Uri of the X-Road security server or adapter server.</param>
         /// <returns>Initialized X-Road web request object.</returns>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static WebRequest Create(Uri requestUri)
         {
             var request = WebRequest.Create(requestUri);

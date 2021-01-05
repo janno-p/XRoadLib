@@ -29,11 +29,13 @@ namespace XRoadLib.Serialization
 
         public bool Reset()
         {
-            if (_stream.CanSeek && _stream.Length == 0)
-                return false;
-
             if (_stream.CanSeek)
+            {
+                if (_stream.Length == 0)
+                    return false;
+
                 _stream.Seek(0, SeekOrigin.Begin);
+            }
 
             _bufferPosition = 0;
             _bufferSize = -1;

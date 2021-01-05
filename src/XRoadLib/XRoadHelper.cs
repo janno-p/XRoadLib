@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using XRoadLib.Serialization;
@@ -62,6 +63,7 @@ namespace XRoadLib
             return keyValuePair.Substring(fromIndex, toIndex - fromIndex).Trim();
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static string GenerateRequestId()
         {
             const int randomLength = 32;

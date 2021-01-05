@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using XRoadLib.Serialization;
@@ -45,6 +46,7 @@ namespace XRoadLib.Extensions.AspNetCore
         /// <summary>
         /// Exception that occurred while handling service request.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public Exception Exception { get; set; }
 
         public IMessageFormatter MessageFormatter { get; set; }

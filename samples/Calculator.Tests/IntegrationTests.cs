@@ -192,9 +192,9 @@ namespace Calculator.Tests
             Assert.Equal("1183", result.Value);
         }
 
-        private static XElement GetBodyElement(XDocument document)
+        private static XElement GetBodyElement(XContainer container)
         {
-            var envelope = document.Element(XName.Get("Envelope", NamespaceConstants.SoapEnv));
+            var envelope = container.Element(XName.Get("Envelope", NamespaceConstants.SoapEnv));
             Assert.NotNull(envelope);
 
             var body = envelope.Element(XName.Get("Body", NamespaceConstants.SoapEnv));
@@ -205,12 +205,12 @@ namespace Calculator.Tests
 
         private class Fault
         {
-            public string Code { get; private set; }
-            public string Value { get; private set; }
+            public string Code { get; private init; }
+            public string Value { get; private init; }
 
-            public static Fault FromXml(XDocument document)
+            public static Fault FromXml(XContainer container)
             {
-                var body = GetBodyElement(document);
+                var body = GetBodyElement(container);
 
                 var fault = body.Element(XName.Get("Fault", NamespaceConstants.SoapEnv));
                 Assert.NotNull(fault);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
@@ -18,6 +19,7 @@ namespace XRoadLib
         /// <summary>
         /// User defined name for service manager in case of multiple definitions.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
         string Name { get; }
 
         /// <summary>
@@ -43,6 +45,7 @@ namespace XRoadLib
         /// <summary>
         /// Header definition of the protocol.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
         HeaderDefinition HeaderDefinition { get; }
 
         /// <summary>

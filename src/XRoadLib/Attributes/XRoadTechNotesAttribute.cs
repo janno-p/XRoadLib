@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace XRoadLib.Attributes
 {
@@ -11,11 +12,13 @@ namespace XRoadLib.Attributes
         public string LanguageCode { get; }
         public string Value { get; }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XRoadTechNotesAttribute(string value)
         {
             Value = value;
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XRoadTechNotesAttribute(string languageCode, string value)
         {
             LanguageCode = languageCode;
