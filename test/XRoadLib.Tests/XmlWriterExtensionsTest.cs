@@ -42,6 +42,36 @@ namespace XRoadLib.Tests
         }
         
         [Fact]
+        public async Task WriteQualifiedAttributeWithoutPredefinedPrefixTest()
+        {
+#if NET5_0
+            await
+#endif
+            using var stream = new MemoryStream();
+            
+#if NET5_0
+            await
+#endif
+            using var writer = XmlWriter.Create(stream, new XmlWriterSettings { Async = true, Encoding = XRoadEncoding.Utf8 });
+
+            await writer.WriteStartDocumentAsync();
+            await writer.WriteStartElementAsync(null, "test", null);
+            await writer.WriteQualifiedAttributeAsync("attributeName", new XmlQualifiedName("qualifiedName", "urn:qualifiedNamespace"));
+            await writer.WriteEndElementAsync();
+            await writer.WriteEndDocumentAsync();
+            await writer.FlushAsync();
+
+            stream.Seek(0, SeekOrigin.Begin);
+
+            var document = XDocument.Load(stream);
+
+            var attribute = document.Element(XName.Get("test"))?.Attribute("attributeName");
+            
+            Assert.NotNull(attribute);
+            Assert.Equal("tmp:qualifiedName", attribute.Value);
+        }
+        
+        [Fact]
         public async Task WriteTypeAttributeTest()
         {
 #if NET5_0
