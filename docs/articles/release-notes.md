@@ -1,3 +1,7 @@
+#### 1.4.3 - 22.02.2021
+
+* Fix regression in qualified attribute serialization (handle undefined namespace prefixes).
+
 #### 1.4.2 - 05.01.2021
 
 * Remove usage of Synchronous API in serialization of qualified attribute values.
