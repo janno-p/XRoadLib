@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Calculator.Contract;
 
 namespace Calculator.WebService
@@ -8,6 +9,12 @@ namespace Calculator.WebService
         public int Calculate(CalculationRequest request)
         {
             return GetOperation(request.Operation)(request.X, request.Y);
+        }
+
+        public Task<int> CalculateAsync(CalculationRequest request)
+        {
+            var result = GetOperation(request.Operation)(request.X, request.Y);
+            return Task.FromResult(result);
         }
 
         private static Func<int, int, int> GetOperation(Operation operation) => operation switch

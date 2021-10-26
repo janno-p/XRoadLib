@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml.Linq;
+using XRoadLib.Extensions;
 
 namespace XRoadLib.Schema
 {
@@ -10,6 +13,9 @@ namespace XRoadLib.Schema
     /// </summary>
     public class ResponseDefinition : ParticleDefinition
     {
+        private static readonly Type TaskType = typeof(Task);
+        private static readonly Type GenericTaskType = typeof(Task<>);
+
         /// <summary>
         /// Operation definition to which this response element definition belongs to.
         /// </summary>
@@ -61,12 +67,39 @@ namespace XRoadLib.Schema
         public XName ResultElementName { get; set; }
 
         /// <summary>
+        /// Indicates that method uses async calls.
+        /// </summary>
+        public bool IsAsync { get; }
+
+        /// <summary>
+        /// Used in serializer to convert from specific type task to Task&lt;object&gt;
+        /// </summary>
+        public ConvertTaskMethod ConvertTaskMethod { get; set; }
+
+        /// <summary>
         /// Initializes new response definition using default values extracted from
         /// operation definition entity.
         /// </summary>
         public ResponseDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
         {
             var parameterInfo = declaringOperationDefinition.MethodInfo.ReturnParameter;
+
+            var parameterType = parameterInfo?.ParameterType;
+            if (parameterType is not null)
+            {
+                if (parameterType.IsGenericType && parameterType.GetGenericTypeDefinition() == GenericTaskType)
+                {
+                    IsAsync = true;
+                    parameterType = parameterType.GetGenericArguments().Single();
+                    ConvertTaskMethod = parameterInfo.CreateConvertTaskMethod();
+                }
+                else if (parameterType == TaskType)
+                {
+                    IsAsync = true;
+                    parameterType = typeof(void);
+                    ConvertTaskMethod = parameterInfo.CreateConvertTaskMethod();
+                }
+            }
 
             DeclaringOperationDefinition = declaringOperationDefinition;
             ParameterInfo = parameterInfo;
@@ -78,7 +111,7 @@ namespace XRoadLib.Schema
             Content = ContentDefinition.FromType(
                 this,
                 parameterInfo,
-                parameterInfo?.ParameterType,
+                parameterType,
                 "response",
                 targetNamespace,
                 defaultQualifiedElement

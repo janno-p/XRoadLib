@@ -145,7 +145,7 @@ namespace XRoadLib.Extensions.AspNetCore
 
             try
             {
-                var parameters = context.ServiceMap.RequestDefinition.ParameterInfo != null ? new[] { context.Parameters } : new object[0];
+                var parameters = context.ServiceMap.RequestDefinition.ParameterInfo != null ? new[] { context.Parameters } : Array.Empty<object>();
                 context.Result = await InvokeRuntimeMethodAsync(context, serviceObject, parameters).ConfigureAwait(false);
             }
             catch (Exception exception)
@@ -158,8 +158,16 @@ namespace XRoadLib.Extensions.AspNetCore
             }
         }
 
-        protected virtual Task<object> InvokeRuntimeMethodAsync(WebServiceContext context, object serviceObject, object[] parameters) =>
-            Task.FromResult(context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters));
+        protected virtual async Task<object> InvokeRuntimeMethodAsync(WebServiceContext context, object serviceObject, object[] parameters)
+        {
+            if (!context.ServiceMap.ResponseDefinition.IsAsync)
+                return context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters);
+
+            var task = (Task)context.ServiceMap.OperationDefinition.MethodInfo.Invoke(serviceObject, parameters);
+            await task.ConfigureAwait(false);
+
+            return await context.ServiceMap.ResponseDefinition.ConvertTaskMethod(task).ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Deserializes X-Road request from SOAP message payload.
