@@ -1,0 +1,18 @@
+﻿name: General
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ubuntu-test:
+    runs-on: ubuntu-latest
+    steps: []
+
+  windows-test:
+    runs-on: windows-latest
+    steps: []
