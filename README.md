@@ -2,7 +2,7 @@
 
 A .NET library for implementing service interfaces of [X-Road](http://x-road.eu) providers using Code-First Development approach.
 
-[![NuGet](https://buildstats.info/nuget/XRoadLib?includePreReleases=true)](https://www.nuget.org/packages/XRoadLib/)  
+[![NuGet](https://buildstats.info/nuget/XRoadLib)](https://www.nuget.org/packages/XRoadLib/)  
 [![Build Status](https://github.com/janno-p/XRoadLib/actions/workflows/general.yml/badge.svg?branch=main&event=push)](https://github.com/janno-p/XRoadLib/actions/workflows/general.yml)
 
 ## Documentation
