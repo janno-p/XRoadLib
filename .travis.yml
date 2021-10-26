@@ -1,7 +1,0 @@
-language: csharp
-dotnet: 5.0.100
-sudo: false
-dist: bionic
-script:
-  - dotnet tool restore
-  - dotnet fake run build.fsx target RunTests
