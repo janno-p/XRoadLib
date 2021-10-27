@@ -38,7 +38,7 @@ jobs:
         run: dotnet tool restore
       - name: Test
         env:
-          TEST: some value
+          TEST: ${{ secrets.TEST }}
         run: |
           echo $env:TEST >> ${{ github.workspace }}\test.txt
           type ${{ github.workspace }}\test.txt
