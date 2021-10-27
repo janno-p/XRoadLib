@@ -17,3 +17,9 @@ jobs:
           dotnet-version: 5.0.x
       - name: Install tools
         run: dotnet tool restore
+      - name: Test
+        env:
+          TEST: some value
+        run: |
+          echo %TEST% >> ${{ github.workspace }}\test.txt
+          type ${{ github.workspace }}\test.txt
