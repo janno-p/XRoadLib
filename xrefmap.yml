@@ -1543,12 +1543,24 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Extensions.AssemblyExtensions.GetServiceContracts
   nameWithType: AssemblyExtensions.GetServiceContracts
+- uid: XRoadLib.Extensions.ConvertTaskMethod
+  name: ConvertTaskMethod
+  href: api/XRoadLib.Extensions.ConvertTaskMethod.html
+  commentId: T:XRoadLib.Extensions.ConvertTaskMethod
+  fullName: XRoadLib.Extensions.ConvertTaskMethod
+  nameWithType: ConvertTaskMethod
 - uid: XRoadLib.Extensions.GetValueMethod
   name: GetValueMethod
   href: api/XRoadLib.Extensions.GetValueMethod.html
   commentId: T:XRoadLib.Extensions.GetValueMethod
   fullName: XRoadLib.Extensions.GetValueMethod
   nameWithType: GetValueMethod
+- uid: XRoadLib.Extensions.ParameterInfoExtensions
+  name: ParameterInfoExtensions
+  href: api/XRoadLib.Extensions.ParameterInfoExtensions.html
+  commentId: T:XRoadLib.Extensions.ParameterInfoExtensions
+  fullName: XRoadLib.Extensions.ParameterInfoExtensions
+  nameWithType: ParameterInfoExtensions
 - uid: XRoadLib.Extensions.ProtoBuf.Attributes
   name: XRoadLib.Extensions.ProtoBuf.Attributes
   href: api/XRoadLib.Extensions.ProtoBuf.Attributes.html
@@ -5473,6 +5485,19 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Schema.ResponseDefinition.ContainsNonTechnicalFault
   nameWithType: ResponseDefinition.ContainsNonTechnicalFault
+- uid: XRoadLib.Schema.ResponseDefinition.ConvertTaskMethod
+  name: ConvertTaskMethod
+  href: api/XRoadLib.Schema.ResponseDefinition.html#XRoadLib_Schema_ResponseDefinition_ConvertTaskMethod
+  commentId: P:XRoadLib.Schema.ResponseDefinition.ConvertTaskMethod
+  fullName: XRoadLib.Schema.ResponseDefinition.ConvertTaskMethod
+  nameWithType: ResponseDefinition.ConvertTaskMethod
+- uid: XRoadLib.Schema.ResponseDefinition.ConvertTaskMethod*
+  name: ConvertTaskMethod
+  href: api/XRoadLib.Schema.ResponseDefinition.html#XRoadLib_Schema_ResponseDefinition_ConvertTaskMethod_
+  commentId: Overload:XRoadLib.Schema.ResponseDefinition.ConvertTaskMethod
+  isSpec: "True"
+  fullName: XRoadLib.Schema.ResponseDefinition.ConvertTaskMethod
+  nameWithType: ResponseDefinition.ConvertTaskMethod
 - uid: XRoadLib.Schema.ResponseDefinition.DeclaringOperationDefinition
   name: DeclaringOperationDefinition
   href: api/XRoadLib.Schema.ResponseDefinition.html#XRoadLib_Schema_ResponseDefinition_DeclaringOperationDefinition
@@ -5499,6 +5524,19 @@ references:
   isSpec: "True"
   fullName: XRoadLib.Schema.ResponseDefinition.FaultName
   nameWithType: ResponseDefinition.FaultName
+- uid: XRoadLib.Schema.ResponseDefinition.IsAsync
+  name: IsAsync
+  href: api/XRoadLib.Schema.ResponseDefinition.html#XRoadLib_Schema_ResponseDefinition_IsAsync
+  commentId: P:XRoadLib.Schema.ResponseDefinition.IsAsync
+  fullName: XRoadLib.Schema.ResponseDefinition.IsAsync
+  nameWithType: ResponseDefinition.IsAsync
+- uid: XRoadLib.Schema.ResponseDefinition.IsAsync*
+  name: IsAsync
+  href: api/XRoadLib.Schema.ResponseDefinition.html#XRoadLib_Schema_ResponseDefinition_IsAsync_
+  commentId: Overload:XRoadLib.Schema.ResponseDefinition.IsAsync
+  isSpec: "True"
+  fullName: XRoadLib.Schema.ResponseDefinition.IsAsync
+  nameWithType: ResponseDefinition.IsAsync
 - uid: XRoadLib.Schema.ResponseDefinition.ParameterInfo
   name: ParameterInfo
   href: api/XRoadLib.Schema.ResponseDefinition.html#XRoadLib_Schema_ResponseDefinition_ParameterInfo
