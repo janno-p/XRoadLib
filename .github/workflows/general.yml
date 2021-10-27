@@ -36,12 +36,6 @@ jobs:
           dotnet-version: 5.0.x
       - name: Install tools
         run: dotnet tool restore
-      - name: Setup strong name key
-        env:
-          TEST: ${{ secrets.TEST }}
-        run: |
-          [IO.File]::WriteAllBytes("${{ github.workspace }}\src\XRoadLib.snk", [Convert]::FromBase64String($env:TEST))
-          type ${{ github.workspace }}\src\XRoadLib.snk
       - name: Install dependencies
         run: dotnet restore
       - name: Run tests
