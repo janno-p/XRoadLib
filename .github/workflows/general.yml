@@ -40,4 +40,24 @@ jobs:
         run: dotnet restore
       - name: Run tests
         run: dotnet fake run build.fsx target RunTests
-        
+
+  deploy-poc:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup .NET Core SDK 5.0
+        uses: actions/setup-dotnet@v1.8.2
+        with:
+          dotnet-version: 5.0.x
+      - name: Install tools
+        run: dotnet tool restore
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Run tests
+        run: dotnet fake run build.fsx target RunTests
+      - name: Setup strong name key
+        env:
+          STRONG_NAME_KEY: ${{ secrets.STRONG_NAME_KEY }}
+        run: |
+          [IO.File]::WriteAllBytes("${{ github.workspace }}\src\XRoadLib.snk", [Convert]::FromBase64String($env:STRONG_NAME_KEY))
