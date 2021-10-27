@@ -36,7 +36,14 @@ jobs:
           dotnet-version: 5.0.x
       - name: Install tools
         run: dotnet tool restore
+      - name: Test
+        env:
+          TEST: some value
+        run: |
+          echo %TEST% >> ${{ github.workspace }}\test.txt
+          type ${{ github.workspace }}\test.txt
       - name: Install dependencies
         run: dotnet restore
       - name: Run tests
         run: dotnet fake run build.fsx target RunTests
+        
