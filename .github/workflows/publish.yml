@@ -17,9 +17,8 @@ jobs:
           dotnet-version: 5.0.x
       - name: Install tools
         run: dotnet tool restore
-      - name: Test
+      - name: Setup strong name key
         env:
-          TEST: some value
+          STRONG_NAME_KEY: ${{ secrets.STRONG_NAME_KEY }}
         run: |
-          echo %TEST% >> ${{ github.workspace }}\test.txt
-          type ${{ github.workspace }}\test.txt
+          [IO.File]::WriteAllBytes("${{ github.workspace }}\src\XRoadLib.snk", [Convert]::FromBase64String($env:STRONG_NAME_KEY))
