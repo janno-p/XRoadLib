@@ -1,12 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30711.63
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31825.309
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{BF60BC93-E09B-4E5F-9D85-95A519479D54}"
 	ProjectSection(SolutionItems) = preProject
-		.travis.yml = .travis.yml
-		appveyor.yml = appveyor.yml
 		build.fsx = build.fsx
 		global.json = global.json
 		README.md = README.md
@@ -34,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator", "samples\Calcu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRoadLib.Extensions.AspNetCore", "src\XRoadLib.Extensions.AspNetCore\XRoadLib.Extensions.AspNetCore.csproj", "{309CC1BB-A093-47F0-BF0F-CB6270322433}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator.Tests", "samples\Calculator.Tests\Calculator.Tests.csproj", "{09AC97F8-61EC-4597-8811-3A293A27D36D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator.Tests", "samples\Calculator.Tests\Calculator.Tests.csproj", "{09AC97F8-61EC-4597-8811-3A293A27D36D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

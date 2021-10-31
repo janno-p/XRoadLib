@@ -6,6 +6,7 @@ nuget Fake.Core.Target
 nuget Fake.Documentation.DocFx
 nuget Fake.DotNet.Cli
 nuget Fake.Tools.Git
+nuget FSharp.Core ~> 5
 nuget Octokit //"
 
 // http https://github.com/dotnet/docfx/releases/download/v2.45/docfx.zip 
