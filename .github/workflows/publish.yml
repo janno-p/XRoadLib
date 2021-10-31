@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: windows-latest
+    env:
+      RELEASE_VERSION: ${{ github.event.release.tag_name }}
+      RELEASE_NOTES: ${{ github.event.release.body }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -17,8 +20,32 @@ jobs:
           dotnet-version: 5.0.x
       - name: Install tools
         run: dotnet tool restore
+      - name: Install dependencies
+        run: dotnet restore
       - name: Setup strong name key
         env:
           STRONG_NAME_KEY: ${{ secrets.STRONG_NAME_KEY }}
         run: |
           [IO.File]::WriteAllBytes("${{ github.workspace }}\src\XRoadLib.snk", [Convert]::FromBase64String($env:STRONG_NAME_KEY))
+      - name: Build release
+        run: dotnet fake run build.fsx target BuildRelease
+      - name: Generate help
+        run: dotnet fake run .\build.fsx --single-target target GenerateHelp
+      - name: Prepare docs
+        run: git clone -b gh-pages --single-branch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} ${{ github.workspace }}\temp\gh-pages
+      - name: Generate docs
+        run: dotnet fake run .\build.fsx --single-target target GenerateDocs
+      - name: Release docs
+        run: |
+          git config user.name 'Janno Põldma'
+          git config user.email 'janno.poldma@gmail.com'
+          git add . --all
+          git commit -m "Update generated documentation for version ${{ github.event.release.tag_name }}"
+          git push
+        working-directory: ${{ github.workspace }}\temp\gh-pages
+      - name: Build NuGet package
+        run: dotnet fake run .\build.fsx --single-target target NuGet
+      - name: Push to NuGet
+        run: dotnet nuget push ${{ github.workspace }}\bin\*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_TO_NUGET_ORG }} --skip-duplicate
+      - name: Push to Github
+        run: dotnet nuget push ${{ github.workspace }}\bin\*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ github.token }} --skip-duplicate
