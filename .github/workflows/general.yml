@@ -57,7 +57,7 @@ jobs:
       - name: Run tests
         run: dotnet fake run build.fsx target RunTests
       - name: Generate help
-        run: dotnet fake run .\build.fsx --single-target target Release
+        run: dotnet fake run .\build.fsx --single-target target GenerateHelp
       - name: Generate docs
         uses: nikeee/docfx-action@v1.0.0
         with:
