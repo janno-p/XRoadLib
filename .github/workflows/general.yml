@@ -61,6 +61,8 @@ jobs:
           [IO.File]::WriteAllBytes("${{ github.workspace }}\src\XRoadLib.snk", [Convert]::FromBase64String($env:STRONG_NAME_KEY))
       - name: Build release
         run: dotnet fake run build.fsx target BuildRelease
+      - name: test123
+        run: dir $env:USERPROFILE\.nuget\packages
       - name: Generate help
         run: dotnet fake run .\build.fsx --single-target target GenerateHelp
       - name: Generate docs
