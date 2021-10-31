@@ -66,13 +66,14 @@ jobs:
         run: dotnet fake run build.fsx target BuildRelease
       - name: Generate help
         run: dotnet fake run .\build.fsx --single-target target GenerateHelp
-      - run: mkdir ${{ github.workspace }}\temp\gh-pages -ea 0
+      - name: Prepare docs
+        run: git clone -b gh-pages --single-branch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} ${{ github.workspace }}\temp\gh-pages
+      - name: Generate docs
+        run: dotnet fake run .\build.fsx --single-target target GenerateDocs
       - name: Release docs
         run: |
-          git clone -b gh-pages --single-branch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} .
           git config user.name 'Janno Põldma'
           git config user.email 'janno.poldma@gmail.com'
-          dotnet fake run .\build.fsx --single-target target GenerateDocs
           git add . --all
           git commit -m "Update generated documentation for version ${{ github.event.release.tag_name }}"
           git push
