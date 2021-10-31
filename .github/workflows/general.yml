@@ -66,6 +66,7 @@ jobs:
         run: dotnet fake run build.fsx target BuildRelease
       - name: Generate help
         run: dotnet fake run .\build.fsx --single-target target GenerateHelp
+      - run: mkdir ${{ github.workspace }}\temp\gh-pages -ea 0
       - name: Release docs
         run: |
           git clone -b gh-pages --single-branch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} .
