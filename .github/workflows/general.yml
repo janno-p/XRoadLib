@@ -66,10 +66,5 @@ jobs:
         run: dotnet fake run build.fsx target BuildRelease
       - name: Generate help
         run: dotnet fake run .\build.fsx --single-target target GenerateHelp
-      - name: Generate docs
-        run: dotnet fake run .\build.fsx --single-target target GenerateDocs
-      - name: Publish documentation
-        uses: maxheld83/ghpages@master
-        env:
-          BUILD_DIR: ${{ github.workspace }}\temp\gh-pages
-          GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Release docs
+        run: dotnet fake run .\build.fsx --single-target target ReleaseDocs
