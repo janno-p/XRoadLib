@@ -38,6 +38,9 @@ let keyFile = "src" </> "XRoadLib.snk"
 // Read additional information from the release notes document
 let release = ReleaseNotes.load "RELEASE_NOTES.md"
 
+let packageVersion = Environment.environVarOrDefault "RELEASE_VERSION" release.NugetVersion
+let packageSemVer = SemVer.parse(packageVersion)
+
 // Projects which will be included in release
 let productProjects =
     !! "src/*/*.csproj"
@@ -66,7 +69,7 @@ Target.create "BuildRelease" (fun _ ->
         DotNet.build
             (fun p ->
                 { p with
-                    Common = { p.Common with CustomParams = Some(sprintf "/p:Version=%s" release.NugetVersion) }
+                    Common = { p.Common with CustomParams = Some(sprintf "/p:Version=%s" packageVersion) }
                     Configuration = DotNet.BuildConfiguration.Release })
             proj
     )
@@ -108,10 +111,10 @@ Target.create "NuGet" (fun _ ->
         (DotNet.pack
             (fun p ->
                 { p with
-                    Common = { p.Common with CustomParams = Some(sprintf "/p:Version=%s" release.NugetVersion) }
+                    Common = { p.Common with CustomParams = Some(sprintf "/p:Version=%s" packageVersion) }
                     OutputPath = Some(binDir)
                     Configuration = DotNet.BuildConfiguration.Release
-                    VersionSuffix = release.SemVer.PreRelease |> Option.map (fun v -> v.Origin) })
+                    VersionSuffix = packageSemVer.PreRelease |> Option.map (fun v -> v.Origin) })
         )
 )
 
@@ -123,6 +126,10 @@ Target.create "PublishNuget" (fun _ ->
 
 // --------------------------------------------------------------------------------------
 // Generate documentation
+
+let docfx =
+    DocFx.exec
+        (fun p -> { p with DocFxPath = Environment.environVar "USERPROFILE" </> ".nuget" </> "packages" </> "docfx.console" </> "2.58.5" </> "tools" </> "docfx.exe" })
 
 Target.create "GenerateHelp" (fun _ ->
     Shell.rm "docs/articles/release-notes.md"
@@ -139,20 +146,20 @@ Target.create "CleanDocs" (fun _ ->
 )
 
 Target.create "Serve" (fun _ ->
-    DocFx.exec id "serve" tempDocsDir
+    docfx "serve" tempDocsDir
 )
 
 Target.description "Generate the documentation"
 Target.create "GenerateDocs" (fun _ ->
-    DocFx.exec id (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json") ""
+    docfx (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json") ""
 )
 
 Target.create "ReleaseDocs" (fun _ ->
     Shell.cleanDirs [ tempDocsDir ]
     Git.Repository.cloneSingleBranch "" (sprintf "%s/%s.git" gitHome gitName) "gh-pages" tempDocsDir
-    DocFx.exec id (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json") ""
+    docfx (__SOURCE_DIRECTORY__ </> "docs" </> "docfx.json") ""
     Git.Staging.stageAll tempDocsDir
-    Git.Commit.exec tempDocsDir (sprintf "Update generated documentation for version %s" release.NugetVersion)
+    Git.Commit.exec tempDocsDir (sprintf "Update generated documentation for version %s" packageVersion)
     Git.Branches.push tempDocsDir
 )
 
@@ -174,15 +181,15 @@ Target.create "Release" (fun _ ->
         |> function None -> gitHome + "/" + gitName | Some (s: string) -> s.Split().[0]
 
     Git.Staging.stageAll ""
-    Git.Commit.exec "" (sprintf "Bump version to %s" release.NugetVersion)
+    Git.Commit.exec "" (sprintf "Bump version to %s" packageVersion)
     Git.Branches.pushBranch "" remote (Git.Information.getBranchName "")
 
-    Git.Branches.tag "" release.NugetVersion
-    Git.Branches.pushTag "" remote release.NugetVersion
+    Git.Branches.tag "" packageVersion
+    Git.Branches.pushTag "" remote packageVersion
 
     // release on github
     GitHub.createClientWithToken token
-    |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    |> GitHub.draftNewRelease gitOwner gitName packageVersion (packageSemVer.PreRelease <> None) release.Notes
     // |> GitHub.uploadFile "PATH_TO_FILE"
     |> GitHub.publishDraft
     |> Async.RunSynchronously
