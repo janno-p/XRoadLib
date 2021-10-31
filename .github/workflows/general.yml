@@ -67,4 +67,7 @@ jobs:
       - name: Generate help
         run: dotnet fake run .\build.fsx --single-target target GenerateHelp
       - name: Release docs
-        run: dotnet fake run .\build.fsx --single-target target ReleaseDocs
+        run: |
+          git config --global user.name 'Janno Põldma'
+          git config --global user.email 'janno.poldma@gmail.com'
+          dotnet fake run .\build.fsx --single-target target ReleaseDocs
