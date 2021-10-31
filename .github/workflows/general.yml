@@ -68,6 +68,11 @@ jobs:
         run: dotnet fake run .\build.fsx --single-target target GenerateHelp
       - name: Release docs
         run: |
-          git config --global user.name 'Janno Põldma'
-          git config --global user.email 'janno.poldma@gmail.com'
-          dotnet fake run .\build.fsx --single-target target ReleaseDocs
+          git clone -b gh-pages --single-branch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} .
+          git config user.name 'Janno Põldma'
+          git config user.email 'janno.poldma@gmail.com'
+          dotnet fake run .\build.fsx --single-target target GenerateDocs
+          git add . --all
+          git commit -m "Update generated documentation for version ${{ github.event.release.tag_name }}"
+          git push
+        working-directory: ${{ github.workspace }}\temp\gh-pages
