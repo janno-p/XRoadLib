@@ -54,21 +54,19 @@ jobs:
         run: dotnet tool restore
       - name: Install dependencies
         run: dotnet restore
-      - name: Run tests
-        run: dotnet fake run build.fsx target RunTests
-      - name: Generate help
-        run: dotnet fake run .\build.fsx --single-target target GenerateHelp
-      - name: Generate docs
-        uses: nikeee/docfx-action@v1.0.0
-        with:
-          args: ${{ github.workspace }}\docs\docfx.json
-      - name: Publish documentation
-        uses: maxheld83/ghpages@master
-        env:
-          BUILD_DIR: ${{ github.workspace }}\temp\gh-pages
-          GH_PAT: ${{ secrets.GH_PAT }}
       - name: Setup strong name key
         env:
           STRONG_NAME_KEY: ${{ secrets.STRONG_NAME_KEY }}
         run: |
           [IO.File]::WriteAllBytes("${{ github.workspace }}\src\XRoadLib.snk", [Convert]::FromBase64String($env:STRONG_NAME_KEY))
+      - name: Build release
+        run: dotnet fake run build.fsx target BuildRelease
+      - name: Generate help
+        run: dotnet fake run .\build.fsx --single-target target GenerateHelp
+      - name: Generate docs
+        run: dotnet fake run .\build.fsx --single-target target GenerateDocs
+      - name: Publish documentation
+        uses: maxheld83/ghpages@master
+        env:
+          BUILD_DIR: ${{ github.workspace }}\temp\gh-pages
+          GH_PAT: ${{ secrets.GH_PAT }}
