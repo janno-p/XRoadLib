@@ -1,4 +1,5 @@
 #r "paket:
+nuget docfx.console
 nuget Fake.Api.GitHub
 nuget Fake.Core.Environment
 nuget Fake.Core.ReleaseNotes
