@@ -78,3 +78,5 @@ jobs:
           git commit -m "Update generated documentation for version ${{ github.event.release.tag_name }}"
           git push
         working-directory: ${{ github.workspace }}\temp\gh-pages
+      - name: Build NuGet package
+        run: dotnet fake run .\build.fsx --single-target target NuGet
