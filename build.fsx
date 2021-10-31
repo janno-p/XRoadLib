@@ -39,6 +39,19 @@ let keyFile = "src" </> "XRoadLib.snk"
 let release = ReleaseNotes.load "RELEASE_NOTES.md"
 
 let packageVersion = Environment.environVarOrDefault "RELEASE_VERSION" release.NugetVersion
+
+let packageNotes =
+    Environment.environVarOrNone "RELEASE_NOTES"
+    |> Option.map
+        (fun notes ->
+            let delimiter =
+                if notes.IndexOf("\r\n") > 0 then "\r\n"
+                elif notes.IndexOf("\r") > 0 then "\r"
+                else "\n"
+            notes |> String.splitStr delimiter
+        )
+    |> Option.defaultValue release.Notes
+
 let packageSemVer = SemVer.parse(packageVersion)
 
 // Projects which will be included in release
@@ -189,7 +202,7 @@ Target.create "Release" (fun _ ->
 
     // release on github
     GitHub.createClientWithToken token
-    |> GitHub.draftNewRelease gitOwner gitName packageVersion (packageSemVer.PreRelease <> None) release.Notes
+    |> GitHub.draftNewRelease gitOwner gitName packageVersion (packageSemVer.PreRelease <> None) packageNotes
     // |> GitHub.uploadFile "PATH_TO_FILE"
     |> GitHub.publishDraft
     |> Async.RunSynchronously
