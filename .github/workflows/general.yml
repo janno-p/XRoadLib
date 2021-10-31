@@ -56,6 +56,17 @@ jobs:
         run: dotnet restore
       - name: Run tests
         run: dotnet fake run build.fsx target RunTests
+      - name: Generate help
+        run: dotnet fake run .\build.fsx --single-target target Release
+      - name: Generate docs
+        uses: nikeee/docfx-action@v1.0.0
+        with:
+          args: ${{ github.workspace }}\docs\docfx.json
+      - name: Publish documentation
+        uses: maxheld83/ghpages@master
+        env:
+          BUILD_DIR: ${{ github.workspace }}\temp\gh-pages
+          GH_PAT: ${{ secrets.GH_PAT }}
       - name: Setup strong name key
         env:
           STRONG_NAME_KEY: ${{ secrets.STRONG_NAME_KEY }}
