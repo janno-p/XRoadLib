@@ -1,3 +1,7 @@
+#### 1.4.4 - 31.10.2021
+
+* Add support for Async service definitions.
+
 #### 1.4.3 - 22.02.2021
 
 * Fix regression in qualified attribute serialization (handle undefined namespace prefixes).
