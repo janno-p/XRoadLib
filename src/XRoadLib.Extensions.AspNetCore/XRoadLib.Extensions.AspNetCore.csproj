@@ -9,6 +9,8 @@
     <Description>XRoadLib extension to use X-Road messages on ASP.NET Core platform</Description>
     <PackageId>XRoadLib.Extensions.AspNetCore</PackageId>
     <PackageTags>x-tee;x-road;xtee;xroad;aspnetcore;asp.net,core,net</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/janno-p/XRoadLib</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

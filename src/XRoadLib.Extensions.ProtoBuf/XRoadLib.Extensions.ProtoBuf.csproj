@@ -9,6 +9,8 @@
     <Description>XRoadLib extension to use Google Protocol Buffers with X-Road messages</Description>
     <PackageId>XRoadLib.Extensions.ProtoBuf</PackageId>
     <PackageTags>x-tee;x-road;xtee;xroad;protocol;buffers</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/janno-p/XRoadLib</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@
 
   <PropertyGroup>
     <Authors>Janno Põldma</Authors>
-    <Copyright>Copyright © 2020</Copyright>
+    <Copyright>Copyright © 2021</Copyright>
     <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
     <PackageLicense>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicense>
   </PropertyGroup>
