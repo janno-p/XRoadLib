@@ -1,16 +1,26 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+﻿using Calculator;
+using Calculator.Contract;
+using Calculator.WebService;
+using XRoadLib.Extensions.AspNetCore;
 
-namespace Calculator
+var builder = WebApplication.CreateBuilder();
+
+builder.Services.AddXRoadLib();
+builder.Services.AddSingleton<ICalculate, CalculateWebService>();
+builder.Services.AddSingleton<ISumOfIntegers, SumOfIntegersWebService>();
+builder.Services.AddSingleton<CalculatorServiceManager>();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+    app.UseDeveloperExceptionPage();
+
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
 {
-    public static class Program
-    {
-        public static void Main(string[] args) =>
-            BuildWebHost(args).Run();
+    endpoints.MapGet("/", c => c.ExecuteWsdlRequest<CalculatorServiceManager>());
+    endpoints.MapPost("/", c => c.ExecuteWebServiceRequest<CalculatorServiceManager>());
+});
 
-        private static IHost BuildWebHost(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(web => web.UseStartup<Startup>())
-                .Build();
-    }
-}
+app.Run();

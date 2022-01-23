@@ -1,12 +1,11 @@
 using Calculator.Contract;
 
-namespace Calculator.WebService
+namespace Calculator.WebService;
+
+public class SumOfIntegersWebService : ISumOfIntegers
 {
-    public class SumOfIntegersWebService : ISumOfIntegers
+    public int Sum(AddRequest request)
     {
-        public int Sum(AddRequest request)
-        {
-            return request.X + request.Y;
-        }
+        return request.X + request.Y;
     }
 }

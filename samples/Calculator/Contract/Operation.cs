@@ -1,23 +1,19 @@
-﻿using System.Xml.Serialization;
-using XRoadLib.Attributes;
+﻿namespace Calculator.Contract;
 
-namespace Calculator.Contract
+[XmlType]
+[XRoadTitle("en", "Operation type")]
+[XRoadNotes("en", "Defines operations to perform on given arguments")]
+public enum Operation
 {
-    [XmlType]
-    [XRoadTitle("en", "Operation type")]
-    [XRoadNotes("en", "Defines operations to perform on given arguments")]
-    public enum Operation
-    {
-        [XRoadTitle("en", "Add")]
-        Add,
+    [XRoadTitle("en", "Add")]
+    Add,
 
-        [XRoadTitle("en", "Subtract")]
-        Subtract,
+    [XRoadTitle("en", "Subtract")]
+    Subtract,
 
-        [XRoadTitle("en", "Multiply")]
-        Multiply,
+    [XRoadTitle("en", "Multiply")]
+    Multiply,
 
-        [XRoadTitle("en", "Divide")]
-        Divide
-    }
+    [XRoadTitle("en", "Divide")]
+    Divide
 }
