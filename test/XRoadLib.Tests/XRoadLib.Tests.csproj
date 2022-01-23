@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <AssemblyName>XRoadLib.Tests</AssemblyName>
-    <TargetFrameworks>net461;net5.0</TargetFrameworks>
+    <TargetFrameworks>net472;net5.0;net6.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net461' ">
-    <FrameworkPathOverride>/usr/lib/mono/4.6.1-api</FrameworkPathOverride>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,17 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <Reference Include="System.Web.Services" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(OS)' == 'Unix' And '$(TargetFramework)' == 'net461' ">
-    <Reference Include="/usr/lib/mono/4.6.1-api/Facades/System.Runtime.dll" />
-    <Reference Include="/usr/lib/mono/4.6.1-api/Facades/System.Threading.Tasks.dll" />
-  </ItemGroup>
 </Project>

@@ -263,3 +263,5 @@ docs/output/**/*.*
 temp/
 
 !lib/**/*.nupkg
+
+docs/log.txt

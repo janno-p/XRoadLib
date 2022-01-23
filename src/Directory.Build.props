@@ -1,14 +1,17 @@
 <Project>
+
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
-    <LangVersion>Latest</LangVersion>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
 
   <PropertyGroup>
     <Authors>Janno Põldma</Authors>
-    <Copyright>Copyright © 2021</Copyright>
+    <Copyright>Copyright © 2022</Copyright>
     <PackageProjectUrl>http://github.com/janno-p/XRoadLib</PackageProjectUrl>
     <PackageLicense>http://github.com/janno-p/XRoadLib/blob/master/LICENSE.txt</PackageLicense>
   </PropertyGroup>
@@ -20,8 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>$(MSBuildProjectName).Tests</_Parameter1>
-    </AssemblyAttribute>
+    <InternalsVisibleTo Include="$(MSBuildProjectName).Tests" />
   </ItemGroup>
+
 </Project>

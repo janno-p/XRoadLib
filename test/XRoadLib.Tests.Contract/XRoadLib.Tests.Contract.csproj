@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <AssemblyName>XRoadLib.Tests.Contract</AssemblyName>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
@@ -8,4 +9,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\XRoadLib\XRoadLib.csproj" />
   </ItemGroup>
+
 </Project>

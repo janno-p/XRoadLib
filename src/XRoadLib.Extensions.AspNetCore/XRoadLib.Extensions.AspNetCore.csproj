@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <AssemblyName>XRoadLib.Extensions.AspNetCore</AssemblyName>
     <AssemblyTitle>XRoadLib.Extensions.AspNetCore</AssemblyTitle>
@@ -22,4 +23,5 @@
     <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
+
 </Project>
