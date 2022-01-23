@@ -202,11 +202,12 @@ namespace Calculator.Tests
             var body = GetBodyElement(content);
 
             var wrapper = body.Element(XName.Get("CalculateResponse", "http://calculator.x-road.eu/"));
-            Assert.NotNull(wrapper);
+            wrapper.Should().NotBeNull();
 
-            var result = wrapper.Element(XName.Get("response"));
-            Assert.NotNull(result);
-            Assert.Equal("1183", result.Value);
+            var result = wrapper!.Element(XName.Get("response"));
+            result.Should().NotBeNull();
+
+            result!.Value.Should().Be("1183");
         }
 
         [Fact]
@@ -251,33 +252,39 @@ namespace Calculator.Tests
         private static XElement GetBodyElement(XContainer container)
         {
             var envelope = container.Element(XName.Get("Envelope", NamespaceConstants.SoapEnv));
-            Assert.NotNull(envelope);
+            envelope.Should().NotBeNull();
 
-            var body = envelope.Element(XName.Get("Body", NamespaceConstants.SoapEnv));
-            Assert.NotNull(body);
+            var body = envelope!.Element(XName.Get("Body", NamespaceConstants.SoapEnv));
+            body.Should().NotBeNull();
 
-            return body;
+            return body!;
         }
 
         private class Fault
         {
-            public string Code { get; private init; }
-            public string Value { get; private init; }
+            public string Code { get; }
+            public string Value { get; }
+
+            private Fault(string code, string value)
+            {
+                Code = code;
+                Value = value;
+            }
 
             public static Fault FromXml(XContainer container)
             {
                 var body = GetBodyElement(container);
 
                 var fault = body.Element(XName.Get("Fault", NamespaceConstants.SoapEnv));
-                Assert.NotNull(fault);
+                fault.Should().NotBeNull();
 
-                var faultcode = fault.Element(XName.Get("faultcode"));
-                Assert.NotNull(faultcode);
+                var faultcode = fault!.Element(XName.Get("faultcode"));
+                faultcode.Should().NotBeNull();
 
                 var faultstring = fault.Element(XName.Get("faultstring"));
-                Assert.NotNull(faultstring);
+                faultstring.Should().NotBeNull();
 
-                return new Fault { Code = faultcode.Value, Value = faultstring.Value };
+                return new Fault(faultcode!.Value, faultstring!.Value);
             }
         }
     }
