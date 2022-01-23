@@ -94,8 +94,8 @@ Target.create "BuildRelease" (fun _ ->
 Target.create "RunTests" (fun _ ->
     let testProjects =
         [
-            ("test", "XRoadLib.Tests", ["net461"; "net5.0"])
-            ("samples", "Calculator.Tests", ["net5.0"])
+            ("test", "XRoadLib.Tests", ["net472"; "net5.0"; "net6.0"])
+            ("samples", "Calculator.Tests", ["net6.0"])
         ]
 
     testProjects
