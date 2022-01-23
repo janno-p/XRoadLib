@@ -39,7 +39,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "docs", "docs\docs.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRoadLib.SourceGenerator", "src\XRoadLib.SourceGenerator\XRoadLib.SourceGenerator.csproj", "{2C9629C3-A02A-4102-B1C7-045D4354280A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator.Client", "samples\Calculator.Client\Calculator.Client.csproj", "{FADF8974-77AE-4C8A-965B-E589F263C995}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator.Client", "samples\Calculator.Client\Calculator.Client.csproj", "{FADF8974-77AE-4C8A-965B-E589F263C995}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{699B7190-D896-4C2F-AE22-0D78A5FB50DF}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\general.yml = .github\workflows\general.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
