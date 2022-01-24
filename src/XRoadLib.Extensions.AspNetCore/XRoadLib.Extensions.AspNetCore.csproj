@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>XRoadLib.Extensions.AspNetCore</AssemblyName>
-    <AssemblyTitle>XRoadLib.Extensions.AspNetCore</AssemblyTitle>
+    <Nullable>enable</Nullable>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 

@@ -1,12 +1,7 @@
-﻿using System.IO;
-using XRoadLib.Attributes;
-using XRoadLib.Serialization;
+﻿namespace XRoadLib.Tests.Contract;
 
-namespace XRoadLib.Tests.Contract
+public class MimeContent : XRoadSerializable
 {
-    public class MimeContent : XRoadSerializable
-    {
-        [XRoadXmlElement(UseXop = false)]
-        public Stream Value { get; set; }
-    }
+    [XRoadXmlElement(UseXop = false)]
+    public Stream? Value { get; set; }
 }

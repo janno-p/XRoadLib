@@ -1,7 +1,4 @@
-﻿using XRoadLib.Serialization;
+﻿namespace XRoadLib.Tests.Contract;
 
-namespace XRoadLib.Tests.Contract
-{
-    public class Class1 : XRoadSerializable
-    { }
-}
+public class Class1 : XRoadSerializable
+{ }

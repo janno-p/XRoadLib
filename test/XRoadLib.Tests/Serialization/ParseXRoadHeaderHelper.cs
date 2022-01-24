@@ -1,45 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using XRoadLib.Headers;
 using XRoadLib.Serialization;
 using XRoadLib.Soap;
 
-namespace XRoadLib.Tests.Serialization
+namespace XRoadLib.Tests.Serialization;
+
+public static class ParseXRoadHeaderHelper
 {
-    public static class ParseXRoadHeaderHelper
+    private static readonly IMessageFormatter MessageFormatter = new SoapMessageFormatter();
+
+    public static async Task<Tuple<ISoapHeader, IList<XElement>, IServiceManager>> ParseHeaderAsync(string xml, string ns)
     {
-        private static readonly IMessageFormatter MessageFormatter = new SoapMessageFormatter();
-
-        public static async Task<Tuple<ISoapHeader, IList<XElement>, IServiceManager>> ParseHeaderAsync(string xml, string ns)
-        {
 #if NET5_0
             await
 #endif
-            using var stream = new MemoryStream();
+        using var stream = new MemoryStream();
 
 #if NET5_0
             await
 #endif
-            using var streamWriter = new StreamWriter(stream, XRoadEncoding.Utf8);
+        using var streamWriter = new StreamWriter(stream, XRoadEncoding.Utf8);
 
-            await streamWriter.WriteLineAsync(@"<Envelope xmlns=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:id=""http://x-road.eu/xsd/identifiers"" xmlns:repr=""http://x-road.eu/xsd/representation.xsd"">");
-            await streamWriter.WriteLineAsync($"<Header xmlns:xrd=\"{ns}\">");
-            await streamWriter.WriteLineAsync(xml);
-            await streamWriter.WriteLineAsync(@"</Header>");
-            await streamWriter.WriteLineAsync(@"</Envelope>");
-            await streamWriter.FlushAsync();
+        await streamWriter.WriteLineAsync(@"<Envelope xmlns=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:id=""http://x-road.eu/xsd/identifiers"" xmlns:repr=""http://x-road.eu/xsd/representation.xsd"">");
+        await streamWriter.WriteLineAsync($"<Header xmlns:xrd=\"{ns}\">");
+        await streamWriter.WriteLineAsync(xml);
+        await streamWriter.WriteLineAsync(@"</Header>");
+        await streamWriter.WriteLineAsync(@"</Envelope>");
+        await streamWriter.FlushAsync();
 
-            stream.Position = 0;
+        stream.Position = 0;
 
-            using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager });
-            using var msg = new XRoadMessage();
+        using var reader = new XRoadMessageReader(new DataReader(stream), MessageFormatter, "text/xml; charset=UTF-8", Path.GetTempPath(), new IServiceManager[] { Globals.ServiceManager });
+        using var msg = new XRoadMessage();
 
-            await reader.ReadAsync(msg);
+        await reader.ReadAsync(msg);
 
-            return Tuple.Create(msg.Header, msg.UnresolvedHeaders, msg.ServiceManager);
-        }
+        return Tuple.Create(msg.Header, msg.UnresolvedHeaders, msg.ServiceManager);
     }
 }
