@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="XRoadSourceGenerator" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="WsdlUri" />
+  </ItemGroup>
+</Project>

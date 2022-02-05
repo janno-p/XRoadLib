@@ -5,6 +5,7 @@ VisualStudioVersion = 17.0.31825.309
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{BF60BC93-E09B-4E5F-9D85-95A519479D54}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		build.fsx = build.fsx
 		global.json = global.json
@@ -37,8 +38,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator.Tests", "samples
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "docs", "docs\docs.csproj", "{2BA0024B-A8DF-4F24-A779-4831596591DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRoadLib.SourceGenerator", "src\XRoadLib.SourceGenerator\XRoadLib.SourceGenerator.csproj", "{2C9629C3-A02A-4102-B1C7-045D4354280A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculator.Client", "samples\Calculator.Client\Calculator.Client.csproj", "{FADF8974-77AE-4C8A-965B-E589F263C995}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{699B7190-D896-4C2F-AE22-0D78A5FB50DF}"
@@ -46,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{699B
 		.github\workflows\general.yml = .github\workflows\general.yml
 		.github\workflows\publish.yml = .github\workflows\publish.yml
 	EndProjectSection
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "XRoadLib.SourceGenerator", "src\XRoadLib.SourceGenerator\XRoadLib.SourceGenerator.fsproj", "{64291C81-50CE-4872-BCFC-3653CF68CBCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -151,18 +152,6 @@ Global
 		{2BA0024B-A8DF-4F24-A779-4831596591DC}.Release|x64.Build.0 = Release|Any CPU
 		{2BA0024B-A8DF-4F24-A779-4831596591DC}.Release|x86.ActiveCfg = Release|Any CPU
 		{2BA0024B-A8DF-4F24-A779-4831596591DC}.Release|x86.Build.0 = Release|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Debug|x64.Build.0 = Debug|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Debug|x86.Build.0 = Debug|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Release|x64.ActiveCfg = Release|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Release|x64.Build.0 = Release|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Release|x86.ActiveCfg = Release|Any CPU
-		{2C9629C3-A02A-4102-B1C7-045D4354280A}.Release|x86.Build.0 = Release|Any CPU
 		{FADF8974-77AE-4C8A-965B-E589F263C995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FADF8974-77AE-4C8A-965B-E589F263C995}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FADF8974-77AE-4C8A-965B-E589F263C995}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -175,6 +164,18 @@ Global
 		{FADF8974-77AE-4C8A-965B-E589F263C995}.Release|x64.Build.0 = Release|Any CPU
 		{FADF8974-77AE-4C8A-965B-E589F263C995}.Release|x86.ActiveCfg = Release|Any CPU
 		{FADF8974-77AE-4C8A-965B-E589F263C995}.Release|x86.Build.0 = Release|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Debug|x64.Build.0 = Debug|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Debug|x86.Build.0 = Debug|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Release|x64.ActiveCfg = Release|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Release|x64.Build.0 = Release|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Release|x86.ActiveCfg = Release|Any CPU
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -187,8 +188,8 @@ Global
 		{BE36BF04-2B2E-48CE-8B1D-47657349B760} = {34C738B8-0838-4882-B7E7-236102A459B7}
 		{309CC1BB-A093-47F0-BF0F-CB6270322433} = {21BB3EB6-7BD5-4C26-9F7C-868F46AB6274}
 		{09AC97F8-61EC-4597-8811-3A293A27D36D} = {34C738B8-0838-4882-B7E7-236102A459B7}
-		{2C9629C3-A02A-4102-B1C7-045D4354280A} = {21BB3EB6-7BD5-4C26-9F7C-868F46AB6274}
 		{FADF8974-77AE-4C8A-965B-E589F263C995} = {34C738B8-0838-4882-B7E7-236102A459B7}
+		{64291C81-50CE-4872-BCFC-3653CF68CBCC} = {21BB3EB6-7BD5-4C26-9F7C-868F46AB6274}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76B09F66-9938-494A-91D8-70025CF32D24}

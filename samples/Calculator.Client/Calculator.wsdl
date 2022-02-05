@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd" xmlns:tns="http://calculator.x-road.eu/" targetNamespace="http://calculator.x-road.eu/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://x-road.eu/xsd/xroad.xsd" namespace="http://x-road.eu/xsd/xroad.xsd" />
+</xsd:schema>
+    <xsd:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://calculator.x-road.eu/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="AddRequest">
+    <xs:sequence>
+      <xs:element name="X" type="xs:int" />
+      <xs:element name="Y" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CalculationRequest">
+    <xs:sequence>
+      <xs:element name="X" type="xs:int" />
+      <xs:element name="Y" type="xs:int" />
+      <xs:element name="Operation" xmlns:q1="http://calculator.x-road.eu/" type="q1:Operation" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="fault">
+    <xs:sequence>
+      <xs:element name="faultCode" type="xs:string" />
+      <xs:element name="faultString" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="Operation">
+    <xs:annotation>
+      <xs:appinfo>
+        <xrd:title xml:lang="en" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd">Operation type</xrd:title>
+        <xrd:notes xml:lang="en" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd">Defines operations to perform on given arguments</xrd:notes>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Add">
+        <xs:annotation>
+          <xs:appinfo>
+            <xrd:title xml:lang="en" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd">Add</xrd:title>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Subtract">
+        <xs:annotation>
+          <xs:appinfo>
+            <xrd:title xml:lang="en" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd">Subtract</xrd:title>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Multiply">
+        <xs:annotation>
+          <xs:appinfo>
+            <xrd:title xml:lang="en" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd">Multiply</xrd:title>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Divide">
+        <xs:annotation>
+          <xs:appinfo>
+            <xrd:title xml:lang="en" xmlns:xrd="http://x-road.eu/xsd/xroad.xsd">Divide</xrd:title>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Calculate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="request" xmlns:q2="http://calculator.x-road.eu/" type="q2:CalculationRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CalculateAsync">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="request" xmlns:q3="http://calculator.x-road.eu/" type="q3:CalculationRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CalculateAsyncResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="request" xmlns:q4="http://calculator.x-road.eu/" type="q4:CalculationRequest" />
+        <xs:choice>
+          <xs:element name="response" type="xs:int" />
+          <xs:element name="fault" xmlns:q5="http://calculator.x-road.eu/" type="q5:fault" />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CalculateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="request" xmlns:q6="http://calculator.x-road.eu/" type="q6:CalculationRequest" />
+        <xs:choice>
+          <xs:element name="response" type="xs:int" />
+          <xs:element name="fault" xmlns:q7="http://calculator.x-road.eu/" type="q7:fault" />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SumOfIntegers">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="request" xmlns:q8="http://calculator.x-road.eu/" type="q8:AddRequest" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SumOfIntegersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="request" xmlns:q9="http://calculator.x-road.eu/" type="q9:AddRequest" />
+        <xs:choice>
+          <xs:element name="response" type="xs:int" />
+          <xs:element name="fault" xmlns:q10="http://calculator.x-road.eu/" type="q10:fault" />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="RequiredHeaders">
+    <wsdl:part name="client" element="xrd:client" />
+    <wsdl:part name="id" element="xrd:id" />
+    <wsdl:part name="issue" element="xrd:issue" />
+    <wsdl:part name="protocolVersion" element="xrd:protocolVersion" />
+    <wsdl:part name="service" element="xrd:service" />
+    <wsdl:part name="userId" element="xrd:userId" />
+  </wsdl:message>
+  <wsdl:message name="Calculate">
+    <wsdl:part name="body" element="tns:Calculate" />
+  </wsdl:message>
+  <wsdl:message name="CalculateResponse">
+    <wsdl:part name="body" element="tns:CalculateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CalculateAsync">
+    <wsdl:part name="body" element="tns:CalculateAsync" />
+  </wsdl:message>
+  <wsdl:message name="CalculateAsyncResponse">
+    <wsdl:part name="body" element="tns:CalculateAsyncResponse" />
+  </wsdl:message>
+  <wsdl:message name="SumOfIntegers">
+    <wsdl:part name="body" element="tns:SumOfIntegers" />
+  </wsdl:message>
+  <wsdl:message name="SumOfIntegersResponse">
+    <wsdl:part name="body" element="tns:SumOfIntegersResponse" />
+  </wsdl:message>
+  <wsdl:portType name="PortTypeName">
+    <wsdl:operation name="Calculate">
+      <wsdl:documentation>
+        <xrd:title xml:lang="en">Calculation service</xrd:title>
+        <xrd:notes xml:lang="en">Performs specified operation on two user provided integers and returns the result.</xrd:notes>
+      </wsdl:documentation>
+      <wsdl:input message="tns:Calculate" />
+      <wsdl:output message="tns:CalculateResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="CalculateAsync">
+      <wsdl:documentation>
+        <xrd:title xml:lang="en">Calculation service</xrd:title>
+        <xrd:notes xml:lang="en">Performs specified operation on two user provided integers and returns the result.</xrd:notes>
+      </wsdl:documentation>
+      <wsdl:input message="tns:CalculateAsync" />
+      <wsdl:output message="tns:CalculateAsyncResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="SumOfIntegers">
+      <wsdl:documentation>
+        <xrd:title xml:lang="en">Sum of integers</xrd:title>
+        <xrd:notes xml:lang="en">Calculates sum of two user provided integers and returns the result.</xrd:notes>
+      </wsdl:documentation>
+      <wsdl:input message="tns:SumOfIntegers" />
+      <wsdl:output message="tns:SumOfIntegersResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BindingName" type="tns:PortTypeName">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Calculate">
+      <xrd:version>v1</xrd:version>
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="client" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="id" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="issue" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="protocolVersion" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="service" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="userId" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="client" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="id" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="issue" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="protocolVersion" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="service" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="userId" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CalculateAsync">
+      <xrd:version>v1</xrd:version>
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="client" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="id" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="issue" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="protocolVersion" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="service" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="userId" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="client" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="id" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="issue" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="protocolVersion" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="service" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="userId" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SumOfIntegers">
+      <xrd:version>v1</xrd:version>
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="client" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="id" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="issue" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="protocolVersion" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="service" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="userId" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="client" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="id" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="issue" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="protocolVersion" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="service" use="literal" />
+        <soap:header message="tns:RequiredHeaders" part="userId" use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ServiceName">
+    <wsdl:port name="PortName" binding="tns:BindingName">
+      <soap:address location="http://INSERT_CORRECT_SERVICE_URL" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
