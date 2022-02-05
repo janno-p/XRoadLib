@@ -42,6 +42,22 @@ type XRoadLibSourceGenerator () =
             | _ -> None
         )
 
+    let buildPort namespaceName (port: Wsdl.ServicePort) = [
+        let ifaceSrc = Text.StringBuilder()
+        ifaceSrc.AppendLine($"namespace %s{namespaceName}").AppendLine("{") |> ignore
+        ifaceSrc.AppendLine($"    public interface I%s{port.Name.LocalName}").AppendLine("    {") |> ignore
+
+        port.Binding.Operations
+        |> List.iter (fun op ->
+            ifaceSrc.AppendLine($"        void %s{op.PortOperation.Name}();") |> ignore
+        )
+
+        ifaceSrc.AppendLine("    }") |> ignore
+        ifaceSrc.AppendLine("}") |> ignore
+
+        yield ($"I%s{port.Name.LocalName}.cs", string ifaceSrc)
+    ]
+
     let executeAsync context = task {
         for source in getLoadOptions context do
             match source.File.Exists, source.WsdlUri with
@@ -56,11 +72,17 @@ type XRoadLibSourceGenerator () =
             let wsdl = Wsdl.parse doc.Root (Uri source.File.FullName) null
 
             wsdl.Services
-            |> Seq.iter (fun svc ->
-                let name = svc.Name
-                context.AddSource(name, $"public class %s{name} {{ }}")
-            )
+            |> Seq.iter
+                (fun svc ->
+                    svc.Ports
+                    |> List.map (buildPort $"%s{Path.GetFileNameWithoutExtension(source.File.Name)}.%s{svc.Name}")
+                    |> List.concat
+                    |> List.iter context.AddSource
+                )
     }
+
+    let showCompilerError (context: GeneratorExecutionContext) (e: exn) =
+        context.ReportDiagnostic(Diagnostic.Create("XRD0001", "Compiler", e.Message, DiagnosticSeverity.Error, DiagnosticSeverity.Error, true, 0))
 
     interface ISourceGenerator with
         member _.Execute(context) =
@@ -69,10 +91,8 @@ type XRoadLibSourceGenerator () =
                 task.Wait()
             with e ->
                 match e with
-                | :? AggregateException as e ->
-                    e.InnerExceptions
-                    |> Seq.iter (fun ex -> context.ReportDiagnostic(Diagnostic.Create("XRD0001", "Compiler", ex.Message, DiagnosticSeverity.Error, DiagnosticSeverity.Error, true, 0)))
-                | e -> context.ReportDiagnostic(Diagnostic.Create("XRD0001", "Compiler", e.Message, DiagnosticSeverity.Error, DiagnosticSeverity.Error, true, 0))
+                | :? AggregateException as e -> e.InnerExceptions |> Seq.iter (showCompilerError context)
+                | e -> showCompilerError context e
 
         member _.Initialize(_) =
             ()
