@@ -1,2 +1,3 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿var service = new ServiceName();
+
+Console.WriteLine($"Hello, World! I have a {service}");

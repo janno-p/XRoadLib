@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <None Include="XRoadLibSourceGenerator.props" />
+    <Compile Include="Wsdl.fs" />
     <Compile Include="SourceGenerator.fs" />
   </ItemGroup>
 

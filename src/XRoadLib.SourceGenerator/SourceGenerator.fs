@@ -51,12 +51,28 @@ type XRoadLibSourceGenerator () =
                 use! stream = httpClient.GetStreamAsync(wsdlUri)
                 do! stream.CopyToAsync(file)
             | _ -> ()
+
+            let doc = System.Xml.Linq.XDocument.Load(source.File.FullName)
+            let wsdl = Wsdl.parse doc.Root (Uri source.File.FullName) null
+
+            wsdl.Services
+            |> Seq.iter (fun svc ->
+                let name = svc.Name
+                context.AddSource(name, $"public class %s{name} {{ }}")
+            )
     }
 
     interface ISourceGenerator with
         member _.Execute(context) =
-            let task = executeAsync context
-            task.Wait()
+            try
+                let task = executeAsync context
+                task.Wait()
+            with e ->
+                match e with
+                | :? AggregateException as e ->
+                    e.InnerExceptions
+                    |> Seq.iter (fun ex -> context.ReportDiagnostic(Diagnostic.Create("XRD0001", "Compiler", ex.Message, DiagnosticSeverity.Error, DiagnosticSeverity.Error, true, 0)))
+                | e -> context.ReportDiagnostic(Diagnostic.Create("XRD0001", "Compiler", e.Message, DiagnosticSeverity.Error, DiagnosticSeverity.Error, true, 0))
 
         member _.Initialize(_) =
             ()
