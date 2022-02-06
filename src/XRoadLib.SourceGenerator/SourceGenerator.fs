@@ -44,11 +44,19 @@ type XRoadLibSourceGenerator () =
 
     let buildPort namespaceName (port: Wsdl.ServicePort) = [
         let ifaceSrc = Text.StringBuilder()
+        ifaceSrc.AppendLine("using XRoadLib.Attributes;").AppendLine() |> ignore
+
         ifaceSrc.AppendLine($"namespace %s{namespaceName}").AppendLine("{") |> ignore
         ifaceSrc.AppendLine($"    public interface I%s{port.Name.LocalName}").AppendLine("    {") |> ignore
 
         port.Binding.Operations
-        |> List.iter (fun op ->
+        |> List.iteri (fun i op ->
+            if i > 0 then ifaceSrc.AppendLine() |> ignore
+
+            ifaceSrc.Append($"        [XRoadService(\"%s{op.PortOperation.Name}\"") |> ignore
+            op.Version |> Option.iter (fun v -> ifaceSrc.Append($", \"%s{v}\"") |> ignore)
+            ifaceSrc.AppendLine(")]") |> ignore
+
             ifaceSrc.AppendLine($"        void %s{op.PortOperation.Name}();") |> ignore
         )
 

@@ -7,6 +7,7 @@ open System.Xml.Linq
 module Namespace =
     let Soap = XNamespace.Get("http://schemas.xmlsoap.org/wsdl/soap/")
     let Wsdl = XNamespace.Get("http://schemas.xmlsoap.org/wsdl/")
+    let Xrd = XNamespace.Get("http://x-road.eu/xsd/xroad.xsd")
 
 let resolveXName (e: XElement) (name: string) =
     match name.Split(':') with
@@ -53,6 +54,7 @@ type Operation =
     {
         SoapAction: string
         PortOperation: PortOperation
+        Version: string option
     }
 
 type ServiceBinding =
@@ -148,7 +150,8 @@ let parseBinding (findPortType: XName -> PortType) (tns: XNamespace) (binding: X
             | soapOperation ->
                 let soapAction = soapOperation.Attribute(XName.Get "soapAction").Value
                 let portOperation = portType.Operations |> List.find (fun x -> x.Name = operationName)
-                { SoapAction = soapAction; PortOperation = portOperation }
+                let version = binding.Element(Namespace.Xrd + "version") |> Option.ofObj |> Option.map (fun x -> x.Value)
+                { SoapAction = soapAction; PortOperation = portOperation; Version = version }
         ]
     let style =
         match binding.Attribute(XName.Get "style") |> Option.ofObj |> Option.map (fun x -> x.Value) with
