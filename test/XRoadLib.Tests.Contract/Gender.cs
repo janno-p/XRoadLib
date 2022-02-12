@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 
 namespace XRoadLib.Tests.Contract;
 
 public enum Gender
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global")] Unknown,
+    [UsedImplicitly] Unknown,
     Female,
-    [SuppressMessage("ReSharper", "UnusedMember.Global")] Male
+    [UsedImplicitly] Male
 }

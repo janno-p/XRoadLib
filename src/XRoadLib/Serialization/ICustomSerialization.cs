@@ -1,12 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using System.Xml;
+﻿namespace XRoadLib.Serialization;
 
-namespace XRoadLib.Serialization
+public interface ICustomSerialization
 {
-    public interface ICustomSerialization
-    {
-        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-        Task OnContentCompleteAsync(XmlWriter writer);
-    }
+    [UsedImplicitly]
+    Task OnContentCompleteAsync(XmlWriter writer);
 }

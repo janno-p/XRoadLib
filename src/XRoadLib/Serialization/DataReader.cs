@@ -1,82 +1,77 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿namespace XRoadLib.Serialization;
 
-namespace XRoadLib.Serialization
+public sealed class DataReader : IDisposable
 {
-    public class DataReader : IDisposable
+    internal const int BufferSize = 4_096;
+
+    private Stream _stream;
+
+    private readonly byte[] _buffer = new byte[BufferSize];
+    private uint _bufferPosition;
+    private int _bufferSize = -1;
+
+    public long Position { get; private set; }
+
+    public DataReader(Stream stream)
     {
-        internal const int BufferSize = 4_096;
+        _stream = stream;
+    }
 
-        private Stream _stream;
+    public void Dispose()
+    {
+        _stream.Dispose();
+        _stream = null;
+    }
 
-        private readonly byte[] _buffer = new byte[BufferSize];
-        private uint _bufferPosition;
-        private int _bufferSize = -1;
-
-        public long Position { get; private set; }
-
-        public DataReader(Stream stream)
+    public bool Reset()
+    {
+        if (_stream.CanSeek)
         {
-            _stream = stream;
+            if (_stream.Length == 0)
+                return false;
+
+            _stream.Seek(0, SeekOrigin.Begin);
         }
 
-        public void Dispose()
-        {
-            _stream.Dispose();
-            _stream = null;
-        }
+        _bufferPosition = 0;
+        _bufferSize = -1;
 
-        public bool Reset()
-        {
-            if (_stream.CanSeek)
-            {
-                if (_stream.Length == 0)
-                    return false;
+        Position = 0;
 
-                _stream.Seek(0, SeekOrigin.Begin);
-            }
+        return true;
+    }
 
-            _bufferPosition = 0;
-            _bufferSize = -1;
+    public async Task<int> PeekByteAsync()
+    {
+        if (_bufferSize < 0)
+            await UpdateBufferAsync();
 
-            Position = 0;
+        if (_bufferSize == 0)
+            return -1;
 
-            return true;
-        }
+        return _buffer[_bufferPosition];
+    }
 
-        public async Task<int> PeekByteAsync()
-        {
-            if (_bufferSize < 0)
-                await UpdateBufferAsync();
+    public async Task<int> ReadByteAsync()
+    {
+        if (_bufferSize < 0)
+            await UpdateBufferAsync();
 
-            if (_bufferSize == 0)
-                return -1;
+        if (_bufferSize == 0)
+            return -1;
 
-            return _buffer[_bufferPosition];
-        }
+        var byt = _buffer[_bufferPosition++];
+        Position++;
 
-        public async Task<int> ReadByteAsync()
-        {
-            if (_bufferSize < 0)
-                await UpdateBufferAsync();
+        if (_bufferPosition >= _bufferSize)
+            await UpdateBufferAsync();
 
-            if (_bufferSize == 0)
-                return -1;
+        return byt;
+    }
 
-            var byt = _buffer[_bufferPosition++];
-            Position++;
-
-            if (_bufferPosition >= _bufferSize)
-                await UpdateBufferAsync();
-
-            return byt;
-        }
-
-        private async Task UpdateBufferAsync()
-        {
-            _bufferSize = await _stream.ReadAsync(_buffer, 0, BufferSize);
-            _bufferPosition = 0;
-        }
+    private async Task UpdateBufferAsync()
+    {
+        _bufferSize = await _stream.ReadAsync(_buffer, 0, BufferSize);
+        _bufferPosition = 0;
     }
 }

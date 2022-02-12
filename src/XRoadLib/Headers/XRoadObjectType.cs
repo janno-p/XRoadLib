@@ -1,35 +1,32 @@
-﻿using System.Xml.Serialization;
+﻿namespace XRoadLib.Headers;
 
-namespace XRoadLib.Headers
+/// <summary>
+/// Enumeration for XRoad identifier types.
+/// </summary>
+[XmlType("XRoadObjectType", Namespace = NamespaceConstants.XRoadId)]
+public enum XRoadObjectType
 {
     /// <summary>
-    /// Enumeration for XRoad identifier types.
+    /// Identifies member identifier.
     /// </summary>
-    [XmlType("XRoadObjectType", Namespace = NamespaceConstants.XRoadId)]
-    public enum XRoadObjectType
-    {
-        /// <summary>
-        /// Identifies member identifier.
-        /// </summary>
-        [XmlEnum("MEMBER")]
-        Member,
+    [XmlEnum("MEMBER")]
+    Member,
 
-        /// <summary>
-        /// Identifies subsystem identifier.
-        /// </summary>
-        [XmlEnum("SUBSYSTEM")]
-        Subsystem,
+    /// <summary>
+    /// Identifies subsystem identifier.
+    /// </summary>
+    [XmlEnum("SUBSYSTEM")]
+    Subsystem,
 
-        /// <summary>
-        /// Identifies service identifier.
-        /// </summary>
-        [XmlEnum("SERVICE")]
-        Service,
+    /// <summary>
+    /// Identifies service identifier.
+    /// </summary>
+    [XmlEnum("SERVICE")]
+    Service,
 
-        /// <summary>
-        /// Identifies central service identifier.
-        /// </summary>
-        [XmlEnum("CENTRALSERVICE")]
-        CentralService
-    }
+    /// <summary>
+    /// Identifies central service identifier.
+    /// </summary>
+    [XmlEnum("CENTRALSERVICE")]
+    CentralService
 }

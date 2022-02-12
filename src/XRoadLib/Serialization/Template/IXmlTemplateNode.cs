@@ -1,21 +1,17 @@
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿namespace XRoadLib.Serialization.Template;
 
-namespace XRoadLib.Serialization.Template
+public interface IXmlTemplateNode
 {
-    public interface IXmlTemplateNode
-    {
-        IXmlTemplateNode this[string childNodeName, uint version] { get; }
+    IXmlTemplateNode this[string childNodeName, uint version] { get; }
 
-        bool IsRequired { get; }
+    bool IsRequired { get; }
 
-        string Name { get; }
+    string Name { get; }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        string Namespace { get; }
+    [UsedImplicitly]
+    string Namespace { get; }
 
-        IEnumerable<string> ChildNames { get; }
+    IEnumerable<string> ChildNames { get; }
 
-        int CountRequiredNodes(uint version);
-    }
+    int CountRequiredNodes(uint version);
 }

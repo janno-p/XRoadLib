@@ -1,20 +1,17 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace XRoadLib.Serialization;
 
-namespace XRoadLib.Serialization
+/// <summary>
+/// Specifies how string values with special characters should be handled.
+/// </summary>
+public enum StringSerializationMode
 {
     /// <summary>
-    /// Specifies how string values with special characters should be handled.
+    /// Encodes special characters using HTML encoding.
     /// </summary>
-    public enum StringSerializationMode
-    {
-        /// <summary>
-        /// Encodes special characters using HTML encoding.
-        /// </summary>
-        HtmlEncoded,
+    HtmlEncoded,
 
-        /// <summary>
-        /// Wrap strings containing special characters inside CDATA.
-        /// </summary>
-        [SuppressMessage("ReSharper", "UnusedMember.Global")] WrappedInCData
-    }
+    /// <summary>
+    /// Wrap strings containing special characters inside CDATA.
+    /// </summary>
+    [UsedImplicitly] WrappedInCData
 }

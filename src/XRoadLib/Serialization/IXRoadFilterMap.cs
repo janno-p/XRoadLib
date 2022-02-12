@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace XRoadLib.Serialization;
 
-namespace XRoadLib.Serialization
+public interface IXRoadFilterMap
 {
-    public interface IXRoadFilterMap
-    {
-        string GroupName { get; }
+    string GroupName { get; }
 
-        ISet<string> EnabledProperties { get; }
-    }
+    ISet<string> EnabledProperties { get; }
 }

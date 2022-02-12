@@ -1,9 +1,8 @@
-namespace XRoadLib.Wsdl
+﻿namespace XRoadLib.Wsdl;
+
+public enum SoapBindingStyle
 {
-    public enum SoapBindingStyle
-    {
-        Default,
-        Document,
-        Rpc
-    }
+    Default,
+    Document,
+    Rpc
 }

@@ -1,19 +1,16 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace XRoadLib.Soap;
 
-namespace XRoadLib.Soap
+public interface ISoapFault : IFault
 {
-    public interface ISoapFault : IFault
-    {
-        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
-        string FaultCode { get; set; }
+    [UsedImplicitly]
+    string FaultCode { get; set; }
 
-        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
-        string FaultString { get; set; }
+    [UsedImplicitly]
+    string FaultString { get; set; }
 
-        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
-        string FaultActor { get; set; }
+    [UsedImplicitly]
+    string FaultActor { get; set; }
 
-        [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
-        string Details { get; set; }
-    }
+    [UsedImplicitly]
+    string Details { get; set; }
 }

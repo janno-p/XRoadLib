@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 
 namespace XRoadLib.Tests.Contract.Mapping;
 
@@ -27,8 +27,7 @@ public class MergeArrayContentRequest : XRoadSerializable
     public WrapperType[]? Content { get; set; }
 }
 
-[SuppressMessage("ReSharper", "UnusedMember.Global")] 
-[SuppressMessage("ReSharper", "UnusedType.Global")]
+[UsedImplicitly]
 public interface IMergeArrayContentService
 {
     [XRoadService("MergeArrayContent")]

@@ -1,16 +1,15 @@
-﻿namespace XRoadLib.Schema
+﻿namespace XRoadLib.Schema;
+
+/// <summary>
+/// Configuration options for customizing non-technical faults.
+/// </summary>
+public class FaultDefinition : Definition
 {
     /// <summary>
-    /// Configuration options for customizing non-technical faults.
+    /// Initializes empty fault definition object.
     /// </summary>
-    public class FaultDefinition : Definition
+    public FaultDefinition()
     {
-        /// <summary>
-        /// Initializes empty fault definition object.
-        /// </summary>
-        public FaultDefinition()
-        {
-            Documentation = new DocumentationDefinition();
-        }
+        Documentation = new DocumentationDefinition();
     }
 }

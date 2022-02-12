@@ -1,8 +1,7 @@
-﻿namespace XRoadLib.Serialization
+﻿namespace XRoadLib.Serialization;
+
+internal class XRoadFault : IXRoadFault
 {
-    internal class XRoadFault : IXRoadFault
-    {
-        public string FaultCode { get; set; }
-        public string FaultString { get; set; }
-    }
+    public string FaultCode { get; set; }
+    public string FaultString { get; set; }
 }

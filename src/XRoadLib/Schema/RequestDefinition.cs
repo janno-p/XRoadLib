@@ -1,67 +1,60 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Linq;
+﻿using System.Reflection;
 
-namespace XRoadLib.Schema
+namespace XRoadLib.Schema;
+
+/// <summary>
+/// Specification for individual X-Road message request part.
+/// </summary>
+public class RequestDefinition : ParticleDefinition
 {
     /// <summary>
-    /// Specification for individual X-Road message request part.
+    /// Operation which uses this request part in its input.
     /// </summary>
-    public class RequestDefinition : ParticleDefinition
+    [UsedImplicitly]
+    public OperationDefinition DeclaringOperationDefinition { get; }
+
+    /// <summary>
+    /// Runtime parameter info of request object.
+    /// </summary>
+    public ParameterInfo ParameterInfo { get; }
+
+    /// <summary>
+    /// Wrapper element name for incoming requests.
+    /// </summary>
+    [UsedImplicitly]
+    public XName WrapperElementName { get; set; }
+
+    /// <summary>
+    /// Initializes new request definition object.
+    /// </summary>
+    public RequestDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
     {
-        /// <summary>
-        /// Operation which uses this request part in its input.
-        /// </summary>
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public OperationDefinition DeclaringOperationDefinition { get; }
+        var methodParameters = declaringOperationDefinition.MethodInfo.GetParameters();
+        if (methodParameters.Length > 1)
+            throw new SchemaDefinitionException($"Invalid X-Road operation contract `{declaringOperationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
 
-        /// <summary>
-        /// Runtime parameter info of request object.
-        /// </summary>
-        public ParameterInfo ParameterInfo { get; }
+        DeclaringOperationDefinition = declaringOperationDefinition;
+        ParameterInfo = methodParameters.SingleOrDefault();
+        WrapperElementName = declaringOperationDefinition.Name;
 
-        /// <summary>
-        /// Wrapper element name for incoming requests.
-        /// </summary>
-        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public XName WrapperElementName { get; set; }
+        var targetNamespace = declaringOperationDefinition.Name.NamespaceName;
+        var defaultQualifiedElement = isQualifiedElementDefault(targetNamespace);
 
-        /// <summary>
-        /// Initializes new request definition object.
-        /// </summary>
-        public RequestDefinition(OperationDefinition declaringOperationDefinition, Func<string, bool> isQualifiedElementDefault)
-        {
-            var methodParameters = declaringOperationDefinition.MethodInfo.GetParameters();
-            if (methodParameters.Length > 1)
-                throw new SchemaDefinitionException($"Invalid X-Road operation contract `{declaringOperationDefinition.Name.LocalName}`: expected 0-1 input parameters, but {methodParameters.Length} was given.");
+        Content = ContentDefinition.FromType(
+            this,
+            ParameterInfo,
+            ParameterInfo?.ParameterType,
+            "request",
+            targetNamespace,
+            defaultQualifiedElement
+        );
+    }
 
-            DeclaringOperationDefinition = declaringOperationDefinition;
-            ParameterInfo = methodParameters.SingleOrDefault();
-            WrapperElementName = declaringOperationDefinition.Name;
-
-            var targetNamespace = declaringOperationDefinition.Name.NamespaceName;
-            var defaultQualifiedElement = isQualifiedElementDefault(targetNamespace);
-
-            Content = ContentDefinition.FromType(
-                this,
-                ParameterInfo,
-                ParameterInfo?.ParameterType,
-                "request",
-                targetNamespace,
-                defaultQualifiedElement
-            );
-        }
-
-        /// <summary>
-        /// Detailed string presentation of the request object.
-        /// </summary>
-        public override string ToString()
-        {
-            return $"Input value of {ParameterInfo.Member.DeclaringType?.FullName ?? "<null>"}.{ParameterInfo.Member.Name}";
-        }
+    /// <summary>
+    /// Detailed string presentation of the request object.
+    /// </summary>
+    public override string ToString()
+    {
+        return $"Input value of {ParameterInfo.Member.DeclaringType?.FullName ?? "<null>"}.{ParameterInfo.Member.Name}";
     }
 }

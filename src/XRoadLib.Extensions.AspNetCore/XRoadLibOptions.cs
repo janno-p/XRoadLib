@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 
 namespace XRoadLib.Extensions.AspNetCore;
 
@@ -6,7 +6,7 @@ public class XRoadLibOptions
 {
     public DirectoryInfo? StoragePath { get; private set; }
 
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [UsedImplicitly]
     public XRoadLibOptions WithStoragePath(DirectoryInfo path)
     {
         StoragePath = path;

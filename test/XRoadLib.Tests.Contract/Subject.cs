@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 
 namespace XRoadLib.Tests.Contract;
 
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[UsedImplicitly]
 public abstract class Subject : XRoadSerializable
 {
     public string? Name { get; set; }

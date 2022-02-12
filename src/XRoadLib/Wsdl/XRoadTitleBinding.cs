@@ -1,42 +1,35 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using System.Xml;
+﻿namespace XRoadLib.Wsdl;
 
-namespace XRoadLib.Wsdl
+[UsedImplicitly]
+public class XRoadTitleBinding : ServiceDescriptionFormatExtension
 {
-    [SuppressMessage("ReSharper", "UnusedType.Global")]
-    public class XRoadTitleBinding : ServiceDescriptionFormatExtension
+    [UsedImplicitly]
+    public string Prefix { get; }
+
+    [UsedImplicitly]
+    public string Namespace { get; }
+
+    [UsedImplicitly]
+    public string Text { get; set; }
+
+    [UsedImplicitly]
+    public string Language { get; set; }
+
+    public XRoadTitleBinding(string prefix, string ns)
     {
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public string Prefix { get; }
+        Prefix = prefix;
+        Namespace = ns;
+    }
 
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public string Namespace { get; }
+    internal override async Task WriteAsync(XmlWriter writer)
+    {
+        await writer.WriteStartElementAsync(Prefix, "title", Namespace).ConfigureAwait(false);
 
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public string Text { get; set; }
+        if (!string.IsNullOrWhiteSpace(Language))
+            await writer.WriteAttributeStringAsync(null, "lang", NamespaceConstants.Xml, Language).ConfigureAwait(false);
 
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public string Language { get; set; }
+        await writer.WriteStringAsync(Text).ConfigureAwait(false);
 
-        public XRoadTitleBinding(string prefix, string ns)
-        {
-            Prefix = prefix;
-            Namespace = ns;
-        }
-
-        internal override async Task WriteAsync(XmlWriter writer)
-        {
-            await writer.WriteStartElementAsync(Prefix, "title", Namespace).ConfigureAwait(false);
-
-            if (!string.IsNullOrWhiteSpace(Language))
-                await writer.WriteAttributeStringAsync(null, "lang", NamespaceConstants.Xml, Language).ConfigureAwait(false);
-
-            await writer.WriteStringAsync(Text).ConfigureAwait(false);
-
-            await writer.WriteEndElementAsync().ConfigureAwait(false);
-        }
+        await writer.WriteEndElementAsync().ConfigureAwait(false);
     }
 }

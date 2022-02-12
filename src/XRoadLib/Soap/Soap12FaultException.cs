@@ -1,19 +1,20 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Runtime.Serialization;
 
-namespace XRoadLib.Soap
+namespace XRoadLib.Soap;
+
+[Serializable]
+public class Soap12FaultException : Exception
 {
-    public class Soap12FaultException : Exception
-    {
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public ISoap12Fault Fault { get; }
+    [UsedImplicitly]
+    public ISoap12Fault Fault { get; }
 
-        public Soap12FaultException(ISoap12Fault fault)
-            : base(fault?.Reason.First().Text)
-        {
-            Fault = fault ?? throw new ArgumentNullException(nameof(fault));
-        }
+    public Soap12FaultException(ISoap12Fault fault)
+        : base(fault?.Reason.First().Text)
+    {
+        Fault = fault ?? throw new ArgumentNullException(nameof(fault));
     }
+
+    protected Soap12FaultException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    { }
 }

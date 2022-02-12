@@ -1,10 +1,9 @@
-﻿namespace XRoadLib.Soap
+﻿namespace XRoadLib.Soap;
+
+public class SoapFault : ISoapFault
 {
-    public class SoapFault : ISoapFault
-    {
-        public string FaultCode { get; set; }
-        public string FaultString { get; set; }
-        public string FaultActor { get; set; }
-        public string Details { get; set; }
-    }
+    public string FaultCode { get; set; }
+    public string FaultString { get; set; }
+    public string FaultActor { get; set; }
+    public string Details { get; set; }
 }

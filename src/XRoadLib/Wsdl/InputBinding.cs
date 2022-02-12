@@ -1,7 +1,6 @@
-namespace XRoadLib.Wsdl
+﻿namespace XRoadLib.Wsdl;
+
+public class InputBinding : MessageBinding
 {
-    public class InputBinding : MessageBinding
-    {
-        protected override string ElementName { get; } = "input";
-    }
+    protected override string ElementName => "input";
 }

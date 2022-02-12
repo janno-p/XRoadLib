@@ -1,106 +1,100 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using System.Xml;
-using XRoadLib.Extensions;
+﻿using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
-namespace XRoadLib.Serialization.Mapping
+namespace XRoadLib.Serialization.Mapping;
+
+public interface IArrayTypeMap { }
+
+public class ArrayTypeMap<T> : TypeMap, IArrayTypeMap
 {
-    public interface IArrayTypeMap { }
+    private readonly ISerializer _serializer;
 
-    public class ArrayTypeMap<T> : TypeMap, IArrayTypeMap
+    private readonly ITypeMap _elementTypeMap;
+
+    [UsedImplicitly]
+    public ArrayTypeMap(ISerializer serializer, CollectionDefinition collectionDefinition, ITypeMap elementTypeMap)
+        : base(collectionDefinition)
     {
-        private readonly ISerializer _serializer;
+        _serializer = serializer;
+        _elementTypeMap = elementTypeMap;
+    }
 
-        private readonly ITypeMap _elementTypeMap;
+    public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+    {
+        var arrayContent = (ArrayContentDefiniton)content;
 
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        public ArrayTypeMap(ISerializer serializer, CollectionDefinition collectionDefinition, ITypeMap elementTypeMap)
-            : base(collectionDefinition)
+        if (reader.IsEmptyElement && !arrayContent.MergeContent)
+            return await reader.MoveNextAndReturnAsync(Array.Empty<T>()).ConfigureAwait(false);
+
+        var items = new List<T>();
+
+        var parentDepth = arrayContent.MergeContent ? reader.Depth - 1 : reader.Depth;
+        var itemDepth = parentDepth + 1;
+        var itemName = arrayContent.Item.Content.Name;
+
+        if (!arrayContent.MergeContent)
+            await reader.ReadAsync().ConfigureAwait(false);
+
+        while (parentDepth < reader.Depth)
         {
-            _serializer = serializer;
-            _elementTypeMap = elementTypeMap;
-        }
-
-        public override async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
-        {
-            var arrayContent = (ArrayContentDefiniton)content;
-
-            if (reader.IsEmptyElement && !arrayContent.MergeContent)
-                return await reader.MoveNextAndReturnAsync(new T[0]).ConfigureAwait(false);
-
-            var items = new List<T>();
-
-            var parentDepth = arrayContent.MergeContent ? reader.Depth - 1 : reader.Depth;
-            var itemDepth = parentDepth + 1;
-            var itemName = arrayContent.Item.Content.Name;
-
-            if (!arrayContent.MergeContent)
+            if (reader.NodeType != XmlNodeType.Element || reader.Depth != itemDepth)
+            {
                 await reader.ReadAsync().ConfigureAwait(false);
-
-            while (parentDepth < reader.Depth)
-            {
-                if (reader.NodeType != XmlNodeType.Element || reader.Depth != itemDepth)
-                {
-                    await reader.ReadAsync().ConfigureAwait(false);
-                    continue;
-                }
-
-                if (reader.GetXName() != itemName)
-                {
-                    if (arrayContent.MergeContent)
-                        break;
-
-                    if (!arrayContent.Item.AcceptsAnyName)
-                    {
-                        var readerName = reader.GetXName();
-                        throw new UnexpectedElementException($"Invalid array item name `{readerName}`.", Definition, arrayContent.Item, readerName);
-                    }
-                }
-
-                if (reader.IsNilElement())
-                {
-                    items.Add(default);
-                    await reader.ReadAsync().ConfigureAwait(false);
-                    continue;
-                }
-
-                var typeMap = _serializer.GetTypeMapFromXsiType(reader, arrayContent.Item) ?? _elementTypeMap;
-
-                var value = await typeMap.DeserializeAsync(reader, templateNode, arrayContent.Item.Content, message).ConfigureAwait(false);
-
-                items.Add((T)value);
+                continue;
             }
 
-            return items.ToArray();
+            if (reader.GetXName() != itemName)
+            {
+                if (arrayContent.MergeContent)
+                    break;
+
+                if (!arrayContent.Item.AcceptsAnyName)
+                {
+                    var readerName = reader.GetXName();
+                    throw new UnexpectedElementException($"Invalid array item name `{readerName}`.", Definition, arrayContent.Item, readerName);
+                }
+            }
+
+            if (reader.IsNilElement())
+            {
+                items.Add(default);
+                await reader.ReadAsync().ConfigureAwait(false);
+                continue;
+            }
+
+            var typeMap = _serializer.GetTypeMapFromXsiType(reader, arrayContent.Item) ?? _elementTypeMap;
+
+            var value = await typeMap.DeserializeAsync(reader, templateNode, arrayContent.Item.Content, message).ConfigureAwait(false);
+
+            items.Add((T)value);
         }
 
-        public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+        return items.ToArray();
+    }
+
+    public override async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+    {
+        var valueArray = (Array)value;
+
+        if (content.Particle is not RequestDefinition && !content.MergeContent)
+            await message.Style.WriteExplicitArrayTypeAsync(writer, _elementTypeMap.Definition.Name, valueArray.Length).ConfigureAwait(false);
+
+        var arrayContent = (ArrayContentDefiniton)content;
+        var itemName = arrayContent.Item.Content.Name;
+
+        foreach (var valueItem in valueArray)
         {
-            var valueArray = (Array)value;
+            await writer.WriteStartElementAsync(itemName).ConfigureAwait(false);
 
-            if (!(content.Particle is RequestDefinition) && !content.MergeContent)
-                await message.Style.WriteExplicitArrayTypeAsync(writer, _elementTypeMap.Definition.Name, valueArray.Length).ConfigureAwait(false);
-
-            var arrayContent = (ArrayContentDefiniton)content;
-            var itemName = arrayContent.Item.Content.Name;
-
-            foreach (var valueItem in valueArray)
+            if (valueItem != null)
             {
-                await writer.WriteStartElementAsync(itemName).ConfigureAwait(false);
-
-                if (valueItem != null)
-                {
-                    var typeMap = _serializer != null ? _serializer.GetTypeMap(valueItem.GetType()) : _elementTypeMap;
-                    await typeMap.SerializeAsync(writer, templateNode, valueItem, arrayContent.Item.Content, message).ConfigureAwait(false);
-                }
-                else await writer.WriteNilAttributeAsync().ConfigureAwait(false);
-
-                await writer.WriteEndElementAsync().ConfigureAwait(false);
+                var typeMap = _serializer != null ? _serializer.GetTypeMap(valueItem.GetType()) : _elementTypeMap;
+                await typeMap.SerializeAsync(writer, templateNode, valueItem, arrayContent.Item.Content, message).ConfigureAwait(false);
             }
+            else await writer.WriteNilAttributeAsync().ConfigureAwait(false);
+
+            await writer.WriteEndElementAsync().ConfigureAwait(false);
         }
     }
 }

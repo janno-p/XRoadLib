@@ -1,10 +1,6 @@
-using System.Threading.Tasks;
-using System.Xml;
+﻿namespace XRoadLib.Wsdl;
 
-namespace XRoadLib.Wsdl
+public abstract class ServiceDescriptionFormatExtension
 {
-    public abstract class ServiceDescriptionFormatExtension
-    {
-        internal abstract Task WriteAsync(XmlWriter writer);
-    }
+    internal abstract Task WriteAsync(XmlWriter writer);
 }

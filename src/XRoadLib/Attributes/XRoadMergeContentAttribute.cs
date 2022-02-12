@@ -1,8 +1,5 @@
-﻿using System;
+﻿namespace XRoadLib.Attributes;
 
-namespace XRoadLib.Attributes
-{
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
-    public class XRoadMergeContentAttribute : Attribute
-    { }
-}
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+public class XRoadMergeContentAttribute : Attribute
+{ }

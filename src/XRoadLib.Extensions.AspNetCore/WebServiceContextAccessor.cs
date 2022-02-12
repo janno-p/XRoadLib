@@ -1,13 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace XRoadLib.Extensions.AspNetCore;
-
-public interface IWebServiceContextAccessor
-{
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
-    WebServiceContext WebServiceContext { get; }
-}
+﻿namespace XRoadLib.Extensions.AspNetCore;
 
 public class WebServiceContextAccessor : IWebServiceContextAccessor
 {

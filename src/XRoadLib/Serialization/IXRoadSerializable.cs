@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
+﻿namespace XRoadLib.Serialization;
 
-namespace XRoadLib.Serialization
+public interface IXRoadSerializable
 {
-    public interface IXRoadSerializable
-    {
-        void OnMemberDeserialized(string memberName);
+    void OnMemberDeserialized(string memberName);
 
-        void SetTemplateMembers(IEnumerable<string> memberNames);
+    void SetTemplateMembers(IEnumerable<string> memberNames);
 
-        bool IsSpecified(string memberName);
-    }
+    bool IsSpecified(string memberName);
 }

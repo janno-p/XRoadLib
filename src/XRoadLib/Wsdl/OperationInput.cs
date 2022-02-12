@@ -1,7 +1,6 @@
-namespace XRoadLib.Wsdl
+﻿namespace XRoadLib.Wsdl;
+
+public class OperationInput : OperationMessage
 {
-    public class OperationInput : OperationMessage
-    {
-        protected override string ElementName { get; } = "input";
-    }
+    protected override string ElementName => "input";
 }

@@ -1,80 +1,72 @@
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
+﻿namespace XRoadLib.Wsdl;
 
-namespace XRoadLib.Wsdl
+public abstract class DocumentableItem
 {
-    public abstract class DocumentableItem
+    protected abstract string ElementName { get; }
+
+    public XmlElement DocumentationElement { get; set; }
+
+    [UsedImplicitly]
+    public List<XmlAttribute> ExtensibleAttributes { get; } = new();
+    public List<ServiceDescriptionFormatExtension> Extensions { get; } = new();
+    public Dictionary<string, string> Namespaces { get; } = new();
+
+    [UsedImplicitly]
+    public string Documentation
     {
-        protected abstract string ElementName { get; }
-
-        public XmlElement DocumentationElement { get; set; }
-        
-        [SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public List<XmlAttribute> ExtensibleAttributes { get; } = new();
-        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new();
-        public Dictionary<string, string> Namespaces { get; } = new();
-
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public string Documentation
+        get => DocumentationElement != null ? DocumentationElement.InnerText : "";
+        set
         {
-            get => DocumentationElement != null ? DocumentationElement.InnerText : "";
-            set
+            if (string.IsNullOrEmpty(value))
             {
-                if (string.IsNullOrEmpty(value))
-                {
-                    DocumentationElement = null;
-                    return;
-                }
-
-                var doc = new XmlDocument();
-                DocumentationElement = doc.CreateElement(PrefixConstants.Wsdl, "documentation", NamespaceConstants.Wsdl);
-                DocumentationElement.InnerText = value;
+                DocumentationElement = null;
+                return;
             }
+
+            var doc = new XmlDocument();
+            DocumentationElement = doc.CreateElement(PrefixConstants.Wsdl, "documentation", NamespaceConstants.Wsdl);
+            DocumentationElement.InnerText = value;
         }
+    }
 
-        internal async Task WriteAsync(XmlWriter writer)
-        {
-            await WriteStartElementAsync(writer, ElementName).ConfigureAwait(false);
-            await WriteAttributesAsync(writer).ConfigureAwait(false);
-            await WriteElementsAsync(writer).ConfigureAwait(false);
-            await writer.WriteEndElementAsync().ConfigureAwait(false);
-        }
+    internal async Task WriteAsync(XmlWriter writer)
+    {
+        await WriteStartElementAsync(writer, ElementName).ConfigureAwait(false);
+        await WriteAttributesAsync(writer).ConfigureAwait(false);
+        await WriteElementsAsync(writer).ConfigureAwait(false);
+        await writer.WriteEndElementAsync().ConfigureAwait(false);
+    }
 
-        protected virtual async Task WriteAttributesAsync(XmlWriter writer)
-        {
-            var namespaces =
-                Namespaces.Where(x => !string.IsNullOrWhiteSpace(x.Value) && writer.LookupPrefix(x.Value) != x.Key)
-                          .ToList();
+    protected virtual async Task WriteAttributesAsync(XmlWriter writer)
+    {
+        var namespaces =
+            Namespaces.Where(x => !string.IsNullOrWhiteSpace(x.Value) && writer.LookupPrefix(x.Value) != x.Key)
+                      .ToList();
 
-            foreach (var ns in namespaces)
-                await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, ns.Key, NamespaceConstants.Xmlns, ns.Value).ConfigureAwait(false);
+        foreach (var ns in namespaces)
+            await writer.WriteAttributeStringAsync(PrefixConstants.Xmlns, ns.Key, NamespaceConstants.Xmlns, ns.Value).ConfigureAwait(false);
 
-            ExtensibleAttributes.ForEach(x => x.WriteTo(writer));
-        }
+        ExtensibleAttributes.ForEach(x => x.WriteTo(writer));
+    }
 
-        protected virtual async Task WriteElementsAsync(XmlWriter writer)
-        {
-            foreach (var extension in Extensions)
-                await extension.WriteAsync(writer).ConfigureAwait(false);
+    protected virtual async Task WriteElementsAsync(XmlWriter writer)
+    {
+        foreach (var extension in Extensions)
+            await extension.WriteAsync(writer).ConfigureAwait(false);
 
-            DocumentationElement?.WriteTo(writer);
-        }
+        DocumentationElement?.WriteTo(writer);
+    }
 
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        protected Task WriteStartElementAsync(XmlWriter writer, string name)
-        {
-            var prefix =
-                Namespaces.Where(kvp => kvp.Value == NamespaceConstants.Wsdl)
-                          .Select(kvp => kvp.Key)
-                          .SingleOrDefault()
-                ?? writer.LookupPrefix(NamespaceConstants.Wsdl)
-                ?? "";
+    [UsedImplicitly]
+    protected Task WriteStartElementAsync(XmlWriter writer, string name)
+    {
+        var prefix =
+            Namespaces.Where(kvp => kvp.Value == NamespaceConstants.Wsdl)
+                      .Select(kvp => kvp.Key)
+                      .SingleOrDefault()
+            ?? writer.LookupPrefix(NamespaceConstants.Wsdl)
+            ?? "";
 
-            return writer.WriteStartElementAsync(prefix, name, NamespaceConstants.Wsdl);
-        }
+        return writer.WriteStartElementAsync(prefix, name, NamespaceConstants.Wsdl);
     }
 }

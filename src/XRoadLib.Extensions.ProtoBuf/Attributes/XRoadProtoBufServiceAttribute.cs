@@ -1,7 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml.Linq;
 using Google.Protobuf.Reflection;
+using JetBrains.Annotations;
 using XRoadLib.Attributes;
 using XRoadLib.Extensions.ProtoBuf.Serialization.Mapping;
 using XRoadLib.Schema;
@@ -10,7 +10,7 @@ namespace XRoadLib.Extensions.ProtoBuf.Attributes;
 
 /// <inheritdoc />
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-[SuppressMessage("ReSharper", "UnusedType.Global")]
+[UsedImplicitly]
 public class XRoadProtoBufServiceAttribute : XRoadServiceAttribute
 {
     private const string XroadProtobufSchema = "https://e-rik.github.io/schemas/xroad-protobuf.xsd";
@@ -30,7 +30,7 @@ public class XRoadProtoBufServiceAttribute : XRoadServiceAttribute
         _schemaExporter = new Lazy<ISchemaExporter>(() => new ProtoBufSchemaExporter(reflectionType));
     }
 
-    private class ProtoBufSchemaExporter : AbstractSchemaExporter
+    private sealed class ProtoBufSchemaExporter : AbstractSchemaExporter
     {
         private readonly Type _reflectionType;
 

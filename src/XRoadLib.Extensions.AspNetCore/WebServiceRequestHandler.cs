@@ -1,6 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using XRoadLib.Events;
 using XRoadLib.Schema;
@@ -11,7 +11,7 @@ namespace XRoadLib.Extensions.AspNetCore;
 /// <summary>
 /// Base class of service request handlers.
 /// </summary>
-[SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
+[UsedImplicitly]
 public class WebServiceRequestHandler : WebServiceHandler
 {
     protected virtual IServiceProvider ServiceProvider { get; }
@@ -51,7 +51,7 @@ public class WebServiceRequestHandler : WebServiceHandler
     /// <summary>
     /// Handle X-Road message protocol meta-service request.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    [UsedImplicitly]
     protected virtual Task<object?> InvokeMetaServiceAsync(WebServiceContext context) =>
         Task.FromResult<object?>(null);
 
@@ -79,42 +79,42 @@ public class WebServiceRequestHandler : WebServiceHandler
     /// <summary>
     /// Intercept X-Road service request after request message is loaded.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    [UsedImplicitly]
     protected virtual Task OnRequestLoadedAsync(WebServiceContext context) =>
         Task.CompletedTask;
 
     /// <summary>
     /// Handle exception that occurred on service method invokation.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    [UsedImplicitly]
     protected virtual Task OnInvocationErrorAsync(WebServiceContext context) =>
         Task.CompletedTask;
 
     /// <summary>
     /// Customize XML reader settings before deserialization of the X-Road message.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    [UsedImplicitly]
     protected virtual Task OnBeforeDeserializationAsync(WebServiceContext context, BeforeDeserializationEventArgs args) =>
         Task.CompletedTask;
 
     /// <summary>
     /// Intercept X-Road service request handling after deserialization of the message.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    [UsedImplicitly]
     protected virtual Task OnAfterDeserializationAsync(WebServiceContext context) =>
         Task.CompletedTask;
 
     /// <summary>
     /// Intercept X-Road service request handling before serialization of the response message.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    [UsedImplicitly]
     protected virtual Task OnBeforeSerializationAsync(WebServiceContext context) =>
         Task.CompletedTask;
 
     /// <summary>
     /// Intercept X-Road service request handling after serialization of the response message.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+    [UsedImplicitly]
     protected virtual Task OnAfterSerializationAsync(WebServiceContext context) =>
         Task.CompletedTask;
 

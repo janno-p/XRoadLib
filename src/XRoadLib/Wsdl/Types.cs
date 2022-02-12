@@ -1,34 +1,31 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Schema;
+﻿using System.Xml.Schema;
 
-namespace XRoadLib.Wsdl
+namespace XRoadLib.Wsdl;
+
+public class Types : DocumentableItem
 {
-    public class Types : DocumentableItem
+    protected override string ElementName => "types";
+
+    public List<XmlSchema> Schemas { get; } = new();
+
+    protected override async Task WriteElementsAsync(XmlWriter writer)
     {
-        protected override string ElementName { get; } = "types";
+        await base.WriteElementsAsync(writer).ConfigureAwait(false);
 
-        public List<XmlSchema> Schemas { get; } = new();
-
-        protected override async Task WriteElementsAsync(XmlWriter writer)
+        foreach (var schema in Schemas)
         {
-            await base.WriteElementsAsync(writer).ConfigureAwait(false);
+            using var stream = new MemoryStream();
+            schema.Write(stream);
+            stream.Seek(0, SeekOrigin.Begin);
 
-            foreach (var schema in Schemas)
+            using var reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true });
+
+            while (await reader.ReadAsync().ConfigureAwait(false) && reader.NodeType != XmlNodeType.Element)
             {
-                using var stream = new MemoryStream();
-                schema.Write(stream);
-                stream.Seek(0, SeekOrigin.Begin);
-
-                using var reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true });
-
-                while (await reader.ReadAsync().ConfigureAwait(false) && reader.NodeType != XmlNodeType.Element)
-                { }
-
-                await writer.WriteNodeAsync(reader, true).ConfigureAwait(false);
+                // Do nothing
             }
+
+            await writer.WriteNodeAsync(reader, true).ConfigureAwait(false);
         }
     }
 }

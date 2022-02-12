@@ -1,127 +1,124 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml.Serialization;
 
-namespace XRoadLib.Headers
+namespace XRoadLib.Headers;
+
+/// <summary>
+/// X-Road service identifier.
+/// </summary>
+[XmlInclude(typeof(IXRoadIdentifier))]
+[XmlType("XRoadServiceIdentifierType", Namespace = NamespaceConstants.XRoadId)]
+public class XRoadServiceIdentifier : IXRoadIdentifier
 {
+    private string _serviceVersion;
+
     /// <summary>
-    /// X-Road service identifier.
+    /// X-Road instance name.
     /// </summary>
-    [XmlInclude(typeof(IXRoadIdentifier))]
-    [XmlType("XRoadServiceIdentifierType", Namespace = NamespaceConstants.XRoadId)]
-    public class XRoadServiceIdentifier : IXRoadIdentifier
+    public string XRoadInstance { get; set; }
+
+    /// <summary>
+    /// X-Road service provider class.
+    /// </summary>
+    public string MemberClass { get; set; }
+
+    /// <summary>
+    /// X-Road service provider code.
+    /// </summary>
+    public string MemberCode { get; set; }
+
+    /// <summary>
+    /// X-Road service provider subsystem code.
+    /// </summary>
+    public string SubsystemCode { get; set; } // Optional
+
+    /// <summary>
+    /// X-Road service name.
+    /// </summary>
+    public string ServiceCode { get; set; }
+
+    /// <summary>
+    /// X-Road service version.
+    /// </summary>
+    public string ServiceVersion
     {
-        private string _serviceVersion;
-
-        /// <summary>
-        /// X-Road instance name.
-        /// </summary>
-        public string XRoadInstance { get; set; }
-
-        /// <summary>
-        /// X-Road service provider class.
-        /// </summary>
-        public string MemberClass { get; set; }
-
-        /// <summary>
-        /// X-Road service provider code.
-        /// </summary>
-        public string MemberCode { get; set; }
-
-        /// <summary>
-        /// X-Road service provider subsystem code.
-        /// </summary>
-        public string SubsystemCode { get; set; } // Optional
-
-        /// <summary>
-        /// X-Road service name.
-        /// </summary>
-        public string ServiceCode { get; set; }
-
-        /// <summary>
-        /// X-Road service version.
-        /// </summary>
-        public string ServiceVersion
+        get => _serviceVersion;
+        set
         {
-            get => _serviceVersion;
-            set
-            {
-                _serviceVersion = value;
-                Version = string.IsNullOrWhiteSpace(value) ? (uint?)null : Convert.ToUInt32(value.Substring(1));
-            }
+            _serviceVersion = value;
+            Version = string.IsNullOrWhiteSpace(value) ? (uint?)null : Convert.ToUInt32(value.Substring(1));
         }
+    }
 
-        /// <summary>
-        /// X-Road identifier type (SERVICE).
-        /// </summary>
-        public XRoadObjectType ObjectType { get; set; }
+    /// <summary>
+    /// X-Road identifier type (SERVICE).
+    /// </summary>
+    public XRoadObjectType ObjectType { get; set; }
 
-        /// <summary>
-        /// X-Road service version as number.
-        /// </summary>
-        public uint? Version { get; private set; }
+    /// <summary>
+    /// X-Road service version as number.
+    /// </summary>
+    public uint? Version { get; private set; }
 
-        /// <summary>
-        /// Parse X-Road service identifier from legacy service name.
-        /// </summary>
-        public static XRoadServiceIdentifier FromString(string serviceName)
-        {
-            if (serviceName == null)
-                return new XRoadServiceIdentifier();
+    /// <summary>
+    /// Parse X-Road service identifier from legacy service name.
+    /// </summary>
+    public static XRoadServiceIdentifier FromString(string serviceName)
+    {
+        if (serviceName == null)
+            return new XRoadServiceIdentifier();
 
-            var matchMethodAndVersion = new Regex(@"^(?<method>[^\.]*)\.(?<version>v\d+)$").Match(serviceName);
-            if (matchMethodAndVersion.Success)
-                return new XRoadServiceIdentifier
-                {
-                    ServiceCode = matchMethodAndVersion.Groups["method"].Value,
-                    ServiceVersion = matchMethodAndVersion.Groups["version"].Success ? matchMethodAndVersion.Groups["version"].Value : null
-                };
-
-            var matchAll = new Regex(@"^((?<producer>[^\.]+)\.)?(?<method>[^\.]*)(\.(?<version>v\d+))?$").Match(serviceName);
-            if (!matchAll.Success)
-                return new XRoadServiceIdentifier();
-
+        var matchMethodAndVersion = new Regex(@"^(?<method>[^\.]*)\.(?<version>v\d+)$").Match(serviceName);
+        if (matchMethodAndVersion.Success)
             return new XRoadServiceIdentifier
             {
-                ServiceCode = matchAll.Groups["method"].Value,
-                ServiceVersion = matchAll.Groups["version"].Success ? matchAll.Groups["version"].Value : null
+                ServiceCode = matchMethodAndVersion.Groups["method"].Value,
+                ServiceVersion = matchMethodAndVersion.Groups["version"].Success ? matchMethodAndVersion.Groups["version"].Value : null
             };
-        }
 
-        /// <summary>
-        /// Convert X-Road service identifier to old service name.
-        /// </summary>
-        public string ToFullName()
+        var matchAll = new Regex(@"^((?<producer>[^\.]+)\.)?(?<method>[^\.]*)(\.(?<version>v\d+))?$").Match(serviceName);
+        if (!matchAll.Success)
+            return new XRoadServiceIdentifier();
+
+        return new XRoadServiceIdentifier
         {
-            var sb = new StringBuilder();
+            ServiceCode = matchAll.Groups["method"].Value,
+            ServiceVersion = matchAll.Groups["version"].Success ? matchAll.Groups["version"].Value : null
+        };
+    }
 
-            if (!string.IsNullOrWhiteSpace(SubsystemCode))
-                sb.Append($"{SubsystemCode}.");
+    /// <summary>
+    /// Convert X-Road service identifier to old service name.
+    /// </summary>
+    public string ToFullName()
+    {
+        var sb = new StringBuilder();
 
-            sb.Append(ServiceCode ?? string.Empty);
+        if (!string.IsNullOrWhiteSpace(SubsystemCode))
+            sb.Append($"{SubsystemCode}.");
 
-            if (!string.IsNullOrWhiteSpace(ServiceVersion))
-                sb.Append($".{ServiceVersion}");
+        sb.Append(ServiceCode ?? string.Empty);
 
-            return sb.ToString();
-        }
+        if (!string.IsNullOrWhiteSpace(ServiceVersion))
+            sb.Append($".{ServiceVersion}");
 
-        /// <summary>
-        /// String presentation of the X-Road service identifier.
-        /// </summary>
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
+        return sb.ToString();
+    }
 
-            if (!string.IsNullOrEmpty(XRoadInstance) || !string.IsNullOrEmpty(MemberClass) || !string.IsNullOrEmpty(MemberCode))
-                sb.Append($"{XRoadInstance}/{MemberClass}/{MemberCode}/");
+    /// <summary>
+    /// String presentation of the X-Road service identifier.
+    /// </summary>
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
 
-            sb.Append($"{SubsystemCode}/{ServiceCode}");
-            if (!string.IsNullOrEmpty(ServiceVersion))
-                sb.Append($"/{ServiceVersion}");
+        if (!string.IsNullOrEmpty(XRoadInstance) || !string.IsNullOrEmpty(MemberClass) || !string.IsNullOrEmpty(MemberCode))
+            sb.Append($"{XRoadInstance}/{MemberClass}/{MemberCode}/");
 
-            return sb.ToString();
-        }
+        sb.Append($"{SubsystemCode}/{ServiceCode}");
+        if (!string.IsNullOrEmpty(ServiceVersion))
+            sb.Append($"/{ServiceVersion}");
+
+        return sb.ToString();
     }
 }

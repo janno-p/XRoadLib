@@ -1,8 +1,7 @@
-namespace XRoadLib.Soap
+﻿namespace XRoadLib.Soap;
+
+public class Soap12FaultSubcode
 {
-    public class Soap12FaultSubcode
-    {
-        public string Value { get; set; }
-        public Soap12FaultSubcode Subcode { get; set; }
-    }
+    public string Value { get; set; }
+    public Soap12FaultSubcode Subcode { get; set; }
 }

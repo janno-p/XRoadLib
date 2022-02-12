@@ -1,18 +1,14 @@
-using System.Threading.Tasks;
-using System.Xml;
+﻿namespace XRoadLib.Wsdl;
 
-namespace XRoadLib.Wsdl
+public abstract class NamedItem : DocumentableItem
 {
-    public abstract class NamedItem : DocumentableItem
+    public string Name { get; set; }
+
+    protected override async Task WriteAttributesAsync(XmlWriter writer)
     {
-        public string Name { get; set; }
+        await base.WriteAttributesAsync(writer).ConfigureAwait(false);
 
-        protected override async Task WriteAttributesAsync(XmlWriter writer)
-        {
-            await base.WriteAttributesAsync(writer).ConfigureAwait(false);
-
-            if (!string.IsNullOrWhiteSpace(Name))
-                await writer.WriteAttributeStringAsync(null, "name", null, Name).ConfigureAwait(false);
-        }
+        if (!string.IsNullOrWhiteSpace(Name))
+            await writer.WriteAttributeStringAsync(null, "name", null, Name).ConfigureAwait(false);
     }
 }

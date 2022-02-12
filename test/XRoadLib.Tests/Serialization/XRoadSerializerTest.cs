@@ -1,6 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml;
+using JetBrains.Annotations;
 using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
@@ -10,14 +10,16 @@ using XRoadLib.Tests.Contract.Wsdl;
 
 namespace XRoadLib.Tests.Serialization;
 
-[SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
+[UsedImplicitly]
 public class XRoadSerializerTest
 {
-    private class X<T>
+    private static class X<T>
     {
-        // ReSharper disable once UnusedMember.Local, UnusedParameter.Local
-        public static void Method(T t)
-        { }
+        [UsedImplicitly]
+        public static void Method([UsedImplicitly] T t)
+        {
+            Console.WriteLine($"t: {t}");
+        }
     }
 
     private static async Task SerializeWithContextAsync<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, Action<XRoadMessage, string> f)
@@ -103,7 +105,7 @@ public class XRoadSerializerTest
                                 "<ObjektID>3</ObjektID>" +
                                 "</keha>";
 
-        await SerializeWithContextAsync("keha", cls, 1u, true, (msg, xml) =>
+        await SerializeWithContextAsync("keha", cls, 1u, true, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -121,7 +123,7 @@ public class XRoadSerializerTest
                                 + "<item>3</item>"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 1u, true, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 1u, true, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -140,7 +142,7 @@ public class XRoadSerializerTest
                                 + "<item>3</item>"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -150,7 +152,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeBooleanFalseValue()
     {
-        await SerializeWithContextAsync("keha", false, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", false, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>false</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -160,7 +162,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeBooleanTrueValue()
     {
-        await SerializeWithContextAsync("keha", true, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", true, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>true</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -170,7 +172,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeDateTimeValue()
     {
-        await SerializeWithContextAsync("keha", new DateTime(2000, 10, 12, 4, 14, 55, 989), 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", new DateTime(2000, 10, 12, 4, 14, 55, 989), 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>2000-10-12T04:14:55.989</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -180,7 +182,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeDecimalValue()
     {
-        await SerializeWithContextAsync("keha", 0.4M, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", 0.4M, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>0.4</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -190,7 +192,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeFloatValue()
     {
-        await SerializeWithContextAsync("keha", 0.1f, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", 0.1f, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>0.1</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -200,7 +202,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeIntValue()
     {
-        await SerializeWithContextAsync("keha", 44345, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", 44345, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>44345</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -210,7 +212,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeShortValue()
     {
-        await SerializeWithContextAsync("keha", (short)445, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", (short)445, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>445</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -220,7 +222,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeLongValue()
     {
-        await SerializeWithContextAsync("keha", 44345L, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", 44345L, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>44345</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -239,7 +241,7 @@ public class XRoadSerializerTest
                                 + "<item>3</item>"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -249,7 +251,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeShortDateTimeValue()
     {
-        await SerializeWithContextAsync("keha", new DateTime(2000, 10, 12), 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", new DateTime(2000, 10, 12), 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>2000-10-12T00:00:00</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -259,7 +261,7 @@ public class XRoadSerializerTest
     [Fact]
     public async Task CanSerializeStringValue()
     {
-        await SerializeWithContextAsync("keha", "someString", 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", "someString", 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal("<?xml version=\"1.0\" encoding=\"utf-8\"?><keha>someString</keha>", xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -283,7 +285,7 @@ public class XRoadSerializerTest
                                 + "<Loodud>2000-12-12T12:12:12</Loodud>"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -305,7 +307,7 @@ public class XRoadSerializerTest
                                 + "<Sisu href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" />"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(1, msg.AllAttachments.Count);
@@ -327,7 +329,7 @@ public class XRoadSerializerTest
                                 + "<Sisu href=\"cid:1B2M2Y8AsgTpgAmY7PhCfg==\" />"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(1, msg.AllAttachments.Count);
@@ -344,7 +346,7 @@ public class XRoadSerializerTest
                                 + "<ttIsik.dSyn>2012-11-26</ttIsik.dSyn>"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -378,7 +380,7 @@ public class XRoadSerializerTest
                                 + "<StaticProperty>6</StaticProperty>"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -409,7 +411,7 @@ public class XRoadSerializerTest
                                 + "<StaticProperty>6</StaticProperty>"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", value, 1u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", value, 1u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -440,7 +442,7 @@ public class XRoadSerializerTest
                                 + "<KnownProperty>value</KnownProperty>"
                                 + "</keha>";
 
-        await SerializeWithContextAsync("keha", entity, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", entity, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);
@@ -467,7 +469,7 @@ public class XRoadSerializerTest
             + "<Value2>Joy</Value2>"
             + "</keha>";
 
-        await SerializeWithContextAsync("keha", entity, 2u, false, (msg, xml) =>
+        await SerializeWithContextAsync("keha", entity, 2u, false, [AssertionMethod] (msg, xml) =>
         {
             Assert.Equal(expected, xml);
             Assert.Equal(0, msg.AllAttachments.Count);

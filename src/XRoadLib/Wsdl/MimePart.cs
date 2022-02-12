@@ -1,21 +1,16 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Xml;
+﻿namespace XRoadLib.Wsdl;
 
-namespace XRoadLib.Wsdl
+public class MimePart : ServiceDescriptionFormatExtension
 {
-    public class MimePart : ServiceDescriptionFormatExtension
+    public List<ServiceDescriptionFormatExtension> Extensions { get; } = new();
+
+    internal override async Task WriteAsync(XmlWriter writer)
     {
-        public List<ServiceDescriptionFormatExtension> Extensions { get; } = new();
+        await writer.WriteStartElementAsync(PrefixConstants.Mime, "part", NamespaceConstants.Mime).ConfigureAwait(false);
 
-        internal override async Task WriteAsync(XmlWriter writer)
-        {
-            await writer.WriteStartElementAsync(PrefixConstants.Mime, "part", NamespaceConstants.Mime).ConfigureAwait(false);
+        foreach (var extension in Extensions)
+            await extension.WriteAsync(writer).ConfigureAwait(false);
 
-            foreach (var extension in Extensions)
-                await extension.WriteAsync(writer).ConfigureAwait(false);
-
-            await writer.WriteEndElementAsync().ConfigureAwait(false);
-        }
+        await writer.WriteEndElementAsync().ConfigureAwait(false);
     }
 }

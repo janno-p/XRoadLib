@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using XRoadLib.Schema;
+﻿using XRoadLib.Schema;
 
-namespace XRoadLib.Serialization.Mapping
+namespace XRoadLib.Serialization.Mapping;
+
+public interface ICompositeTypeMap : ITypeMap
 {
-    public interface ICompositeTypeMap : ITypeMap
-    {
-        void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions, IEnumerable<string> availableFilters);
-    }
+    void InitializeProperties(IEnumerable<Tuple<PropertyDefinition, ITypeMap>> propertyDefinitions, IEnumerable<string> availableFilters);
 }

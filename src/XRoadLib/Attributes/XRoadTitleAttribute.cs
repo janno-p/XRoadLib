@@ -1,25 +1,22 @@
-﻿using System;
+﻿namespace XRoadLib.Attributes;
 
-namespace XRoadLib.Attributes
+/// <summary>
+/// Title of the service (for displaying to users)
+/// </summary>
+[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Enum | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true)]
+public class XRoadTitleAttribute : Attribute
 {
-    /// <summary>
-    /// Title of the service (for displaying to users)
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Enum | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true)]
-    public class XRoadTitleAttribute : Attribute
+    public string LanguageCode { get; }
+    public string Value { get; }
+
+    public XRoadTitleAttribute(string value)
     {
-        public string LanguageCode { get; }
-        public string Value { get; }
+        Value = value;
+    }
 
-        public XRoadTitleAttribute(string value)
-        {
-            Value = value;
-        }
-
-        public XRoadTitleAttribute(string languageCode, string value)
-        {
-            LanguageCode = languageCode;
-            Value = value;
-        }
+    public XRoadTitleAttribute(string languageCode, string value)
+    {
+        LanguageCode = languageCode;
+        Value = value;
     }
 }

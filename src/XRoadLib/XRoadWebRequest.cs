@@ -1,31 +1,28 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
+﻿using System.Net;
 using XRoadLib.Serialization;
 
-namespace XRoadLib
+namespace XRoadLib;
+
+/// <summary>
+/// Helper methods to initialize X-Road web requests.
+/// </summary>
+[UsedImplicitly]
+public static class XRoadWebRequest
 {
     /// <summary>
-    /// Helper methods to initialize X-Road web requests.
+    /// Initializes new X-Road web request object with default X-Road specific parameter values.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedType.Global")]
-    public static class XRoadWebRequest
+    /// <param name="requestUri">Uri of the X-Road security server or adapter server.</param>
+    /// <returns>Initialized X-Road web request object.</returns>
+    [UsedImplicitly]
+    public static WebRequest Create(Uri requestUri)
     {
-        /// <summary>
-        /// Initializes new X-Road web request object with default X-Road specific parameter values.
-        /// </summary>
-        /// <param name="requestUri">Uri of the X-Road security server or adapter server.</param>
-        /// <returns>Initialized X-Road web request object.</returns>
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public static WebRequest Create(Uri requestUri)
-        {
-            var request = WebRequest.Create(requestUri);
+        var request = WebRequest.Create(requestUri);
 
-            request.ContentType = $"text/xml; charset={XRoadEncoding.Utf8.WebName}";
-            request.Headers["SOAPAction"] = string.Empty;
-            request.Method = "POST";
+        request.ContentType = $"text/xml; charset={XRoadEncoding.Utf8.WebName}";
+        request.Headers["SOAPAction"] = string.Empty;
+        request.Method = "POST";
 
-            return request;
-        }
+        return request;
     }
 }

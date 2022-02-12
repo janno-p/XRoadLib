@@ -1,16 +1,13 @@
-﻿using System.Threading.Tasks;
-using System.Xml;
-using XRoadLib.Schema;
+﻿using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
-namespace XRoadLib.Serialization.Mapping
+namespace XRoadLib.Serialization.Mapping;
+
+public interface IPropertyMap
 {
-    public interface IPropertyMap
-    {
-        PropertyDefinition Definition { get; }
+    PropertyDefinition Definition { get; }
 
-        Task<bool> DeserializeAsync(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message);
+    Task<bool> DeserializeAsync(XmlReader reader, IXRoadSerializable dtoObject, IXmlTemplateNode templateNode, XRoadMessage message);
 
-        Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message);
-    }
+    Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, XRoadMessage message);
 }

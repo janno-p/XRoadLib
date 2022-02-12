@@ -1,91 +1,85 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Linq;
-using XRoadLib.Extensions;
+﻿using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
-namespace XRoadLib.Serialization.Mapping
+namespace XRoadLib.Serialization.Mapping;
+
+public class OptimizedContentTypeMap : ITypeMap
 {
-    public class OptimizedContentTypeMap : ITypeMap
+    public TypeDefinition Definition { get; }
+
+    [UsedImplicitly]
+    public OptimizedContentTypeMap(ContentTypeMap contentTypeMap)
     {
-        public TypeDefinition Definition { get; }
+        Definition = contentTypeMap.Definition;
+    }
 
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        public OptimizedContentTypeMap(ContentTypeMap contentTypeMap)
+    public async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
+    {
+        if (reader.IsEmptyElement)
+            return await DeserializeBase64ContentAsync(reader, message).ConfigureAwait(false);
+
+        if (!await reader.ReadToContentAsync().ConfigureAwait(false))
         {
-            Definition = contentTypeMap.Definition;
+            if (reader.NodeType == XmlNodeType.EndElement)
+                return GetEmptyAttachmentStream(message);
+
+            throw new InvalidQueryException("Invalid content element.");
         }
 
-        public async Task<object> DeserializeAsync(XmlReader reader, IXmlTemplateNode templateNode, ContentDefinition content, XRoadMessage message)
-        {
-            if (reader.IsEmptyElement)
-                return await DeserializeBase64ContentAsync(reader, message).ConfigureAwait(false);
+        if (reader.NodeType != XmlNodeType.Element)
+            return await DeserializeBase64ContentAsync(reader, message).ConfigureAwait(false);
 
-            if (!await reader.ReadToContentAsync().ConfigureAwait(false))
-            {
-                if (reader.NodeType == XmlNodeType.EndElement)
-                    return GetEmptyAttachmentStream(message);
+        if (!await reader.MoveToElementAsync(reader.Depth, XName.Get("Include", NamespaceConstants.Xop)).ConfigureAwait(false))
+            throw new InvalidQueryException("Missing `xop:Include` reference to multipart content.");
 
-                throw new InvalidQueryException("Invalid content element.");
-            }
+        var contentId = reader.GetAttribute("href");
+        if (string.IsNullOrWhiteSpace(contentId))
+            throw new InvalidQueryException("Missing `href` attribute to multipart content.");
 
-            if (reader.NodeType != XmlNodeType.Element)
-                return await DeserializeBase64ContentAsync(reader, message).ConfigureAwait(false);
+        var attachment = message.GetAttachment(contentId.Substring(4));
+        if (attachment == null)
+            throw new InvalidQueryException($"MIME multipart message does not contain message part with ID `{contentId}`.");
 
-            if (!await reader.MoveToElementAsync(reader.Depth, XName.Get("Include", NamespaceConstants.Xop)).ConfigureAwait(false))
-                throw new InvalidQueryException("Missing `xop:Include` reference to multipart content.");
+        return attachment.ContentStream;
+    }
 
-            var contentId = reader.GetAttribute("href");
-            if (string.IsNullOrWhiteSpace(contentId))
-                throw new InvalidQueryException("Missing `href` attribute to multipart content.");
+    private static Stream GetEmptyAttachmentStream(IAttachmentManager attachmentManager)
+    {
+        var tempAttachment = new XRoadAttachment(new MemoryStream()) { IsMultipartContent = false };
+        attachmentManager.AllAttachments.Add(tempAttachment);
+        return tempAttachment.ContentStream;
+    }
 
-            var attachment = message.GetAttachment(contentId.Substring(4));
-            if (attachment == null)
-                throw new InvalidQueryException($"MIME multipart message does not contain message part with ID `{contentId}`.");
+    private static async Task<object> DeserializeBase64ContentAsync(XmlReader reader, IAttachmentManager attachmentManager)
+    {
+        if (reader.IsEmptyElement)
+            return await reader.MoveNextAndReturnAsync(GetEmptyAttachmentStream(attachmentManager)).ConfigureAwait(false);
 
-            return attachment.ContentStream;
-        }
+        const int bufferSize = 1000;
 
-        private static Stream GetEmptyAttachmentStream(IAttachmentManager attachmentManager)
-        {
-            var tempAttachment = new XRoadAttachment(new MemoryStream()) { IsMultipartContent = false };
-            attachmentManager.AllAttachments.Add(tempAttachment);
-            return tempAttachment.ContentStream;
-        }
+        int bytesRead;
+        var buffer = new byte[bufferSize];
 
-        private static async Task<object> DeserializeBase64ContentAsync(XmlReader reader, IAttachmentManager attachmentManager)
-        {
-            if (reader.IsEmptyElement)
-                return await reader.MoveNextAndReturnAsync(GetEmptyAttachmentStream(attachmentManager)).ConfigureAwait(false);
+        var contentStream = GetEmptyAttachmentStream(attachmentManager);
 
-            const int bufferSize = 1000;
+        while ((bytesRead = await reader.ReadContentAsBase64Async(buffer, 0, bufferSize).ConfigureAwait(false)) > 0)
+            await contentStream.WriteAsync(buffer, 0, bytesRead).ConfigureAwait(false);
 
-            int bytesRead;
-            var buffer = new byte[bufferSize];
+        return contentStream;
+    }
 
-            var contentStream = GetEmptyAttachmentStream(attachmentManager);
+    public async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
+    {
+        var attachment = new XRoadAttachment((Stream)value);
+        message.AllAttachments.Add(attachment);
 
-            while ((bytesRead = await reader.ReadContentAsBase64Async(buffer, 0, bufferSize).ConfigureAwait(false)) > 0)
-                await contentStream.WriteAsync(buffer, 0, bytesRead).ConfigureAwait(false);
+        await message.Style.WriteTypeAsync(writer, Definition, content).ConfigureAwait(false);
 
-            return contentStream;
-        }
+        await writer.WriteStartElementAsync(PrefixConstants.Xop, "Include", NamespaceConstants.Xop).ConfigureAwait(false);
 
-        public async Task SerializeAsync(XmlWriter writer, IXmlTemplateNode templateNode, object value, ContentDefinition content, XRoadMessage message)
-        {
-            var attachment = new XRoadAttachment((Stream)value);
-            message.AllAttachments.Add(attachment);
+        await writer.WriteAttributeStringAsync(null, "href", null, $"cid:{attachment.ContentId}").ConfigureAwait(false);
 
-            await message.Style.WriteTypeAsync(writer, Definition, content).ConfigureAwait(false);
-
-            await writer.WriteStartElementAsync(PrefixConstants.Xop, "Include", NamespaceConstants.Xop).ConfigureAwait(false);
-
-            await writer.WriteAttributeStringAsync(null, "href", null, $"cid:{attachment.ContentId}").ConfigureAwait(false);
-
-            await writer.WriteEndElementAsync().ConfigureAwait(false);
-        }
+        await writer.WriteEndElementAsync().ConfigureAwait(false);
     }
 }

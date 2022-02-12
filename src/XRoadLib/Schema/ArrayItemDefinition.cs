@@ -1,45 +1,39 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Xml.Serialization;
-using XRoadLib.Attributes;
+﻿using XRoadLib.Attributes;
 
-namespace XRoadLib.Schema
+namespace XRoadLib.Schema;
+
+public class ArrayItemDefinition : ParticleDefinition
 {
-    public class ArrayItemDefinition : ParticleDefinition
+    public ParticleDefinition Array { get; }
+
+    [UsedImplicitly]
+    public bool AcceptsAnyName { get; set; }
+
+    [UsedImplicitly]
+    public uint MinOccurs { get; set; }
+
+    [UsedImplicitly]
+    public uint? MaxOccurs { get; set; }
+
+    [UsedImplicitly]
+    public Type ItemTypeMapType { get; set; }
+
+    public ArrayItemDefinition(ParticleDefinition array, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
     {
-        public ParticleDefinition Array { get; }
+        Array = array;
 
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public bool AcceptsAnyName { get; set; }
+        var xroadArrayItemAttribute = arrayItemAttribute as XRoadXmlArrayItemAttribute;
 
-        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public uint MinOccurs { get; set; }
+        MinOccurs = xroadArrayItemAttribute?.MinOccurs ?? 0u;
+        MaxOccurs = xroadArrayItemAttribute?.MaxOccurs;
 
-        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public uint? MaxOccurs { get; set; }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public Type ItemTypeMapType { get; set; }
-
-        public ArrayItemDefinition(ParticleDefinition array, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
-        {
-            Array = array;
-
-            var xroadArrayItemAttribute = arrayItemAttribute as XRoadXmlArrayItemAttribute;
-
-            MinOccurs = xroadArrayItemAttribute?.MinOccurs ?? 0u;
-            MaxOccurs = xroadArrayItemAttribute?.MaxOccurs;
-
-            Content = new SingularContentDefinition(
-                this,
-                arrayItemAttribute,
-                runtimeType,
-                runtimeName,
-                targetNamespace,
-                defaultQualifiedElement
-            );
-        }
+        Content = new SingularContentDefinition(
+            this,
+            arrayItemAttribute,
+            runtimeType,
+            runtimeName,
+            targetNamespace,
+            defaultQualifiedElement
+        );
     }
 }

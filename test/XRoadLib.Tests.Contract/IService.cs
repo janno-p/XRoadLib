@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 using XRoadLib.Tests.Contract.Wsdl;
 
 namespace XRoadLib.Tests.Contract;
@@ -9,10 +9,10 @@ public interface IService
     int Service1(Service1Request request);
 }
 
-[SuppressMessage("ReSharper", "UnusedType.Global")]
+[UsedImplicitly]
 public interface IService2
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [UsedImplicitly]
     [XRoadService(nameof(Service2))]
     int Service2(ContainerType request);
 }

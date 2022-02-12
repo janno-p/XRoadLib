@@ -1,13 +1,17 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Runtime.Serialization;
 using XRoadLib.Soap;
 
-namespace XRoadLib.Schema
+namespace XRoadLib.Schema;
+
+[Serializable]
+public class ContractViolationException : XRoadException
 {
-    public class ContractViolationException : XRoadException
-    {
-        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
-        public ContractViolationException(FaultCode faultCode, string message)
-            : base(faultCode, message)
-        { }
-    }
+    [UsedImplicitly]
+    public ContractViolationException(FaultCode faultCode, string message)
+        : base(faultCode, message)
+    { }
+
+    protected ContractViolationException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    { }
 }

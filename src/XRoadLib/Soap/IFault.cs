@@ -1,5 +1,4 @@
-namespace XRoadLib.Soap
-{
-    public interface IFault
-    { }
-}
+﻿namespace XRoadLib.Soap;
+
+public interface IFault
+{ }

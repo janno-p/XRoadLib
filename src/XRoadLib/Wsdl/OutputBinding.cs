@@ -1,7 +1,6 @@
-namespace XRoadLib.Wsdl
+﻿namespace XRoadLib.Wsdl;
+
+public class OutputBinding : MessageBinding
 {
-    public class OutputBinding : MessageBinding
-    {
-        protected override string ElementName { get; } = "output";
-    }
+    protected override string ElementName => "output";
 }

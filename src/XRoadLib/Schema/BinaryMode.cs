@@ -1,8 +1,7 @@
-﻿namespace XRoadLib.Schema
+﻿namespace XRoadLib.Schema;
+
+public enum BinaryMode
 {
-    public enum BinaryMode
-    {
-        Xml,
-        Attachment
-    }
+    Xml,
+    Attachment
 }

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 
@@ -6,16 +6,16 @@ namespace XRoadLib.Tests.Serialization;
 
 public class XRoadFilterMapTest
 {
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
+    [UsedImplicitly]
     private class CustomClass
     {
-        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
+        [UsedImplicitly]
         public string Member1 { get; set; } = "";
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        [UsedImplicitly]
         public int Member2 { get; set; }
 
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+        [UsedImplicitly]
         public CustomClass? Member3 { get; set; }
     }
 

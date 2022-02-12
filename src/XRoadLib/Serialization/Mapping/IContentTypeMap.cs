@@ -1,7 +1,6 @@
-﻿namespace XRoadLib.Serialization.Mapping
+﻿namespace XRoadLib.Serialization.Mapping;
+
+public interface IContentTypeMap
 {
-    public interface IContentTypeMap
-    {
-        ITypeMap GetOptimizedContentTypeMap();
-    }
+    ITypeMap GetOptimizedContentTypeMap();
 }

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
@@ -9,7 +9,8 @@ namespace XRoadLib.Extensions.AspNetCore;
 /// <summary>
 /// X-Road context of classical AspNetCore applications.
 /// </summary>
-public class WebServiceContext : IDisposable
+[UsedImplicitly]
+public sealed class WebServiceContext : IDisposable
 {
     /// <summary>
     /// HTTP context this X-Road context is bound to.
@@ -44,7 +45,7 @@ public class WebServiceContext : IDisposable
     /// <summary>
     /// Exception that occurred while handling service request.
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [UsedImplicitly]
     public Exception? Exception { get; set; }
 
     public IMessageFormatter? MessageFormatter { get; set; }

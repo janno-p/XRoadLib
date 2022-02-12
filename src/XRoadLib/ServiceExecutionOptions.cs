@@ -1,33 +1,30 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using XRoadLib.Events;
+﻿using XRoadLib.Events;
 using XRoadLib.Serialization.Mapping;
 using XRoadLib.Soap;
 
-namespace XRoadLib
+namespace XRoadLib;
+
+[UsedImplicitly]
+public class ServiceExecutionOptions
 {
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-    public class ServiceExecutionOptions
-    {
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public string RequestNamespace { get; set; }
+    [UsedImplicitly]
+    public string RequestNamespace { get; set; }
 
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public IServiceMap ServiceMap { get; set; }
+    [UsedImplicitly]
+    public IServiceMap ServiceMap { get; set; }
 
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public string OperationName { get; set; }
+    [UsedImplicitly]
+    public string OperationName { get; set; }
 
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public uint? Version { get; set; }
+    [UsedImplicitly]
+    public uint? Version { get; set; }
 
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-        public IMessageFormatter MessageFormatter { get; set; }
+    [UsedImplicitly]
+    public IMessageFormatter MessageFormatter { get; set; }
 
-        [SuppressMessage("ReSharper", "UnassignedField.Global")]
-        public EventHandler<XRoadRequestEventArgs> BeforeRequest;
+    [UsedImplicitly]
+    public EventHandler<XRoadRequestEventArgs> BeforeRequest { get; set; }
 
-        [SuppressMessage("ReSharper", "UnassignedField.Global")]
-        public EventHandler<XRoadResponseEventArgs> BeforeDeserialize;
-    }
+    [UsedImplicitly]
+    public EventHandler<XRoadResponseEventArgs> BeforeDeserialize { get; set; }
 }

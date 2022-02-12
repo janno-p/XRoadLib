@@ -1,11 +1,16 @@
-﻿using XRoadLib.Soap;
+﻿using System.Runtime.Serialization;
+using XRoadLib.Soap;
 
-namespace XRoadLib.Schema
+namespace XRoadLib.Schema;
+
+[Serializable]
+public class SchemaDefinitionException : XRoadException
 {
-    public class SchemaDefinitionException : XRoadException
-    {
-        public SchemaDefinitionException(string message)
-            : base(ServerFaultCode.InternalError, message)
-        { }
-    }
+    public SchemaDefinitionException(string message)
+        : base(ServerFaultCode.InternalError, message)
+    { }
+
+    protected SchemaDefinitionException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    { }
 }

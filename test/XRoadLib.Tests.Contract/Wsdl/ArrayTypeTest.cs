@@ -1,10 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 
 namespace XRoadLib.Tests.Contract.Wsdl;
 
-[SuppressMessage("ReSharper", "UnusedMember.Global")] 
-[SuppressMessage("ReSharper", "UnusedType.Global")] 
+[UsedImplicitly]
 public class ArrayTypeTest
 {
+    [UsedImplicitly]
     public string[]? Array1 { get; set; }
 }

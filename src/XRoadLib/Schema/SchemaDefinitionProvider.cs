@@ -1,66 +1,87 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Xml.Linq;
-using System.Xml.Serialization;
+﻿using System.Reflection;
 using XRoadLib.Extensions;
 using XRoadLib.Headers;
 using XRoadLib.Styles;
 using XRoadLib.Wsdl;
 
-namespace XRoadLib.Schema
+namespace XRoadLib.Schema;
+
+/// <summary>
+/// Extracts serialization/definition details from runtime types and methods.
+/// </summary>
+[UsedImplicitly]
+public class SchemaDefinitionProvider
 {
+    private readonly ISchemaExporter _schemaExporter;
+
     /// <summary>
-    /// Extracts serialization/definition details from runtime types and methods.
+    /// Global settings for protocol instance.
     /// </summary>
-    [SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
-    public class SchemaDefinitionProvider
+    public ProtocolDefinition ProtocolDefinition { get; }
+
+    /// <summary>
+    /// Initializes definition builder.
+    /// </summary>
+    public SchemaDefinitionProvider(ISchemaExporter schemaExporter)
     {
-        private readonly ISchemaExporter _schemaExporter;
+        _schemaExporter = schemaExporter ?? throw new ArgumentNullException(nameof(schemaExporter));
 
-        /// <summary>
-        /// Global settings for protocol instance.
-        /// </summary>
-        public ProtocolDefinition ProtocolDefinition { get; }
+        ProtocolDefinition = GetProtocolDefinition();
+    }
 
-        /// <summary>
-        /// Initializes definition builder.
-        /// </summary>
-        public SchemaDefinitionProvider(ISchemaExporter schemaExporter)
+    /// <summary>
+    /// Initializes default simple type definition and applies customizations (if any).
+    /// </summary>
+    public TypeDefinition GetSimpleTypeDefinition<T>(string typeName)
+    {
+        var isType = !string.IsNullOrEmpty(typeName);
+
+        var typeDefinition = new TypeDefinition(typeof(T), isType ? NamespaceConstants.Xsd : "")
         {
-            _schemaExporter = schemaExporter ?? throw new ArgumentNullException(nameof(schemaExporter));
+            Name = isType ? XName.Get(typeName, NamespaceConstants.Xsd) : null,
+            IsSimpleType = true
+        };
 
-            ProtocolDefinition = GetProtocolDefinition();
-        }
+        _schemaExporter.ExportTypeDefinition(typeDefinition);
 
-        /// <summary>
-        /// Initializes default simple type definition and applies customizations (if any).
-        /// </summary>
-        public TypeDefinition GetSimpleTypeDefinition<T>(string typeName)
+        return typeDefinition;
+    }
+
+    /// <summary>
+    /// Initializes default collection type definition and applies customizations (if any).
+    /// </summary>
+    public CollectionDefinition GetCollectionDefinition(TypeDefinition typeDefinition)
+    {
+        var collectionDefinition = new CollectionDefinition(typeDefinition.Type.MakeArrayType(), typeDefinition.TargetNamespace)
         {
-            var isType = !string.IsNullOrEmpty(typeName);
+            ItemDefinition = typeDefinition,
+            CanHoldNullValues = true,
+            IsAnonymous = true
+        };
 
-            var typeDefinition = new TypeDefinition(typeof(T), isType ? NamespaceConstants.Xsd : "")
+        _schemaExporter.ExportTypeDefinition(collectionDefinition);
+
+        return collectionDefinition;
+    }
+
+    /// <summary>
+    /// Initializes default type definition and applies customizations (if any).
+    /// </summary>
+    public TypeDefinition GetTypeDefinition(Type type, string typeName = null)
+    {
+        XName qualifiedName = null;
+
+        if (type.IsArray)
+        {
+            if (!string.IsNullOrWhiteSpace(typeName))
+                qualifiedName = XName.Get(typeName, ProtocolDefinition.ProducerNamespace);
+
+            var collectionDefinition = new CollectionDefinition(type, ProtocolDefinition.ProducerNamespace)
             {
-                Name = isType ? XName.Get(typeName, NamespaceConstants.Xsd) : null,
-                IsSimpleType = true
-            };
-
-            _schemaExporter.ExportTypeDefinition(typeDefinition);
-
-            return typeDefinition;
-        }
-
-        /// <summary>
-        /// Initializes default collection type definition and applies customizations (if any).
-        /// </summary>
-        public CollectionDefinition GetCollectionDefinition(TypeDefinition typeDefinition)
-        {
-            var collectionDefinition = new CollectionDefinition(typeDefinition.Type.MakeArrayType(), typeDefinition.TargetNamespace)
-            {
-                ItemDefinition = typeDefinition,
-                CanHoldNullValues = true,
-                IsAnonymous = true
+                Name = qualifiedName,
+                ItemDefinition = GetTypeDefinition(type.GetElementType()),
+                IsAnonymous = qualifiedName == null,
+                CanHoldNullValues = true
             };
 
             _schemaExporter.ExportTypeDefinition(collectionDefinition);
@@ -68,197 +89,171 @@ namespace XRoadLib.Schema
             return collectionDefinition;
         }
 
-        /// <summary>
-        /// Initializes default type definition and applies customizations (if any).
-        /// </summary>
-        public TypeDefinition GetTypeDefinition(Type type, string typeName = null)
+        var typeInfo = type.GetTypeInfo();
+        var typeAttribute = typeInfo.GetCustomAttribute<XmlTypeAttribute>();
+        var isAnonymous = typeAttribute is { AnonymousType: true };
+
+        var normalizedType = type.NormalizeType();
+        var targetNamespace = typeAttribute?.Namespace ?? ProtocolDefinition.ProducerNamespace;
+
+        if (!isAnonymous)
+            qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(typeName ?? normalizedType.Name), targetNamespace);
+
+        var typeDefinition = new TypeDefinition(normalizedType, targetNamespace)
         {
-            XName qualifiedName = null;
+            ContentComparer = PropertyComparer.Instance,
+            HasStrictContentOrder = true,
+            IsAnonymous = isAnonymous,
+            Name = qualifiedName,
+            State = DefinitionState.Default,
+            CanHoldNullValues = typeInfo.IsClass || normalizedType != type
+        };
 
-            if (type.IsArray)
-            {
-                if (!string.IsNullOrWhiteSpace(typeName))
-                    qualifiedName = XName.Get(typeName, ProtocolDefinition.ProducerNamespace);
+        _schemaExporter.ExportTypeDefinition(typeDefinition);
 
-                var collectionDefinition = new CollectionDefinition(type, ProtocolDefinition.ProducerNamespace)
-                {
-                    Name = qualifiedName,
-                    ItemDefinition = GetTypeDefinition(type.GetElementType()),
-                    IsAnonymous = qualifiedName == null,
-                    CanHoldNullValues = true
-                };
+        return typeDefinition;
+    }
 
-                _schemaExporter.ExportTypeDefinition(collectionDefinition);
+    /// <summary>
+    /// Initializes default property definition and applies customizations (if any).
+    /// </summary>
+    public PropertyDefinition GetPropertyDefinition(PropertyInfo propertyInfo, TypeDefinition typeDefinition)
+    {
+        var propertyDefinition = new PropertyDefinition(propertyInfo, typeDefinition, _schemaExporter.IsQualifiedElementDefault);
 
-                return collectionDefinition;
-            }
+        _schemaExporter.ExportPropertyDefinition(propertyDefinition);
 
-            var typeInfo = type.GetTypeInfo();
-            var typeAttribute = typeInfo.GetCustomAttribute<XmlTypeAttribute>();
-            var isAnonymous = typeAttribute != null && typeAttribute.AnonymousType;
+        return propertyDefinition;
+    }
 
-            var normalizedType = type.NormalizeType();
-            var targetNamespace = typeAttribute?.Namespace ?? ProtocolDefinition.ProducerNamespace;
+    /// <summary>
+    /// Initializes default request element definition and applies customizations (if any).
+    /// </summary>
+    public RequestDefinition GetRequestDefinition(OperationDefinition operationDefinition)
+    {
+        var requestDefinition = new RequestDefinition(operationDefinition, _schemaExporter.IsQualifiedElementDefault);
 
-            if (!isAnonymous)
-                qualifiedName = XName.Get((typeAttribute?.TypeName).GetValueOrDefault(typeName ?? normalizedType.Name), targetNamespace);
+        operationDefinition.ExtensionSchemaExporter?.ExportRequestDefinition(requestDefinition);
+        _schemaExporter.ExportRequestDefinition(requestDefinition);
 
-            var typeDefinition = new TypeDefinition(normalizedType, targetNamespace)
-            {
-                ContentComparer = PropertyComparer.Instance,
-                HasStrictContentOrder = true,
-                IsAnonymous = isAnonymous,
-                Name = qualifiedName,
-                State = DefinitionState.Default,
-                CanHoldNullValues = typeInfo.IsClass || normalizedType != type
-            };
+        return requestDefinition;
+    }
 
-            _schemaExporter.ExportTypeDefinition(typeDefinition);
-
-            return typeDefinition;
-        }
-
-        /// <summary>
-        /// Initializes default property definition and applies customizations (if any).
-        /// </summary>
-        public PropertyDefinition GetPropertyDefinition(PropertyInfo propertyInfo, TypeDefinition typeDefinition)
+    /// <summary>
+    /// Initializes default response element definition and applies customizations (if any).
+    /// </summary>
+    public ResponseDefinition GetResponseDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
+    {
+        var responseDefinition = new ResponseDefinition(operationDefinition, _schemaExporter.IsQualifiedElementDefault)
         {
-            var propertyDefinition = new PropertyDefinition(propertyInfo, typeDefinition, _schemaExporter.IsQualifiedElementDefault);
+            XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice
+        };
 
-            _schemaExporter.ExportPropertyDefinition(propertyDefinition);
+        operationDefinition.ExtensionSchemaExporter?.ExportResponseDefinition(responseDefinition);
+        _schemaExporter.ExportResponseDefinition(responseDefinition);
 
-            return propertyDefinition;
-        }
+        return responseDefinition;
+    }
 
-        /// <summary>
-        /// Initializes default request element definition and applies customizations (if any).
-        /// </summary>
-        public RequestDefinition GetRequestDefinition(OperationDefinition operationDefinition)
-        {
-            var requestDefinition = new RequestDefinition(operationDefinition, _schemaExporter.IsQualifiedElementDefault);
+    /// <summary>
+    /// Initializes default opeartion definition and applies customizations (if any).
+    /// </summary>
+    public OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XName qualifiedName, uint? version)
+    {
+        var operationDefinition = new OperationDefinition(qualifiedName, version, methodInfo);
 
-            operationDefinition.ExtensionSchemaExporter?.ExportRequestDefinition(requestDefinition);
-            _schemaExporter.ExportRequestDefinition(requestDefinition);
+        operationDefinition.ExtensionSchemaExporter?.ExportOperationDefinition(operationDefinition);
+        _schemaExporter.ExportOperationDefinition(operationDefinition);
 
-            return requestDefinition;
-        }
+        return operationDefinition;
+    }
 
-        /// <summary>
-        /// Initializes default response element definition and applies customizations (if any).
-        /// </summary>
-        public ResponseDefinition GetResponseDefinition(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
-        {
-            var responseDefinition = new ResponseDefinition(operationDefinition, _schemaExporter.IsQualifiedElementDefault)
-            {
-                XRoadFaultPresentation = xRoadFaultPresentation ?? XRoadFaultPresentation.Choice
-            };
+    /// <summary>
+    /// Initializes default fault definition and applies customizations (if any).
+    /// </summary>
+    public FaultDefinition GetFaultDefinition()
+    {
+        var faultDefinition = new FaultDefinition { Name = XName.Get("fault", ProtocolDefinition.ProducerNamespace) };
 
-            operationDefinition.ExtensionSchemaExporter?.ExportResponseDefinition(responseDefinition);
-            _schemaExporter.ExportResponseDefinition(responseDefinition);
+        _schemaExporter.ExportFaultDefinition(faultDefinition);
 
-            return responseDefinition;
-        }
+        return faultDefinition;
+    }
 
-        /// <summary>
-        /// Initializes default opeartion definition and applies customizations (if any).
-        /// </summary>
-        public OperationDefinition GetOperationDefinition(MethodInfo methodInfo, XName qualifiedName, uint? version)
-        {
-            var operationDefinition = new OperationDefinition(qualifiedName, version, methodInfo);
+    /// <summary>
+    /// Get schema location of specified schema namespace.
+    /// </summary>
+    public string GetSchemaLocation(string namespaceName, ISchemaExporter extension = null)
+    {
+        return _schemaExporter.ExportSchemaLocation(namespaceName)
+               ?? extension?.ExportSchemaLocation(namespaceName)
+               ?? NamespaceConstants.GetSchemaLocation(namespaceName);
+    }
 
-            operationDefinition.ExtensionSchemaExporter?.ExportOperationDefinition(operationDefinition);
-            _schemaExporter.ExportOperationDefinition(operationDefinition);
+    /// <summary>
+    /// Customize service description before presentation.
+    /// </summary>
+    public void ExportServiceDescription(ServiceDescription serviceDescription)
+    {
+        _schemaExporter.ExportServiceDescription(serviceDescription);
+    }
 
-            return operationDefinition;
-        }
+    /// <summary>
+    /// Get preferred X-Road namespace prefix for service description.
+    /// </summary>
+    public string GetXRoadPrefix() => _schemaExporter.XRoadPrefix ?? PrefixConstants.XRoad;
 
-        /// <summary>
-        /// Initializes default fault definition and applies customizations (if any).
-        /// </summary>
-        public FaultDefinition GetFaultDefinition()
-        {
-            var faultDefinition = new FaultDefinition { Name = XName.Get("fault", ProtocolDefinition.ProducerNamespace) };
+    /// <summary>
+    /// Get main namespace which defines X-Road message protocol specifics.
+    /// </summary>
+    public string GetXRoadNamespace() => _schemaExporter.XRoadNamespace ?? NamespaceConstants.XRoad;
 
-            _schemaExporter.ExportFaultDefinition(faultDefinition);
+    /// <summary>
+    /// Customize X-Road message header elements.
+    /// </summary>
+    public HeaderDefinition GetXRoadHeaderDefinition()
+    {
+        var headerDefinition = new HeaderDefinition { MessageName = "RequiredHeaders" };
 
-            return faultDefinition;
-        }
+        headerDefinition.Use<XRoadHeader>()
+                        .WithRequiredHeader(x => x.Client)
+                        .WithRequiredHeader(x => x.Service)
+                        .WithRequiredHeader(x => x.UserId)
+                        .WithRequiredHeader(x => x.Id)
+                        .WithRequiredHeader(x => x.Issue)
+                        .WithRequiredHeader(x => x.ProtocolVersion)
+                        .WithHeaderNamespace(NamespaceConstants.XRoad)
+                        .WithHeaderNamespace(NamespaceConstants.XRoadRepr);
 
-        /// <summary>
-        /// Get schema location of specified schema namespace.
-        /// </summary>
-        public string GetSchemaLocation(string namespaceName, ISchemaExporter extension = null)
-        {
-            return _schemaExporter.ExportSchemaLocation(namespaceName)
-                ?? extension?.ExportSchemaLocation(namespaceName)
-                ?? NamespaceConstants.GetSchemaLocation(namespaceName);
-        }
+        _schemaExporter.ExportHeaderDefinition(headerDefinition);
 
-        /// <summary>
-        /// Customize service description before presentation.
-        /// </summary>
-        public void ExportServiceDescription(ServiceDescription serviceDescription)
-        {
-            _schemaExporter.ExportServiceDescription(serviceDescription);
-        }
+        return headerDefinition;
+    }
 
-        /// <summary>
-        /// Get preferred X-Road namespace prefix for service description.
-        /// </summary>
-        public string GetXRoadPrefix() => _schemaExporter.XRoadPrefix ?? PrefixConstants.XRoad;
+    /// <summary>
+    /// Returns `true` if given namespace defines qualified element names by default.
+    /// </summary>
+    public virtual bool IsQualifiedElementDefault(string namespaceName) =>
+        _schemaExporter.IsQualifiedElementDefault(namespaceName);
 
-        /// <summary>
-        /// Get main namespace which defines X-Road message protocol specifics.
-        /// </summary>
-        public string GetXRoadNamespace() => _schemaExporter.XRoadNamespace ?? NamespaceConstants.XRoad;
+    private ProtocolDefinition GetProtocolDefinition()
+    {
+        var protocolDefinition = new ProtocolDefinition { Style = new DocLiteralStyle() };
 
-        /// <summary>
-        /// Customize X-Road message header elements.
-        /// </summary>
-        public HeaderDefinition GetXRoadHeaderDefinition()
-        {
-            var headerDefinition = new HeaderDefinition { MessageName = "RequiredHeaders" };
+        _schemaExporter.ExportProtocolDefinition(protocolDefinition);
 
-            headerDefinition.Use<XRoadHeader>()
-                            .WithRequiredHeader(x => x.Client)
-                            .WithRequiredHeader(x => x.Service)
-                            .WithRequiredHeader(x => x.UserId)
-                            .WithRequiredHeader(x => x.Id)
-                            .WithRequiredHeader(x => x.Issue)
-                            .WithRequiredHeader(x => x.ProtocolVersion)
-                            .WithHeaderNamespace(NamespaceConstants.XRoad)
-                            .WithHeaderNamespace(NamespaceConstants.XRoadRepr);
+        if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.SoapEnv))
+            protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.SoapEnv), PrefixConstants.SoapEnv);
 
-            _schemaExporter.ExportHeaderDefinition(headerDefinition);
+        if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.Xsd))
+            protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.Xsd), PrefixConstants.Xsd);
 
-            return headerDefinition;
-        }
+        if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.Xsi))
+            protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.Xsi), PrefixConstants.Xsi);
 
-        /// <summary>
-        /// Returns `true` if given namespace defines qualified element names by default.
-        /// </summary>
-        public virtual bool IsQualifiedElementDefault(string namespaceName) =>
-            _schemaExporter.IsQualifiedElementDefault(namespaceName);
+        if (!string.IsNullOrEmpty(protocolDefinition.ProducerNamespace) && !protocolDefinition.GlobalNamespacePrefixes.ContainsKey(protocolDefinition.ProducerNamespace))
+            protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(protocolDefinition.ProducerNamespace), PrefixConstants.Target);
 
-        private ProtocolDefinition GetProtocolDefinition()
-        {
-            var protocolDefinition = new ProtocolDefinition { Style = new DocLiteralStyle() };
-
-            _schemaExporter.ExportProtocolDefinition(protocolDefinition);
-
-            if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.SoapEnv))
-                protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.SoapEnv), PrefixConstants.SoapEnv);
-
-            if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.Xsd))
-                protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.Xsd), PrefixConstants.Xsd);
-
-            if (!protocolDefinition.GlobalNamespacePrefixes.ContainsKey(NamespaceConstants.Xsi))
-                protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(NamespaceConstants.Xsi), PrefixConstants.Xsi);
-
-            if (!string.IsNullOrEmpty(protocolDefinition.ProducerNamespace) && !protocolDefinition.GlobalNamespacePrefixes.ContainsKey(protocolDefinition.ProducerNamespace))
-                protocolDefinition.GlobalNamespacePrefixes.Add(XNamespace.Get(protocolDefinition.ProducerNamespace), PrefixConstants.Target);
-
-            return protocolDefinition;
-        }
+        return protocolDefinition;
     }
 }

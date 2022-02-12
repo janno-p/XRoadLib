@@ -1,44 +1,39 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿namespace XRoadLib.Serialization;
 
-namespace XRoadLib.Serialization
+internal sealed class StreamCounter : IDisposable
 {
-    internal class StreamCounter : IDisposable
+    private Stream _stream;
+
+    public long WriteCount { get; private set; }
+
+    public StreamCounter(Stream stream)
     {
-        private Stream _stream;
+        _stream = stream;
+    }
 
-        public long WriteCount { get; private set; }
+    public Task FlushAsync() =>
+        _stream.FlushAsync();
 
-        public StreamCounter(Stream stream)
-        {
-            _stream = stream;
-        }
+    public async Task WriteAsync(byte[] buffer, int offset, int count)
+    {
+        WriteCount += count - offset;
+        await _stream.WriteAsync(buffer, offset, count).ConfigureAwait(false);
+    }
 
-        public Task FlushAsync() =>
-            _stream.FlushAsync();
+    public async Task WriteAsync(Stream stream)
+    {
+        const int bufferSize = 4_096;
 
-        public async Task WriteAsync(byte[] buffer, int offset, int count)
-        {
-            WriteCount += count - offset;
-            await _stream.WriteAsync(buffer, offset, count).ConfigureAwait(false);
-        }
+        var buffer = new byte[bufferSize];
+        int bytesRead;
 
-        public async Task WriteAsync(Stream stream)
-        {
-            const int bufferSize = 4_096;
+        while ((bytesRead = await stream.ReadAsync(buffer, 0, bufferSize)) > 0)
+            await WriteAsync(buffer, 0, bytesRead).ConfigureAwait(false);
+    }
 
-            var buffer = new byte[bufferSize];
-            int bytesRead;
-
-            while ((bytesRead = await stream.ReadAsync(buffer, 0, bufferSize)) > 0)
-                await WriteAsync(buffer, 0, bytesRead).ConfigureAwait(false);
-        }
-
-        public void Dispose()
-        {
-            _stream.Dispose();
-            _stream = null;
-        }
+    public void Dispose()
+    {
+        _stream.Dispose();
+        _stream = null;
     }
 }

@@ -1,7 +1,3 @@
-namespace XRoadLib.Wsdl
-{
-    public abstract class MessageBinding : NamedItem
-    {
+﻿namespace XRoadLib.Wsdl;
 
-    }
-}
+public abstract class MessageBinding : NamedItem { }

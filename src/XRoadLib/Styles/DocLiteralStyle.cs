@@ -1,44 +1,40 @@
-﻿using System;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.Schema;
+﻿using System.Xml.Schema;
 using XRoadLib.Wsdl;
 
-namespace XRoadLib.Styles
+namespace XRoadLib.Styles;
+
+public class DocLiteralStyle : Style
 {
-    public class DocLiteralStyle : Style
+    public override void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, Action<string> addSchemaImport)
     {
-        public override void AddItemElementToArrayElement(XmlSchemaElement arrayElement, XmlSchemaElement itemElement, Action<string> addSchemaImport)
-        {
-            arrayElement.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { itemElement } } };
-        }
+        arrayElement.SchemaType = new XmlSchemaComplexType { Particle = new XmlSchemaSequence { Items = { itemElement } } };
+    }
 
-        public override SoapBinding CreateSoapBinding()
+    public override SoapBinding CreateSoapBinding()
+    {
+        return new()
         {
-            return new()
-            {
-                Transport = NamespaceConstants.Http
-            };
-        }
+            Transport = NamespaceConstants.Http
+        };
+    }
 
-        public override SoapBodyBinding CreateSoapBodyBinding(string targetNamespace)
-        {
-            return new() { Use = SoapBindingUse.Literal };
-        }
+    public override SoapBodyBinding CreateSoapBodyBinding(string targetNamespace)
+    {
+        return new() { Use = SoapBindingUse.Literal };
+    }
 
-        public override SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace)
+    public override SoapHeaderBinding CreateSoapHeaderBinding(XName headerName, string messageName, string targetNamespace)
+    {
+        return new()
         {
-            return new()
-            {
-                Message = new XmlQualifiedName(messageName, targetNamespace),
-                Part = headerName.LocalName,
-                Use = SoapBindingUse.Literal
-            };
-        }
+            Message = new XmlQualifiedName(messageName, targetNamespace),
+            Part = headerName.LocalName,
+            Use = SoapBindingUse.Literal
+        };
+    }
 
-        public override SoapOperationBinding CreateSoapOperationBinding(string soapAction)
-        {
-            return new() { SoapAction = soapAction, Style = SoapBindingStyle.Document };
-        }
+    public override SoapOperationBinding CreateSoapOperationBinding(string soapAction)
+    {
+        return new() { SoapAction = soapAction, Style = SoapBindingStyle.Document };
     }
 }

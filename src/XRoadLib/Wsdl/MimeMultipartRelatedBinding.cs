@@ -1,23 +1,17 @@
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using System.Xml;
+﻿namespace XRoadLib.Wsdl;
 
-namespace XRoadLib.Wsdl
+public class MimeMultipartRelatedBinding : ServiceDescriptionFormatExtension
 {
-    public class MimeMultipartRelatedBinding : ServiceDescriptionFormatExtension
+    [UsedImplicitly]
+    public List<MimePart> Parts { get; } = new();
+
+    internal override async Task WriteAsync(XmlWriter writer)
     {
-        [SuppressMessage("ReSharper", "ReturnTypeCanBeEnumerable.Global")]
-        public List<MimePart> Parts { get; } = new();
+        await writer.WriteStartElementAsync(PrefixConstants.Mime, "multipartRelated", NamespaceConstants.Mime).ConfigureAwait(false);
 
-        internal override async Task WriteAsync(XmlWriter writer)
-        {
-            await writer.WriteStartElementAsync(PrefixConstants.Mime, "multipartRelated", NamespaceConstants.Mime).ConfigureAwait(false);
+        foreach (var part in Parts)
+            await part.WriteAsync(writer).ConfigureAwait(false);
 
-            foreach (var part in Parts)
-                await part.WriteAsync(writer).ConfigureAwait(false);
-
-            await writer.WriteEndElementAsync().ConfigureAwait(false);
-        }
+        await writer.WriteEndElementAsync().ConfigureAwait(false);
     }
 }

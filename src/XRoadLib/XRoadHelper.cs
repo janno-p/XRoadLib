@@ -1,83 +1,76 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using XRoadLib.Serialization;
 using XRoadLib.Soap;
 
-namespace XRoadLib
+namespace XRoadLib;
+
+public static class XRoadHelper
 {
-    public static class XRoadHelper
+    public static IMessageFormatter GetMessageFormatter(string contentTypeHeader)
     {
-        public static IMessageFormatter GetMessageFormatter(string contentTypeHeader)
+        var contentType = GetMultipartContentType(contentTypeHeader);
+
+        if (!IsMultipartMsg(contentTypeHeader))
+            contentType = (contentTypeHeader ?? "").Split(new[] { ';' }, 2).First().Trim();
+        else if (contentType?.Equals(ContentTypes.Xop) == true)
+            contentType = GetContentTypeStartInfo(contentTypeHeader);
+
+        return contentType switch
         {
-            var contentType = GetMultipartContentType(contentTypeHeader);
+            null => new SoapMessageFormatter(),
+            "" => new SoapMessageFormatter(),
 
-            if (!IsMultipartMsg(contentTypeHeader))
-                contentType = (contentTypeHeader ?? "").Split(new[] { ';' }, 2).First().Trim();
-            else if (contentType?.Equals(ContentTypes.Xop) == true)
-                contentType = GetContentTypeStartInfo(contentTypeHeader);
+            ContentTypes.Soap => new SoapMessageFormatter(),
+            ContentTypes.Soap12 => new Soap12MessageFormatter(),
 
-            switch (contentType)
-            {
-                case null:
-                case "":
-                case ContentTypes.Soap:
-                    return new SoapMessageFormatter();
+            _ => throw new InvalidQueryException($"Unknown content type `{contentType}` used for message payload.")
+        };
+    }
 
-                case ContentTypes.Soap12:
-                    return new Soap12MessageFormatter();
+    private static string GetContentTypeStartInfo(string contentTypeHeader) =>
+        ExtractValue("start-info=", contentTypeHeader, ";")?.Trim().Trim('"');
 
-                default:
-                    throw new InvalidQueryException($"Unknown content type `{contentType}` used for message payload.");
-            }
-        }
+    public static string GetMultipartContentType(string contentType) =>
+        ExtractValue("type=", contentType, ";")?.Trim().Trim('"');
 
-        private static string GetContentTypeStartInfo(string contentTypeHeader) =>
-            ExtractValue("start-info=", contentTypeHeader, ";")?.Trim().Trim('"');
+    public static bool IsMultipartMsg(string contentType) =>
+        (contentType ?? "").ToLower().Contains("multipart/related");
 
-        public static string GetMultipartContentType(string contentType) =>
-            ExtractValue("type=", contentType, ";")?.Trim().Trim('"');
+    public static string GetContentTypeHeader(string contentType) =>
+        $"{contentType}; charset={XRoadEncoding.Utf8.WebName}";
 
-        public static bool IsMultipartMsg(string contentType) =>
-            (contentType ?? "").ToLower().Contains("multipart/related");
+    public static string ExtractValue(string key, string keyValuePair, string separator)
+    {
+        if (string.IsNullOrEmpty(keyValuePair))
+            return null;
 
-        public static string GetContentTypeHeader(string contentType) =>
-            $"{contentType}; charset={XRoadEncoding.Utf8.WebName}";
+        // Mis positsioonilt küsitud key üldse hakkab ..
+        var indexOfKey = keyValuePair.ToLower().IndexOf(key.ToLower(), StringComparison.Ordinal);
+        if (indexOfKey < 0)
+            return null;
 
-        public static string ExtractValue(string key, string keyValuePair, string separator)
-        {
-            if (string.IsNullOrEmpty(keyValuePair))
-                return null;
+        var fromIndex = indexOfKey + key.Length;
+        var toIndex = keyValuePair.Length;
+        if (separator != null && keyValuePair.IndexOf(separator, fromIndex, StringComparison.Ordinal) > -1)
+            toIndex = keyValuePair.IndexOf(separator, fromIndex, StringComparison.Ordinal);
 
-            // Mis positsioonilt küsitud key üldse hakkab ..
-            var indexOfKey = keyValuePair.ToLower().IndexOf(key.ToLower(), StringComparison.Ordinal);
-            if (indexOfKey < 0)
-                return null;
+        return keyValuePair.Substring(fromIndex, toIndex - fromIndex).Trim();
+    }
 
-            var fromIndex = indexOfKey + key.Length;
-            var toIndex = keyValuePair.Length;
-            if (separator != null && keyValuePair.IndexOf(separator, fromIndex, StringComparison.Ordinal) > -1)
-                toIndex = keyValuePair.IndexOf(separator, fromIndex, StringComparison.Ordinal);
+    [UsedImplicitly]
+    public static string GenerateRequestId()
+    {
+        const int randomLength = 32;
+        const int nonceLength = (int)(4.0d / 3.0d * randomLength);
 
-            return keyValuePair.Substring(fromIndex, toIndex - fromIndex).Trim();
-        }
+        var random = new byte[randomLength];
 
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public static string GenerateRequestId()
-        {
-            const int randomLength = 32;
-            const int nonceLength = (int)(4.0d / 3.0d * randomLength);
+        var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(random);
 
-            var random = new byte[randomLength];
+        var nch = new char[nonceLength + 2];
+        Convert.ToBase64CharArray(random, 0, randomLength, nch, 0);
 
-            var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(random);
-
-            var nch = new char[nonceLength + 2];
-            Convert.ToBase64CharArray(random, 0, randomLength, nch, 0);
-
-            return new string(nch);
-        }
+        return new string(nch);
     }
 }

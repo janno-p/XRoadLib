@@ -1,12 +1,14 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 
 namespace XRoadLib.Tests.Contract;
 
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[UsedImplicitly]
 public class IgnoreCaseClass : XRoadSerializable
 {
+    [UsedImplicitly]
     public long[]? Objektid { get; set; }
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [UsedImplicitly]
+    // ReSharper disable once InconsistentNaming
     public long ObjektID { get; set; }
 }

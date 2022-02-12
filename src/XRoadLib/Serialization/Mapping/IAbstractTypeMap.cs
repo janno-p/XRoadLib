@@ -1,5 +1,4 @@
-﻿namespace XRoadLib.Serialization.Mapping
-{
-    public interface IAbstractTypeMap
-    { }
-}
+﻿namespace XRoadLib.Serialization.Mapping;
+
+public interface IAbstractTypeMap
+{ }

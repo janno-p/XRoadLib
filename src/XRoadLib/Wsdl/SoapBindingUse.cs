@@ -1,9 +1,8 @@
-namespace XRoadLib.Wsdl
+﻿namespace XRoadLib.Wsdl;
+
+public enum SoapBindingUse
 {
-    public enum SoapBindingUse
-    {
-        Default,
-        Encoded,
-        Literal
-    }
+    Default,
+    Encoded,
+    Literal
 }

@@ -1,9 +1,8 @@
-﻿namespace XRoadLib.Schema
+﻿namespace XRoadLib.Schema;
+
+public class EmptyContentDefinition : ContentDefinition
 {
-    public class EmptyContentDefinition : ContentDefinition
-    {
-        public EmptyContentDefinition(ParticleDefinition particle)
-            : base(particle)
-        {}
-    }
+    public EmptyContentDefinition(ParticleDefinition particle)
+        : base(particle)
+    { }
 }

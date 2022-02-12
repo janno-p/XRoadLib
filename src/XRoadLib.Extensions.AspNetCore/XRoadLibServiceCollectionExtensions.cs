@@ -1,16 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace XRoadLib.Extensions.AspNetCore;
 
 public static class XRoadLibServiceCollectionExtensions
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+    [UsedImplicitly]
     public static IServiceCollection AddXRoadLib(this IServiceCollection services) =>
         AddXRoadLib(services, _ => {});
 
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [UsedImplicitly]
     public static IServiceCollection AddXRoadLib(this IServiceCollection services, Action<XRoadLibOptions> configureOptions)
     {
         if (services == null)

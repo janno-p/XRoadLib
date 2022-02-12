@@ -1,9 +1,8 @@
 ﻿using System.Text;
 
-namespace XRoadLib.Serialization
+namespace XRoadLib.Serialization;
+
+public static class XRoadEncoding
 {
-    public static class XRoadEncoding
-    {
-        public static Encoding Utf8 { get; } = new UTF8Encoding();
-    }
+    public static Encoding Utf8 { get; } = new UTF8Encoding();
 }

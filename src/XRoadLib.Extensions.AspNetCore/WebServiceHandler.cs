@@ -30,7 +30,4 @@ public abstract class WebServiceHandler : IWebServiceHandler
 
         await writer.FlushAsync().ConfigureAwait(false);
     }
-
-    public virtual void Dispose()
-    { }
 }
