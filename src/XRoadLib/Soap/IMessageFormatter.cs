@@ -17,11 +17,11 @@ public interface IMessageFormatter
     Task<bool> TryMoveToHeaderAsync(XmlReader reader);
     Task<bool> TryMoveToBodyAsync(XmlReader reader);
 
-    Task WriteStartEnvelopeAsync(XmlWriter writer, string prefix = null);
+    Task WriteStartEnvelopeAsync(XmlWriter writer, string? prefix = null);
     Task WriteStartBodyAsync(XmlWriter writer);
 
     Task WriteSoapFaultAsync(XmlWriter writer, IFault fault);
-    Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement> additionalHeaders = null);
+    Task WriteSoapHeaderAsync(XmlWriter writer, Style style, ISoapHeader header, HeaderDefinition definition, IEnumerable<XElement>? additionalHeaders = null);
 
     Task ThrowSoapFaultIfPresentAsync(XmlReader reader);
 

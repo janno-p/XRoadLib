@@ -10,9 +10,9 @@ public abstract class FaultCode
         [UsedImplicitly] MustUnderstand
     }
 
-    public string Value { get; }
+    public string? Value { get; }
 
-    protected FaultCode(FaultCodeType type, string value)
+    protected FaultCode(FaultCodeType type, string? value)
     {
         Value = string.IsNullOrWhiteSpace(value) ? type.ToString() : $"{type}.{value}";
     }

@@ -52,7 +52,7 @@ public class SoapMessageFormatter : IMessageFormatter
         return reader.MoveToElementAsync(1, BodyName);
     }
 
-    public Task WriteStartEnvelopeAsync(XmlWriter writer, string prefix = null)
+    public Task WriteStartEnvelopeAsync(XmlWriter writer, string? prefix = null)
     {
         var prefixValue = string.IsNullOrEmpty(prefix) ? PrefixConstants.SoapEnv : prefix;
         return writer.WriteStartElementAsync(prefixValue, EnvelopeName.LocalName, EnvelopeName.NamespaceName);
@@ -65,9 +65,12 @@ public class SoapMessageFormatter : IMessageFormatter
 
     public IFault CreateFault(Exception exception)
     {
+        var xRoadException = exception as XRoadException;
+        var faultCode = xRoadException?.FaultCode ?? ServerFaultCode.InternalError;
+
         return new SoapFault
         {
-            FaultCode = ((exception as XRoadException)?.FaultCode ?? ServerFaultCode.InternalError).Value,
+            FaultCode = faultCode.Value ?? string.Empty,
             FaultString = exception?.Message ?? string.Empty
         };
     }

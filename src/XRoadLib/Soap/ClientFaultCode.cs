@@ -11,7 +11,7 @@ public sealed class ClientFaultCode : FaultCode
     public static ClientFaultCode UnknownType => new(nameof(UnknownType));
     public static ClientFaultCode UnsupportedContentTransferEncoding => new(nameof(UnsupportedContentTransferEncoding));
 
-    public ClientFaultCode(string value = null)
+    public ClientFaultCode(string? value = null)
         : base(FaultCodeType.Client, value)
     { }
 }
