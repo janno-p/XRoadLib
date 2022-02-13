@@ -40,5 +40,5 @@ public interface IServiceMap
     /// <summary>
     /// Serializes X-Road message protocol responses according to operation definitions.
     /// </summary>
-    Task SerializeResponseAsync(XmlWriter writer, object value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null);
+    Task SerializeResponseAsync(XmlWriter writer, object? value, XRoadMessage message, XmlReader requestReader, ICustomSerialization customSerialization = null);
 }

@@ -63,7 +63,7 @@ public class XRoadServiceIdentifier : IXRoadIdentifier
     /// <summary>
     /// Parse X-Road service identifier from legacy service name.
     /// </summary>
-    public static XRoadServiceIdentifier FromString(string serviceName)
+    public static XRoadServiceIdentifier FromString(string? serviceName)
     {
         if (serviceName == null)
             return new XRoadServiceIdentifier();

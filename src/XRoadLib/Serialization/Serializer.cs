@@ -76,7 +76,7 @@ public sealed class Serializer : ISerializer
     {
         var operationDefinition = GetOperationDefinition(_contractAssembly, qualifiedName);
         if (operationDefinition == null || qualifiedName.NamespaceName != operationDefinition.Name.NamespaceName)
-            throw new UnknownOperationException(qualifiedName);
+            throw new UnknownOperationException($"The operation `{qualifiedName}` is not defined by contract.");
 
         var requestDefinition = _schemaDefinitionProvider.GetRequestDefinition(operationDefinition);
         var inputTypeMap = GetParticleDefinitionTypeMap(requestDefinition, null);

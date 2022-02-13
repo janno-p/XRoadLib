@@ -22,7 +22,7 @@ public class XRoadSerializerTest
         }
     }
 
-    private static async Task SerializeWithContextAsync<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, Action<XRoadMessage, string> f)
+    private static async Task SerializeWithContextAsync<T>(string elementName, T value, uint dtoVersion, bool addEnvelope, Action<XRoadMessage, string> f) where T : notnull
     {
         var message = Globals.ServiceManager.CreateMessage();
         message.IsMultipartContainer = true;
@@ -56,7 +56,7 @@ public class XRoadSerializerTest
             await writer.WriteStartElementAsync(elementName);
 
             var propType = typeof(X<>).MakeGenericType(typeof(T));
-            var methodInfo = propType.GetTypeInfo().GetMethod(nameof(X<object>.Method));
+            var methodInfo = propType.GetTypeInfo().GetMethod(nameof(X<object>.Method))!;
 
             var operationDefinition = new OperationDefinition(nameof(X<object>.Method), null, methodInfo);
             var requestDefinition = new RequestDefinition(operationDefinition, _ => false);

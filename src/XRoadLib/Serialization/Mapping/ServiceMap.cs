@@ -183,10 +183,10 @@ public class ServiceMap : IServiceMap
         await writer.WriteEndElementAsync().ConfigureAwait(false);
     }
 
-    protected virtual object PrepareRequestValue(object value) => value;
-    protected virtual object PrepareResponseValue(object value) => value;
-    protected virtual object ProcessRequestValue(object value) => value;
-    protected virtual object ProcessResponseValue(object value) => value;
+    protected virtual object? PrepareRequestValue(object? value) => value;
+    protected virtual object? PrepareResponseValue(object? value) => value;
+    protected virtual object? ProcessRequestValue(object value) => value;
+    protected virtual object? ProcessResponseValue(object value) => value;
 
     private async Task SerializeValueAsync(XmlWriter writer, object value, ITypeMap typeMap, IXmlTemplateNode templateNode, XRoadMessage message, ContentDefinition content)
     {

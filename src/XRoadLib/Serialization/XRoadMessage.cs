@@ -37,7 +37,7 @@ public sealed class XRoadMessage : IAttachmentManager
     /// message (elements are present in document, but set to null even if type contains value).
     /// For deserialization incoming elements are ignored even if they contain value.
     /// </summary>
-    public IXmlTemplate XmlTemplate { get; set; }
+    public IXmlTemplate? XmlTemplate { get; set; }
 
     /// <summary>
     /// Content type of the MIME multipart message container.

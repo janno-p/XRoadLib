@@ -21,12 +21,12 @@ internal sealed class XRoadMessageReader : IDisposable
 
     private readonly ICollection<IServiceManager> _serviceManagers;
     private readonly IMessageFormatter _messageFormatter;
-    private readonly string _storagePath;
+    private readonly string? _storagePath;
     private readonly string _contentTypeHeader;
 
     private DataReader _dataReader;
 
-    public XRoadMessageReader(DataReader dataReader, IMessageFormatter messageFormatter, string contentTypeHeader, string storagePath, IEnumerable<IServiceManager> serviceManagers)
+    public XRoadMessageReader(DataReader dataReader, IMessageFormatter messageFormatter, string contentTypeHeader, string? storagePath, IEnumerable<IServiceManager> serviceManagers)
     {
         _contentTypeHeader = contentTypeHeader;
         _dataReader = dataReader;

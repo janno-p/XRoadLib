@@ -542,6 +542,7 @@ public class XRoadDeserializerTest
     {
         serviceMap ??= ServiceMap;
         var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod(serviceName));
+
         return DeserializeRequestContentAsync(contentXml, Globals.ServiceManager, serviceName, async msgr =>
         {
             var message = Globals.ServiceManager.CreateMessage();

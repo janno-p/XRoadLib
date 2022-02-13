@@ -47,7 +47,7 @@ public abstract class AbstractSchemaExporter : ISchemaExporter
     public virtual void ExportFaultDefinition(FaultDefinition faultDefinition) { }
 
     /// <inheritdoc />
-    public virtual string ExportSchemaLocation(string namespaceName) => null;
+    public virtual string? ExportSchemaLocation(string namespaceName) => null;
 
     /// <inheritdoc />
     public virtual void ExportServiceDescription(ServiceDescription serviceDescription) { }

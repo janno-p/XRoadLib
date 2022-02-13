@@ -1,6 +1,7 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
+using XRoadLib.Headers;
 using XRoadLib.Serialization;
 using XRoadLib.Tests.Contract.Mapping;
 
@@ -99,7 +100,7 @@ public class ArrayTest
     {
         var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
 
-        using var message = new XRoadMessage(ServiceManager, null);
+        using var message = new XRoadMessage(ServiceManager, new XRoadHeader());
 
 #if NET5_0
             await
@@ -125,7 +126,7 @@ public class ArrayTest
         var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
         var doc2 = new XDocument(new XElement("envelope", new XElement("body", document.Root)));
 
-        using var message = new XRoadMessage(ServiceManager, null);
+        using var message = new XRoadMessage(ServiceManager, new XRoadHeader());
         using var reader = doc2.CreateAsyncReader();
 
         for (var i = 0; i < 3; i++)

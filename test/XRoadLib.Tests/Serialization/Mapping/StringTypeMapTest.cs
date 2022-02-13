@@ -4,6 +4,7 @@ using XRoadLib.Headers;
 using XRoadLib.Schema;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Tests.Serialization.Mapping;
 
@@ -76,7 +77,7 @@ public class StringTypeMapTest : TypeMapTestBase
         {
             await writer.WriteStartDocumentAsync();
             await writer.WriteStartElementAsync(null, "value", "");
-            await typeMap.SerializeAsync(writer, null, value, Globals.GetTestDefinition(typeMap.Definition.Type), message);
+            await typeMap.SerializeAsync(writer, XRoadXmlTemplate.EmptyNode, value, Globals.GetTestDefinition(typeMap.Definition.Type), message);
             await writer.WriteEndElementAsync();
             await writer.WriteEndDocumentAsync();
         }
@@ -84,7 +85,10 @@ public class StringTypeMapTest : TypeMapTestBase
         using var textReader = new StringReader(stream.ToString());
         using var reader = XmlReader.Create(textReader, new XmlReaderSettings { Async = true });
 
-        while (await reader.ReadAsync() && reader.LocalName != "value") { }
+        while (await reader.ReadAsync() && reader.LocalName != "value")
+        {
+            // Do nothing
+        }
 
         return await reader.ReadInnerXmlAsync();
     }

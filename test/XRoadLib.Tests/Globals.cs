@@ -14,12 +14,15 @@ public static class Globals
         return new TestDefinition(type);
     }
 
-    private class TestDefinition : ContentDefinition
+    private sealed class TestDefinition : ContentDefinition
     {
         public TestDefinition(Type type)
-            : base(null)
+            : base(new TestParticleDefinition())
         {
             RuntimeType = type;
         }
     }
+
+    private sealed class TestParticleDefinition : ParticleDefinition
+    { }
 }

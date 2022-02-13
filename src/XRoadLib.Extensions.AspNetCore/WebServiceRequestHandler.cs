@@ -121,7 +121,7 @@ public class WebServiceRequestHandler : WebServiceHandler
     protected virtual XName ResolveOperationName(WebServiceContext context)
     {
         if (context.Request.RootElementName == null)
-            throw new UnknownOperationException("Could not resolve operation name from request.", context.Request.RootElementName);
+            throw new UnknownOperationException("Could not resolve operation name from request.");
 
         return context.Request.RootElementName;
     }
@@ -220,7 +220,7 @@ public class WebServiceRequestHandler : WebServiceHandler
                 await writer.WriteAttributesAsync(reader, true).ConfigureAwait(false);
                 await writer.WriteMissingAttributesAsync(ServiceManager.ProtocolDefinition).ConfigureAwait(false);
             }
-            else await writer.WriteSoapEnvelopeAsync(context.MessageFormatter, ServiceManager.ProtocolDefinition).ConfigureAwait(false);
+            else await writer.WriteSoapEnvelopeAsync(messageFormatter, ServiceManager.ProtocolDefinition).ConfigureAwait(false);
 
             if (await messageFormatter.TryMoveToHeaderAsync(reader).ConfigureAwait(false))
                 await writer.WriteNodeAsync(reader, true).ConfigureAwait(false);

@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using XRoadLib.Serialization;
 using XRoadLib.Serialization.Mapping;
+using XRoadLib.Serialization.Template;
 
 namespace XRoadLib.Tests.Serialization.Mapping;
 
@@ -97,11 +98,14 @@ public class OptimizedContentTypeMapTest : TypeMapTestBase
 
         using var reader = document.CreateAsyncReader();
 
-        while (await reader.ReadAsync() && reader.NodeType != XmlNodeType.Element) { }
+        while (await reader.ReadAsync() && reader.NodeType != XmlNodeType.Element)
+        {
+            // Do nothing
+        }
 
         return await OptimizedContentTypeMap.DeserializeAsync(
             reader,
-            null,
+            XRoadXmlTemplate.EmptyNode,
             Globals.GetTestDefinition(OptimizedContentTypeMap.Definition.Type),
             message
         );

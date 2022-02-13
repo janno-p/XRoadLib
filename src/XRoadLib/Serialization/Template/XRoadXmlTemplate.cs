@@ -14,7 +14,7 @@ public class XRoadXmlTemplate : IXmlTemplate
 
     public IDictionary<string, Type> ParameterTypes => _parameterTypes;
 
-    public XRoadXmlTemplate(string templateXml, MethodInfo methodInfo)
+    public XRoadXmlTemplate(string? templateXml, MethodInfo? methodInfo)
     {
         if (!string.IsNullOrEmpty(templateXml))
         {

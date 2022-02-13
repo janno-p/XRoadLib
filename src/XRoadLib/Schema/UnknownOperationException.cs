@@ -6,17 +6,8 @@ namespace XRoadLib.Schema;
 [Serializable]
 public class UnknownOperationException : ContractViolationException
 {
-    [UsedImplicitly]
-    public XName QualifiedName { get; }
-
-    public UnknownOperationException(string message, XName qualifiedName)
+    public UnknownOperationException(string message)
         : base(ClientFaultCode.UnknownOperation, message)
-    {
-        QualifiedName = qualifiedName;
-    }
-
-    public UnknownOperationException(XName qualifiedName)
-        : this($"The operation `{qualifiedName}` is not defined by contract.", qualifiedName)
     { }
 
     protected UnknownOperationException(SerializationInfo info, StreamingContext context)
