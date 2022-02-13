@@ -15,7 +15,7 @@ public static class XmlWriterExtensions
     /// <summary>
     /// Serializes attribute with qualified name content.
     /// </summary>
-    public static async Task WriteQualifiedAttributeAsync(this XmlWriter writer, string name, XmlQualifiedName qualifiedName)
+    public static async Task WriteQualifiedAttributeAsync(this XmlWriter writer, string name, XmlQualifiedName? qualifiedName)
     {
         if (qualifiedName == null || qualifiedName.IsEmpty)
             return;

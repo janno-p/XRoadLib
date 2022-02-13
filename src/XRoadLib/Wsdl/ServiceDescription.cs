@@ -8,7 +8,7 @@ public class ServiceDescription : NamedItem
     public List<Message> Messages { get; } = new();
     public List<PortType> PortTypes { get; } = new();
     public List<Service> Services { get; } = new();
-    public string TargetNamespace { get; set; }
+    public string? TargetNamespace { get; set; }
     public Types Types { get; } = new();
 
     protected override async Task WriteAttributesAsync(XmlWriter writer)

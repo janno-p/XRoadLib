@@ -4,10 +4,10 @@ namespace XRoadLib.Wsdl;
 
 public class SoapHeaderBinding : ServiceDescriptionFormatExtension
 {
-    public string Encoding { get; set; }
-    public XmlQualifiedName Message { get; set; }
-    public string Namespace { get; set; }
-    public string Part { get; set; }
+    public string? Encoding { get; set; }
+    public XmlQualifiedName? Message { get; set; }
+    public string? Namespace { get; set; }
+    public string? Part { get; set; }
     public SoapBindingUse Use { get; set; } = SoapBindingUse.Default;
 
     internal override async Task WriteAsync(XmlWriter writer)

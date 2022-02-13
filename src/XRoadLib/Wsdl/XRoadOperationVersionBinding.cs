@@ -10,10 +10,11 @@ public class XRoadOperationVersionBinding : ServiceDescriptionFormatExtension
 
     public string Version { get; set; }
 
-    public XRoadOperationVersionBinding(string prefix, string ns)
+    public XRoadOperationVersionBinding(string prefix, string ns, string version)
     {
         Prefix = prefix;
         Namespace = ns;
+        Version = version;
     }
 
     internal override async Task WriteAsync(XmlWriter writer)

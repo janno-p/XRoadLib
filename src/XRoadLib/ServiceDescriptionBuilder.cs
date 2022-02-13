@@ -988,9 +988,9 @@ public sealed class ServiceDescriptionBuilder
 
     private XRoadOperationVersionBinding CreateXRoadOperationVersionBinding(OperationDefinition operationDefinition)
     {
-        return operationDefinition.Version == 0 ?
-            null :
-            new XRoadOperationVersionBinding(_xRoadPrefix, _xRoadNamespace) { Version = $"v{operationDefinition.Version}" };
+        return operationDefinition.Version != 0
+            ? new XRoadOperationVersionBinding(_xRoadPrefix, _xRoadNamespace, $"v{operationDefinition.Version}")
+            : null;
     }
 
     private XmlElement CreateXrdDocumentationElement(string name, string languageCode, string value, Action<string> addSchemaImport)

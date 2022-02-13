@@ -10,10 +10,10 @@ public class XRoadTitleBinding : ServiceDescriptionFormatExtension
     public string Namespace { get; }
 
     [UsedImplicitly]
-    public string Text { get; set; }
+    public string Text { get; set; } = string.Empty;
 
     [UsedImplicitly]
-    public string Language { get; set; }
+    public string? Language { get; set; }
 
     public XRoadTitleBinding(string prefix, string ns)
     {

@@ -4,7 +4,7 @@ public abstract class DocumentableItem
 {
     protected abstract string ElementName { get; }
 
-    public XmlElement DocumentationElement { get; set; }
+    public XmlElement? DocumentationElement { get; set; }
 
     [UsedImplicitly]
     public List<XmlAttribute> ExtensibleAttributes { get; } = new();

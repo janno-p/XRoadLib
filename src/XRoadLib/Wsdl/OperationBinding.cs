@@ -4,8 +4,8 @@ public class OperationBinding : NamedItem
 {
     protected override string ElementName => "operation";
 
-    public InputBinding Input { get; set; }
-    public OutputBinding Output { get; set; }
+    public InputBinding? Input { get; set; }
+    public OutputBinding? Output { get; set; }
 
     protected override async Task WriteElementsAsync(XmlWriter writer)
     {

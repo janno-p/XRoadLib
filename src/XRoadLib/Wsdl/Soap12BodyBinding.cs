@@ -4,10 +4,10 @@
 public class Soap12BodyBinding : ServiceDescriptionFormatExtension
 {
     [UsedImplicitly]
-    public string Encoding { get; set; }
+    public string? Encoding { get; set; }
 
     [UsedImplicitly]
-    public string Namespace { get; set; }
+    public string? Namespace { get; set; }
 
     [UsedImplicitly]
     public SoapBindingUse Use { get; set; } = SoapBindingUse.Default;

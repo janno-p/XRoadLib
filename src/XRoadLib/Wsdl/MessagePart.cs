@@ -6,8 +6,8 @@ public class MessagePart : NamedItem
 {
     protected override string ElementName => "part";
 
-    public XmlQualifiedName Element { get; set; }
-    public XmlQualifiedName Type { get; set; }
+    public XmlQualifiedName? Element { get; set; }
+    public XmlQualifiedName? Type { get; set; }
 
     protected override async Task WriteAttributesAsync(XmlWriter writer)
     {

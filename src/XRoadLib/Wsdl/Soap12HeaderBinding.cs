@@ -6,16 +6,16 @@ namespace XRoadLib.Wsdl;
 public class Soap12HeaderBinding : ServiceDescriptionFormatExtension
 {
     [UsedImplicitly]
-    public string Encoding { get; set; }
+    public string? Encoding { get; set; }
 
     [UsedImplicitly]
-    public XmlQualifiedName Message { get; set; }
+    public XmlQualifiedName? Message { get; set; }
 
     [UsedImplicitly]
-    public string Namespace { get; set; }
+    public string? Namespace { get; set; }
 
     [UsedImplicitly]
-    public string Part { get; set; }
+    public string? Part { get; set; }
 
     [UsedImplicitly]
     public SoapBindingUse Use { get; set; } = SoapBindingUse.Default;

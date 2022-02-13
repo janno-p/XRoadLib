@@ -7,7 +7,7 @@ public class Binding : NamedItem
     protected override string ElementName => "binding";
 
     public List<OperationBinding> Operations { get; } = new();
-    public XmlQualifiedName Type { get; set; }
+    public XmlQualifiedName? Type { get; set; }
 
     protected override async Task WriteAttributesAsync(XmlWriter writer)
     {

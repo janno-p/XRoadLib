@@ -27,10 +27,10 @@ public static class XRoadHelper
         };
     }
 
-    private static string GetContentTypeStartInfo(string contentTypeHeader) =>
+    private static string? GetContentTypeStartInfo(string contentTypeHeader) =>
         ExtractValue("start-info=", contentTypeHeader, ";")?.Trim().Trim('"');
 
-    public static string GetMultipartContentType(string contentType) =>
+    public static string? GetMultipartContentType(string contentType) =>
         ExtractValue("type=", contentType, ";")?.Trim().Trim('"');
 
     public static bool IsMultipartMsg(string contentType) =>
@@ -39,13 +39,13 @@ public static class XRoadHelper
     public static string GetContentTypeHeader(string contentType) =>
         $"{contentType}; charset={XRoadEncoding.Utf8.WebName}";
 
-    public static string ExtractValue(string key, string keyValuePair, string separator)
+    public static string? ExtractValue(string key, string? keyValuePair, string? separator)
     {
         if (string.IsNullOrEmpty(keyValuePair))
             return null;
 
         // Mis positsioonilt küsitud key üldse hakkab ..
-        var indexOfKey = keyValuePair.ToLower().IndexOf(key.ToLower(), StringComparison.Ordinal);
+        var indexOfKey = keyValuePair!.ToLower().IndexOf(key.ToLower(), StringComparison.Ordinal);
         if (indexOfKey < 0)
             return null;
 
