@@ -93,7 +93,7 @@ public static class NamespaceConstants
     /// <summary>
     /// Get schema location of specified schema.
     /// </summary>
-    public static string GetSchemaLocation(string namespaceName) =>
+    public static string? GetSchemaLocation(string namespaceName) =>
         namespaceName switch
         {
             Http => namespaceName,
@@ -119,7 +119,7 @@ public static class NamespaceConstants
     /// <summary>
     /// Get preferred global XML namespace prefix of the namespace.
     /// </summary>
-    public static string GetPreferredPrefix(string namespaceName) => namespaceName switch
+    public static string? GetPreferredPrefix(string namespaceName) => namespaceName switch
     {
         Mime => PrefixConstants.Mime,
         Soap => PrefixConstants.Soap,

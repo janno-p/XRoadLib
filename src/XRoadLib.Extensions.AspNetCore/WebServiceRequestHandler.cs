@@ -140,6 +140,9 @@ public class WebServiceRequestHandler : WebServiceHandler
         var operationName = ResolveOperationName(context);
 
         context.ServiceMap = context.Request.GetSerializer().GetServiceMap(operationName);
+        if (context.ServiceMap == null)
+            throw new InvalidQueryException($"Could not find ServiceMap for '{operationName}'");
+
         context.Response.BinaryMode = context.ServiceMap.OperationDefinition.OutputBinaryMode;
 
         var serviceObject = await GetServiceObjectAsync(context).ConfigureAwait(false);

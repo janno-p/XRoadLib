@@ -57,12 +57,12 @@ public sealed class Serializer : ISerializer
         AddSystemType<object>("", x => new AnyContentTypeMap(x, this));
     }
 
-    public IServiceMap GetServiceMap(string operationName)
+    public IServiceMap? GetServiceMap(string operationName)
     {
         return GetServiceMap(XName.Get(operationName, _producerNamespace));
     }
 
-    public IServiceMap GetServiceMap(XName qualifiedName)
+    public IServiceMap? GetServiceMap(XName? qualifiedName)
     {
         if (qualifiedName == null)
             return null;
@@ -96,7 +96,7 @@ public sealed class Serializer : ISerializer
         return _serviceMaps.GetOrAdd(qualifiedName, serviceMap);
     }
 
-    private OperationDefinition GetOperationDefinition(Assembly typeAssembly, XName qualifiedName)
+    private OperationDefinition? GetOperationDefinition(Assembly? typeAssembly, XName qualifiedName)
     {
         return typeAssembly?.GetTypes()
                            .Where(t => t.GetTypeInfo().IsInterface)
@@ -108,13 +108,13 @@ public sealed class Serializer : ISerializer
                            .SingleOrDefault(d => d.State != DefinitionState.Ignored);
     }
 
-    public ITypeMap GetTypeMapFromXsiType(XmlReader reader, ParticleDefinition particleDefinition)
+    public ITypeMap? GetTypeMapFromXsiType(XmlReader reader, ParticleDefinition particleDefinition)
     {
         var qualifiedName = reader.GetTypeAttributeValue();
         return qualifiedName == null ? null : GetTypeMap(particleDefinition, qualifiedName);
     }
 
-    public ITypeMap GetTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps = null)
+    public ITypeMap? GetTypeMap(Type? runtimeType, IDictionary<Type, ITypeMap>? partialTypeMaps = null)
     {
         if (runtimeType == null)
             return null;
@@ -126,7 +126,7 @@ public sealed class Serializer : ISerializer
             : AddTypeMap(normalizedType, partialTypeMaps);
     }
 
-    public ITypeMap GetTypeMap(ParticleDefinition particleDefinition, XName qualifiedName)
+    public ITypeMap? GetTypeMap(ParticleDefinition particleDefinition, XName? qualifiedName)
     {
         if (qualifiedName == null)
             return null;
@@ -137,7 +137,7 @@ public sealed class Serializer : ISerializer
         return particleDefinition.Content is ArrayContentDefiniton ? typeMaps?.Item2 : typeMaps?.Item1;
     }
 
-    private ITypeMap AddTypeMap(Type runtimeType, IDictionary<Type, ITypeMap> partialTypeMaps)
+    private ITypeMap? AddTypeMap(Type runtimeType, IDictionary<Type, ITypeMap>? partialTypeMaps)
     {
         if (runtimeType.IsXRoadSerializable() && Version.HasValue && !runtimeType.GetTypeInfo().ExistsInVersion(Version.Value))
             throw new SchemaDefinitionException($"The runtime type `{runtimeType.Name}` is not defined for DTO version `{Version.Value}`.");
@@ -192,7 +192,7 @@ public sealed class Serializer : ISerializer
         return _runtimeTypeMaps.GetOrAdd(runtimeType, compositeTypeMap);
     }
 
-    private Tuple<ITypeMap, ITypeMap> AddTypeMap(ParticleDefinition particleDefinition, XName qualifiedName)
+    private Tuple<ITypeMap, ITypeMap>? AddTypeMap(ParticleDefinition particleDefinition, XName qualifiedName)
     {
         var typeDefinition = GetRuntimeTypeDefinition(particleDefinition, qualifiedName);
         if (typeDefinition == null)
@@ -234,7 +234,7 @@ public sealed class Serializer : ISerializer
         return _xmlTypeMaps.GetOrAdd(qualifiedName, typeMapTuple);
     }
 
-    private TypeDefinition GetRuntimeTypeDefinition(ParticleDefinition particleDefinition, XName qualifiedName)
+    private TypeDefinition? GetRuntimeTypeDefinition(ParticleDefinition particleDefinition, XName qualifiedName)
     {
         if (!qualifiedName.NamespaceName.StartsWith("http://"))
         {
@@ -313,14 +313,14 @@ public sealed class Serializer : ISerializer
                              });
     }
 
-    private ITypeMap GetParticleDefinitionTypeMap(ParticleDefinition particleDefinition, IDictionary<Type, ITypeMap> partialTypeMaps)
+    private ITypeMap? GetParticleDefinitionTypeMap(ParticleDefinition particleDefinition, IDictionary<Type, ITypeMap>? partialTypeMaps)
     {
         return particleDefinition.Content.TypeName == null
             ? GetTypeMap(particleDefinition.Content.RuntimeType, partialTypeMaps)
             : GetTypeMap(particleDefinition, particleDefinition.Content.TypeName);
     }
 
-    private ITypeMap GetCustomTypeMap(Type typeMapType)
+    private ITypeMap? GetCustomTypeMap(Type? typeMapType)
     {
         if (typeMapType == null)
             return null;
@@ -333,7 +333,7 @@ public sealed class Serializer : ISerializer
         return _customTypeMaps.GetOrAdd(typeMapType, typeMap);
     }
 
-    private Tuple<ResponseDefinition, ITypeMap> GetReturnValueTypeMap(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
+    private Tuple<ResponseDefinition, ITypeMap?>? GetReturnValueTypeMap(OperationDefinition operationDefinition, XRoadFaultPresentation? xRoadFaultPresentation = null)
     {
         var returnDefinition = _schemaDefinitionProvider.GetResponseDefinition(operationDefinition, xRoadFaultPresentation);
         if (returnDefinition.Content.State == DefinitionState.Ignored)

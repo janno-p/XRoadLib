@@ -19,7 +19,7 @@ public sealed class ServiceDescriptionBuilder
 {
     private readonly SchemaDefinitionProvider _schemaDefinitionProvider;
     private readonly uint? _version;
-    private readonly Func<OperationDefinition, bool> _operationFilter;
+    private readonly Func<OperationDefinition, bool>? _operationFilter;
 
     private readonly Binding _binding;
     private readonly PortType _portType;
@@ -51,7 +51,7 @@ public sealed class ServiceDescriptionBuilder
     /// <param name="operationFilter">Allows to filter operations which are presented in service description.</param>
     /// <param name="version">Global version for service description (when versioning entire schema and operations using same version number).</param>
     /// </summary>
-    public ServiceDescriptionBuilder(SchemaDefinitionProvider schemaDefinitionProvider, Func<OperationDefinition, bool> operationFilter = null, uint? version = null)
+    public ServiceDescriptionBuilder(SchemaDefinitionProvider schemaDefinitionProvider, Func<OperationDefinition, bool>? operationFilter = null, uint? version = null)
     {
         _schemaDefinitionProvider = schemaDefinitionProvider ?? throw new ArgumentNullException(nameof(schemaDefinitionProvider));
         _operationFilter = operationFilter;
@@ -91,7 +91,7 @@ public sealed class ServiceDescriptionBuilder
             if (string.IsNullOrEmpty(prefix))
                 return false;
 
-            globalNamespaces[prefix] = namespaceName;
+            globalNamespaces[prefix!] = namespaceName;
 
             return true;
         };

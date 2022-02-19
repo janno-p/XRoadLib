@@ -26,13 +26,13 @@ public class ServiceManager<THeader> : ServiceManager
     /// <typeparam name="TResult">Expected result type of the operation.</typeparam>
     /// <returns>Deserialized value of X-Road response message Soap body.</returns>
     [UsedImplicitly]
-    public virtual async Task<TResult> ExecuteAsync<TResult>(WebRequest webRequest, object body, THeader header, ServiceExecutionOptions options = null) =>
+    public virtual async Task<TResult> ExecuteAsync<TResult>(WebRequest webRequest, object body, THeader header, ServiceExecutionOptions? options = null) =>
         (TResult)await ((IServiceManager)this).ExecuteAsync(webRequest, body, header, options).ConfigureAwait(false);
 
     /// <summary>
     /// Initialize new X-Road message of this X-Road message protocol instance.
     /// </summary>
-    public XRoadMessage CreateMessage(THeader header = null) =>
+    public XRoadMessage CreateMessage(THeader? header = null) =>
         new(this, header ?? new THeader());
 
     protected override ISoapHeader CreateHeader() =>

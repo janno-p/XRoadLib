@@ -19,7 +19,7 @@ public class TypeDefinition : Definition
     public bool IsSimpleType { get; set; }
 
     [UsedImplicitly]
-    public Type TypeMapType { get; set; }
+    public Type? TypeMapType { get; set; }
 
     public bool HasStrictContentOrder { get; set; }
 

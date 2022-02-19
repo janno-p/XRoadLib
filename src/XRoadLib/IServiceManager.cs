@@ -68,7 +68,7 @@ public interface IServiceManager
     /// <param name="operationFilter">Allows to filter out unwanted operations which should not appear in service description.</param>
     /// <param name="version">Global DTO version of wanted service description.</param>
     /// <returns>Service description instance of current schema definition.</returns>
-    ServiceDescription CreateServiceDescription(Func<OperationDefinition, bool> operationFilter = null, uint? version = null);
+    ServiceDescription CreateServiceDescription(Func<OperationDefinition, bool>? operationFilter = null, uint? version = null);
 
     /// <summary>
     /// Executes X-Road operation on endpoint specified by WebRequest parameter.
@@ -78,5 +78,5 @@ public interface IServiceManager
     /// <param name="header">Soap header part of outgoing serialized X-Road message.</param>
     /// <param name="options">Additional options to configure service call execution.</param>
     /// <returns>Deserialized value of X-Road response message Soap body.</returns>
-    Task<object> ExecuteAsync(WebRequest webRequest, object body, ISoapHeader header, ServiceExecutionOptions options = null);
+    Task<object> ExecuteAsync(WebRequest webRequest, object body, ISoapHeader header, ServiceExecutionOptions? options = null);
 }

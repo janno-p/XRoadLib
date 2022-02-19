@@ -22,5 +22,7 @@ public class UnsupportedContentTransferEncodingException : ContractViolationExce
 
     protected UnsupportedContentTransferEncodingException(SerializationInfo info, StreamingContext context)
         : base(info, context)
-    { }
+    {
+        ContentTransferEncoding = default!;
+    }
 }

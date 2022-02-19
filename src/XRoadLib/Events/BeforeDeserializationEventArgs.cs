@@ -9,5 +9,5 @@ public class BeforeDeserializationEventArgs : EventArgs
     /// <summary>
     /// Customize deserialization by assigning custom settings of XML reader.
     /// </summary>
-    public XmlReaderSettings XmlReaderSettings { get; set; }
+    public XmlReaderSettings? XmlReaderSettings { get; set; }
 }

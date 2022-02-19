@@ -16,7 +16,7 @@ public class RequestDefinition : ParticleDefinition
     /// <summary>
     /// Runtime parameter info of request object.
     /// </summary>
-    public ParameterInfo ParameterInfo { get; }
+    public ParameterInfo? ParameterInfo { get; }
 
     /// <summary>
     /// Wrapper element name for incoming requests.

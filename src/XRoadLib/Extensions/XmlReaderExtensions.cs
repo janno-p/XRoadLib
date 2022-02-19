@@ -29,18 +29,18 @@ public static class XmlReaderExtensions
             var value => throw new InvalidQueryException($"Invalid {QnXsiNil} attribute value: `{value}`")
         };
 
-    internal static XName GetTypeAttributeValue(this XmlReader reader)
+    internal static XName? GetTypeAttributeValue(this XmlReader reader)
     {
         return GetTypeAttributeValue(reader, QnXsiType);
     }
 
-    private static XName GetTypeAttributeValue(XmlReader reader, XName attributeName, bool isArrayType = false)
+    private static XName? GetTypeAttributeValue(XmlReader reader, XName attributeName, bool isArrayType = false)
     {
         var typeValue = reader.GetAttribute(attributeName.LocalName, attributeName.NamespaceName);
         return ParseQualifiedValue(reader, typeValue, isArrayType);
     }
 
-    internal static XName ParseQualifiedValue(this XmlReader reader, string value, bool isArrayType = false)
+    internal static XName? ParseQualifiedValue(this XmlReader reader, string? value, bool isArrayType = false)
     {
         if (value == null)
             return null;

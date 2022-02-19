@@ -2,7 +2,7 @@
 
 public abstract class Definition
 {
-    public XName Name { get; set; }
+    public XName? Name { get; set; }
 
     public DefinitionState State { get; set; }
 

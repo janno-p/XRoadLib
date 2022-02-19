@@ -28,7 +28,7 @@ public abstract class ContentDefinition : Definition
     [UsedImplicitly]
     public int Order { get; set; } = -1;
 
-    public XName TypeName { get; set; }
+    public XName? TypeName { get; set; }
 
     public Type RuntimeType { get; set; }
 

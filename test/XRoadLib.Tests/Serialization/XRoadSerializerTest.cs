@@ -61,7 +61,7 @@ public class XRoadSerializerTest
             var operationDefinition = new OperationDefinition(nameof(X<object>.Method), null, methodInfo);
             var requestDefinition = new RequestDefinition(operationDefinition, _ => false);
 
-            var typeMap = Globals.ServiceManager.GetSerializer(dtoVersion).GetTypeMap(typeof(T));
+            var typeMap = Globals.ServiceManager.GetSerializer(dtoVersion).GetTypeMap(typeof(T))!;
             await typeMap.SerializeAsync(writer, XRoadXmlTemplate.EmptyNode, value, requestDefinition.Content, message);
 
             await writer.WriteEndElementAsync();

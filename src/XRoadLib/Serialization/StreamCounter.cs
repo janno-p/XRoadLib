@@ -2,7 +2,7 @@
 
 internal sealed class StreamCounter : IDisposable
 {
-    private Stream _stream;
+    private readonly Stream _stream;
 
     public long WriteCount { get; private set; }
 
@@ -34,6 +34,5 @@ internal sealed class StreamCounter : IDisposable
     public void Dispose()
     {
         _stream.Dispose();
-        _stream = null;
     }
 }

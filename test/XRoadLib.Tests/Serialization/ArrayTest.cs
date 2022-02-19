@@ -98,7 +98,7 @@ public class ArrayTest
 
     private async Task<XDocument> SerializeMessageAsync(object request)
     {
-        var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
+        var serviceMap = _serializer.GetServiceMap("MergeArrayContent")!;
 
         using var message = new XRoadMessage(ServiceManager, new XRoadHeader());
 
@@ -123,7 +123,7 @@ public class ArrayTest
 
     private async Task<object> DeserializeMessageAsync(XDocument document)
     {
-        var serviceMap = _serializer.GetServiceMap("MergeArrayContent");
+        var serviceMap = _serializer.GetServiceMap("MergeArrayContent")!;
         var doc2 = new XDocument(new XElement("envelope", new XElement("body", document.Root)));
 
         using var message = new XRoadMessage(ServiceManager, new XRoadHeader());

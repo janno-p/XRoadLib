@@ -16,5 +16,7 @@ public abstract class XRoadException : Exception
 
     protected XRoadException(SerializationInfo info, StreamingContext context)
         : base(info, context)
-    { }
+    {
+        FaultCode = default!;
+    }
 }

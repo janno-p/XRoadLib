@@ -19,8 +19,8 @@ public class XRoadDeserializerTest
     private const uint DtoVersion = 3;
 
     private static readonly ISerializer Serializer = Globals.ServiceManager.GetSerializer(DtoVersion);
-    private static readonly IServiceMap ServiceMap = Serializer.GetServiceMap(nameof(IService.Service1));
-    private static readonly IServiceMap Service3Map = Serializer.GetServiceMap(nameof(IService3.Service3));
+    private static readonly IServiceMap ServiceMap = Serializer.GetServiceMap(nameof(IService.Service1))!;
+    private static readonly IServiceMap Service3Map = Serializer.GetServiceMap(nameof(IService3.Service3))!;
 
     private static readonly IMessageFormatter MessageFormatter = new SoapMessageFormatter();
 
@@ -450,7 +450,7 @@ public class XRoadDeserializerTest
 
         Assert.True(await reader.MoveToElementAsync(0));
 
-        var typeMap = Serializer.GetTypeMap(typeof(ContainerType));
+        var typeMap = Serializer.GetTypeMap(typeof(ContainerType))!;
 
         using var message = new XRoadMessage();
         var entity = await typeMap.DeserializeAsync(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message);
@@ -495,13 +495,14 @@ public class XRoadDeserializerTest
         using var reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true });
 
         Assert.True(await reader.MoveToElementAsync(0));
-        var typeMap = Serializer.GetTypeMap(typeof(ContainerType));
+        var typeMap = Serializer.GetTypeMap(typeof(ContainerType))!;
 
         using var message = new XRoadMessage();
 
         var exception = await Assert.ThrowsAsync<UnknownTypeException>(() => typeMap.DeserializeAsync(reader, XRoadXmlTemplate.EmptyNode, Globals.GetTestDefinition(typeof(ContainerType)), message));
         Assert.Equal("Expected anonymous type, but `Test` was given.", exception.Message);
-        Assert.True(exception.TypeDefinition.IsAnonymous);
+        exception.TypeDefinition.Should().NotBeNull();
+        Assert.True(exception.TypeDefinition!.IsAnonymous);
         Assert.Same(exception.TypeDefinition.Type, anonymousProperty?.PropertyType);
         Assert.IsType<PropertyDefinition>(exception.ParticleDefinition);
         Assert.Same(((PropertyDefinition)exception.ParticleDefinition).PropertyInfo, anonymousProperty);
