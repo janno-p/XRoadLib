@@ -163,7 +163,7 @@ public class WebServiceRequestHandler : WebServiceHandler
         }
     }
 
-    protected virtual async Task<object> InvokeRuntimeMethodAsync(WebServiceContext context, object serviceObject, object[] parameters)
+    protected virtual async Task<object?> InvokeRuntimeMethodAsync(WebServiceContext context, object serviceObject, object[] parameters)
     {
         if (context.ServiceMap is null)
             throw new InvalidOperationException("ServiceMap is not define for current WebService request");

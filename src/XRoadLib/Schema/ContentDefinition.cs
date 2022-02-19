@@ -32,7 +32,7 @@ public abstract class ContentDefinition : Definition
 
     public Type RuntimeType { get; set; }
 
-    public virtual XName SerializedName => Name;
+    public virtual XName? SerializedName => Name;
 
     protected ContentDefinition(ParticleDefinition particle)
     {

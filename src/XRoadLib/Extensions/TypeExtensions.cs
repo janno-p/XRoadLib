@@ -10,18 +10,18 @@ public static class TypeExtensions
     [UsedImplicitly]
     public static bool IsAnonymous(this Type type)
     {
-        return (type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();
+        return (type.GetCustomAttribute<XmlTypeAttribute>()?.AnonymousType).GetValueOrDefault();
     }
 
     public static bool IsXRoadSerializable(this Type type)
     {
-        var baseType = type.GetTypeInfo().BaseType;
+        var baseType = type.BaseType;
 
         while (baseType != null)
         {
             if (baseType == typeof(XRoadSerializable))
                 return true;
-            baseType = baseType.GetTypeInfo().BaseType;
+            baseType = baseType.BaseType;
         }
 
         return false;
@@ -29,7 +29,7 @@ public static class TypeExtensions
 
     private static IEnumerable<PropertyDefinition> GetTypeProperties(this Type type, uint? version, Func<PropertyInfo, PropertyDefinition> createDefinition)
     {
-        return type.GetTypeInfo()
+        return type
 #pragma warning disable S3011
                    .GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
 #pragma warning restore S3011
@@ -51,8 +51,8 @@ public static class TypeExtensions
     {
         var properties = new List<PropertyDefinition>();
 
-        if (type.GetTypeInfo().BaseType != typeof(XRoadSerializable))
-            properties.AddRange(type.GetTypeInfo().BaseType.GetAllPropertiesSorted(comparer, version, createDefinition));
+        if (type.BaseType != null && type.BaseType != typeof(XRoadSerializable))
+            properties.AddRange(type.BaseType.GetAllPropertiesSorted(comparer, version, createDefinition));
 
         properties.AddRange(type.GetPropertiesSorted(comparer, version, createDefinition));
 
@@ -117,7 +117,7 @@ public static class TypeExtensions
         return version >= versionAdded.GetValueOrDefault() && version < versionRemoved.GetValueOrDefault(uint.MaxValue);
     }
 
-    internal static XName GetSystemTypeName(this Type type)
+    internal static XName? GetSystemTypeName(this Type type)
     {
         if (type == typeof(bool)) return XmlTypeConstants.Boolean;
         if (type == typeof(DateTime)) return XName.Get("dateTime", NamespaceConstants.Xsd);
@@ -126,7 +126,7 @@ public static class TypeExtensions
         if (type == typeof(long)) return XName.Get("long", NamespaceConstants.Xsd);
         if (type == typeof(string)) return XmlTypeConstants.String;
         if (type == typeof(TimeSpan)) return XName.Get("duration", NamespaceConstants.Xsd);
-        return typeof(Stream).GetTypeInfo().IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.Xsd) : null;
+        return typeof(Stream).IsAssignableFrom(type) ? XName.Get("base64Binary", NamespaceConstants.Xsd) : null;
     }
 
     public static bool HasMergeAttribute(this ICustomAttributeProvider customAttributeProvider)
@@ -135,49 +135,48 @@ public static class TypeExtensions
                || customAttributeProvider.GetSingleAttribute<XmlTextAttribute>() != null;
     }
 
-    public static XmlElementAttribute GetXmlElementAttribute(this ICustomAttributeProvider customAttributeProvider)
+    public static XmlElementAttribute? GetXmlElementAttribute(this ICustomAttributeProvider customAttributeProvider)
     {
         return customAttributeProvider.GetSingleAttribute<XRoadXmlElementAttribute>()
                ?? customAttributeProvider.GetSingleAttribute<XmlElementAttribute>();
     }
         
-    public static XmlArrayAttribute GetXmlArrayAttribute(this ICustomAttributeProvider customAttributeProvider)
+    public static XmlArrayAttribute? GetXmlArrayAttribute(this ICustomAttributeProvider customAttributeProvider)
     {
         return customAttributeProvider.GetSingleAttribute<XRoadXmlArrayAttribute>()
                ?? customAttributeProvider.GetSingleAttribute<XmlArrayAttribute>();
     }
         
-    public static XmlArrayItemAttribute GetXmlArrayItemAttribute(this ICustomAttributeProvider customAttributeProvider)
+    public static XmlArrayItemAttribute? GetXmlArrayItemAttribute(this ICustomAttributeProvider customAttributeProvider)
     {
         return customAttributeProvider.GetSingleAttribute<XRoadXmlArrayItemAttribute>()
                ?? customAttributeProvider.GetSingleAttribute<XmlArrayItemAttribute>();
     }
 
-    public static T GetSingleAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
+    public static T? GetSingleAttribute<T>(this ICustomAttributeProvider customAttributeProvider)
     {
         return customAttributeProvider.GetCustomAttributes(typeof(T), false).Cast<T>().SingleOrDefault();
     }
 
-    public static bool IsNullable(this Type type)
+    public static bool IsNullable(this Type? type)
     {
-        return type != null && type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        return type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
     }
 
     private static bool BaseTypeHasGenericArgument(Type type, Type runtimeType)
     {
-        var typeInfo = type.GetTypeInfo().BaseType?.GetTypeInfo();
-        if (typeInfo == null)
+        var baseType = type.BaseType;
+        if (baseType == null)
             return false;
 
-        return typeInfo.IsGenericType && typeInfo.GetGenericArguments().Single().GetTypeInfo().IsAssignableFrom(runtimeType);
+        return baseType.IsGenericType && baseType.GetGenericArguments().Single().IsAssignableFrom(runtimeType);
     }
 
     public static bool IsFilterableField(this Type runtimeType, string fieldName, string groupName)
     {
-        return runtimeType.GetTypeInfo()
-                          .Assembly
+        return runtimeType.Assembly
                           .GetTypes()
-                          .Where(t => typeof(IXRoadFilterMap).GetTypeInfo().IsAssignableFrom(t))
+                          .Where(t => typeof(IXRoadFilterMap).IsAssignableFrom(t))
                           .Where(t => BaseTypeHasGenericArgument(t, runtimeType))
                           .Select(t => (IXRoadFilterMap)Activator.CreateInstance(t))
                           .Where(m => m.GroupName.Equals(groupName))
@@ -185,13 +184,12 @@ public static class TypeExtensions
     }
 
     [UsedImplicitly]
-    public static Tuple<MethodInfo, XRoadServiceAttribute> FindMethodDeclaration(this MethodInfo method, string operationName, IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts)
+    public static Tuple<MethodInfo, XRoadServiceAttribute>? FindMethodDeclaration(this MethodInfo method, string operationName, IDictionary<MethodInfo, IDictionary<string, XRoadServiceAttribute>> serviceContracts)
     {
         if (method.DeclaringType == null)
             return null;
 
         var methodContracts = method.DeclaringType
-                                    .GetTypeInfo()
                                     .GetInterfaces()
                                     .Select(iface => method.DeclaringType.GetTypeInfo().GetRuntimeInterfaceMap(iface))
                                     .Where(map => map.TargetMethods.Contains(method))
@@ -208,19 +206,19 @@ public static class TypeExtensions
         return Tuple.Create(methodContract, serviceAttribute);
     }
 
-    public static string GetValueOrDefault(this string value, string defaultValue = null)
+    public static string GetValueOrDefault(this string? value, string defaultValue)
     {
-        return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
+        return string.IsNullOrWhiteSpace(value) ? defaultValue : value!;
     }
 
-    internal static XmlElementAttribute GetElementAttributeFromInterface(this Type declaringType, PropertyInfo propertyInfo)
+    internal static XmlElementAttribute? GetElementAttributeFromInterface(this Type declaringType, PropertyInfo? propertyInfo)
     {
         if (propertyInfo == null)
             return null;
 
         var getMethod = propertyInfo.GetGetMethod();
 
-        foreach (var iface in declaringType.GetTypeInfo().GetInterfaces())
+        foreach (var iface in declaringType.GetInterfaces())
         {
             var map = declaringType.GetTypeInfo().GetRuntimeInterfaceMap(iface);
 
@@ -235,9 +233,9 @@ public static class TypeExtensions
             if (index < 0)
                 continue;
 
-            var ifaceProperty = iface.GetTypeInfo().GetProperties().SingleOrDefault(p => p.GetGetMethod() == map.InterfaceMethods[index]);
+            var ifaceProperty = iface.GetProperties().SingleOrDefault(p => p.GetGetMethod() == map.InterfaceMethods[index]);
 
-            var attribute = ifaceProperty.GetSingleAttribute<XmlElementAttribute>();
+            var attribute = ifaceProperty?.GetSingleAttribute<XmlElementAttribute>();
             if (attribute != null)
                 return attribute;
         }

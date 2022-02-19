@@ -6,7 +6,7 @@
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Enum | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Parameter, AllowMultiple = true)]
 public class XRoadTechNotesAttribute : Attribute
 {
-    public string LanguageCode { get; }
+    public string? LanguageCode { get; }
     public string Value { get; }
 
     [UsedImplicitly]

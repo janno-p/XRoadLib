@@ -33,7 +33,7 @@ internal static class PropertyInfoExtensions
         else
             generator.Emit(OpCodes.Callvirt, propertyInfo.GetGetMethod(true));
 
-        if (propertyType.GetTypeInfo().IsValueType)
+        if (propertyType.IsValueType)
             generator.Emit(OpCodes.Box, propertyType);
 
         generator.Emit(OpCodes.Ret);
@@ -58,7 +58,7 @@ internal static class PropertyInfoExtensions
         generator.Emit(OpCodes.Ldarg_0);
         generator.Emit(OpCodes.Ldarg_1);
 
-        if (propertyType.GetTypeInfo().IsValueType)
+        if (propertyType.IsValueType)
             generator.Emit(OpCodes.Unbox_Any, propertyType);
 
         if (converterType != null)
@@ -87,7 +87,7 @@ internal static class PropertyInfoExtensions
     private static MethodInfo GetConverterMethod(Type converterType, string name)
     {
 #pragma warning disable S3011
-        return converterType.GetTypeInfo().GetMethod(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+        return converterType.GetMethod(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)!;
 #pragma warning restore S3011
     }
 }

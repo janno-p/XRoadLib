@@ -8,8 +8,8 @@ public static class AssemblyExtensions
     public static IDictionary<MethodInfo, IList<XRoadServiceAttribute>> GetServiceContracts(this Assembly assembly)
     {
         return assembly.GetTypes()
-                       .Where(t => t.GetTypeInfo().IsInterface)
-                       .SelectMany(t => t.GetTypeInfo().GetMethods())
+                       .Where(t => t.IsInterface)
+                       .SelectMany(t => t.GetMethods())
                        .Select(m => Tuple.Create(m, m.GetCustomAttributes(typeof(XRoadServiceAttribute), false)
                                                      .OfType<XRoadServiceAttribute>()
                                                      .ToList()))

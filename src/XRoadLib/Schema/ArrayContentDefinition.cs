@@ -15,7 +15,7 @@ public sealed class ArrayContentDefiniton : ContentDefinition
     [UsedImplicitly]
     public ArrayItemDefinition Item { get; set; }
 
-    public override XName SerializedName => MergeContent ? Item.Content.Name : Name;
+    public override XName? SerializedName => MergeContent ? Item.Content.Name : Name;
 
     public ArrayContentDefiniton(ParticleDefinition particle, ICustomAttributeProvider customAttributeProvider, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
         : base(particle)
@@ -44,7 +44,7 @@ public sealed class ArrayContentDefiniton : ContentDefinition
 
         IsNullable = (arrayAttribute?.IsNullable).GetValueOrDefault();
         Order = (arrayAttribute?.Order).GetValueOrDefault(-1);
-        UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
+        UseXop = typeof(Stream).IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
         TypeName = (arrayItemAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.Xsd));
         IsOptional = xroadArrayAttribute?.IsOptional == true;
         State = DefinitionState.Default;
@@ -56,7 +56,7 @@ public sealed class ArrayContentDefiniton : ContentDefinition
         Item = new ArrayItemDefinition(
             Particle,
             arrayItemAttribute,
-            runtimeType.GetElementType(),
+            runtimeType.GetElementType()!,
             MergeContent ? runtimeName : "item",
             targetNamespace,
             defaultQualifiedElement

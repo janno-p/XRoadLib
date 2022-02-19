@@ -154,8 +154,8 @@ public sealed class ServiceDescriptionBuilder
                 .ProtocolDefinition
                 .ContractAssembly
                 .GetTypes()
-                .Where(type => type.IsXRoadSerializable() || type.GetTypeInfo().IsEnum && type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>() != null)
-                .Where(type => !_version.HasValue || type.GetTypeInfo().ExistsInVersion(_version.Value))
+                .Where(type => type.IsXRoadSerializable() || type.IsEnum && type.GetCustomAttribute<XmlTypeAttribute>() != null)
+                .Where(type => !_version.HasValue || type.ExistsInVersion(_version.Value))
                 .Select(type => _schemaDefinitionProvider.GetTypeDefinition(type))
                 .Where(def => !def.IsAnonymous && def.Name != null && def.State == DefinitionState.Default)
                 .ToList();
@@ -168,7 +168,7 @@ public sealed class ServiceDescriptionBuilder
             _schemaTypeDefinitions.Add(typeDefinition.Name, typeDefinition);
             _runtimeTypeDefinitions.Add(typeDefinition.Type, typeDefinition);
 
-            var baseType = typeDefinition.Type.GetTypeInfo().BaseType;
+            var baseType = typeDefinition.Type.BaseType;
             if (baseType == null || !baseType.IsXRoadSerializable())
                 continue;
 
@@ -382,14 +382,14 @@ public sealed class ServiceDescriptionBuilder
 
                 var namespaceSchemaReferences = GetSchemaReferences(typeDefinition.Name.NamespaceName);
 
-                if (typeDefinition.Type.GetTypeInfo().IsEnum)
+                if (typeDefinition.Type.IsEnum)
                 {
                     schemaType = new XmlSchemaSimpleType();
                     AddEnumTypeContent(typeDefinition.Type.Namespace, typeDefinition.Type, (XmlSchemaSimpleType)schemaType);
                 }
                 else
                 {
-                    schemaType = new XmlSchemaComplexType { IsAbstract = typeDefinition.Type.GetTypeInfo().IsAbstract };
+                    schemaType = new XmlSchemaComplexType { IsAbstract = typeDefinition.Type.IsAbstract };
 
                     if (AddComplexTypeContent((XmlSchemaComplexType)schemaType, typeDefinition, namespaceSchemaReferences) != null)
                         throw new NotImplementedException();
@@ -709,13 +709,13 @@ public sealed class ServiceDescriptionBuilder
             return null;
         }
 
-        if (typeDefinition.Type.GetTypeInfo().BaseType == typeof(XRoadSerializable))
+        if (typeDefinition.Type.BaseType == typeof(XRoadSerializable))
             schemaType.Particle = contentParticle;
         else
         {
             var extension = new XmlSchemaComplexContentExtension
             {
-                BaseTypeName = GetSchemaTypeName(typeDefinition.Type.GetTypeInfo().BaseType, schemaReferences.SchemaNamespace),
+                BaseTypeName = GetSchemaTypeName(typeDefinition.Type.BaseType, schemaReferences.SchemaNamespace),
                 Particle = contentParticle
             };
 
@@ -795,7 +795,7 @@ public sealed class ServiceDescriptionBuilder
 
     private void SetSchemaElementType(XmlSchemaElement schemaElement, ContentDefinition contentDefinition, SchemaReferences schemaReferences)
     {
-        if (typeof(Stream).GetTypeInfo().IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
+        if (typeof(Stream).IsAssignableFrom(contentDefinition.RuntimeType) && contentDefinition.UseXop)
             AddBinaryAttribute(schemaReferences.SchemaNamespace, schemaElement);
 
         var typeDefinition = GetContentTypeDefinition(contentDefinition);
@@ -816,7 +816,7 @@ public sealed class ServiceDescriptionBuilder
         XmlSchemaType schemaType;
         XmlQualifiedName schemaTypeName = null;
 
-        if (contentDefinition.RuntimeType.GetTypeInfo().IsEnum)
+        if (contentDefinition.RuntimeType.IsEnum)
         {
             schemaType = new XmlSchemaSimpleType();
             AddEnumTypeContent(schemaReferences.SchemaNamespace, contentDefinition.RuntimeType, (XmlSchemaSimpleType)schemaType);
@@ -840,7 +840,7 @@ public sealed class ServiceDescriptionBuilder
 
         foreach (var name in Enum.GetNames(type))
         {
-            var memberInfo = type.GetTypeInfo().GetMember(name).Single();
+            var memberInfo = type.GetMember(name).Single();
             var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
             var value = (attribute?.Name).GetValueOrDefault(name);
             restriction.Facets.Add(new XmlSchemaEnumerationFacet

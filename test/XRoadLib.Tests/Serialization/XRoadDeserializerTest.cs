@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 using XRoadLib.Extensions;
 using XRoadLib.Headers;
@@ -542,7 +541,7 @@ public class XRoadDeserializerTest
     private static Task<object> DeserializeRequestAsync(string? templateXml, string contentXml, IServiceMap? serviceMap = null, string serviceName = nameof(IService.Service1))
     {
         serviceMap ??= ServiceMap;
-        var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(IService).GetTypeInfo().GetMethod(serviceName));
+        var template = string.IsNullOrEmpty(templateXml) ? null : new XRoadXmlTemplate(templateXml, typeof(IService).GetMethod(serviceName));
 
         return DeserializeRequestContentAsync(contentXml, Globals.ServiceManager, serviceName, async msgr =>
         {

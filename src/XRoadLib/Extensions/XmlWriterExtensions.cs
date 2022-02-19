@@ -56,7 +56,7 @@ public static class XmlWriterExtensions
     /// <summary>
     /// Serializes xsi:type attribute.
     /// </summary>
-    public static Task WriteTypeAttributeAsync(this XmlWriter writer, XName qualifiedName, string ns = null) =>
+    public static Task WriteTypeAttributeAsync(this XmlWriter writer, XName qualifiedName, string? ns = null) =>
         writer.WriteTypeAttributeAsync(qualifiedName.LocalName, ns ?? qualifiedName.NamespaceName);
 
     private static async Task WriteArrayTypeAttributeAsync(this XmlWriter writer, string typeName, string typeNamespace, int arraySize)
@@ -119,7 +119,7 @@ public static class XmlWriterExtensions
     /// <summary>
     /// Serializes beginning of SOAP envelope into X-Road message.
     /// </summary>
-    public static async Task WriteSoapEnvelopeAsync(this XmlWriter writer, IMessageFormatter messageFormatter, ProtocolDefinition protocolDefinition)
+    public static async Task WriteSoapEnvelopeAsync(this XmlWriter writer, IMessageFormatter messageFormatter, ProtocolDefinition? protocolDefinition)
     {
         var soapEnvPrefix = protocolDefinition != null ? protocolDefinition.GlobalNamespacePrefixes[messageFormatter.Namespace] : PrefixConstants.SoapEnv;
 
@@ -135,7 +135,7 @@ public static class XmlWriterExtensions
             await writer.WriteAttributeStringAsync(null, "encodingStyle", messageFormatter.Namespace, NamespaceConstants.SoapEnc).ConfigureAwait(false);
     }
 
-    public static async Task WriteMissingAttributesAsync(this XmlWriter writer, ProtocolDefinition protocolDefinition)
+    public static async Task WriteMissingAttributesAsync(this XmlWriter writer, ProtocolDefinition? protocolDefinition)
     {
         if (protocolDefinition == null)
             return;

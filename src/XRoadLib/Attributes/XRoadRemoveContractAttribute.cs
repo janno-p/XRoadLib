@@ -4,5 +4,5 @@
 public class XRoadRemoveContractAttribute : Attribute
 {
     public uint Version { get; set; }
-    public Type Converter { get; set; }
+    public Type? Converter { get; set; }
 }

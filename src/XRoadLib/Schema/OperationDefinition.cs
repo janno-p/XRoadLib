@@ -64,7 +64,7 @@ public class OperationDefinition : Definition
     /// <summary>
     /// Customized export options defined by extension.
     /// </summary>
-    public ISchemaExporter ExtensionSchemaExporter { get; }
+    public ISchemaExporter? ExtensionSchemaExporter { get; }
 
     /// <summary>
     /// Customized SOAPAction header value for this operation.

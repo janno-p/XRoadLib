@@ -11,12 +11,12 @@ public interface ISchemaExporter
     /// <summary>
     /// Preferred X-Road namespace prefix of the message protocol version.
     /// </summary>
-    string XRoadPrefix { get; }
+    string? XRoadPrefix { get; }
 
     /// <summary>
     /// X-Road specification namespace of the message protocol version.
     /// </summary>
-    string XRoadNamespace { get; }
+    string? XRoadNamespace { get; }
 
     /// <summary>
     /// Configuration hook for overriding default operation settings.
@@ -54,7 +54,7 @@ public interface ISchemaExporter
     /// <summary>
     /// Provide custom schema locations.
     /// </summary>
-    string ExportSchemaLocation(string namespaceName);
+    string? ExportSchemaLocation(string namespaceName);
 
     /// <summary>
     /// Allows each message protocol implementation to customize service description document

@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using XRoadLib.Extensions;
+﻿using XRoadLib.Extensions;
 using XRoadLib.Schema;
 using XRoadLib.Serialization.Template;
 
@@ -15,7 +14,7 @@ public class EnumTypeMap : TypeMap
     {
         foreach (var name in Enum.GetNames(typeDefinition.Type))
         {
-            var memberInfo = typeDefinition.Type.GetTypeInfo().GetMember(name).Single();
+            var memberInfo = typeDefinition.Type.GetMember(name).Single();
             var attribute = memberInfo.GetSingleAttribute<XmlEnumAttribute>();
             var value = (attribute?.Name).GetValueOrDefault(name);
             var enumValue = (int)Enum.Parse(typeDefinition.Type, name);

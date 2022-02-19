@@ -103,7 +103,6 @@ implementation and X-Road protocol info. In our sample application we can rely o
 to provide implementations for the requested services.
 
     [lang=csharp]
-    using System.Reflection;
     using XRoadLib;
     using XRoadLib.Headers;
     using XRoadLib.Schema;
@@ -113,7 +112,7 @@ to provide implementations for the requested services.
         public class CalculatorServiceManager : ServiceManager<XRoadHeader>
         {
             public CalculatorServiceManager()
-                : base("4.0", new DefaultSchemaExporter("http://calculator.x-road.eu/", typeof(CalculatorServiceManager).GetTypeInfo().Assembly))
+                : base("4.0", new DefaultSchemaExporter("http://calculator.x-road.eu/", typeof(CalculatorServiceManager).Assembly))
             { }
         }
     }

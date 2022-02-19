@@ -27,7 +27,7 @@ public sealed class SingularContentDefinition : ContentDefinition
 
         IsNullable = (elementAttribute?.IsNullable).GetValueOrDefault();
         Order = (elementAttribute?.Order).GetValueOrDefault(-1);
-        UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadElementAttribute?.UseXop).GetValueOrDefault(true);
+        UseXop = typeof(Stream).IsAssignableFrom(runtimeType) && (xroadElementAttribute?.UseXop).GetValueOrDefault(true);
         TypeName = (elementAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.Xsd));
         IsOptional = xroadElementAttribute?.IsOptional == true;
         State = DefinitionState.Default;
@@ -37,7 +37,7 @@ public sealed class SingularContentDefinition : ContentDefinition
         EmptyTagHandlingMode = xroadElementAttribute?.EmptyTagHandlingMode;
     }
 
-    public SingularContentDefinition(ParticleDefinition particle, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
+    public SingularContentDefinition(ParticleDefinition particle, XmlArrayItemAttribute? arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
         : base(particle)
     {
         var xroadArrayItemAttribute = arrayItemAttribute as XRoadXmlArrayItemAttribute;
@@ -53,7 +53,7 @@ public sealed class SingularContentDefinition : ContentDefinition
         );
 
         IsNullable = (arrayItemAttribute?.IsNullable).GetValueOrDefault();
-        UseXop = typeof(Stream).GetTypeInfo().IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
+        UseXop = typeof(Stream).IsAssignableFrom(runtimeType) && (xroadArrayItemAttribute?.UseXop).GetValueOrDefault(true);
         TypeName = (arrayItemAttribute?.DataType).MapNotEmpty(x => XName.Get(x, NamespaceConstants.Xsd));
         State = DefinitionState.Default;
         RuntimeType = runtimeType;

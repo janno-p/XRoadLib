@@ -49,7 +49,7 @@ public class XRoadServiceAttribute : Attribute
     /// <summary>
     /// Provides extension specific customizations for the schema.
     /// </summary>
-    public virtual ISchemaExporter SchemaExporter => null;
+    public virtual ISchemaExporter? SchemaExporter => null;
 
     /// <summary>
     /// Attachment serialization mode for service input. Available options are `Xml` (binary is serialized inside XML document
@@ -69,7 +69,7 @@ public class XRoadServiceAttribute : Attribute
     /// SOAPAction header value for this service.
     /// </summary>
     [UsedImplicitly]
-    public virtual string SoapAction { get; set; }
+    public virtual string SoapAction { get; set; } = string.Empty;
 
     /// <summary>
     /// Initializes new operation definition.

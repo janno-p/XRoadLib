@@ -5,11 +5,11 @@ namespace XRoadLib.Extensions;
 
 public static class ParameterInfoExtensions
 {
-    internal static ConvertTaskMethod CreateConvertTaskMethod(this ParameterInfo parameterInfo)
+    internal static ConvertTaskMethod CreateConvertTaskMethod(this ParameterInfo? parameterInfo)
     {
         var type = parameterInfo?.ParameterType;
         if (type == null)
-            return _ => null;
+            return _ => Task.FromResult<object?>(null);
 
         var dynamicSet = new DynamicMethod("DynamicConvertTask", typeof(Task<object>), new[] { typeof(Task) });
         var generator = dynamicSet.GetILGenerator();
@@ -36,17 +36,17 @@ public static class ParameterInfoExtensions
     private static MethodInfo GetConvertTaskMethod(string methodName)
     {
 #pragma warning disable S3011
-        return typeof(ParameterInfoExtensions).GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic);
+        return typeof(ParameterInfoExtensions).GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic)!;
 #pragma warning restore S3011
     }
 
-    private static async Task<object> ConvertTask(Task task)
+    private static async Task<object?> ConvertTask(Task task)
     {
-        await task;
-        return Task.FromResult((object)null).ConfigureAwait(false);
+        await task.ConfigureAwait(false);
+        return Task.FromResult((object?)null);
     }
 
-    private static async Task<object> ConvertTaskOfT<T>(Task task)
+    private static async Task<object?> ConvertTaskOfT<T>(Task task)
     {
         var genericTask = (Task<T>)task;
         var result = await genericTask.ConfigureAwait(false);

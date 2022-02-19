@@ -1,3 +1,3 @@
 ﻿namespace XRoadLib.Extensions;
 
-public delegate object GetValueMethod(object source);
+public delegate object? GetValueMethod(object source);

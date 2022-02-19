@@ -117,7 +117,7 @@ public static class XmlReaderExtensions
     /// <summary>
     /// Move XML reader current position to next element which matches the given arguments.
     /// </summary>
-    public static async Task<bool> MoveToElementAsync(this XmlReader reader, int depth, XName name = null)
+    public static async Task<bool> MoveToElementAsync(this XmlReader reader, int depth, XName? name = null)
     {
         while (true)
         {

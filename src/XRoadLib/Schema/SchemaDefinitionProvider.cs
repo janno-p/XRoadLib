@@ -52,9 +52,8 @@ public class SchemaDefinitionProvider
     /// </summary>
     public CollectionDefinition GetCollectionDefinition(TypeDefinition typeDefinition)
     {
-        var collectionDefinition = new CollectionDefinition(typeDefinition.Type.MakeArrayType(), typeDefinition.TargetNamespace)
+        var collectionDefinition = new CollectionDefinition(typeDefinition.Type.MakeArrayType(), typeDefinition, typeDefinition.TargetNamespace)
         {
-            ItemDefinition = typeDefinition,
             CanHoldNullValues = true,
             IsAnonymous = true
         };
@@ -67,7 +66,7 @@ public class SchemaDefinitionProvider
     /// <summary>
     /// Initializes default type definition and applies customizations (if any).
     /// </summary>
-    public TypeDefinition GetTypeDefinition(Type type, string typeName = null)
+    public TypeDefinition GetTypeDefinition(Type type, string? typeName = null)
     {
         XName qualifiedName = null;
 
@@ -76,10 +75,9 @@ public class SchemaDefinitionProvider
             if (!string.IsNullOrWhiteSpace(typeName))
                 qualifiedName = XName.Get(typeName, ProtocolDefinition.ProducerNamespace);
 
-            var collectionDefinition = new CollectionDefinition(type, ProtocolDefinition.ProducerNamespace)
+            var collectionDefinition = new CollectionDefinition(type, GetTypeDefinition(type.GetElementType()!), ProtocolDefinition.ProducerNamespace)
             {
                 Name = qualifiedName,
-                ItemDefinition = GetTypeDefinition(type.GetElementType()),
                 IsAnonymous = qualifiedName == null,
                 CanHoldNullValues = true
             };
@@ -89,8 +87,7 @@ public class SchemaDefinitionProvider
             return collectionDefinition;
         }
 
-        var typeInfo = type.GetTypeInfo();
-        var typeAttribute = typeInfo.GetCustomAttribute<XmlTypeAttribute>();
+        var typeAttribute = type.GetCustomAttribute<XmlTypeAttribute>();
         var isAnonymous = typeAttribute is { AnonymousType: true };
 
         var normalizedType = type.NormalizeType();
@@ -106,7 +103,7 @@ public class SchemaDefinitionProvider
             IsAnonymous = isAnonymous,
             Name = qualifiedName,
             State = DefinitionState.Default,
-            CanHoldNullValues = typeInfo.IsClass || normalizedType != type
+            CanHoldNullValues = type.IsClass || normalizedType != type
         };
 
         _schemaExporter.ExportTypeDefinition(typeDefinition);
@@ -183,7 +180,7 @@ public class SchemaDefinitionProvider
     /// <summary>
     /// Get schema location of specified schema namespace.
     /// </summary>
-    public string GetSchemaLocation(string namespaceName, ISchemaExporter extension = null)
+    public string? GetSchemaLocation(string namespaceName, ISchemaExporter? extension = null)
     {
         return _schemaExporter.ExportSchemaLocation(namespaceName)
                ?? extension?.ExportSchemaLocation(namespaceName)

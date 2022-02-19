@@ -16,9 +16,9 @@ public class ArrayItemDefinition : ParticleDefinition
     public uint? MaxOccurs { get; set; }
 
     [UsedImplicitly]
-    public Type ItemTypeMapType { get; set; }
+    public Type? ItemTypeMapType { get; set; }
 
-    public ArrayItemDefinition(ParticleDefinition array, XmlArrayItemAttribute arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
+    public ArrayItemDefinition(ParticleDefinition array, XmlArrayItemAttribute? arrayItemAttribute, Type runtimeType, string runtimeName, string targetNamespace, bool defaultQualifiedElement)
     {
         Array = array;
 

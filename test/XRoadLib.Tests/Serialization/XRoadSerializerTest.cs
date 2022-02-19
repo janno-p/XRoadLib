@@ -56,7 +56,7 @@ public class XRoadSerializerTest
             await writer.WriteStartElementAsync(elementName);
 
             var propType = typeof(X<>).MakeGenericType(typeof(T));
-            var methodInfo = propType.GetTypeInfo().GetMethod(nameof(X<object>.Method))!;
+            var methodInfo = propType.GetMethod(nameof(X<object>.Method))!;
 
             var operationDefinition = new OperationDefinition(nameof(X<object>.Method), null, methodInfo);
             var requestDefinition = new RequestDefinition(operationDefinition, _ => false);
