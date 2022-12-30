@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
       - name: Run tests
-        run: build.sh --target RunTests
+        run: ./build.sh --target RunTests
 
   windows-test:
     runs-on: windows-latest
