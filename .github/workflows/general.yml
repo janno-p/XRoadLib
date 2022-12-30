@@ -39,4 +39,4 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
       - name: Run tests
-        run: build.cmd --target RunTests
+        run: ./build.cmd --target RunTests
