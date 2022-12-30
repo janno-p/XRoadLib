@@ -17,10 +17,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapGet("/", c => c.ExecuteWsdlRequest<CalculatorServiceManager>());
-    endpoints.MapPost("/", c => c.ExecuteWebServiceRequest<CalculatorServiceManager>());
-});
+app.MapGet("/", httpContext => httpContext.ExecuteWsdlRequest<CalculatorServiceManager>());
+app.MapPost("/", httpContext => httpContext.ExecuteWebServiceRequest<CalculatorServiceManager>());
 
 app.Run();

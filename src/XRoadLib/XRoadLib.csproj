@@ -14,8 +14,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="all" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Using Include="JetBrains.Annotations" />
+    <Using Include="System.Xml" />
+    <Using Include="System.Xml.Linq" />
+    <Using Include="System.Xml.Serialization" />
   </ItemGroup>
 
 </Project>

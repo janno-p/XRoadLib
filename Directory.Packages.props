@@ -1,0 +1,32 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="docfx.console" Version="2.59.4" />
+    <PackageVersion Include="Fake.Api.GitHub" Version="5.23.1" />
+    <PackageVersion Include="Fake.Core.Context" Version="5.23.1" />
+    <PackageVersion Include="Fake.Core.ReleaseNotes" Version="5.23.1" />
+    <PackageVersion Include="Fake.Core.Target" Version="5.23.1" />
+    <PackageVersion Include="Fake.Documentation.DocFx" Version="5.23.1" />
+    <PackageVersion Include="Fake.DotNet.Cli" Version="5.23.1" />
+    <PackageVersion Include="Fake.Tools.Git" Version="5.23.1" />
+    <PackageVersion Include="FluentAssertions" Version="6.8.0" />
+    <PackageVersion Include="FSharp.Core" Version="7.0.0" />
+    <PackageVersion Include="Google.Protobuf" Version="3.21.12" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2022.3.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageVersion Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+    <PackageVersion Include="xunit" Version="2.4.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
+  </ItemGroup>
+
+</Project>

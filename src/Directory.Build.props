@@ -26,4 +26,8 @@
     <InternalsVisibleTo Include="$(MSBuildProjectName).Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
+  </ItemGroup>
+
 </Project>

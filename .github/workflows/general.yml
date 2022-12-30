@@ -14,29 +14,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup .NET Core SDK 6.0
+      - name: Setup .NET Core SDK 7.0
         uses: actions/setup-dotnet@v1.8.2
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
       - name: Install tools
         run: dotnet tool restore
       - name: Install dependencies
         run: dotnet restore
       - name: Run tests
-        run: dotnet fake run build.fsx target RunTests
+        run: build.sh --target RunTests
 
   windows-test:
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup .NET Core SDK 6.0
+      - name: Setup .NET Core SDK 7.0
         uses: actions/setup-dotnet@v1.8.2
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
       - name: Install tools
         run: dotnet tool restore
       - name: Install dependencies
         run: dotnet restore
       - name: Run tests
-        run: dotnet fake run build.fsx target RunTests
+        run: build.cmd --target RunTests

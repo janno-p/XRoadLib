@@ -28,6 +28,8 @@ choco install docfx
   dotnet tool install fake-cli -g
   ```
 
+https://fsprojects.github.io/Paket/fsi-integration.html
+
 ## Building
 
 ```sh

@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup .NET Core SDK 6.0
+      - name: Setup .NET Core SDK 7.0
         uses: actions/setup-dotnet@v1.8.2
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
       - name: Install tools
         run: dotnet tool restore
       - name: Install dependencies
@@ -28,13 +28,13 @@ jobs:
         run: |
           [IO.File]::WriteAllBytes("${{ github.workspace }}\src\XRoadLib.snk", [Convert]::FromBase64String($env:STRONG_NAME_KEY))
       - name: Build release
-        run: dotnet fake run build.fsx target BuildRelease
+        run: build.cmd --target BuildRelease
       - name: Generate help
-        run: dotnet fake run .\build.fsx --single-target target GenerateHelp
+        run: build.cmd --single-target --target GenerateHelp
       - name: Prepare docs
         run: git clone -b gh-pages --single-branch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} ${{ github.workspace }}\temp\gh-pages
       - name: Generate docs
-        run: dotnet fake run .\build.fsx --single-target target GenerateDocs
+        run: build.cmd --single-target --target GenerateDocs
       - name: Release docs
         run: |
           git config user.name 'Janno Põldma'
@@ -44,7 +44,7 @@ jobs:
           git push
         working-directory: ${{ github.workspace }}\temp\gh-pages
       - name: Build NuGet package
-        run: dotnet fake run .\build.fsx --single-target target NuGet
+        run: build.cmd --single-target --target NuGet
       - name: Push to NuGet
         run: dotnet nuget push ${{ github.workspace }}\bin\*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLISH_TO_NUGET_ORG }} --skip-duplicate
       - name: Push to Github

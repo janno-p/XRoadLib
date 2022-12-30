@@ -2,14 +2,8 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "fake-cli": {
-      "version": "5.20.4",
-      "commands": [
-        "fake"
-      ]
-    },
     "xunit-cli": {
-      "version": "0.1.14",
+      "version": "0.1.16",
       "commands": [
         "xunit"
       ]

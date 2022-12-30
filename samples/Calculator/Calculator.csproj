@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +11,13 @@
 
   <ItemGroup Condition="$(Configuration) == 'Debug'">
     <InternalsVisibleTo Include="Calculator.Tests" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Using Include="System.Xml.Serialization" />
+    <Using Include="XRoadLib" />
+    <Using Include="XRoadLib.Attributes" />
+    <Using Include="XRoadLib.Serialization" />
   </ItemGroup>
 
 </Project>
