@@ -1,18 +1,9 @@
 <Project>
-
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageVersion Include="docfx.console" Version="2.59.4" />
-    <PackageVersion Include="Fake.Api.GitHub" Version="5.23.1" />
-    <PackageVersion Include="Fake.Core.Context" Version="5.23.1" />
-    <PackageVersion Include="Fake.Core.ReleaseNotes" Version="5.23.1" />
-    <PackageVersion Include="Fake.Core.Target" Version="5.23.1" />
-    <PackageVersion Include="Fake.Documentation.DocFx" Version="5.23.1" />
-    <PackageVersion Include="Fake.DotNet.Cli" Version="5.23.1" />
-    <PackageVersion Include="Fake.Tools.Git" Version="5.23.1" />
     <PackageVersion Include="FluentAssertions" Version="6.8.0" />
     <PackageVersion Include="FSharp.Core" Version="7.0.0" />
     <PackageVersion Include="Google.Protobuf" Version="3.21.12" />
@@ -28,5 +19,4 @@
     <PackageVersion Include="xunit" Version="2.4.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
   </ItemGroup>
-
 </Project>

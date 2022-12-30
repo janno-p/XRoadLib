@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <WarnOn>3390;$(WarnOn)</WarnOn>
@@ -12,14 +13,13 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Fake.Api.GitHub" />
-    <PackageReference Include="Fake.Core.Context" />
-    <PackageReference Include="Fake.Core.ReleaseNotes" />
-    <PackageReference Include="Fake.Core.Target" />
-    <PackageReference Include="Fake.Documentation.DocFx" />
-    <PackageReference Include="Fake.DotNet.Cli" />
-    <PackageReference Include="Fake.Tools.Git" />
-    <PackageReference Update="FSharp.Core" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="Fake.Api.GitHub" Version="5.23.1" />
+    <PackageReference Include="Fake.Core.Context" Version="5.23.1" />
+    <PackageReference Include="Fake.Core.ReleaseNotes" Version="5.23.1" />
+    <PackageReference Include="Fake.Core.Target" Version="5.23.1" />
+    <PackageReference Include="Fake.Documentation.DocFx" Version="5.23.1" />
+    <PackageReference Include="Fake.DotNet.Cli" Version="5.23.1" />
+    <PackageReference Include="Fake.Tools.Git" Version="5.23.1" />
   </ItemGroup>
 
 </Project>

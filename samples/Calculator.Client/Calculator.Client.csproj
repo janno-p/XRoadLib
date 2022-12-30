@@ -7,13 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\XRoadLib\XRoadLib.csproj" />
-    <ProjectReference Include="..\..\src\XRoadLib.SourceGenerator\XRoadLib.SourceGenerator.fsproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\src\XRoadLib.SourceGenerator\XRoadLib.SourceGenerator.csproj" OutputItemType="Analyzer" />
   </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="Calculator.wsdl" XRoadSourceGenerator="True" WsdlUri="http://localhost:62978/" />
-  </ItemGroup>
-
-  <Import Project="..\..\src\XRoadLib.SourceGenerator\XRoadLibSourceGenerator.props" />
 
 </Project>

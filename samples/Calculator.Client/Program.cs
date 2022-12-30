@@ -1,5 +1,5 @@
 ﻿using Calculator.Client;
 
-var service = new CalculatorPort();
+var service = new CalculatorClient();
 
 Console.WriteLine($"Hello, World! I have a {service}");
